@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Mentoria avatar parçası: 200x200, diğer katmanlarla hizalı. -->
+  
+  <g stroke="#2B2350" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M69 95 L55 92 M131 95 L145 92" fill="none"/>
+    <circle cx="83" cy="96" r="14" fill="#BFE6FF" fill-opacity="0.35"/>
+    <circle cx="117" cy="96" r="14" fill="#BFE6FF" fill-opacity="0.35"/>
+    <path d="M96.5 94 Q100 89.5 103.5 94" fill="none"/>
+  </g>
+  <path d="M75 92 L80 87 M109 92 L114 87" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+</svg>

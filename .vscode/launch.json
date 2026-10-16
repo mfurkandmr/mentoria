@@ -1,0 +1,65 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Mentoria",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--dart-define-from-file=env.json"
+      ]
+    },
+    {
+      "name": "Mentoria (web - oturum açık kalsın)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "deviceId": "chrome",
+      "toolArgs": [
+        "--dart-define-from-file=env.json",
+        "--web-port=5173",
+        "--web-browser-flag=--user-data-dir=.dart_tool/chrome-profile"
+      ]
+    },
+    {
+      "name": "Mentoria (demo - öğrenci)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--dart-define=DEMO=true"
+      ]
+    },
+    {
+      "name": "Mentoria (demo - koç)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--dart-define=DEMO=true",
+        "--dart-define=DEMO_ROLE=coach"
+      ]
+    },
+    {
+      "name": "Mentoria (demo - müdür)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--dart-define=DEMO=true",
+        "--dart-define=DEMO_ROLE=admin"
+      ]
+    },
+    {
+      "name": "Mentoria (demo - veli)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--dart-define=DEMO=true",
+        "--dart-define=DEMO_ROLE=parent"
+      ]
+    }
+  ]
+}

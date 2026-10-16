@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Mentoria avatar parçası: 200x200, diğer katmanlarla hizalı. -->
+  <defs><linearGradient id="gx" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5B4BC8"/><stop offset="0.55" stop-color="#3B2A8F"/><stop offset="1" stop-color="#1E1650"/></linearGradient></defs>
+<g stroke="#2B2350" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+<path d="M52 98 C44 60 68 36 102 36 C136 36 158 58 148 98 C146 86 142 78 136 71 C122 77 104 75 91 64 C85 73 70 79 58 81 C55 87 53 92 52 98 Z" fill="url(#gx)"/>
+</g>
+<path d="M74 48 L75.2 50.8 L78 52 L75.2 53.2 L74 56 L72.8 53.2 L70 52 L72.8 50.8 Z" fill="#FFFFFF" opacity="0.9"/><path d="M118 40 L119.2 42.8 L122 44 L119.2 45.2 L118 48 L116.8 45.2 L114 44 L116.8 42.8 Z" fill="#FFFFFF" opacity="0.9"/><path d="M136 62 L137.2 64.8 L140 66 L137.2 67.2 L136 70 L134.8 67.2 L132 66 L134.8 64.8 Z" fill="#FFFFFF" opacity="0.9"/><path d="M92 36 L93.2 38.8 L96 40 L93.2 41.2 L92 44 L90.8 41.2 L88 40 L90.8 38.8 Z" fill="#FFFFFF" opacity="0.9"/><path d="M60 74 L61.2 76.8 L64 78 L61.2 79.2 L60 82 L58.8 79.2 L56 78 L58.8 76.8 Z" fill="#FFFFFF" opacity="0.9"/><path d="M142 82 L143.2 84.8 L146 86 L143.2 87.2 L142 90 L140.8 87.2 L138 86 L140.8 84.8 Z" fill="#FFFFFF" opacity="0.9"/>
+<path d="M76 50 Q94 40 116 45" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.3"/>
+</svg>

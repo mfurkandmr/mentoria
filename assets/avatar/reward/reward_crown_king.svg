@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Mentoria avatar parçası: 200x200, diğer katmanlarla hizalı. -->
+  <defs><linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE68A"/><stop offset="0.55" stop-color="#FFC531"/><stop offset="1" stop-color="#E39A12"/></linearGradient></defs>
+  <g stroke="#2B2350" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M66 50 C62 22 138 22 134 50 Z" fill="#C81E4A"/>
+  </g>
+  <g stroke="#2B2350" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M56 54 L60 14 L80 34 L100 4 L120 34 L140 14 L144 54 Z" fill="url(#gold)"/>
+  </g>
+  <g stroke="#2B2350" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+    <circle cx="60" cy="14" r="5.5" fill="#FFE68A" stroke-width="3"/>
+    <circle cx="100" cy="4" r="5.5" fill="#FFE68A" stroke-width="3"/>
+    <circle cx="140" cy="14" r="5.5" fill="#FFE68A" stroke-width="3"/>
+  </g>
+  <g stroke="#2B2350" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M100 22 L108 32 L100 42 L92 32 Z" fill="#E5484D" stroke-width="3"/>
+  </g>
+  <path d="M97 28 L100 25" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+  <g stroke="#2B2350" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+    <circle cx="74" cy="40" r="4" fill="#4DABF7" stroke-width="2.5"/>
+    <circle cx="126" cy="40" r="4" fill="#51CF66" stroke-width="2.5"/>
+  </g>
+  <g stroke="#2B2350" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+    <rect x="52" y="48" width="96" height="15" rx="7.5" fill="#FFFFFF"/>
+  </g>
+  <path d="M64 52 L64 58" stroke="#2B2350" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M82 52 L82 58" stroke="#2B2350" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M100 52 L100 58" stroke="#2B2350" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M118 52 L118 58" stroke="#2B2350" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M136 52 L136 58" stroke="#2B2350" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M68 44 L70 26" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" opacity="0.55"/>
+  <path d="M160 15 Q161.54 20.46 167 22 Q161.54 23.54 160 29 Q158.46 23.54 153 22 Q158.46 20.46 160 15 Z" fill="#FFE68A" stroke="#2B2350" stroke-width="2"/>
+  <path d="M40 27 Q41.1 30.9 45 32 Q41.1 33.1 40 37 Q38.9 33.1 35 32 Q38.9 30.9 40 27 Z" fill="#FFE68A" stroke="#2B2350" stroke-width="2"/>
+</svg>

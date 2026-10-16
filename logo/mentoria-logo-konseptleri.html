@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mentoria Logo Konseptleri</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F6FF; --card: #FFFFFF; --text: #1E1B4B; --muted: #6B6890; --line: #E4E1FA;
+    --brand: #5B4BFF; --brand-dark: #4436E0; --accent: #FFB020; --soft: #EDEBFF;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg: #12102A; --card: #1C1A3A; --text: #F1F0FF; --muted: #A9A6CF; --line: #2E2B55; }
+  }
+  :root[data-theme="dark"] { --bg: #12102A; --card: #1C1A3A; --text: #F1F0FF; --muted: #A9A6CF; --line: #2E2B55; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: Nunito, system-ui, sans-serif; padding: 32px 16px 64px; }
+  header { max-width: 1100px; margin: 0 auto 28px; }
+  h1 { font-size: 32px; font-weight: 900; margin: 0 0 6px; }
+  header p { color: var(--muted); margin: 0; font-size: 16px; }
+  .palette { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  .sw { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+  .sw i { width: 22px; height: 22px; border-radius: 6px; display: inline-block; border: 1px solid var(--line); }
+  .grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .tag { font-size: 12px; font-weight: 800; color: var(--brand); letter-spacing: .06em; text-transform: uppercase; }
+  .hero { background: var(--soft); border-radius: 16px; display: grid; place-items: center; padding: 18px; }
+  .hero svg { width: 180px; height: 180px; }
+  .row { display: flex; align-items: center; gap: 14px; }
+  .icon { width: 64px; height: 64px; border-radius: 16px; display: grid; place-items: center; flex: none; box-shadow: 0 4px 12px rgba(30,27,75,.15); }
+  .icon svg { width: 52px; height: 52px; }
+  .icon.sm { width: 40px; height: 40px; border-radius: 10px; }
+  .icon.sm svg { width: 32px; height: 32px; }
+  .word { font-weight: 900; font-size: 26px; letter-spacing: -.02em; }
+  .word b { color: var(--brand); font-weight: 900; }
+  h2 { margin: 0; font-size: 20px; }
+  .card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- 1. Kepli Baykuş -->
+    <symbol id="owl-cap" viewBox="0 0 200 200">
+      <ellipse cx="100" cy="184" rx="50" ry="6" fill="#1E1B4B" opacity=".12"/>
+      <ellipse cx="44" cy="128" rx="16" ry="34" fill="#4436E0" transform="rotate(14 44 128)"/>
+      <ellipse cx="156" cy="128" rx="16" ry="34" fill="#4436E0" transform="rotate(-14 156 128)"/>
+      <ellipse cx="100" cy="120" rx="60" ry="62" fill="#5B4BFF"/>
+      <ellipse cx="100" cy="142" rx="36" ry="38" fill="#EDEBFF"/>
+      <path d="M86 140 q6 6 12 0 M102 140 q6 6 12 0 M94 156 q6 6 12 0" stroke="#C9C3FF" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <circle cx="78" cy="104" r="22" fill="#fff"/><circle cx="122" cy="104" r="22" fill="#fff"/>
+      <circle cx="81" cy="106" r="11" fill="#1E1B4B"/><circle cx="119" cy="106" r="11" fill="#1E1B4B"/>
+      <circle cx="85" cy="102" r="4" fill="#fff"/><circle cx="123" cy="102" r="4" fill="#fff"/>
+      <path d="M92 122 h16 l-8 12 z" fill="#FFB020" stroke="#FFB020" stroke-width="3" stroke-linejoin="round"/>
+      <ellipse cx="86" cy="182" rx="10" ry="5" fill="#FFB020"/><ellipse cx="114" cy="182" rx="10" ry="5" fill="#FFB020"/>
+      <rect x="72" y="50" width="56" height="20" rx="6" fill="#1E1B4B"/>
+      <path d="M100 26 L156 46 L100 66 L44 46 Z" fill="#1E1B4B" stroke="#1E1B4B" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M100 46 L146 52 L146 76" stroke="#FFB020" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <circle cx="146" cy="80" r="6" fill="#FFB020"/>
+    </symbol>
+
+    <!-- 2. Grafik Baykuş -->
+    <symbol id="owl-chart" viewBox="0 0 200 200">
+      <rect x="118" y="128" width="18" height="50" rx="5" fill="#FFD27A"/>
+      <rect x="142" y="104" width="18" height="74" rx="5" fill="#FFC042"/>
+      <rect x="166" y="76" width="18" height="102" rx="5" fill="#FFB020"/>
+      <path d="M110 112 L140 88 L156 98 L184 58" stroke="#1E1B4B" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M170 56 L186 54 L184 70" stroke="#1E1B4B" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M22 70 L32 44 L48 64 Z M112 70 L102 44 L86 64 Z" fill="#4436E0" stroke="#4436E0" stroke-width="4" stroke-linejoin="round"/>
+      <ellipse cx="67" cy="122" rx="48" ry="56" fill="#5B4BFF"/>
+      <ellipse cx="67" cy="142" rx="28" ry="32" fill="#EDEBFF"/>
+      <path d="M108 120 Q126 108 132 96" stroke="#4436E0" stroke-width="14" fill="none" stroke-linecap="round"/>
+      <circle cx="50" cy="100" r="17" fill="#fff"/><circle cx="84" cy="100" r="17" fill="#fff"/>
+      <circle cx="54" cy="100" r="8.5" fill="#1E1B4B"/><circle cx="88" cy="100" r="8.5" fill="#1E1B4B"/>
+      <circle cx="57" cy="97" r="3" fill="#fff"/><circle cx="91" cy="97" r="3" fill="#fff"/>
+      <path d="M61 114 h12 l-6 9 z" fill="#FFB020" stroke="#FFB020" stroke-width="3" stroke-linejoin="round"/>
+      <ellipse cx="56" cy="178" rx="9" ry="4.5" fill="#FFB020"/><ellipse cx="78" cy="178" rx="9" ry="4.5" fill="#FFB020"/>
+    </symbol>
+
+    <!-- 3. M-Baykuş monogram -->
+    <symbol id="owl-m" viewBox="0 0 200 200">
+      <path d="M38 168 L38 58 L64 28 L100 80 L136 28 L162 58 L162 168 Q100 190 38 168 Z" fill="#5B4BFF" stroke="#5B4BFF" stroke-width="14" stroke-linejoin="round"/>
+      <path d="M30 120 Q22 150 44 168 L52 128 Z M170 120 Q178 150 156 168 L148 128 Z" fill="#4436E0" stroke="#4436E0" stroke-width="6" stroke-linejoin="round"/>
+      <path d="M84 142 l8 7 8 -7 8 7 8 -7 M92 158 l8 7 8 -7" stroke="#C9C3FF" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="70" cy="98" r="22" fill="#fff"/><circle cx="130" cy="98" r="22" fill="#fff"/>
+      <circle cx="74" cy="100" r="11" fill="#1E1B4B"/><circle cx="126" cy="100" r="11" fill="#1E1B4B"/>
+      <circle cx="78" cy="96" r="4" fill="#fff"/><circle cx="130" cy="96" r="4" fill="#fff"/>
+      <path d="M92 114 h16 l-8 12 z" fill="#FFB020" stroke="#FFB020" stroke-width="3" stroke-linejoin="round"/>
+    </symbol>
+
+    <!-- 4. Gözlüklü Kitap Baykuşu -->
+    <symbol id="owl-book" viewBox="0 0 200 200">
+      <path d="M52 52 L60 22 L82 46 Z M148 52 L140 22 L118 46 Z" fill="#4436E0" stroke="#4436E0" stroke-width="5" stroke-linejoin="round"/>
+      <circle cx="100" cy="98" r="54" fill="#5B4BFF"/>
+      <ellipse cx="100" cy="126" rx="30" ry="22" fill="#EDEBFF"/>
+      <circle cx="78" cy="94" r="19" fill="#fff"/><circle cx="122" cy="94" r="19" fill="#fff"/>
+      <circle cx="80" cy="96" r="9" fill="#1E1B4B"/><circle cx="120" cy="96" r="9" fill="#1E1B4B"/>
+      <circle cx="83" cy="93" r="3" fill="#fff"/><circle cx="123" cy="93" r="3" fill="#fff"/>
+      <circle cx="78" cy="94" r="21" fill="none" stroke="#1E1B4B" stroke-width="5"/>
+      <circle cx="122" cy="94" r="21" fill="none" stroke="#1E1B4B" stroke-width="5"/>
+      <path d="M97 92 Q100 88 103 92" stroke="#1E1B4B" stroke-width="5" fill="none"/>
+      <path d="M93 112 h14 l-7 10 z" fill="#FFB020" stroke="#FFB020" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M100 152 Q68 136 30 144 L30 182 Q68 174 100 190 Z" fill="#FFB020" stroke="#E89A00" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M100 152 Q132 136 170 144 L170 182 Q132 174 100 190 Z" fill="#FFC042" stroke="#E89A00" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M44 156 Q70 150 90 160 M44 166 Q70 160 90 170 M110 160 Q130 150 156 156 M110 170 Q130 160 156 166" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/>
+      <ellipse cx="62" cy="146" rx="12" ry="8" fill="#4436E0"/><ellipse cx="138" cy="146" rx="12" ry="8" fill="#4436E0"/>
+    </symbol>
+
+    <!-- 5. Yıldız Rehber "Nova" -->
+    <symbol id="star" viewBox="0 0 200 200">
+      <path d="M30 170 Q22 150 34 140 M18 120 l4 8 8 4 -8 4 -4 8 -4 -8 -8 -4 8 -4 z M168 30 l3 6 6 3 -6 3 -3 6 -3 -6 -6 -3 6 -3 z" fill="#FFD27A" stroke="#FFD27A" stroke-width="2" stroke-linejoin="round"/>
+      <polygon points="100,35 118.8,79.1 166.6,83.4 130.4,114.9 141.1,161.6 100,137 58.9,161.6 69.6,114.9 33.4,83.4 81.2,79.1" fill="#FFB020" stroke="#FFB020" stroke-width="16" stroke-linejoin="round"/>
+      <rect x="74" y="56" width="52" height="12" rx="4" fill="#1E1B4B"/>
+      <path d="M100 30 L138 44 L100 58 L62 44 Z" fill="#5B4BFF" stroke="#5B4BFF" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M100 44 L132 50 L132 68" stroke="#1E1B4B" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <circle cx="132" cy="71" r="4.5" fill="#1E1B4B"/>
+      <ellipse cx="86" cy="102" rx="6" ry="8" fill="#1E1B4B"/><ellipse cx="114" cy="102" rx="6" ry="8" fill="#1E1B4B"/>
+      <circle cx="88" cy="99" r="2.2" fill="#fff"/><circle cx="116" cy="99" r="2.2" fill="#fff"/>
+      <circle cx="74" cy="116" r="6" fill="#FF7A9A" opacity=".55"/><circle cx="126" cy="116" r="6" fill="#FF7A9A" opacity=".55"/>
+      <path d="M90 116 Q100 126 110 116" stroke="#1E1B4B" stroke-width="4" fill="none" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header>
+  <h1>Mentoria · Maskot Logo Konseptleri</h1>
+  <p>YKS öğrencilerine hitap eden, eğlenceli ama güven veren 5 maskot önerisi. Her kartta büyük maskot, uygulama ikonu ve yazı logosu var.</p>
+  <div class="palette">
+    <span class="sw"><i style="background:#5B4BFF"></i>Mentoria Moru #5B4BFF</span>
+    <span class="sw"><i style="background:#4436E0"></i>Koyu Mor #4436E0</span>
+    <span class="sw"><i style="background:#FFB020"></i>Hedef Sarısı #FFB020</span>
+    <span class="sw"><i style="background:#1E1B4B"></i>Gece Lacivert #1E1B4B</span>
+    <span class="sw"><i style="background:#EDEBFF"></i>Lavanta #EDEBFF</span>
+  </div>
+</header>
+
+<main class="grid">
+  <article class="card">
+    <span class="tag">Konsept 1 · Klasik</span>
+    <div class="hero"><svg><use href="#owl-cap"/></svg></div>
+    <h2>“Mento” – Kepli Baykuş</h2>
+    <p>Bilgeliğin sembolü baykuş, mezuniyet kepiyle “hedef üniversite” mesajını taşıyor. En tanıdık ve güvenli seçenek; veliler ve kurumlar için de ciddi duruyor.</p>
+    <div class="row">
+      <div class="icon" style="background:#EDEBFF"><svg><use href="#owl-cap"/></svg></div>
+      <div class="icon sm" style="background:#EDEBFF"><svg><use href="#owl-cap"/></svg></div>
+      <span class="word">Mento<b>ria</b></span>
+    </div>
+  </article>
+
+  <article class="card">
+    <span class="tag">Konsept 2 · İstatistik</span>
+    <div class="hero"><svg><use href="#owl-chart"/></svg></div>
+    <h2>Grafik Baykuşu</h2>
+    <p>Kanadıyla yükselen net grafiğini gösteren baykuş. Uygulamanın “takip + istatistik” özünü doğrudan anlatıyor; mağaza ekran görüntülerinde de güçlü bir hikâye.</p>
+    <div class="row">
+      <div class="icon" style="background:#EDEBFF"><svg><use href="#owl-chart"/></svg></div>
+      <div class="icon sm" style="background:#EDEBFF"><svg><use href="#owl-chart"/></svg></div>
+      <span class="word">Mento<b>ria</b></span>
+    </div>
+  </article>
+
+  <article class="card">
+    <span class="tag">Konsept 3 · Monogram</span>
+    <div class="hero"><svg><use href="#owl-m"/></svg></div>
+    <h2>M-Baykuş</h2>
+    <p>Baykuşun kulakları ve başı “M” harfini oluşturuyor. Küçük boyutta (bildirim ikonu, favicon) en iyi okunan seçenek; marka ve maskot tek şekilde birleşiyor. <strong>Önerim bu.</strong></p>
+    <div class="row">
+      <div class="icon" style="background:#EDEBFF"><svg><use href="#owl-m"/></svg></div>
+      <div class="icon sm" style="background:#EDEBFF"><svg><use href="#owl-m"/></svg></div>
+      <span class="word">Mento<b>ria</b></span>
+    </div>
+  </article>
+
+  <article class="card">
+    <span class="tag">Konsept 4 · Çalışkan</span>
+    <div class="hero"><svg><use href="#owl-book"/></svg></div>
+    <h2>Gözlüklü Kitap Baykuşu</h2>
+    <p>Açık kitabın arkasından bakan gözlüklü baykuş. Daha sıcak ve “çalışma arkadaşı” hissi veriyor; Pomodoro ve konu takibi ekranlarında maskot animasyonu olarak çok iyi çalışır.</p>
+    <div class="row">
+      <div class="icon" style="background:#EDEBFF"><svg><use href="#owl-book"/></svg></div>
+      <div class="icon sm" style="background:#EDEBFF"><svg><use href="#owl-book"/></svg></div>
+      <span class="word">Mento<b>ria</b></span>
+    </div>
+  </article>
+
+  <article class="card">
+    <span class="tag">Konsept 5 · Alternatif</span>
+    <div class="hero"><svg><use href="#star"/></svg></div>
+    <h2>“Nova” – Rehber Yıldız</h2>
+    <p>Baykuş dışı bir yol: kep takmış, gülümseyen bir yıldız. “Yolunu gösteren yıldız / mentor” metaforu. Piyasadaki baykuşlardan ayrışmak istersen güçlü bir alternatif.</p>
+    <div class="row">
+      <div class="icon" style="background:#5B4BFF"><svg><use href="#star"/></svg></div>
+      <div class="icon sm" style="background:#5B4BFF"><svg><use href="#star"/></svg></div>
+      <span class="word">Mento<b>ria</b></span>
+    </div>
+  </article>
+</main>
+</body>
+</html>

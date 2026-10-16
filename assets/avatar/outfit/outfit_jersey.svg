@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Mentoria avatar parçası: 200x200, diğer katmanlarla hizalı. -->
+  <defs><linearGradient id="js" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFB23E"/><stop offset="1" stop-color="#F07C1A"/></linearGradient></defs>
+<g stroke="#2B2350" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+<path d="M36 200 C36 166 58 148 86 146 L114 146 C142 148 164 166 164 200 Z" fill="url(#js)"/>
+<path d="M84 146 L100 160 L116 146" fill="none" stroke-width="4"/>
+</g>
+<path d="M46 170 Q52 186 50 200 M154 170 Q148 186 150 200" fill="none" stroke="#FFFFFF" stroke-width="6" opacity="0.85"/>
+<path d="M96 168 L104 166 L106 166 L106 192 L112 192 L112 197 L92 197 L92 192 L98 192 L98 174 L94 175 Z" fill="#FFFFFF" stroke="#2B2350" stroke-width="2.5" stroke-linejoin="round"/>
+</svg>

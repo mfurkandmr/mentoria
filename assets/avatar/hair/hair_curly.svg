@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Mentoria avatar parçası: 200x200, diğer katmanlarla hizalı. -->
+  
+  <g stroke="#2B2350" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+    <circle cx="55" cy="92" r="15" fill="#B9562F"/>
+    <circle cx="56" cy="72" r="15" fill="#B9562F"/>
+    <circle cx="66" cy="55" r="15" fill="#B9562F"/>
+    <circle cx="82" cy="44" r="15" fill="#B9562F"/>
+    <circle cx="100" cy="40" r="15" fill="#B9562F"/>
+    <circle cx="118" cy="44" r="15" fill="#B9562F"/>
+    <circle cx="134" cy="55" r="15" fill="#B9562F"/>
+    <circle cx="144" cy="72" r="15" fill="#B9562F"/>
+    <circle cx="145" cy="92" r="15" fill="#B9562F"/>
+  </g>
+  <circle cx="55" cy="92" r="12.6" fill="#C9653A"/>
+  <circle cx="56" cy="72" r="12.6" fill="#C9653A"/>
+  <circle cx="66" cy="55" r="12.6" fill="#C9653A"/>
+  <circle cx="82" cy="44" r="12.6" fill="#C9653A"/>
+  <circle cx="100" cy="40" r="12.6" fill="#C9653A"/>
+  <circle cx="118" cy="44" r="12.6" fill="#C9653A"/>
+  <circle cx="134" cy="55" r="12.6" fill="#C9653A"/>
+  <circle cx="144" cy="72" r="12.6" fill="#C9653A"/>
+  <circle cx="145" cy="92" r="12.6" fill="#C9653A"/>
+  <ellipse cx="100" cy="62" rx="40" ry="20" fill="#C9653A"/>
+  <g stroke="#2B2350" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+    <circle cx="76" cy="64" r="9" fill="#C9653A" stroke-width="3"/>
+    <circle cx="92" cy="60" r="9" fill="#C9653A" stroke-width="3"/>
+    <circle cx="108" cy="60" r="9" fill="#C9653A" stroke-width="3"/>
+    <circle cx="124" cy="64" r="9" fill="#C9653A" stroke-width="3"/>
+  </g>
+  <path d="M50 68 Q56 63 62 67" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
+  <path d="M60 51 Q66 46 72 50" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
+  <path d="M76 40 Q82 35 88 39" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
+  <path d="M94 36 Q100 31 106 35" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
+  <path d="M112 40 Q118 35 124 39" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
+  <path d="M128 51 Q134 46 140 50" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
+  <path d="M138 68 Q144 63 150 67" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
+</svg>

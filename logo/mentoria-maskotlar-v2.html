@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mentoria Maskotlar v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #F7F6FF; --card: #FFFFFF; --text: #1E1B4B; --muted: #6B6890; --line: #E4E1FA; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg: #12102A; --card: #1C1A3A; --text: #F1F0FF; --muted: #A9A6CF; --line: #2E2B55; }
+  }
+  :root[data-theme="dark"] { --bg: #12102A; --card: #1C1A3A; --text: #F1F0FF; --muted: #A9A6CF; --line: #2E2B55; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: Nunito, system-ui, sans-serif; padding: 32px 16px 64px; }
+  header { max-width: 1100px; margin: 0 auto 28px; }
+  h1 { font-size: 32px; font-weight: 900; margin: 0 0 6px; }
+  header p { color: var(--muted); margin: 0; font-size: 16px; }
+  .grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .tag { font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+  .hero { border-radius: 16px; display: grid; place-items: center; padding: 18px; }
+  .hero svg { width: 190px; height: 190px; }
+  .row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .icon { width: 64px; height: 64px; border-radius: 16px; display: grid; place-items: center; flex: none; box-shadow: 0 4px 12px rgba(30,27,75,.18); }
+  .icon svg { width: 54px; height: 54px; }
+  .icon.sm { width: 40px; height: 40px; border-radius: 10px; }
+  .icon.sm svg { width: 34px; height: 34px; }
+  .word { font-weight: 900; font-size: 26px; letter-spacing: -.02em; }
+  h2 { margin: 0; font-size: 20px; }
+  .card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+  .chips { display: flex; gap: 6px; }
+  .chips i { width: 18px; height: 18px; border-radius: 5px; display: inline-block; border: 1px solid var(--line); }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- 1. Tilki "Fino" -->
+    <symbol id="fox" viewBox="0 0 200 200">
+      <ellipse cx="100" cy="186" rx="52" ry="6" fill="#000" opacity=".1"/>
+      <path d="M36 26 L84 66 L44 96 Z M164 26 L116 66 L156 96 Z" fill="#FF7A2F" stroke="#FF7A2F" stroke-width="10" stroke-linejoin="round"/>
+      <path d="M46 46 L70 68 L50 82 Z M154 46 L130 68 L150 82 Z" fill="#3B2A63" stroke="#3B2A63" stroke-width="6" stroke-linejoin="round"/>
+      <path d="M24 92 Q100 30 176 92 Q178 140 100 180 Q22 140 24 92 Z" fill="#FF7A2F"/>
+      <path d="M24 92 Q100 30 176 92 Q160 76 100 70 Q40 76 24 92 Z" fill="#FF9350"/>
+      <path d="M30 108 Q66 108 100 132 Q134 108 170 108 Q160 150 100 180 Q40 150 30 108 Z" fill="#FFF4EC"/>
+      <ellipse cx="70" cy="104" rx="9" ry="12" fill="#2A1E46"/><ellipse cx="130" cy="104" rx="9" ry="12" fill="#2A1E46"/>
+      <circle cx="73" cy="99" r="3.5" fill="#fff"/><circle cx="133" cy="99" r="3.5" fill="#fff"/>
+      <path d="M58 86 Q70 80 82 86 M118 86 Q130 80 142 86" stroke="#B4501B" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <ellipse cx="100" cy="148" rx="11" ry="7.5" fill="#2A1E46"/>
+      <path d="M92 160 Q100 168 108 160" stroke="#2A1E46" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <circle cx="56" cy="130" r="7" fill="#FF9AA8" opacity=".6"/><circle cx="144" cy="130" r="7" fill="#FF9AA8" opacity=".6"/>
+      <g transform="rotate(-38 160 52)">
+        <rect x="126" y="46" width="62" height="12" rx="3" fill="#6C5CE7"/>
+        <rect x="126" y="46" width="10" height="12" rx="2" fill="#FFB3C1"/>
+        <path d="M188 46 L202 52 L188 58 Z" fill="#FFE2B8"/>
+        <path d="M197 50 L202 52 L197 54 Z" fill="#2A1E46"/>
+      </g>
+    </symbol>
+
+    <!-- 2. Arı "Bızz" -->
+    <symbol id="bee" viewBox="0 0 200 200">
+      <clipPath id="beeBody"><ellipse cx="100" cy="118" rx="60" ry="56"/></clipPath>
+      <polygon points="100,14 176,58 176,146 100,190 24,146 24,58" fill="none" stroke="#FFE08A" stroke-width="6" stroke-linejoin="round"/>
+      <path d="M86 66 Q74 40 62 30 M114 66 Q126 40 138 30" stroke="#2B2350" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <circle cx="60" cy="28" r="8" fill="#2B2350"/><circle cx="140" cy="28" r="8" fill="#2B2350"/>
+      <ellipse cx="54" cy="78" rx="22" ry="30" fill="#CFE6FF" stroke="#9CCBFF" stroke-width="3" transform="rotate(-35 54 78)"/>
+      <ellipse cx="146" cy="78" rx="22" ry="30" fill="#CFE6FF" stroke="#9CCBFF" stroke-width="3" transform="rotate(35 146 78)"/>
+      <ellipse cx="100" cy="118" rx="60" ry="56" fill="#FFC531"/>
+      <g clip-path="url(#beeBody)">
+        <rect x="30" y="138" width="140" height="14" fill="#2B2350"/>
+        <rect x="30" y="162" width="140" height="14" fill="#2B2350"/>
+        <ellipse cx="82" cy="84" rx="30" ry="14" fill="#FFE07A" opacity=".7"/>
+      </g>
+      <circle cx="80" cy="106" r="15" fill="#fff"/><circle cx="120" cy="106" r="15" fill="#fff"/>
+      <circle cx="83" cy="108" r="8" fill="#2B2350"/><circle cx="117" cy="108" r="8" fill="#2B2350"/>
+      <circle cx="86" cy="105" r="3" fill="#fff"/><circle cx="120" cy="105" r="3" fill="#fff"/>
+      <circle cx="62" cy="124" r="6" fill="#FF8A65" opacity=".55"/><circle cx="138" cy="124" r="6" fill="#FF8A65" opacity=".55"/>
+      <path d="M90 124 Q100 133 110 124" stroke="#2B2350" stroke-width="4" fill="none" stroke-linecap="round"/>
+    </symbol>
+
+    <!-- 3. Ahtapot "Okto" -->
+    <symbol id="octo" viewBox="0 0 200 200">
+      <g stroke="#7A4CF5" stroke-width="18" fill="none" stroke-linecap="round">
+        <path d="M60 112 Q40 140 40 160"/>
+        <path d="M80 118 Q74 150 64 176"/>
+        <path d="M100 118 Q100 152 100 180"/>
+        <path d="M120 118 Q126 150 136 176"/>
+        <path d="M140 112 Q160 140 160 160"/>
+      </g>
+      <path d="M42 120 Q38 32 100 30 Q162 32 158 120 Q130 130 100 126 Q70 130 42 120 Z" fill="#8E5BFF"/>
+      <ellipse cx="78" cy="52" rx="20" ry="11" fill="#B391FF" opacity=".7" transform="rotate(-20 78 52)"/>
+      <circle cx="130" cy="58" r="6" fill="#7A4CF5"/><circle cx="142" cy="76" r="4" fill="#7A4CF5"/><circle cx="58" cy="78" r="5" fill="#7A4CF5"/>
+      <circle cx="80" cy="88" r="16" fill="#fff"/><circle cx="120" cy="88" r="16" fill="#fff"/>
+      <circle cx="82" cy="90" r="8" fill="#22184A"/><circle cx="118" cy="90" r="8" fill="#22184A"/>
+      <circle cx="85" cy="87" r="3" fill="#fff"/><circle cx="121" cy="87" r="3" fill="#fff"/>
+      <path d="M90 108 Q100 116 110 108" stroke="#22184A" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <circle cx="64" cy="104" r="6" fill="#FF8FB1" opacity=".6"/><circle cx="136" cy="104" r="6" fill="#FF8FB1" opacity=".6"/>
+      <circle cx="34" cy="168" r="17" fill="#fff" stroke="#22184A" stroke-width="4"/>
+      <rect x="30" y="146" width="8" height="6" rx="2" fill="#22184A"/>
+      <path d="M34 168 L34 159 M34 168 L41 172" stroke="#FF5A5F" stroke-width="3.5" stroke-linecap="round"/>
+      <rect x="146" y="150" width="34" height="30" rx="4" fill="#fff" stroke="#22184A" stroke-width="4"/>
+      <rect x="152" y="166" width="5" height="9" fill="#FFB020"/><rect x="160" y="160" width="5" height="15" fill="#FFB020"/><rect x="168" y="155" width="5" height="20" fill="#FFB020"/>
+    </symbol>
+
+    <!-- 4. Penguen "Pingo" -->
+    <symbol id="peng" viewBox="0 0 200 200">
+      <ellipse cx="100" cy="188" rx="48" ry="6" fill="#000" opacity=".1"/>
+      <ellipse cx="46" cy="128" rx="14" ry="34" fill="#1B1E3D" transform="rotate(18 46 128)"/>
+      <ellipse cx="154" cy="128" rx="14" ry="34" fill="#1B1E3D" transform="rotate(-18 154 128)"/>
+      <ellipse cx="100" cy="116" rx="56" ry="70" fill="#262A52"/>
+      <path d="M100 76 Q76 56 60 80 Q50 110 64 140 Q76 176 100 178 Q124 176 136 140 Q150 110 140 80 Q124 56 100 76 Z" fill="#FFFFFF"/>
+      <circle cx="82" cy="94" r="9" fill="#262A52"/><circle cx="118" cy="94" r="9" fill="#262A52"/>
+      <circle cx="85" cy="91" r="3.2" fill="#fff"/><circle cx="121" cy="91" r="3.2" fill="#fff"/>
+      <path d="M90 106 L110 106 L100 120 Z" fill="#FFA62B" stroke="#FFA62B" stroke-width="4" stroke-linejoin="round"/>
+      <circle cx="70" cy="114" r="6" fill="#FF9AA8" opacity=".6"/><circle cx="130" cy="114" r="6" fill="#FF9AA8" opacity=".6"/>
+      <ellipse cx="84" cy="186" rx="12" ry="6" fill="#FFA62B"/><ellipse cx="116" cy="186" rx="12" ry="6" fill="#FFA62B"/>
+      <path d="M40 96 Q40 26 100 26 Q160 26 160 96" stroke="#5B4BFF" stroke-width="10" fill="none" stroke-linecap="round"/>
+      <rect x="28" y="80" width="24" height="38" rx="11" fill="#5B4BFF"/>
+      <rect x="148" y="80" width="24" height="38" rx="11" fill="#5B4BFF"/>
+      <rect x="34" y="88" width="12" height="22" rx="6" fill="#8A7DFF"/>
+      <rect x="154" y="88" width="12" height="22" rx="6" fill="#8A7DFF"/>
+    </symbol>
+
+    <!-- 5. Robot "Mentobot" -->
+    <symbol id="bot" viewBox="0 0 200 200">
+      <ellipse cx="100" cy="188" rx="46" ry="6" fill="#000" opacity=".1"/>
+      <path d="M100 40 L100 22" stroke="#3D35A8" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="100" cy="18" r="9" fill="#FFB020"/>
+      <circle cx="102" cy="15" r="3" fill="#FFE2A0"/>
+      <rect x="22" y="78" width="18" height="40" rx="8" fill="#3D35A8"/>
+      <rect x="160" y="78" width="18" height="40" rx="8" fill="#3D35A8"/>
+      <rect x="36" y="38" width="128" height="110" rx="36" fill="#5B4BFF"/>
+      <rect x="36" y="38" width="128" height="40" rx="36" fill="#7466FF" opacity=".6"/>
+      <rect x="52" y="60" width="96" height="70" rx="22" fill="#171436"/>
+      <path d="M68 98 Q78 82 88 98 M112 98 Q122 82 132 98" stroke="#5EF2D2" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <path d="M90 112 Q100 120 110 112" stroke="#5EF2D2" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+      <rect x="62" y="152" width="76" height="36" rx="14" fill="#4436E0"/>
+      <path d="M76 178 L90 166 L100 172 L120 158" stroke="#FFB020" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header>
+  <h1>Mentoria · Maskotlar v2</h1>
+  <p>Baykuşu bıraktık. Beş farklı karakter önerisi: her biri uygulamanın bir yönünü temsil ediyor ve kendi renk paletiyle geliyor.</p>
+</header>
+
+<main class="grid">
+  <article class="card">
+    <span class="tag" style="color:#FF7A2F">Öneri 1 · Zekâ & strateji</span>
+    <div class="hero" style="background:#FFF1E7"><svg><use href="#fox"/></svg></div>
+    <h2>“Fino” – Kalemli Tilki</h2>
+    <p>Tilki “zeki ve stratejik çalışan öğrenci” imajı veriyor. Kulağının arkasında kalem taşıyor. Turuncu-mor renkleri sınav uygulamaları arasında kolayca fark ediliyor. <strong>Favorim.</strong></p>
+    <div class="chips"><i style="background:#FF7A2F"></i><i style="background:#6C5CE7"></i><i style="background:#3B2A63"></i><i style="background:#FFF4EC"></i></div>
+    <div class="row">
+      <div class="icon" style="background:#6C5CE7"><svg><use href="#fox"/></svg></div>
+      <div class="icon sm" style="background:#FFF1E7"><svg><use href="#fox"/></svg></div>
+      <span class="word" style="color:#FF7A2F">mentoria</span>
+    </div>
+  </article>
+
+  <article class="card">
+    <span class="tag" style="color:#E0A100">Öneri 2 · Çalışkanlık</span>
+    <div class="hero" style="background:#FFF8DE"><svg><use href="#bee"/></svg></div>
+    <h2>“Bızz” – Çalışkan Arı</h2>
+    <p>Arı her gün biraz daha bal yapar, öğrenci de her gün biraz daha soru çözer. Arkadaki petek altıgeni, istatistik kartları ve rozetler için bir tasarım dili de olabilir.</p>
+    <div class="chips"><i style="background:#FFC531"></i><i style="background:#2B2350"></i><i style="background:#CFE6FF"></i><i style="background:#FFE08A"></i></div>
+    <div class="row">
+      <div class="icon" style="background:#2B2350"><svg><use href="#bee"/></svg></div>
+      <div class="icon sm" style="background:#FFF8DE"><svg><use href="#bee"/></svg></div>
+      <span class="word" style="color:#E0A100">mentoria</span>
+    </div>
+  </article>
+
+  <article class="card">
+    <span class="tag" style="color:#8E5BFF">Öneri 3 · Çok yönlülük</span>
+    <div class="hero" style="background:#F1EAFF"><svg><use href="#octo"/></svg></div>
+    <h2>“Okto” – Çok Kollu Ahtapot</h2>
+    <p>Bir kolunda kronometre, diğerinde grafik var. Deneme, soru, konu ve süreyi aynı anda takip eden uygulamayı birebir anlatıyor. Piyasada benzeri pek yok.</p>
+    <div class="chips"><i style="background:#8E5BFF"></i><i style="background:#22184A"></i><i style="background:#FFB020"></i><i style="background:#FF5A5F"></i></div>
+    <div class="row">
+      <div class="icon" style="background:#F1EAFF"><svg><use href="#octo"/></svg></div>
+      <div class="icon sm" style="background:#F1EAFF"><svg><use href="#octo"/></svg></div>
+      <span class="word" style="color:#8E5BFF">mentoria</span>
+    </div>
+  </article>
+
+  <article class="card">
+    <span class="tag" style="color:#5B4BFF">Öneri 4 · Odak & disiplin</span>
+    <div class="hero" style="background:#E9F2FF"><svg><use href="#peng"/></svg></div>
+    <h2>“Pingo” – Kulaklıklı Penguen</h2>
+    <p>Kulaklığını takmış, odak modunda bir penguen. Pomodoro ekranının doğal kahramanı; sakin, disiplinli ve sevimli.</p>
+    <div class="chips"><i style="background:#262A52"></i><i style="background:#5B4BFF"></i><i style="background:#FFA62B"></i><i style="background:#E9F2FF"></i></div>
+    <div class="row">
+      <div class="icon" style="background:#E9F2FF"><svg><use href="#peng"/></svg></div>
+      <div class="icon sm" style="background:#E9F2FF"><svg><use href="#peng"/></svg></div>
+      <span class="word" style="color:#5B4BFF">mentoria</span>
+    </div>
+  </article>
+
+  <article class="card">
+    <span class="tag" style="color:#0FB89A">Öneri 5 · Modern koç</span>
+    <div class="hero" style="background:#E6FBF6"><svg><use href="#bot"/></svg></div>
+    <h2>“Mentobot” – Koç Robot</h2>
+    <p>Göğsünde yükselen grafik taşıyan, gülen ekran yüzlü bir robot. “Akıllı dijital koç” hissi veriyor; ileride yapay zekâ önerileri eklenirse marka hikâyesine çok iyi oturur.</p>
+    <div class="chips"><i style="background:#5B4BFF"></i><i style="background:#171436"></i><i style="background:#5EF2D2"></i><i style="background:#FFB020"></i></div>
+    <div class="row">
+      <div class="icon" style="background:#171436"><svg><use href="#bot"/></svg></div>
+      <div class="icon sm" style="background:#E6FBF6"><svg><use href="#bot"/></svg></div>
+      <span class="word" style="color:#0FB89A">mentoria</span>
+    </div>
+  </article>
+</main>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Mentoria avatar parçası: 200x200, diğer katmanlarla hizalı. -->
+<g stroke="#2B2350" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+<path d="M36 200 C36 166 58 148 86 146 L114 146 C142 148 164 166 164 200 Z" fill="#FFFFFF"/>
+</g>
+<g stroke="#2B2350" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+<path d="M86 146 L100 176 L114 146 Z" fill="#8FD3C7" stroke-width="3.5"/>
+<path d="M86 146 L76 162 L94 172 Z M114 146 L124 162 L106 172 Z" fill="#F4F6FA" stroke-width="3.5"/>
+<rect x="116" y="178" width="20" height="16" rx="3" fill="#F4F6FA" stroke-width="3"/>
+</g>
+<path d="M100 176 L100 200" stroke="#2B2350" stroke-width="3" opacity="0.4"/>
+<path d="M122 180 L122 168" stroke="#4DABF7" stroke-width="4" stroke-linecap="round"/>
+<path d="M130 182 L130 170" stroke="#FF6B8A" stroke-width="4" stroke-linecap="round"/>
+<circle cx="66" cy="184" r="9" fill="#BFE6FF" stroke="#2B2350" stroke-width="3"/>
+<path d="M60 186 Q66 190 72 186" fill="none" stroke="#3CCBBB" stroke-width="3" stroke-linecap="round"/>
+</svg>

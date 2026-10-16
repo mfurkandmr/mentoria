@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pomodoro zil sesleri ve Mentoria bildirim sesi bildirim kanallarında adla kullanılır; release
+     derlemesinde kaynak küçültme bunları silmesin. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@raw/pomodoro_*,@raw/mentoria_bildirim" />

@@ -1,0 +1,47 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "mentoria-web",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8771", "--directory", "M:\\build\\web"],
+      "port": 8771
+    },
+    {
+      "name": "demo-coach-before",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8772", "--directory", "M:\\build\\web_coach_before"],
+      "port": 8772
+    },
+    {
+      "name": "demo-admin-before",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8773", "--directory", "M:\\build\\web_admin_before"],
+      "port": 8773
+    },
+    {
+      "name": "demo-coach",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8774", "--directory", "M:\\build\\web_coach"],
+      "port": 8774
+    },
+    {
+      "name": "demo-admin",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8775", "--directory", "M:\\build\\web_admin"],
+      "port": 8775
+    },
+    {
+      "name": "demo-parent",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8776", "--directory", "M:\\build\\web_parent"],
+      "port": 8776
+    },
+    {
+      "name": "demo-student",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8777", "--directory", "M:\\build\\web_student"],
+      "port": 8777
+    }
+  ]
+}

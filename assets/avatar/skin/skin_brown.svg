@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Mentoria avatar parçası: 200x200, diğer katmanlarla hizalı. -->
+  <defs><radialGradient id="face" cx="0.4" cy="0.34" r="0.72"><stop offset="0" stop-color="#DDA272"/><stop offset="0.6" stop-color="#C07F4E"/><stop offset="1" stop-color="#9C6036"/></radialGradient></defs>
+  <g stroke="#2B2350" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M86 122 L86 150 Q100 158 114 150 L114 122 Z" fill="#C07F4E"/>
+    <circle cx="55" cy="97" r="12" fill="#C07F4E"/>
+    <circle cx="145" cy="97" r="12" fill="#C07F4E"/>
+  </g>
+  <path d="M88 128 Q100 140 112 128 L112 124 L88 124 Z" fill="#9C6036"/>
+  <path d="M51 99 Q54 91 59 97" fill="none" stroke="#9C6036" stroke-width="3" stroke-linecap="round"/>
+  <path d="M149 99 Q146 91 141 97" fill="none" stroke="#9C6036" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="100" cy="92" r="46" fill="url(#face)" stroke="#2B2350" stroke-width="4.5"/>
+  <path d="M73 81 Q81 75 90 79" fill="none" stroke="#2B2350" stroke-width="3.6" stroke-linecap="round"/>
+  <path d="M110 79 Q119 75 127 81" fill="none" stroke="#2B2350" stroke-width="3.6" stroke-linecap="round"/>
+  <ellipse cx="83" cy="96" rx="6.4" ry="8.4" fill="#2B2350"/>
+  <ellipse cx="117" cy="96" rx="6.4" ry="8.4" fill="#2B2350"/>
+  <circle cx="85.4" cy="92.6" r="2.6" fill="#FFFFFF"/>
+  <circle cx="119.4" cy="92.6" r="2.6" fill="#FFFFFF"/>
+  <circle cx="81" cy="99.5" r="1.2" fill="#FFFFFF"/>
+  <circle cx="115" cy="99.5" r="1.2" fill="#FFFFFF"/>
+  <ellipse cx="69" cy="110" rx="8" ry="5" fill="#E0606E" opacity="0.45"/>
+  <ellipse cx="131" cy="110" rx="8" ry="5" fill="#E0606E" opacity="0.45"/>
+  <path d="M98 104 Q101.5 107 98 110" fill="none" stroke="#9C6036" stroke-width="3" stroke-linecap="round"/>
+  <path d="M88 114 Q100 128 112 114 Q100 119 88 114 Z" fill="#6B2430" stroke="#2B2350" stroke-width="3.6" stroke-linejoin="round"/>
+  <path d="M94.5 120.5 Q100 117.5 105.5 120.5 Q100 124 94.5 120.5 Z" fill="#FF8FA3"/>
+  <path d="M76 62 Q86 54 98 53" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.35"/>
+</svg>

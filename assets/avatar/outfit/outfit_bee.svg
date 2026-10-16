@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Mentoria avatar parçası: 200x200, diğer katmanlarla hizalı. -->
+  <defs><clipPath id="b"><path d="M36 200 C36 166 58 148 86 146 L114 146 C142 148 164 166 164 200 Z"/></clipPath></defs>
+  <g stroke="#2B2350" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M36 200 C36 166 58 148 86 146 L114 146 C142 148 164 166 164 200 Z" fill="#FFC531"/>
+  </g>
+  <g clip-path="url(#b)" fill="#2B2350"><rect x="0" y="166" width="200" height="11"/><rect x="0" y="187" width="200" height="11"/></g>
+  <g stroke="#2B2350" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M36 200 C36 166 58 148 86 146 L114 146 C142 148 164 166 164 200 Z" fill="none"/>
+  </g>
+  <g stroke="#2B2350" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+    <circle cx="80" cy="151" r="6.5" fill="#FFFFFF" stroke-width="3"/>
+    <circle cx="90" cy="156" r="6.5" fill="#FFFFFF" stroke-width="3"/>
+    <circle cx="100" cy="158" r="6.5" fill="#FFFFFF" stroke-width="3"/>
+    <circle cx="110" cy="156" r="6.5" fill="#FFFFFF" stroke-width="3"/>
+    <circle cx="120" cy="151" r="6.5" fill="#FFFFFF" stroke-width="3"/>
+  </g>
+  <path d="M52 176 Q56 164 66 156" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.45"/>
+</svg>
