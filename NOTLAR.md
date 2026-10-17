@@ -3,8 +3,8 @@
 Bu dosya, son iki büyük özelliğin (white label ve öğrenci avatarı) ne yaptığını,
 nasıl çalıştığını ve nelere dikkat edilmesi gerektiğini anlatır.
 
-> **Güncel durum (17 Ekim 2026):** Depodaki 34 migration'ın hepsi canlı
-> projede (`lmbykdvvxormfiaomysn`; Günün Sorusu, AYT ve düello dahil). `send-push` sürüm 6 canlı ve
+> **Güncel durum (17 Ekim 2026):** Depodaki 35 migration'ın hepsi canlı
+> projede (`lmbykdvvxormfiaomysn`; Günün Sorusu, AYT, düello, plan ve deneme eğilimi dahil). `send-push` sürüm 6 canlı ve
 > depodakiyle aynı; Vault'ta `push_function_url` / `push_webhook_secret` var.
 > `meeting-reminders` cron işi çalışıyor (hatasız). **Telefon bildirimi gerçek
 > cihazda doğrulandı:** 19:10'da bir görüşme hatırlatması FCM'e iletildi
@@ -1216,7 +1216,7 @@ havuzla aynı. Havuz değişirse canlıdaki anahtar da yenilenmeli.
 ## 30. YKS puan hesaplayıcı, haftalık plan, yükselen / düşen öğrenciler
 
 `20261018240000_plan_and_trends` (geri alma `…_plan_and_trends.down.sql`, test
-`plan_test.mjs`).
+`plan_test.mjs`). **Canlıda.**
 
 - **Puan hesaplayıcı** (`/student/score`; Denemeler ekranının sağ üstündeki
   hesap makinesi):
