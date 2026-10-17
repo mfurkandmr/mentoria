@@ -4,6 +4,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../garden/presentation/garden_screen.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/constants/exam_subjects.dart';
@@ -31,7 +34,16 @@ class StudyScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(currentProfileProvider).value;
     return Scaffold(
-      appBar: SkyAppBar(title: Text(tr('Çalışma süresi'))),
+      appBar: SkyAppBar(
+        title: Text(tr('Çalışma süresi')),
+        actions: [
+          IconButton(
+            tooltip: tr('Odak Bahçem'),
+            onPressed: () => context.push('/student/garden'),
+            icon: const Icon(Icons.local_florist_rounded),
+          ),
+        ],
+      ),
       body: profile == null
           ? const BizzLoader()
           : RefreshIndicator(
@@ -342,12 +354,25 @@ class _StudyTimerCardState extends ConsumerState<StudyTimerCard> {
             subjectCode: _subject,
           );
       ref.invalidate(studySessionsProvider(widget.studentId));
+      ref.invalidate(allSessionsProvider(widget.studentId));
       ref.invalidate(studentSummariesProvider);
       if (!mounted) return;
-      showMessage(
-        context,
-        tr('{p0} dakika kaydedildi 🐝', {'p0': (seconds / 60).round()}),
-      );
+      // Her oturum Odak Bahçesi'ne bir çiçek eker.
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              tr('{p0} dakika kaydedildi, bahçende bir çiçek açtı 🌸', {
+                'p0': (seconds / 60).round(),
+              }),
+            ),
+            action: SnackBarAction(
+              label: tr('Bahçeye bak'),
+              onPressed: () => context.push('/student/garden'),
+            ),
+          ),
+        );
       if (pomodoroDone) {
         celebrate(context);
         final restEnd = workDoneAt.add(Duration(minutes: _restMinutes));

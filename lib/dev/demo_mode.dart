@@ -16,6 +16,7 @@ import '../features/account/data/account_repository.dart';
 import '../features/admin/data/admin_repository.dart';
 import '../features/coaching/data/coaching_repository.dart';
 import '../features/meetings/data/meeting_repository.dart';
+import '../features/mistakes/data/mistake_repository.dart';
 import '../features/tracking/data/tracking_models.dart';
 import '../features/tracking/data/tracking_repository.dart';
 import 'demo_repositories.dart';
@@ -87,6 +88,14 @@ Future<List<Override>> buildDemoOverrides([
     },
   );
   seedDemoMeetings(meetings);
+  final mistakes = InMemoryMistakeRepository(
+    canView: switch (role) {
+      'coach' => (s) => meetingCoaches[s] == 'demo-coach',
+      'admin' => (_) => true,
+      _ => (s) => s == 'demo-student',
+    },
+  );
+  seedDemoMistakes(mistakes);
   // Öğrenciye yarınki görüşmenin hatırlatması.
   final tomorrow = DateTime.now().add(const Duration(days: 1));
   notifications.add(
@@ -220,6 +229,7 @@ Future<List<Override>> buildDemoOverrides([
     assignmentRepositoryProvider.overrideWithValue(assignments),
     notificationRepositoryProvider.overrideWithValue(notifications),
     meetingRepositoryProvider.overrideWithValue(meetings),
+    mistakeRepositoryProvider.overrideWithValue(mistakes),
     tenantRepositoryProvider.overrideWithValue(
       InMemoryTenantRepository(
         tenants: demoTenants(),
@@ -602,4 +612,53 @@ void seedDemoBatches(InMemoryExamRepository exams) {
       createdAt: old,
     );
   }
+}
+
+/// Demo öğrencisinin hata defteri: bugün tekrarı gelen, ilerleyen ve
+/// öğrenilmiş kartlar (fotoğrafsız; yer tutucu çizilir).
+void seedDemoMistakes(InMemoryMistakeRepository repo) {
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  MistakeCard card(
+    int i,
+    String subject,
+    String note, {
+    int stage = 0,
+    int dueIn = 0,
+    int fails = 0,
+    bool mastered = false,
+  }) => MistakeCard(
+    id: 'demo-mistake-$i',
+    studentId: 'demo-student',
+    subjectCode: subject,
+    note: note,
+    stage: mastered ? 4 : stage,
+    fails: fails,
+    dueOn: today.add(Duration(days: dueIn)),
+    createdAt: now.subtract(Duration(days: 10 + i)),
+    masteredAt: mastered ? now.subtract(const Duration(days: 2)) : null,
+  );
+  repo.cards.addAll([
+    card(
+      1,
+      'TYT_MAT',
+      'Problemler: yaş problemi, denklemi ters kurdum',
+      fails: 1,
+    ),
+    card(
+      2,
+      'TYT_FIZ',
+      'Kuvvet ve hareket: sürtünme yönünü karıştırdım',
+      stage: 1,
+    ),
+    card(
+      3,
+      'TYT_TUR',
+      'Paragraf: ana düşünce, iki şık arasında kaldım',
+      stage: 2,
+      dueIn: 4,
+    ),
+    card(4, 'TYT_KIM', 'Mol hesabı: birim dönüşümü', stage: 1, dueIn: 2),
+    card(5, 'TYT_MAT', 'Üslü sayılar: negatif üs', mastered: true),
+  ]);
 }

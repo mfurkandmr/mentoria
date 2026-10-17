@@ -16,6 +16,7 @@ import '../features/admin/data/admin_repository.dart';
 import '../features/auth/data/profile.dart';
 import '../features/coaching/data/coaching_repository.dart';
 import '../features/meetings/data/meeting_repository.dart';
+import '../features/mistakes/data/mistake_repository.dart';
 import '../features/tracking/data/tracking_models.dart';
 import '../features/tracking/data/tracking_repository.dart';
 
@@ -1272,4 +1273,65 @@ void seedDemoMeetings(InMemoryMeetingRepository repo) {
   if (!day(DateTime.monday, 0).isAfter(today)) {
     repo._statuses[(zeynep, day(DateTime.monday, 0))] = MeetingStatus.held;
   }
+}
+
+/// Bellekte hata defteri (demo ve testler). Fotoğraflar bellekte tutulur.
+class InMemoryMistakeRepository implements MistakeRepository {
+  InMemoryMistakeRepository({required this.canView, DateTime Function()? clock})
+    : _clock = clock ?? DateTime.now;
+
+  final bool Function(String studentId) canView;
+  final DateTime Function() _clock;
+  final cards = <MistakeCard>[];
+  final photos = <String, Uint8List>{};
+  var _id = 0;
+
+  @override
+  Future<List<MistakeCard>> fetchCards(String studentId) async {
+    if (!canView(studentId)) return const [];
+    return [
+      for (final c in cards)
+        if (c.studentId == studentId) c,
+    ]..sort((a, b) => a.dueOn.compareTo(b.dueOn));
+  }
+
+  @override
+  Future<void> addCard(String studentId, MistakeDraft d) async {
+    final now = _clock();
+    final id = 'mistake-${++_id}';
+    String? path;
+    if (d.photo != null) {
+      path = '$studentId/$id.${d.photoExtension}';
+      photos[path] = d.photo!;
+    }
+    cards.add(
+      MistakeCard(
+        id: id,
+        studentId: studentId,
+        subjectCode: d.subjectCode,
+        topicId: d.topicId,
+        note: d.note,
+        photoPath: path,
+        dueOn: DateTime(now.year, now.month, now.day + 1),
+        createdAt: now,
+      ),
+    );
+  }
+
+  @override
+  Future<MistakeCard> review(MistakeCard card, {required bool solved}) async {
+    final i = cards.indexWhere((c) => c.id == card.id);
+    final next = cards[i].reviewed(solved: solved, now: _clock());
+    cards[i] = next;
+    return next;
+  }
+
+  @override
+  Future<void> deleteCard(MistakeCard card) async {
+    cards.removeWhere((c) => c.id == card.id);
+    photos.remove(card.photoPath);
+  }
+
+  @override
+  Future<Uint8List?> loadPhoto(String path) async => photos[path];
 }

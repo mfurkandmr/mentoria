@@ -17,7 +17,13 @@ enum NotificationKind {
   deletionRequest(Icons.person_remove_outlined, 'deletion_request'),
 
   /// Öğrenciye: koçuyla görüşmesine 24 saatten az kaldı.
-  meeting(Icons.event_rounded);
+  meeting(Icons.event_rounded),
+
+  /// Öğrenciye: hata defterinde bugün tekrarı gelen sorular.
+  review(Icons.replay_circle_filled_rounded),
+
+  /// Veliye: çocuğunun haftalık özeti.
+  weeklyReport(Icons.auto_awesome_rounded, 'weekly_report');
 
   const NotificationKind(this.icon, [this._db]);
   final IconData icon;
@@ -70,6 +76,10 @@ class AppNotification {
     NotificationKind.note => tr('Koçundan yeni not'),
     NotificationKind.deletionRequest => tr('Hesap silme talebi'),
     NotificationKind.meeting => tr('Görüşme hatırlatması'),
+    NotificationKind.review => tr('Tekrar zamanı! 🔁'),
+    NotificationKind.weeklyReport => tr('{child} için haftalık Bal Raporu 🐝', {
+      'child': data['child'] ?? '',
+    }),
   };
 
   String get body => switch (kind) {
@@ -94,6 +104,18 @@ class AppNotification {
       {'name': data['student'] ?? ''},
     ),
     NotificationKind.meeting => _meetingBody(),
+    NotificationKind.review => tr(
+      'Hata defterinde {n} soru seni bekliyor. Unutmadan bir daha çöz!',
+      {'n': data['count'] ?? 1},
+    ),
+    NotificationKind.weeklyReport => tr(
+      'Bu hafta {q} soru çözdü, {m} dk odaklandı, {d} gün çalıştı.',
+      {
+        'q': data['questions'] ?? 0,
+        'm': data['minutes'] ?? 0,
+        'd': data['days'] ?? 0,
+      },
+    ),
   };
 
   /// "Yarın 11:00 · Ayşe Koç ile görüşmen var"
@@ -126,6 +148,8 @@ class AppNotification {
     NotificationKind.task || NotificationKind.note => '/student',
     NotificationKind.deletionRequest => '${data['route'] ?? '/'}',
     NotificationKind.meeting => '/student',
+    NotificationKind.review => '/student/mistakes',
+    NotificationKind.weeklyReport => '${data['route'] ?? '/parent'}',
   };
 
   AppNotification markRead() => AppNotification(

@@ -23,7 +23,8 @@ type ServiceAccount = {
 type NotificationRow = {
   id: string;
   user_id: string;
-  kind: 'assignment' | 'exam' | 'task' | 'note' | 'deletion_request' | 'meeting';
+  kind: 'assignment' | 'exam' | 'task' | 'note' | 'deletion_request' | 'meeting'
+    | 'review' | 'weekly_report';
   data: Record<string, unknown>;
 };
 
@@ -87,6 +88,18 @@ function texts(n: NotificationRow): { title: string; body: string; route: string
         route: '/student',
       };
     }
+    case 'review':
+      return {
+        title: 'Tekrar zamanı! 🔁',
+        body: `Hata defterinde ${s(d.count)} soru seni bekliyor. Unutmadan bir daha çöz!`,
+        route: '/student/mistakes',
+      };
+    case 'weekly_report':
+      return {
+        title: `${s(d.child)} için haftalık Bal Raporu 🐝`,
+        body: `Bu hafta ${s(d.questions)} soru çözdü, ${s(d.minutes)} dk odaklandı, ${s(d.days)} gün çalıştı.`,
+        route: s(d.route) || '/parent',
+      };
   }
 }
 

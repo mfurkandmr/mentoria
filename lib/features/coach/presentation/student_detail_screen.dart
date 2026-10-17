@@ -1,3 +1,4 @@
+import '../../mistakes/presentation/mistake_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -47,6 +48,7 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
     tr('Görevler'),
     tr('Ödevler'),
     tr('Notlar'),
+    tr('Hata Defteri'),
   ];
   late final TabController _controller =
       TabController(length: _tabs.length, vsync: this)..addListener(() {
@@ -211,6 +213,7 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
                   children: [NotesList(studentId: id, canWrite: isCoach)],
                 ),
+                MistakesView(studentId: id, readOnly: true, bottomPadding: 32),
               ],
             ),
           ),

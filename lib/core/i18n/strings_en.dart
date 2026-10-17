@@ -1214,6 +1214,116 @@ const enStrings = <String, String>{
   'aktif gün': 'active days',
   'Favori ders: {s}': 'Favourite subject: {s}',
 
+  // Odak Bahçesi
+  'Türkçe, Edebiyat, Dil': 'Turkish, Literature, Languages',
+  'Fen': 'Science',
+  'Sosyal': 'Social sciences',
+  'Ders seçilmemiş': 'No subject',
+  'Papatya': 'Daisy',
+  'Lale': 'Tulip',
+  'Çan çiçeği': 'Bellflower',
+  'Ayçiçeği': 'Sunflower',
+  'Kozmos': 'Cosmos',
+  'Yarıda kaldı (soldu)': 'Left unfinished (wilted)',
+  'Filiz (10 dk altı)': 'Sprout (under 10 min)',
+  'Tomurcuk (10-25 dk)': 'Bud (10-25 min)',
+  'Çiçek (25-50 dk)': 'Flower (25-50 min)',
+  'Dev çiçek (50 dk+)': 'Giant flower (50+ min)',
+  'Bu ay': 'This month',
+  'Odak Bahçem 🌸 #Mentoria': 'My Focus Garden 🌸 #Mentoria',
+  'Bu pomodoro yarıda kalmış, çiçek soldu 🥀':
+      'This pomodoro was left unfinished, the flower wilted 🥀',
+  'Odak Bahçem': 'My Focus Garden',
+  'Çiçekler ne anlama geliyor?': 'What do the flowers mean?',
+  'Her çalışma oturumu bahçene bir çiçek eker.':
+      'Every study session plants a flower in your garden.',
+  'çiçek': 'flowers',
+  'tam açmış': 'in full bloom',
+  'Bahçen tohumlarla dolu ama henüz filiz yok.':
+      'Your garden is full of seeds, but nothing has sprouted yet.',
+  'Bir pomodoro tamamla, ilk çiçeğin açsın! 🌱':
+      'Finish a pomodoro and your first flower will bloom! 🌱',
+  '{n} çiçek açtı': '{n} flowers bloomed',
+  'İlk çiçeğini ek': 'Plant your first flower',
+  '{p0} dakika kaydedildi, bahçende bir çiçek açtı 🌸':
+      '{p0} minutes saved, a flower bloomed in your garden 🌸',
+  'Bahçeye bak': 'See garden',
+
+  // Hata Defteri
+  'Hata Defteri': 'Mistake Notebook',
+  'Hata ekle': 'Add mistake',
+  '{n} g': '{n} d',
+  'Öğrenildi': 'Learned',
+  '{n}. tekrar basamağı': 'Review step {n}',
+  'Soru fotoğrafı': 'Question photo',
+  'Bugün tekrar': 'Review today',
+  '{date} tekrar': 'Review on {date}',
+  'Hata defteri boş': 'The mistake notebook is empty',
+  'Hata defterin boş': 'Your mistake notebook is empty',
+  'Öğrenci yanlış yaptığı soruları ekledikçe burada görünür.':
+      'Questions the student got wrong will appear here as they are added.',
+  'Yanlış yaptığın bir sorunun fotoğrafını çek; Bızz onu 1, 3, 7 ve 21 gün sonra sana yeniden sorsun. Unutma eğrisini birlikte yeneriz!':
+      'Snap a photo of a question you got wrong; Bızz will ask it again after 1, 3, 7 and 21 days. Together we beat the forgetting curve!',
+  'Yaklaşan tekrarlar': 'Upcoming reviews',
+  'bugün tekrar': 'due today',
+  'yolda': 'in progress',
+  'öğrenildi': 'learned',
+  '{n} soruyu şimdi tekrar et': 'Review {n} questions now',
+  'Bugünlük tekrar yok. Harika! 🎉': 'No reviews for today. Great! 🎉',
+  'En çok takıldığı yerler': 'Where they struggle most',
+  'Hata sayısı ve tekrarda yeniden yanlışlara göre':
+      'By number of mistakes and repeated errors in review',
+  'Tekrarda {n} kez yeniden yanlış yapıldı':
+      'Got it wrong {n} more times in review',
+  'Kart silinsin mi?': 'Delete this card?',
+  'Fotoğrafı ve tekrar geçmişi de silinir.':
+      'Its photo and review history will be deleted too.',
+  'Kartı sil': 'Delete card',
+  'Fotoğraf alınamadı. İzinleri kontrol et.':
+      'Couldn’t get the photo. Check permissions.',
+  'Bir fotoğraf ya da kısa bir not ekle.': 'Add a photo or a short note.',
+  'Deftere eklendi. Bızz yarın sana yeniden soracak! 🐝':
+      'Added to the notebook. Bızz will ask you again tomorrow! 🐝',
+  'Hata defterine ekle': 'Add to mistake notebook',
+  'Fotoğraf çek': 'Take photo',
+  'Galeriden seç': 'Choose from gallery',
+  'Fotoğrafı kaldır': 'Remove photo',
+  'Seçilmedi': 'Not selected',
+  'Nerede takıldın? (isteğe bağlı)': 'Where did you get stuck? (optional)',
+  'ör. işlem hatası, formülü unuttum':
+      'e.g. calculation error, forgot the formula',
+  'Deftere ekle': 'Add to notebook',
+  'Tekrar bitti': 'Review finished',
+  '{i} / {n}': '{i} / {n}',
+  'Notun: {n}': 'Your note: {n}',
+  'Soruyu kağıtta yeniden çöz, sonra dürüstçe işaretle.':
+      'Solve the question again on paper, then mark it honestly.',
+  'Yine yapamadım': 'Still couldn’t',
+  'Çözdüm': 'Solved it',
+  '{s} / {n} soruyu çözdün': 'You solved {s} / {n} questions',
+  '{m} soru artık tamamen öğrenildi! 🏆':
+      '{m} questions are now fully learned! 🏆',
+  'Hepsi doğru! Bir sonraki tekrar daha ileri bir tarihte.':
+      'All correct! The next review is further ahead.',
+  'Yapamadıkların yarın yeniden gelecek. Pes etmek yok! 💪':
+      'The ones you missed come back tomorrow. Never give up! 💪',
+  'Deftere dön': 'Back to notebook',
+  '{n} soru tekrar bekliyor': '{n} questions to review',
+  'Yanlışlarını unutma': 'Don’t forget your mistakes',
+  'Bugünlük tekrar yok ✓': 'No reviews today ✓',
+
+  // Bildirimler: tekrar ve veli raporu
+  'Tekrar zamanı! 🔁': 'Review time! 🔁',
+  '{child} için haftalık Bal Raporu 🐝': 'Weekly Honey Report for {child} 🐝',
+  'Hata defterinde {n} soru seni bekliyor. Unutmadan bir daha çöz!':
+      '{n} questions are waiting in your mistake notebook. Solve them again before you forget!',
+  'Bu hafta {q} soru çözdü, {m} dk odaklandı, {d} gün çalıştı.':
+      'This week: {q} questions, {m} min of focus, {d} active days.',
+  'Bu hafta henüz kayıt yok. Küçük bir teşvik iyi gelebilir! 💛':
+      'No activity yet this week. A little encouragement could help! 💛',
+  'Her pazar akşamı bu özeti bildirim olarak da alırsın.':
+      'You’ll also get this summary as a notification every Sunday evening.',
+
   // Bildirim kanalı
   'Mentoria bildirimleri': 'Mentoria notifications',
   'Ödev, görüşme, mesaj ve deneme bildirimleri':

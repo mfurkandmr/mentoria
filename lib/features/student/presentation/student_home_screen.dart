@@ -32,6 +32,9 @@ import '../data/bizz_shake.dart';
 import '../../recap/data/week_recap.dart';
 import '../../recap/presentation/recap_card.dart';
 import 'home_cards.dart';
+import 'home_shortcuts.dart';
+import '../../mistakes/data/mistake_repository.dart';
+import '../../garden/presentation/garden_screen.dart';
 import 'home_sky.dart';
 import '../../ranking/data/ranking_repository.dart';
 
@@ -109,6 +112,8 @@ class StudentHomeScreen extends ConsumerWidget {
       ref.invalidate(topicProgressProvider(id));
       ref.invalidate(assignmentsProvider(id));
       ref.invalidate(meetingSchedulesProvider(id));
+      ref.invalidate(mistakeCardsProvider(id));
+      ref.invalidate(allSessionsProvider(id));
       await Future.wait([
         ref.read(questionLogsProvider(id).future),
         ref.read(studySessionsProvider(id).future),
@@ -152,6 +157,8 @@ class StudentHomeScreen extends ConsumerWidget {
           now: now,
         ),
       ),
+      // Hata Defteri ve Odak Bahçesi kısayolları.
+      HomeShortcuts(studentId: id),
       IntrinsicHeight(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,

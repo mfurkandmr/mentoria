@@ -994,3 +994,39 @@ Sayfalar (veri yoksa o sayfa atlanır):
 Boş haftada tek, cesaretlendiren sayfa. "Hareketi azalt" açıksa sayfalar
 kendiliğinden geçmez. Önizleme: `flutter test test/tool/recap_preview_test.dart`
 → `build/recap_preview.png` (Windows yazı tipleriyle). Test: `test/recap_test.dart`.
+
+---
+
+## 23. Hata Defteri, Odak Bahçesi, veli haftalık raporu
+
+**Hata Defteri** (`lib/features/mistakes/`, migration
+`20261018190000_mistakes_and_parent_report`, test `mistakes_test.mjs`):
+- Öğrenci yanlış yaptığı sorunun fotoğrafını (kamera / galeri, image_picker)
+  ders, konu ve notla ekler. Tekrar aralıkları 1 → 3 → 7 → 21 gün; dördüncü
+  doğru tekrardan sonra "öğrenildi", yanlışta başa döner. Kural sunucuda
+  (`review_mistake`), aynısı `MistakeCard.reviewed` (demo / test).
+- Fotoğraflar özel `mistake-photos` kovasında (`<öğrenci id>/...`, 2 MB).
+  Yalnızca öğrenci yükler/siler; koç, müdür, veli görür (can_view_student).
+- Her sabah 10:00'da (pg_cron `review-reminders`) tekrarı gelen öğrenciye
+  tek bildirim (`review`).
+- Ekranlar: `/student/mistakes` (özet, "N soruyu şimdi tekrar et", tekrar
+  oturumu), ana sayfa kısayolu, koçun öğrenci ayrıntısında ve veli ekranında
+  salt okunur "Hata Defteri" sekmesi + "En çok takıldığı yerler".
+- Not: hesap silinince kartlar silinir ama kovadaki fotoğraflar kalır
+  (Storage SQL ile silinmez); gerekirse dönemsel temizlik.
+
+**Odak Bahçesi** (`lib/features/garden/`, yalnızca uygulama):
+- Her çalışma oturumu bir çiçek: ders → cins (matematik papatya, Türkçe/
+  edebiyat/dil lale, fen çan çiçeği, sosyal ayçiçeği, derssiz kozmos), süre
+  → büyüklük (filiz / tomurcuk / çiçek / 50 dk+ parıltılı dev çiçek);
+  20 dk'dan kısa pomodoro soluk. Rüzgârda sallanır, Bızz aralarında uçar,
+  çiçeğe dokununca ayrıntı. Bu hafta / bu ay / tümü, paylaş.
+- `/student/garden`; ana sayfa ve çalışma süresi ekranından; oturum
+  kaydedilince "bahçende bir çiçek açtı" bildirimi.
+
+**Veli haftalık raporu:** her pazar 19:00 (pg_cron `parent-weekly-reports`)
+veliye çocuğunun son 7 günü (soru, dakika, aktif gün; `weekly_report`).
+Veli ekranında yeni "Bal Raporu" sekmesi (tab=4): paylaşılabilir özet kartı.
+
+Önizleme: `flutter test test/tool/new_features_preview_test.dart` →
+`build/new_features_preview.png`. Testler: `test/mistakes_garden_test.dart`.

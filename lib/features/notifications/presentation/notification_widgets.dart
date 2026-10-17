@@ -21,7 +21,8 @@ import '../data/notification_repository.dart';
 /// tuşuyla dönülebilsin); deneme ve görevler panelin sekmesine geçer.
 void openNotification(BuildContext context, AppNotification n) {
   final router = GoRouter.of(context);
-  if (n.route == '/student/homework') {
+  // Alt menüsüz sayfalar üste açılır (geri tuşu çalışsın).
+  if (const {'/student/homework', '/student/mistakes'}.contains(n.route)) {
     router.push(n.route);
   } else {
     router.go(n.route);
@@ -172,11 +173,14 @@ class NotificationTile extends StatelessWidget {
                   NotificationKind.note => context.brand.info,
                   NotificationKind.deletionRequest => context.brand.danger,
                   NotificationKind.meeting => context.brand.secondary,
+                  NotificationKind.review => context.brand.danger,
+                  NotificationKind.weeklyReport => context.brand.primary,
                 },
                 foregroundColor:
                     n.kind == NotificationKind.exam ||
                         n.kind == NotificationKind.deletionRequest ||
-                        n.kind == NotificationKind.meeting
+                        n.kind == NotificationKind.meeting ||
+                        n.kind == NotificationKind.review
                     ? Colors.white
                     : context.brand.ink,
                 child: Icon(n.kind.icon, size: 20),
