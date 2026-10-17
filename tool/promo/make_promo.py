@@ -451,13 +451,201 @@ def stat_scene(dur, bg, value, suffix, lines, sub, decimals_sep='.'):
     return s
 
 
+def card(name, width=230):
+    """Yuvarlak köşeli, beyaz kenarlı, gölgeli küçük ekran kartı."""
+    shot = status_bar(Image.open(f'{SHOTS}/{name}.png'))
+    hgt = int(shot.size[1] * width / shot.size[0])
+    shot = shot.resize((width, hgt), Image.LANCZOS)
+    b, r, m = 6, 26, 40
+    body = Image.new('RGBA', (width + 2 * b, hgt + 2 * b), (0, 0, 0, 0))
+    ImageDraw.Draw(body).rounded_rectangle((0, 0, body.size[0] - 1, body.size[1] - 1), radius=r + b,
+                                           fill=(255, 255, 255, 255))
+    mask = Image.new('L', shot.size, 0)
+    ImageDraw.Draw(mask).rounded_rectangle((0, 0, width - 1, hgt - 1), radius=r, fill=255)
+    body.paste(shot, (b, b), mask)
+    out = Image.new('RGBA', (body.size[0] + 2 * m, body.size[1] + 2 * m), (0, 0, 0, 0))
+    sm = Image.new('L', out.size, 0)
+    sm.paste(body.split()[3], (m, m + 16))
+    sh = Image.new('RGBA', out.size, (0, 0, 0, 0))
+    sh.putalpha(sm.filter(ImageFilter.GaussianBlur(18)).point(lambda v: int(v * 0.5)))
+    out.alpha_composite(sh)
+    out.alpha_composite(body, (m, m))
+    return out
+
+
+def vignette():
+    y, x = np.mgrid[0:H, 0:W]
+    d = np.sqrt(((x - W / 2) / (W * 0.62)) ** 2 + ((y - H * 0.48) / (H * 0.62)) ** 2)
+    a = np.clip((d - 0.55) / 0.6, 0, 1) ** 1.6 * 170
+    arr = np.zeros((H, W, 4), np.uint8)
+    arr[..., 0], arr[..., 1], arr[..., 2] = 22, 12, 4
+    arr[..., 3] = a.astype(np.uint8)
+    return Image.fromarray(arr, 'RGBA')
+
+
+def cafe_intro(photo, phone_xy, orbit_c, shots, caption):
+    """Kafede telefonlu adam: ekranlar etrafında döner, birleşip telefona
+    girer, kamera telefona dalar."""
+    src = Image.open(photo).convert('RGB')
+    k = W / src.size[0]
+    img = src.resize((W, int(src.size[1] * k)), Image.LANCZOS).convert('RGBA')
+    px, py = phone_xy[0] * k, phone_xy[1] * k
+    ox, oy = orbit_c[0] * k, orbit_c[1] * k
+    vig = vignette()
+    cards = [card(n, 200) for n in shots]
+    n = len(cards)
+    glow = orb(90, (255, 230, 170), 255)
+    head = Headline(caption, None, size=74, top=170)
+    dur = 5.8
+    T_CONV, T_IN, T_DIVE = 3.2, 4.3, 4.35
+
+    def camera(t):
+        s = 1.0 + 0.10 * ease_in_out(t / T_DIVE)
+        cx = lerp(W / 2, px, 0.3 * ease_in_out(t / T_DIVE))
+        cy = lerp(H / 2, py, 0.3 * ease_in_out(t / T_DIVE))
+        dz = ease_in_out((t - T_DIVE) / 0.85) ** 1.4
+        if dz > 0:
+            s *= math.exp(math.log(10) * dz)
+            cx, cy = lerp(cx, px, min(1, dz * 4)), lerp(cy, py, min(1, dz * 4))
+        hw, hh = W / (2 * s), H / (2 * s)
+        cx = min(max(cx, hw), W - hw)
+        cy = min(max(cy, hh), img.size[1] - hh)
+        return s, cx, cy
+
+    def card_state(i, t):
+        """(x, y, ölçek, alfa, derinlik) — görüntü koordinatlarında."""
+        appear = 0.35 + 0.16 * i
+        a_in = ease_out_cubic((t - appear) / 0.5)
+        ang = 2 * math.pi * i / n + t * 0.95
+        z = math.sin(ang)  # +1 önde (göğüs hizası), -1 arkada (başın üstü)
+        x = ox + 455 * math.cos(ang)
+        y = oy + (200 if z > 0 else 300) * z
+        sc = 0.55 + 0.45 * (z + 1) / 2
+        sc *= 0.4 + 0.6 * ease_out_back((t - appear) / 0.6, 1.4) if t > appear else 0
+        alpha = a_in * (0.35 + 0.65 * (z + 1) / 2)
+        c = ease_in_out((t - T_CONV - 0.05 * i) / (T_IN - T_CONV))
+        if c > 0:
+            c2 = c ** 1.7
+            x, y = lerp(x, px, c2), lerp(y, py, c2)
+            sc = lerp(sc, 0.06, c2)
+            alpha *= 1 - 0.6 * c2 if c < 1 else 0
+            z = lerp(z, 2, c)
+        return x, y, sc, alpha, z
+
+    def frame(t):
+        s, cx, cy = camera(t)
+        box = (cx - W / (2 * s), cy - H / (2 * s), cx + W / (2 * s), cy + H / (2 * s))
+        fr = img.resize((W, H), Image.BILINEAR, box=box)
+
+        def to_screen(x, y):
+            return (x - cx) * s + W / 2, (y - cy) * s + H / 2
+
+        items = []
+        for i in range(n):
+            for g in range(3 if t > T_CONV else 1):  # birleşirken iz
+                st = card_state(i, t - g * 0.035)
+                if st[3] > 0.01 and st[2] > 0.01:
+                    items.append((st[4] - g * 0.001, i, st, 1 - g * 0.35))
+        for _, i, (x, y, sc, a, z), gm in sorted(items, key=lambda v: v[0]):
+            im = scaled(cards[i], sc * s)
+            sx, sy = to_screen(x, y)
+            safe_paste(fr, faded(im, a * gm), sx - im.size[0] / 2, sy - im.size[1] / 2)
+        # Telefona giriş parlaması
+        g = math.exp(-((t - T_IN - 0.1) / 0.35) ** 2)
+        if g > 0.02:
+            gi = scaled(glow, (0.6 + 1.6 * g) * min(s, 3))
+            sx, sy = to_screen(px, py)
+            safe_paste(fr, faded(gi, g), sx - gi.size[0] / 2, sy - gi.size[1] / 2)
+        fr.alpha_composite(vig)
+        head.draw(fr, t - 0.5, 1 - ease_out_cubic((t - 3.0) / 0.5))
+        # Dalış sonunda sıcak beyaz ışık
+        w = ease_in_out((t - 4.85) / 0.45)
+        if w > 0:
+            fr = Image.blend(fr, Image.new('RGBA', (W, H), (255, 246, 228, 255)), w)
+        if t < 0.4:
+            fr = Image.blend(Image.new('RGBA', (W, H), (0, 0, 0, 255)), fr, ease_in_out(t / 0.4))
+        return fr
+
+    sc = Scene(dur, None)
+    sc.frame = frame
+    return sc
+
+
+class SwapPhone:
+    """Aynı yerde sırayla değişen ekranlar (çapraz geçişli)."""
+
+    def __init__(self, names, switch, cx, top, width, angle=0.0, delay=0.25):
+        self.phones = [Phone(nm, cx, top, width, angle=angle, delay=delay) for nm in names]
+        self.switch = switch  # her ekranın bitiş anı
+
+    def zoom(self, t):
+        return 0.0
+
+    def index(self, t):
+        for i, s in enumerate(self.switch):
+            if t < s:
+                return i, ease_in_out((t - (s - 0.35)) / 0.35)
+        return len(self.phones) - 1, 0.0
+
+    def draw(self, frame, t, dur):
+        i, b = self.index(t)
+        self.phones[i].draw(frame, t, dur)
+        if b > 0 and i + 1 < len(self.phones):
+            layer = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+            self.phones[i + 1].draw(layer, t, dur)
+            frame.alpha_composite(faded(layer, b))
+
+
+def chip(text, color):
+    txt = render_text(text, font(800, 40), (255, 255, 255), shadow=False)
+    pad = 28
+    im = Image.new('RGBA', (txt.size[0] + 2 * pad, txt.size[1] + 2 * pad - 14), (0, 0, 0, 0))
+    ImageDraw.Draw(im).rounded_rectangle((0, 0, im.size[0] - 1, im.size[1] - 1), radius=40, fill=color + (255,),
+                                         outline=(255, 255, 255, 200), width=4)
+    im.alpha_composite(txt, (pad, pad - 12))
+    return im
+
+
+def whitelabel_scene(bg):
+    h = Headline(['Kendi logon,', 'rengin, yazı tipin'], 'Uygulama kurumunun kimliğine bürünür')
+    top = max(600, h.bottom + 80)
+    sw = [2.2, 3.9, 9]
+    left = SwapPhone(['w_editor', 'w_editor_fonts'], [3.2, 9], W * 0.29, top + 40, 470, angle=5, delay=0.25)
+    right = SwapPhone(['w_learn_mentoria', 'w_learn_yildiz', 'w_learn_zirve'], sw, W * 0.71, top, 470, angle=-5,
+                      delay=0.45)
+    labels = [('Mentoria · Nunito', (108, 75, 216)), ('Yıldız Dershanesi · Poppins', (31, 128, 160)),
+              ('Zirve Akademi · Baloo 2', (46, 140, 80))]
+    chips = [chip(t, c) for t, c in labels]
+    cy = top + 1040
+
+    def extra(fr, t):
+        i, b = right.index(t)
+        p = ease_out_back((t - 0.9) / 0.5, 1.6)
+        if p <= 0:
+            return
+        for k, a in ((i, 1 - b), (i + 1, b)):
+            if k < len(chips) and a > 0:
+                c = scaled(chips[k], p)
+                safe_paste(fr, faded(c, a), W / 2 - c.size[0] / 2, cy + (1 - a) * 30)
+
+    return Scene(6.4, bg, h, [left, right], extra)
+
+
 # ----------------------------------------------------------------- videolar
+INTRO_SHOTS_COACH = ['c01_coach_home', 'c02_coach_trends', 'a01_admin_home', 'c04_detail_exams', 'c06_detail_plan',
+                     'w_learn_yildiz', 'c05_detail_learn']
+INTRO_SHOTS_STUDENT = ['s01_home', 's04_learn_ayt', 's06_daily', 's08_duel_intro', 's11_score', 's14_plan',
+                       's15_avatar']
+HIT = 4.4  # ekranların telefona girdiği an (müzik vurgusu)
+
+
 def coach_video():
     V = '#2B1F6B', '#6C4BD8'
     G = '#1D2B64', '#3D7BD9'
     O = '#7A2A55', '#E0663A'
     T = '#123B3A', '#2E9C7A'
-    scenes = []
+    scenes = [cafe_intro('build/promo/cafe_coach.png', (400, 875), (430, 690), INTRO_SHOTS_COACH,
+                         ['Bütün kurumun', 'tek telefonda'])]
     scenes.append(brand_scene(3.6, Background('#160F3D', '#5B3CC4', 1), 'bizz_idle',
                               ['Koçlar ve kurumlar için'], 'Koç destekli YKS takibi'))
     scenes.append(stat_scene(3.4, Background(*V, 2), 4, ' rol', ['Tek platform'],
@@ -477,6 +665,7 @@ def coach_video():
                      focus=(0.36, 2.4, 1.4)))
     scenes.append(ph('c07_detail_mistakes', ["Hata Defteri'ni", 'birlikte izle'], 'Akıllı tekrar: 1 · 3 · 7 · 21 gün', Background(*O, 8)))
     scenes.append(ph('a01_admin_home', ['Kurum müdürü', 'paneli'], 'Lisans, koçlar, kurum görünümü', Background(*G, 9)))
+    scenes.append(whitelabel_scene(Background(*O, 12)))
     scenes.append(ph('a03_admin_inactive', ['Hareketsiz öğrenciyi', 'kaçırma'], 'Bu hafta çalışmayanlar tek listede', Background(*T, 10)))
     scenes.append(brand_scene(4.6, Background('#160F3D', '#5B3CC4', 11), 'bizz_happy',
                               ['Öğrenciniz büyürken', 'siz izleyin.'], None, 'Davet kodunuzla hemen başlayın'))
@@ -489,7 +678,8 @@ def student_video():
     P = '#5B1D4F', '#E0487A'
     T = '#123B3A', '#2E9C7A'
     B = '#1D2B64', '#3D7BD9'
-    scenes = []
+    scenes = [cafe_intro('build/promo/cafe_student.png', (364, 866), (395, 680), INTRO_SHOTS_STUDENT,
+                         ['Bütün YKS yolculuğun', 'tek telefonda'])]
     scenes.append(brand_scene(3.6, Background('#160F3D', '#5B3CC4', 21), 'bizz_happy',
                               ['YKS yolculuğun', 'artık eğlenceli'], 'Öğrenci ve veliler için 🐝'))
 
@@ -580,12 +770,20 @@ def preview(name, scenes):
 if __name__ == '__main__':
     which = sys.argv[1]
     name, scenes = coach_video() if which == 'coach' else student_video()
+    if len(sys.argv) > 2 and sys.argv[2] == '--intro':
+        s = scenes[0]
+        times = [0.6, 1.5, 2.5, 3.3, 3.8, 4.2, 4.5, 4.9, 5.3]
+        sheet = Image.new('RGB', (len(times) * 368, 648), (20, 20, 20))
+        for k, t in enumerate(times):
+            sheet.paste(s.frame(t).convert('RGB').resize((360, 640), Image.LANCZOS), (k * 368, 0))
+        sheet.save(f'{OUT}/{name}_intro.png')
+        sys.exit(0)
     if len(sys.argv) > 2 and sys.argv[2] == '--preview':
         preview(name, scenes)
         sys.exit(0)
     path, total = render(name, scenes)
     music = f'{OUT}/{name}_music.wav'
     subprocess.run([sys.executable, os.path.join(os.path.dirname(__file__), 'make_music.py'), f'{total + 0.2:.2f}', music,
-                    '11' if which == 'coach' else '5'], check=True)
+                    '11' if which == 'coach' else '5', str(HIT)], check=True)
     mux(path, music, f'{OUT}/{name}.mp4')
     print('bitti', name, f'{total:.1f} sn')

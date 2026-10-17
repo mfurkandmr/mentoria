@@ -1267,8 +1267,20 @@ Araçlar `tool/promo/`:
    - Telefon çerçevesi, durum çubuğu, kelime kelime gelen başlıklar,
      yakınlaşma, sayaç sahnesi ve geçişlerle 1080×1920, 30 fps MP4 üretir.
    - ffmpeg için `pip install imageio-ffmpeg`.
-3. **Müzik:** `python tool/promo/make_music.py <sn> <wav>`. Numpy ile özgün
-   sentez, telifsiz (112 BPM, Dm-Bb-F-C).
+   - `--intro` ile kafe girişinin kare dizisi.
+   - **Kafe girişi (v2):** Figma'da üretilmiş kafe fotoğrafları
+     (`build/promo/cafe_coach.png`, `cafe_student.png`, 864×1536). Telefonlu
+     adamın etrafında uygulama ekranları döner, birleşip telefona girer,
+     kamera telefona dalar. Telefon ve yörünge merkezi fotoğraf piksel
+     koordinatıyla `coach_video()` / `student_video()` içinde verilir.
+   - **Özelleştirme sahnesi (koç-müdür videosu):** `w_editor*` ve
+     `w_learn_<marka>` görüntüleri; harness tüm marka yazı tiplerini
+     `build/promo/fonts/all/manifest.txt` listesinden yükler.
+3. **Müzik:** `python tool/promo/make_music.py <sn> <wav> [tohum] [vuruş_sn]`.
+   Numpy ile özgün sentez, telifsiz. Yumuşak arka plan: 76 BPM,
+   Fmaj7-Am7-Dm7-Bbmaj7, elektrikli piyano, pad, çan, yankı; davul yok.
+   Ortalama ses ≈ -19 dB. `vuruş_sn` anında esinti ve çan (ekranlar telefona
+   girer).
 4. **VideoDB:** görüntü ve müzik VideoDB'ye yüklenip zaman çizelgesiyle
    birleştirilir. Dosyalar herkese açık depoda yalnızca bu dosyaları içeren
    `promo-assets` dalından okunur.

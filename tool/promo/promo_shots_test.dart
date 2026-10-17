@@ -45,7 +45,9 @@ import 'package:mentoria/features/plan/presentation/plan_widgets.dart';
 import 'package:mentoria/features/recap/data/week_recap.dart';
 import 'package:mentoria/features/recap/presentation/recap_card.dart';
 import 'package:mentoria/features/student/presentation/student_home_screen.dart';
+import 'package:mentoria/features/tenants/presentation/tenant_editor_screen.dart';
 import 'package:mentoria/features/tracking/data/tracking_models.dart';
+import 'package:mentoria/core/theme/app_fonts.dart';
 import 'package:mentoria/shared/motion.dart';
 import 'package:mentoria/shared/widgets/bizz.dart';
 import 'package:mentoria/shared/widgets/brand_logo.dart';
@@ -81,12 +83,11 @@ Future<void> _fonts(WidgetTester tester) async {
     await _loadFont('Roboto', [r'C:\Windows\Fonts\segoeui.ttf', emoji]);
     // Yazı tipi belirtilmeyen metinler test yazı tipine düşer.
     await _loadFont('SymbolsFallback', [emoji]);
-    // google_fonts'un aile adları: Nunito_regular, Nunito_500 … Nunito_900.
-    for (final w in [400, 500, 600, 700, 800, 900]) {
-      await _loadFont(w == 400 ? 'Nunito_regular' : 'Nunito_$w', [
-        'build/promo/fonts/nunito_$w.ttf',
-        emoji,
-      ]);
+    // google_fonts'un aile adları (Nunito_regular, Poppins_700 …); kurumların
+    // seçebildiği 10 yazı tipinin hepsi (build/promo/fonts/all).
+    for (final name in File('build/promo/fonts/all/manifest.txt').readAsLinesSync()) {
+      if (name.trim().isEmpty) continue;
+      await _loadFont(name, ['build/promo/fonts/all/$name.ttf', emoji]);
     }
   });
   await initializeDateFormatting('tr_TR');
@@ -103,8 +104,8 @@ List<PracticeQuestion> _pool(String subject) => [
 ];
 
 /// Uygulamanın teması; emoji için sembol yazı tipi yedek olarak eklenir.
-ThemeData _theme() {
-  final t = AppTheme.light(BrandTheme.fromBranding(Branding.mentoria));
+ThemeData _theme([Branding brand = Branding.mentoria]) {
+  final t = AppTheme.light(BrandTheme.fromBranding(brand));
   TextStyle? f(TextStyle? s) => s?.copyWith(fontFamilyFallback: const ['SymbolsFallback']);
   final tt = t.textTheme;
   return t.copyWith(
@@ -126,6 +127,7 @@ Future<void> shoot(
   Widget home, {
   Future<void> Function(ProviderContainer c)? interact,
   Future<void> Function(ProviderContainer c)? prepare,
+  Branding brand = Branding.mentoria,
 }) async {
   await _fonts(tester);
   Motion.enabled = false;
@@ -167,7 +169,7 @@ Future<void> shoot(
         container: c,
         child: MaterialApp.router(
           debugShowCheckedModeBanner: false,
-          theme: _theme(),
+          theme: _theme(brand),
           locale: const Locale('tr', 'TR'),
           supportedLocales: const [Locale('tr', 'TR')],
           localizationsDelegates: GlobalMaterialLocalizations.delegates,
@@ -353,6 +355,23 @@ void main() {
       await tapText(t, 'Haftanın Bal Raporu');
     });
   });
+
+  // ------------------------------------------------------------ Beyaz etiket
+  final yildiz = demoTenants()[1];
+  const zirve = Branding(
+    name: 'Zirve Akademi',
+    primary: Color(0xFF34D399),
+    secondary: Color(0xFFF97316),
+    font: AppFont.baloo2,
+  );
+  for (final (tag, brand) in [('mentoria', Branding.mentoria), ('yildiz', yildiz), ('zirve', zirve)]) {
+    testWidgets('w_home_$tag', (t) => shoot(t, 'w_home_$tag', 'student', const StudentHomeScreen(), brand: brand,
+        interact: (_) => scrollTo(t, find.text('Günün Sorusu'), extra: 60)));
+    testWidgets('w_learn_$tag', (t) => shoot(t, 'w_learn_$tag', 'student', const LearnScreen(), brand: brand));
+  }
+  testWidgets('w_editor', (t) => shoot(t, 'w_editor', 'admin', const TenantEditorScreen(selfService: true)));
+  testWidgets('w_editor_fonts', (t) => shoot(t, 'w_editor_fonts', 'admin', const TenantEditorScreen(selfService: true),
+      interact: (_) => scrollTo(t, find.text('Baloo 2'), extra: 120)));
 
   // ------------------------------------------------------------ Veli
   testWidgets('p01_parent_home', (t) => shoot(t, 'p01_parent_home', 'parent', const ParentHomeScreen()));
