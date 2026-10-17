@@ -1403,7 +1403,7 @@ class InMemoryDailyQuestionRepository implements DailyQuestionRepository {
   String questionFor(DateTime day) {
     final d = day.difference(DateTime(2026)).inDays;
     final h = myId.hashCode.abs();
-    final subject = practiceSubjects[(d + h) % practiceSubjects.length];
+    final subject = tytPracticeSubjects[(d + h) % tytPracticeSubjects.length];
     final pool = practiceDailyLimit(subject) * 30;
     final n = 1 + (d * 7919 + h) % pool;
     return '$subject-${n.toString().padLeft(4, '0')}';

@@ -12,6 +12,7 @@ import 'package:mentoria/features/learn/data/practice_report.dart';
 import 'package:mentoria/features/learn/data/practice_repository.dart';
 import 'package:mentoria/features/learn/presentation/daily_question_screen.dart';
 import 'package:mentoria/features/learn/presentation/learn_report_view.dart';
+import 'package:mentoria/features/learn/presentation/learn_screen.dart';
 import 'package:mentoria/features/learn/presentation/notebook_button.dart';
 import 'package:mentoria/features/mistakes/data/mistake_repository.dart';
 import 'package:mentoria/shared/motion.dart';
@@ -246,6 +247,51 @@ void main() {
       expect(find.text('Fizik'), findsOneWidget);
       expect(find.textContaining('En zayıf ders: Fizik'), findsOneWidget);
       expect(find.textContaining('En çok yanlış:'), findsWidgets);
+    });
+
+    testWidgets('AYT sekmesi: 11 ders, günlük 130 hak, sorular açılır', (
+      tester,
+    ) async {
+      final c = await app(tester, const LearnScreen());
+      expect(find.text('0 / 110'), findsOneWidget);
+      await tester.tap(find.text('AYT'));
+      await tester.pumpAndSettle();
+      expect(find.text('0 / 130'), findsOneWidget, reason: '2×20 + 9×10');
+      expect(find.text('Türk Dili ve Edebiyatı'), findsOneWidget);
+      expect(find.text('20 soru hakkın var'), findsNWidgets(2));
+      await tester.scrollUntilVisible(
+        find.text('Türk Dili ve Edebiyatı'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Türk Dili ve Edebiyatı'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Soru çöz'));
+      await tester.pumpAndSettle();
+      expect(find.text('Soru 1 / 20'), findsOneWidget);
+      final s = SubjectPractice.of(
+        subject: 'AYT_EDB',
+        studentId: 'demo-student',
+        pool: pool('AYT_EDB'),
+        answers: const [],
+        now: DateTime.now(),
+      );
+      final q = s.todaysQuestions.first;
+      expect(find.text(q.text), findsOneWidget);
+      await tester.tap(find.text(q.options[q.answer]));
+      await tester.pumpAndSettle();
+      final saved = await c
+          .read(practiceRepositoryProvider)
+          .fetchAnswers('demo-student');
+      expect(saved.where((a) => a.subject == 'AYT_EDB'), hasLength(1));
+    });
+
+    test('AYT ders adları karışmaz', () {
+      expect(practiceSubjectLabel('AYT_MAT'), 'AYT Matematik');
+      expect(practiceSubjectLabel('TYT_MAT'), 'Matematik');
+      expect(practiceSubjectLabel('AYT_EDB'), 'Türk Dili ve Edebiyatı');
+      expect(practiceSubjects, hasLength(20));
     });
 
     testWidgets('karnesi boş öğrenci', (tester) async {

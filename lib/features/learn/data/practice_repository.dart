@@ -5,11 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../core/constants/exam_subjects.dart';
 import '../../auth/data/auth_repository.dart';
 
-/// Eğitim bölümündeki dersler (TYT) ve günlük hakları. Sunucudaki
-/// `practice_daily_limit` ile aynı; havuz = hak × 30.
-const practiceSubjects = [
+/// Eğitim bölümündeki TYT dersleri.
+const tytPracticeSubjects = [
   'TYT_TUR',
   'TYT_MAT',
   'TYT_FIZ',
@@ -21,8 +21,38 @@ const practiceSubjects = [
   'TYT_DIN',
 ];
 
+/// Eğitim bölümündeki AYT dersleri.
+const aytPracticeSubjects = [
+  'AYT_MAT',
+  'AYT_FIZ',
+  'AYT_KIM',
+  'AYT_BIY',
+  'AYT_EDB',
+  'AYT_TAR1',
+  'AYT_COG1',
+  'AYT_TAR2',
+  'AYT_COG2',
+  'AYT_FELG',
+  'AYT_DIN',
+];
+
+/// Tüm dersler (TYT sonra AYT).
+const practiceSubjects = [...tytPracticeSubjects, ...aytPracticeSubjects];
+
+/// Günlük hak; sunucudaki `practice_daily_limit` ile aynı. Havuz = hak × 30.
 int practiceDailyLimit(String subject) =>
-    subject == 'TYT_TUR' || subject == 'TYT_MAT' ? 20 : 10;
+    const {'TYT_TUR', 'TYT_MAT', 'AYT_MAT', 'AYT_EDB'}.contains(subject)
+    ? 20
+    : 10;
+
+/// Ders adı; AYT'de TYT ile aynı adı taşıyan dersler "AYT" önekiyle
+/// (karne ve başlıklarda karışmasın).
+String practiceSubjectLabel(String code) {
+  final name = subjectByCode(code).name;
+  if (!code.startsWith('AYT_')) return name;
+  final clash = tytPracticeSubjects.any((c) => subjectByCode(c).name == name);
+  return clash ? 'AYT $name' : name;
+}
 
 /// Havuzdaki bir soru (`assets/learn/questions/<ders>.json`).
 class PracticeQuestion {

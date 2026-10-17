@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/constants/exam_subjects.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/widgets/common.dart';
@@ -91,13 +90,13 @@ class LearnReportView extends ConsumerWidget {
               color: brand.danger,
               message: weak.weakestTopic == null
                   ? tr('En zayıf ders: {subject} (%{p} isabet).', {
-                      'subject': subjectByCode(weak.subject).name,
+                      'subject': practiceSubjectLabel(weak.subject),
                       'p': (weak.accuracy * 100).round(),
                     })
                   : tr(
                       'En zayıf ders: {subject} (%{p} isabet). Önce "{topic}" konusuna odaklanılabilir.',
                       {
-                        'subject': subjectByCode(weak.subject).name,
+                        'subject': practiceSubjectLabel(weak.subject),
                         'p': (weak.accuracy * 100).round(),
                         'topic': weak.weakestTopic,
                       },
@@ -158,7 +157,7 @@ class _SubjectRow extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        subjectByCode(report.subject).name,
+                        practiceSubjectLabel(report.subject),
                         style: const TextStyle(fontWeight: FontWeight.w800),
                       ),
                     ),

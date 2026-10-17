@@ -146,3 +146,116 @@ def ek_i(n):
     w = _last_word(n)
     v = {'a': 'ı', 'ı': 'ı', 'e': 'i', 'i': 'i', 'o': 'u', 'u': 'u', 'ö': 'ü', 'ü': 'ü'}[_last_vowel(w)]
     return f"{n}'{'s' if w[-1] in 'aeıioöuü' else ''}{v}"
+
+
+def relation_gens(topic, rel, fwd=None, has=None, has_not=None, weights=(1, 1, 1),
+                  has_limit=6, has_not_limit=12, extra_groups=(), explain=None):
+    """(öğe, grup) tablosundan üç soru kalıbı üretir:
+
+    fwd     "... {item} ..." → doğru cevap grubu (çeldirici: diğer gruplar)
+    has     "... {group} ..." → gruba ait bir öğe (çeldirici: başka grupların öğeleri)
+    has_not "... {group} ..." → gruba ait olmayan öğe (diğer 4 şık gruptan)
+
+    Şablonlar None ise o kalıp kullanılmaz. Dönüş: [(üretici, ağırlık), ...].
+    """
+    groups = {}
+    for item, g in rel:
+        groups.setdefault(g, []).append(item)
+    all_groups = list(groups) + [g for g in extra_groups if g not in groups]
+    explain = explain or (lambda item, g: f'{item}: {g}.')
+    out = []
+
+    if fwd:
+        @stem_limit(1)
+        def gen_fwd(r):
+            item, g = r.choice(rel)
+            others = [x for x in all_groups if x != g]
+            r.shuffle(others)
+            return make(r, topic, fwd.format(item=item), g, others, explain(item, g))
+        out.append((gen_fwd, weights[0]))
+
+    if has:
+        @stem_limit(has_limit)
+        def gen_has(r):
+            g = r.choice(list(groups))
+            item = r.choice(groups[g])
+            others = [x for x, gg in rel if gg != g and x not in groups[g]]
+            others = r.sample(others, min(4, len(others)))
+            return make(r, topic, has.format(group=g), item, others, explain(item, g))
+        out.append((gen_has, weights[1]))
+
+    if has_not:
+        big = [g for g, v in groups.items() if len(v) >= 4]
+        if big:
+            @stem_limit(has_not_limit)
+            def gen_has_not(r):
+                g = r.choice(big)
+                inside = r.sample(groups[g], 4)
+                outside = [x for x, gg in rel if gg != g and x not in groups[g]]
+                item = r.choice(outside)
+                other_g = next(gg for x, gg in rel if x == item)
+                return make(r, topic, has_not.format(group=g), item, inside,
+                            f'{item}: {other_g}. Diğerleri: {g}.')
+            out.append((gen_has_not, weights[2]))
+    return out
+
+
+def define_gens(topic, defs, fwd, back, weights=(1, 1)):
+    """{kavram: tanım} → "tanımı nedir" ve "hangi kavramdır" soruları."""
+    keys = list(defs)
+
+    @stem_limit(1)
+    def gen_fwd(r):
+        k = r.choice(keys)
+        return make(r, topic, fwd.format(k=k), defs[k], [defs[x] for x in r.sample(keys, len(keys)) if x != k],
+                    f'{k}: {defs[k]}')
+
+    @stem_limit(1)
+    def gen_back(r):
+        k = r.choice(keys)
+        return make(r, topic, back.format(v=defs[k]), k, [x for x in r.sample(keys, len(keys)) if x != k],
+                    f'{k}: {defs[k]}')
+    return [(gen_fwd, weights[0]), (gen_back, weights[1])]
+
+
+def chrono_gens(topic, events, limit=60, weights=(3, 2, 2, 2)):
+    """(olay, yıl) tablosu → yıl, yüzyıl, en önce, en sonra soruları."""
+    count = {}
+    for _, y in events:
+        count[y] = count.get(y, 0) + 1
+    unique = [(e, y) for e, y in events if count[y] == 1]
+
+    @stem_limit(1)
+    def yil(r):
+        e, y = r.choice(events)
+        return make(r, topic, f'{e} hangi yılda gerçekleşmiştir?', y,
+                    num_distractors(r, y, 12 if y > 1900 else 25 if y > 1700 else 60), f'{e}: {y}.')
+
+    @stem_limit(1)
+    def yuzyil(r):
+        e, y = r.choice(events)
+        c = (y - 1) // 100 + 1
+        return make(r, topic, f'{e} hangi yüzyılda gerçekleşmiştir?', f'{c}. yüzyıl',
+                    [f'{x}. yüzyıl' for x in [c - 1, c + 1, c - 2, c + 2, c + 3] if x > 0],
+                    f'{y} yılı {c}. yüzyıldadır.')
+
+    def _order(first):
+        @stem_limit(limit)
+        def gen(r):
+            picks = r.sample(unique, 5)
+            pick = (min if first else max)(picks, key=lambda p: p[1])
+            word = 'önce' if first else 'sonra'
+            return make(r, topic, f'Aşağıdaki gelişmelerden hangisi diğerlerinden {word} gerçekleşmiştir?',
+                        pick[0], [p[0] for p in picks if p != pick],
+                        'Yıllar: ' + ', '.join(f'{e} ({y})' for e, y in sorted(picks, key=lambda p: p[1])) + '.')
+        return gen
+    return [(yil, weights[0]), (yuzyil, weights[1]), (_order(True), weights[2]), (_order(False), weights[3])]
+
+
+def fact_gen(topic, facts):
+    """[(soru, doğru, [çeldiriciler])] → tek kalıp."""
+    @stem_limit(1)
+    def gen(r):
+        q, a, others = r.choice(facts)
+        return make(r, topic, q, a, r.sample(others, len(others)), f'Doğru cevap: {a}.')
+    return gen

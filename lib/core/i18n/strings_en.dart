@@ -1426,6 +1426,9 @@ const enStrings = <String, String>{
       'Questions solved, accuracy and the most-missed topic',
   'En çok yanlış: {topic} ({n})': 'Most missed: {topic} ({n})',
 
+  'TYT': 'TYT',
+  'AYT': 'AYT',
+
   // Bildirim kanalı
   'Mentoria bildirimleri': 'Mentoria notifications',
   'Ödev, görüşme, mesaj ve deneme bildirimleri':

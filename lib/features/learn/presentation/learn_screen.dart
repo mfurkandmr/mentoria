@@ -18,8 +18,18 @@ import '../data/learn_cards.dart';
 import '../data/practice_repository.dart';
 import 'notebook_button.dart';
 
-/// Derslerin rengi ve simgesi.
+/// Derslerin rengi ve simgesi (AYT dersleri TYT karşılığının rengini alır).
 ({Color color, IconData icon}) subjectLook(String code) => switch (code) {
+  'AYT_EDB' => (
+    color: const Color(0xFFE5484D),
+    icon: Icons.history_edu_rounded,
+  ),
+  'AYT_TAR1' || 'AYT_TAR2' => subjectLook('TYT_TAR'),
+  'AYT_COG1' || 'AYT_COG2' => subjectLook('TYT_COG'),
+  'AYT_FELG' => subjectLook('TYT_FEL'),
+  _ when code.startsWith('AYT_') => subjectLook(
+    code.replaceFirst('AYT_', 'TYT_'),
+  ),
   'TYT_TUR' => (color: const Color(0xFFE5484D), icon: Icons.menu_book_rounded),
   'TYT_MAT' => (color: const Color(0xFF5B4BC8), icon: Icons.calculate_rounded),
   'TYT_FIZ' => (color: const Color(0xFF1E6FD9), icon: Icons.bolt_rounded),
@@ -38,7 +48,7 @@ import 'notebook_button.dart';
   _ => (color: const Color(0xFF5B4BC8), icon: Icons.school_rounded),
 };
 
-String _subjectName(String code) => subjectByCode(code).name;
+String _subjectName(String code) => practiceSubjectLabel(code);
 
 /// Öğrencinin "Eğitim" sekmesi: dersler, günlük haklar, bilgi kartları ve
 /// telifsiz soru havuzundan günlük çalışma.
@@ -57,13 +67,23 @@ class LearnScreen extends ConsumerWidget {
   }
 }
 
-class _LearnHome extends ConsumerWidget {
+class _LearnHome extends ConsumerStatefulWidget {
   const _LearnHome({required this.studentId});
   final String studentId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_LearnHome> createState() => _LearnHomeState();
+}
+
+class _LearnHomeState extends ConsumerState<_LearnHome> {
+  /// Gösterilen sınav: TYT ya da AYT.
+  bool _ayt = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final studentId = widget.studentId;
     final answers = ref.watch(practiceAnswersProvider(studentId));
+    final subjects = _ayt ? aytPracticeSubjects : tytPracticeSubjects;
     return AsyncView(
       value: answers,
       onRetry: () => ref.invalidate(practiceAnswersProvider(studentId)),
@@ -73,8 +93,10 @@ class _LearnHome extends ConsumerWidget {
             d.year == today.year &&
             d.month == today.month &&
             d.day == today.day;
-        final used = all.where((a) => isToday(a.answeredOn)).length;
-        final quota = practiceSubjects.fold<int>(
+        final used = all
+            .where((a) => subjects.contains(a.subject) && isToday(a.answeredOn))
+            .length;
+        final quota = subjects.fold<int>(
           0,
           (s, c) => s + practiceDailyLimit(c),
         );
@@ -84,9 +106,20 @@ class _LearnHome extends ConsumerWidget {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
             children: [
+              SegmentedButton<bool>(
+                segments: [
+                  ButtonSegment(value: false, label: Text(tr('TYT'))),
+                  ButtonSegment(value: true, label: Text(tr('AYT'))),
+                ],
+                selected: {_ayt},
+                showSelectedIcon: false,
+                onSelectionChanged: (v) => setState(() => _ayt = v.first),
+              ),
+              const SizedBox(height: 12),
               _TodayBanner(used: used, quota: quota),
               const SizedBox(height: 14),
               GridView.count(
+                key: ValueKey(_ayt),
                 crossAxisCount: 2,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -94,7 +127,7 @@ class _LearnHome extends ConsumerWidget {
                 crossAxisSpacing: 12,
                 childAspectRatio: 0.95,
                 children: [
-                  for (final (i, c) in practiceSubjects.indexed)
+                  for (final (i, c) in subjects.indexed)
                     FadeSlideIn(
                       delay: FadeSlideIn.stagger(i),
                       child: _SubjectTile(
@@ -283,7 +316,7 @@ class _SubjectTile extends ConsumerWidget {
                 ),
                 const Spacer(),
                 Text(
-                  _subjectName(subject),
+                  subjectByCode(subject).name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(

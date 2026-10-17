@@ -511,4 +511,535 @@ const learnCards = <String, List<LearnCard>>{
       'Kanaat: elindekiyle yetinmek · Tevazu: alçakgönüllülük · İhlas: ibadeti yalnız Allah için yapmak · Riya: gösteriş · Tevekkül: elinden geleni yapıp sonucu Allah\'a bırakmak.',
     ),
   ],
+  'AYT_MAT': [
+    LearnCard(
+      'Logaritma',
+      'Logaritma, üstel ifadenin tersidir. Çarpım toplama, bölüm çıkarmaya dönüşür; üs başa çarpan olarak iner.',
+      formula: 'logₐ(x·y) = logₐx + logₐy   ·   logₐ(xⁿ) = n·logₐx',
+    ),
+    LearnCard(
+      'Taban değiştirme',
+      'Farklı tabanlı logaritmalar ortak bir tabana çevrilerek karşılaştırılır. logₐa = 1, logₐ1 = 0.',
+      formula: 'logₐb = log b / log a',
+    ),
+    LearnCard(
+      'Kalan teoremi',
+      'P(x) polinomunun (x − a) ile bölümünden kalan P(a)\'dır. Katsayılar toplamı P(1), sabit terim P(0).',
+      formula: 'P(x) = (x − a)·Q(x) + P(a)',
+    ),
+    LearnCard(
+      'Kökler ve katsayılar',
+      'ax² + bx + c = 0 denkleminde kökler toplamı ve çarpımı doğrudan katsayılardan bulunur. Δ > 0 ise iki farklı reel kök vardır.',
+      formula: 'x₁ + x₂ = −b/a   ·   x₁·x₂ = c/a   ·   Δ = b² − 4ac',
+    ),
+    LearnCard(
+      'Parabol',
+      'f(x) = ax² + bx + c parabolünün tepe noktası T(r, k). a > 0 ise kollar yukarı, en küçük değer k\'dir.',
+      formula: 'r = −b / 2a   ·   k = f(r)',
+    ),
+    LearnCard(
+      'Karmaşık sayılar',
+      'i² = −1 ve i\'nin kuvvetleri dörtte bir tekrar eder. z = a + bi için modül, orijine uzaklıktır.',
+      formula: '|z| = √(a² + b²)   ·   i⁴ = 1',
+    ),
+    LearnCard(
+      'Diziler',
+      'Aritmetik dizide ardışık terimlerin farkı, geometrik dizide oranı sabittir.',
+      formula: 'aₙ = a₁ + (n−1)d   ·   Sₙ = n(a₁ + aₙ)/2   ·   aₙ = a₁·rⁿ⁻¹',
+    ),
+    LearnCard(
+      'Limit',
+      '0/0 belirsizliğinde çarpanlara ayırıp sadeleştir. x → ∞ iken rasyonel ifadede dereceler eşitse sonuç baş katsayıların oranıdır.',
+      formula: 'lim (x→a) (x² − a²)/(x − a) = 2a',
+    ),
+    LearnCard(
+      'Türev kuralları',
+      'Türev anlık değişim hızı ve teğetin eğimidir. f\'(x) = 0 olan noktalarda yerel en büyük ya da en küçük değer aranır.',
+      formula: '(xⁿ)\' = n·xⁿ⁻¹   ·   (f·g)\' = f\'g + fg\'',
+    ),
+    LearnCard(
+      'İntegral',
+      'Belirli integral, eğri ile x ekseni arasındaki alanı verir: ilkel fonksiyonun üst ve alt sınırdaki değerlerinin farkı alınır.',
+      formula: '∫xⁿ dx = xⁿ⁺¹/(n+1) + C',
+    ),
+    LearnCard(
+      'Trigonometri',
+      'sin²x + cos²x = 1. sin(kx) ve cos(kx) için periyot 2π/|k|, tan(kx) için π/|k|. 180° = π radyan.',
+      formula: 'sin 30° = 1/2   ·   sin 45° = √2/2   ·   sin 60° = √3/2',
+    ),
+    LearnCard(
+      'Permütasyon ve kombinasyon',
+      'Sıralama önemliyse permütasyon, yalnızca seçim önemliyse kombinasyon kullanılır.',
+      formula: 'P(n, r) = n!/(n−r)!   ·   C(n, r) = n!/(r!(n−r)!)',
+    ),
+  ],
+  'AYT_FIZ': [
+    LearnCard(
+      'Newton\'un ikinci yasası',
+      'Net kuvvet, kütle ile ivmenin çarpımıdır. Sürtünme kuvveti hareketi engelleyen yöndedir.',
+      formula: 'F(net) = m·a   ·   f(s) = μ·N',
+    ),
+    LearnCard(
+      'Momentum ve itme',
+      'Dış kuvvet yoksa toplam momentum korunur. İtme, momentumdaki değişime eşittir.',
+      formula: 'p = m·v   ·   F·Δt = Δp',
+    ),
+    LearnCard(
+      'Atışlar',
+      'Yatay atışta yatay hız sabittir; düşme süresi yalnızca yüksekliğe bağlıdır. Düşey atışta tepe noktasında hız sıfırdır.',
+      formula: 'h = ½·g·t²   ·   h(max) = v²/2g',
+    ),
+    LearnCard(
+      'Düzgün çembersel hareket',
+      'Sürat sabit, hızın yönü sürekli değişir. Merkezcil ivme her an çemberin merkezine doğrudur.',
+      formula: 'a = v²/r   ·   F = m·v²/r   ·   v = 2πr/T',
+    ),
+    LearnCard(
+      'Basit harmonik hareket',
+      'Denge noktasında hız en büyük, uç noktalarda ivme en büyüktür. Yay sarkacında periyot kütleye, basit sarkaçta ip uzunluğuna bağlıdır.',
+      formula: 'T = 2π√(m/k)   ·   T = 2π√(L/g)',
+    ),
+    LearnCard(
+      'Tork ve denge',
+      'Dönme etkisi kuvvet ile dönme eksenine dik uzaklığın çarpımıdır. Dengede net kuvvet ve net tork sıfırdır.',
+      formula: 'τ = F·d',
+    ),
+    LearnCard(
+      'Elektrik alan ve Coulomb',
+      'Yükler arasındaki kuvvet yüklerin çarpımıyla doğru, aradaki uzaklığın karesiyle ters orantılıdır.',
+      formula: 'F = k·q₁·q₂/d²   ·   E = k·q/d²',
+    ),
+    LearnCard(
+      'Kondansatör',
+      'Sığa, levhaların alanı ve aradaki yalıtkanla artar, levhalar arası uzaklıkla azalır; gerilime bağlı değildir.',
+      formula: 'Q = C·V   ·   E = ½·C·V²',
+    ),
+    LearnCard(
+      'Manyetizma ve indüksiyon',
+      'Akım taşıyan tele manyetik alanda kuvvet etki eder. Manyetik akı değişimi emk oluşturur.',
+      formula: 'F = B·I·L   ·   ε = B·L·v',
+    ),
+    LearnCard(
+      'Transformatör',
+      'Alternatif akımla çalışır. Gerilimler sarım sayılarıyla doğru, akımlar ters orantılıdır.',
+      formula: 'V₁/V₂ = N₁/N₂',
+    ),
+    LearnCard(
+      'Fotoelektrik olay',
+      'Sökülen elektronların enerjisi ışığın frekansına, sayısı ise ışığın şiddetine bağlıdır.',
+      formula: 'E(foton) = h·f = W + E(k,max)',
+    ),
+    LearnCard(
+      'Radyoaktivite',
+      'Her yarı ömürde bozunmamış madde yarıya iner. Alfa: helyum çekirdeği · Beta: elektron · Gama: elektromanyetik dalga.',
+      formula: 'm = m₀ / 2ⁿ',
+    ),
+  ],
+  'AYT_KIM': [
+    LearnCard(
+      'İdeal gaz denklemi',
+      'Normal şartlarda (0 °C, 1 atm) 1 mol gaz 22,4 L hacim kaplar. Sabit sıcaklıkta basınç ile hacim ters orantılıdır.',
+      formula: 'P·V = n·R·T   ·   P₁V₁ = P₂V₂',
+    ),
+    LearnCard(
+      'Molarite',
+      'Bir litre çözeltide çözünen maddenin mol sayısıdır. Su eklenirse mol sayısı değişmez, derişim azalır.',
+      formula: 'M = n / V   ·   M₁V₁ = M₂V₂',
+    ),
+    LearnCard(
+      'Koligatif özellikler',
+      'Uçucu olmayan madde eklenen çözeltide kaynama noktası yükselir, donma noktası düşer, buhar basıncı azalır.',
+    ),
+    LearnCard(
+      'pH ve pOH',
+      '25 °C\'de pH + pOH = 14. pH < 7 asidik, pH = 7 nötr, pH > 7 baziktir.',
+      formula: 'pH = −log[H⁺]',
+    ),
+    LearnCard(
+      'Denge sabiti',
+      'Ürünlerin derişimleri çarpımının girenlerinkine oranıdır; katı ve saf sıvılar yazılmaz. Kc yalnızca sıcaklıkla değişir.',
+      formula: 'aA + bB ⇌ cC  →  Kc = [C]ᶜ / ([A]ᵃ[B]ᵇ)',
+    ),
+    LearnCard(
+      'Le Chatelier ilkesi',
+      'Dengedeki sisteme yapılan etkiyi azaltacak yönde kayma olur. Ekzotermik tepkimede sıcaklık artarsa denge girenlere kayar.',
+    ),
+    LearnCard(
+      'Tepkime hızı',
+      'Hız derişim, sıcaklık, temas yüzeyi ve katalizörle artar. Katalizör aktifleşme enerjisini düşürür, ΔH\'yi değiştirmez.',
+      formula: 'Hız = k·[A]ᵐ·[B]ⁿ',
+    ),
+    LearnCard(
+      'Hess yasası',
+      'Tepkime ters çevrilirse ΔH\'nin işareti değişir; katsayılarla çarpılırsa ΔH de aynı sayıyla çarpılır.',
+      formula: 'ΔH(toplam) = ΔH₁ + ΔH₂ + …',
+    ),
+    LearnCard(
+      'Elektrokimya',
+      'Anotta yükseltgenme, katotta indirgenme olur. 1 Faraday (96 500 C) yük 1 mol elektrona karşılık gelir.',
+      formula: 'n(metal) = yük (F) / iyon değerliği',
+    ),
+    LearnCard(
+      'Organik bileşikler',
+      'Alkan CₙH₂ₙ₊₂ (tekli bağ) · Alken CₙH₂ₙ (ikili bağ) · Alkin CₙH₂ₙ₋₂ (üçlü bağ) · Alkol –OH · Karboksilik asit –COOH.',
+    ),
+    LearnCard(
+      'Periyodik özellikler',
+      'Periyotta soldan sağa atom yarıçapı azalır, iyonlaşma enerjisi ve elektronegatiflik artar. Grupta aşağı inildikçe yarıçap artar.',
+    ),
+  ],
+  'AYT_BIY': [
+    LearnCard(
+      'Bağımsız genler',
+      'Her gen ayrı çaprazlanır, olasılıklar çarpılır. n heterozigot gen 2ⁿ çeşit gamet oluşturur.',
+      formula: 'AaBb × AaBb  →  9 : 3 : 3 : 1',
+    ),
+    LearnCard(
+      'Kan grupları',
+      'A ve B alelleri eş baskın, 0 aleli çekiniktir. A0 × B0 çaprazlamasından dört kan grubu da çıkabilir.',
+    ),
+    LearnCard(
+      'Eşeye bağlı kalıtım',
+      'Renk körlüğü ve hemofili X kromozomunda taşınır. Erkek çocuk X\'ini anneden aldığı için hastalık erkeklerde daha sık görülür.',
+    ),
+    LearnCard(
+      'Hardy-Weinberg dengesi',
+      'Büyük, rastgele çiftleşen ve göç, mutasyon, seçilim olmayan popülasyonda alel frekansları kuşaktan kuşağa değişmez.',
+      formula: 'p + q = 1   ·   p² + 2pq + q² = 1',
+    ),
+    LearnCard(
+      'Protein sentezi',
+      'Transkripsiyonda DNA\'dan mRNA yapılır, translasyonda ribozomda protein sentezlenir. Her amino asit üç nükleotitlik bir kodonla şifrelenir.',
+      formula: 'n amino asit → n − 1 peptit bağı',
+    ),
+    LearnCard(
+      'Hücresel solunum',
+      'Glikoliz sitoplazmada, Krebs döngüsü mitokondri matriksinde, ETS mitokondri iç zarında gerçekleşir. Son elektron alıcısı oksijendir.',
+    ),
+    LearnCard(
+      'Fotosentez',
+      'Işığa bağımlı tepkimeler tilakoit zarlarında, Calvin döngüsü stromada gerçekleşir. Suyun parçalanmasıyla O₂ açığa çıkar.',
+      formula: '6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂',
+    ),
+    LearnCard(
+      'Endokrin sistem',
+      'İnsülin kan şekerini düşürür, glukagon yükseltir. Kalsitonin kandaki kalsiyumu düşürür, parathormon yükseltir.',
+    ),
+    LearnCard(
+      'Sinir sistemi',
+      'Beyincik denge ve kas uyumu, omurilik soğanı solunum ve kalp atışı, hipotalamus vücut sıcaklığı ve susuzluk merkezidir.',
+    ),
+    LearnCard(
+      'Dolaşım',
+      'Sol karıncık kanı aort ile vücuda, sağ karıncık akciğer atardamarı ile akciğerlere pompalar. Akciğer toplardamarı temiz kan taşır.',
+    ),
+    LearnCard(
+      'Enerji akışı',
+      'Besin zincirinde her basamağa önceki basamaktaki enerjinin yaklaşık %10\'u aktarılır; gerisi ısı olarak kaybolur.',
+    ),
+  ],
+  'AYT_EDB': [
+    LearnCard(
+      'Tanzimat edebiyatı',
+      'Şinasi, Namık Kemal, Ziya Paşa (I. kuşak: toplum için sanat) · Recaizade Mahmut Ekrem, Abdülhak Hamit, Samipaşazade Sezai (II. kuşak: sanat için sanat).',
+    ),
+    LearnCard(
+      'Servet-i Fünun',
+      'Sanat için sanat; ağır, süslü dil; aruz ölçüsü; bireysel konular. Tevfik Fikret, Cenap Şahabettin, Halit Ziya Uşaklıgil, Mehmet Rauf.',
+    ),
+    LearnCard(
+      'Millî Edebiyat',
+      'Sade Türkçe, hece ölçüsü, Anadolu ve millî konular. Ömer Seyfettin, Ziya Gökalp, Mehmet Emin Yurdakul; Beş Hececiler de bu çizgidedir.',
+    ),
+    LearnCard(
+      'Cumhuriyet dönemi şiiri',
+      'Garip (Orhan Veli, Oktay Rifat, Melih Cevdet): ölçü-kafiye ve söz sanatlarını reddeder. İkinci Yeni (Cemal Süreya, Edip Cansever, Turgut Uyar): imge ve kapalı anlatım.',
+    ),
+    LearnCard(
+      'Divan nazım biçimleri',
+      'Gazel: aa ba ca, aşk · Kaside: övgü, nesib-girizgâh-methiye-fahriye-dua · Mesnevi: aa bb cc, uzun konular · Rubai: aaxa, felsefi · Tuyuğ: Türklere özgü.',
+    ),
+    LearnCard(
+      'Halk şiiri biçimleri',
+      'Koşma: 11\'li hece, lirik · Semai ve varsağı: 8\'li hece · Mani: 7\'li hece, aaxa · Destan: toplumsal olaylar · Taşlama: eleştiri.',
+    ),
+    LearnCard(
+      'Hece ölçüsü',
+      'Dizedeki hece sayısı ünlü sayısına eşittir. Koşma 11, semai 8, mani 7 hecelidir.',
+    ),
+    LearnCard(
+      'Söz sanatları I',
+      'Teşbih: benzetme · İstiare: tek ögeyle benzetme · Teşhis: kişileştirme · İntak: konuşturma · Mübalağa: abartma · Tezat: karşıtlık.',
+    ),
+    LearnCard(
+      'Söz sanatları II',
+      'Tecahül-i arif: bilmezlikten gelme · Hüsn-i talil: güzel neden bulma · Telmih: hatırlatma · Kinaye: hem gerçek hem mecaz · Tevriye: uzak anlamı kastetme.',
+    ),
+    LearnCard(
+      'Edebiyatımızda ilkler',
+      'İlk yerli roman: Taaşşuk-ı Talat ve Fitnat · İlk tiyatro: Şair Evlenmesi · İlk edebî roman: İntibah · İlk realist roman: Araba Sevdası · İlk psikolojik roman: Eylül.',
+    ),
+    LearnCard(
+      'Batı akımları',
+      'Klasisizm: Racine, Molière · Romantizm: Victor Hugo · Realizm: Balzac, Flaubert · Natüralizm: Zola · Parnasizm: Leconte de Lisle · Sembolizm: Baudelaire, Mallarmé.',
+    ),
+    LearnCard(
+      'Düşünce yazıları',
+      'Deneme: kesin yargı yok, samimi · Makale: kanıta dayalı · Fıkra: güncel ve kısa · Sohbet: okurla konuşur gibi · Eleştiri: eseri değerlendirir.',
+    ),
+  ],
+  'AYT_TAR1': [
+    LearnCard(
+      'İslam tarihi',
+      '622 Hicret · 624 Bedir · 625 Uhud · 627 Hendek · 628 Hudeybiye · 630 Mekke\'nin fethi. Dört halife: Ebubekir, Ömer, Osman, Ali.',
+    ),
+    LearnCard(
+      'Türk-İslam devletleri',
+      'Karahanlılar: ilk Müslüman Türk devleti · Gazneliler: Hindistan seferleri · Büyük Selçuklu: Malazgirt (1071), Nizamiye Medreseleri.',
+    ),
+    LearnCard(
+      'Osmanlı kuruluş ve yükselme',
+      'Osman Bey (1299) · Orhan Bey: ilk düzenli ordu · I. Murad: Yeniçeri Ocağı · Fatih: İstanbul (1453) · Yavuz: halifelik · Kanuni: en geniş sınırlar.',
+    ),
+    LearnCard(
+      'Osmanlı toprak sistemi',
+      'Tımar: vergi geliri asker yetiştirme karşılığında verilir. Zamanla yerini iltizam ve malikane sistemine bırakır.',
+    ),
+    LearnCard(
+      'Divan-ı Hümayun',
+      'Sadrazam: padişahın vekili · Kazasker: adalet ve eğitim · Defterdar: maliye · Nişancı: tuğra ve tapu · Şeyhülislam: fetva.',
+    ),
+    LearnCard(
+      'XVII. yüzyıl',
+      'Zitvatorok (1606) ile Avusturya\'ya üstünlük kaybedilir. Kandiye\'nin fethi (1669) ve Bucaş (1672) ile en geniş sınırlara ulaşılır.',
+    ),
+    LearnCard(
+      'XVIII. yüzyıl ıslahatları',
+      'Lale Devri ve ilk matbaa (III. Ahmet) · Nizam-ı Cedit ordusu (III. Selim). Küçük Kaynarca (1774) ile Kırım\'ın bağımsızlığı kabul edilir.',
+    ),
+    LearnCard(
+      'XIX. yüzyıl',
+      'Sened-i İttifak (1808) · Yeniçeri Ocağı\'nın kaldırılması (1826) · Tanzimat (1839) · Islahat (1856) · I. Meşrutiyet (1876).',
+    ),
+    LearnCard(
+      'Avrupa\'da dönüşüm',
+      'Coğrafi Keşifler (1492 Amerika) · Rönesans ve Reform (1517 Luther) · Westphalia (1648) · Fransız İhtilali (1789): milliyetçilik ve eşitlik fikirleri.',
+    ),
+    LearnCard(
+      'Osmanlı\'nın dağılması',
+      'Balta Limanı (1838) ile ekonomik bağımlılık · Duyun-ı Umumiye (1881) · 31 Mart Vakası (1909) · Trablusgarp (1911) ve Balkan Savaşları.',
+    ),
+  ],
+  'AYT_COG1': [
+    LearnCard(
+      'Nüfus yoğunlukları',
+      'Aritmetik: nüfus / yüz ölçümü · Fizyolojik: nüfus / tarım alanı · Tarımsal: tarımla geçinen nüfus / tarım alanı.',
+    ),
+    LearnCard(
+      'Doğal nüfus artışı',
+      'Doğum ve ölüm oranları binde (‰) verilir; farkın onda biri yüzdelik artış hızıdır.',
+      formula: '(‰ doğum − ‰ ölüm) / 10 = % artış',
+    ),
+    LearnCard(
+      'Sıcaklık ve yükselti',
+      'Yükseldikçe sıcaklık her 200 m\'de yaklaşık 1 °C azalır. Yıllık sıcaklık farkı en sıcak ve en soğuk ay ortalamaları arasındaki farktır.',
+    ),
+    LearnCard(
+      'Nüfus piramitleri',
+      'Geniş tabanlı piramit genç ve hızlı artan nüfusu, dar tabanlı piramit yaşlanan nüfusu gösterir.',
+    ),
+    LearnCard(
+      'Biyomlar',
+      'Tundra: yosun-liken · Tayga: iğne yapraklı · Step: kısa otlar · Savan: uzun otlar · Maki: Akdeniz çalıları · Yağmur ormanı: en zengin tür çeşitliliği.',
+    ),
+    LearnCard(
+      'Türkiye\'de tarım ürünleri',
+      'Fındık ve çay: Karadeniz · Zeytin ve incir: Ege · Muz ve turunçgil: Akdeniz · Antep fıstığı ve mercimek: Güneydoğu · Kayısı: Malatya.',
+    ),
+    LearnCard(
+      'Türkiye\'de madenler',
+      'Taşkömürü: Zonguldak · Petrol: Batman · Demir: Divriği · Krom: Guleman · Bakır: Murgul · Bor: Balıkesir-Eskişehir-Kütahya.',
+    ),
+    LearnCard(
+      'Barajlar',
+      'Fırat: Atatürk, Keban, Karakaya · Kızılırmak: Hirfanlı, Altınkaya · Sakarya: Sarıyar · Çoruh: Deriner, Yusufeli.',
+    ),
+    LearnCard(
+      'Kalkınma projeleri',
+      'GAP: Güneydoğu Anadolu · DAP: Doğu Anadolu · DOKAP: Doğu Karadeniz · KOP: Konya Ovası · ZBK: Zonguldak-Bartın-Karabük.',
+    ),
+    LearnCard(
+      'Tarım türleri',
+      'Ekstansif: doğaya bağlı, verimi düşük · Entansif: modern teknikli, verimi yüksek · Plantasyon: geniş alanda tek ürün.',
+    ),
+  ],
+  'AYT_TAR2': [
+    LearnCard(
+      'İki savaş arası',
+      '1917 Rus İhtilali · 1929 Dünya Ekonomik Bunalımı · 1922 Mussolini ve 1933 Hitler iktidara gelir: totaliter rejimler yükselir.',
+    ),
+    LearnCard(
+      'II. Dünya Savaşı',
+      '1939\'da başlar, 1945\'te biter. Türkiye savaşın sonuna kadar denge politikası izler. Savaş sonrası BM kurulur (1945).',
+    ),
+    LearnCard(
+      'Soğuk Savaş başlıyor',
+      'Truman Doktrini (1947) ve Marshall Planı ile ABD Avrupa\'yı destekler. NATO (1949) ve Varşova Paktı (1955) karşı karşıya gelir.',
+    ),
+    LearnCard(
+      'Türkiye ve Batı',
+      'Kore Savaşı\'na asker gönderen Türkiye 1952\'de NATO\'ya girer. 1963 Ankara Antlaşması ile AET\'ye ortak olur.',
+    ),
+    LearnCard(
+      'Yumuşama dönemi',
+      'Küba Füze Krizi (1962) sonrası iki blok gerginliği azaltır. Helsinki Nihai Senedi (1975) bu dönemin simgesidir.',
+    ),
+    LearnCard(
+      'Kıbrıs meselesi',
+      'Kıbrıs Cumhuriyeti 1960\'ta kurulur. Johnson Mektubu (1964), Kıbrıs Barış Harekâtı (1974) ve KKTC\'nin kurulması (1983).',
+    ),
+    LearnCard(
+      'Türkiye\'de demokrasi',
+      '1946 çok partili hayat · 1950 Demokrat Parti iktidarı · 1960, 1971, 1980 askerî müdahaleler · 1961 ve 1982 anayasaları.',
+    ),
+    LearnCard(
+      'Soğuk Savaş\'ın sonu',
+      'Gorbaçov\'un glasnost ve perestroykası · 1989 Berlin Duvarı\'nın yıkılması · 1991 SSCB\'nin dağılması ve Türk cumhuriyetlerinin bağımsızlığı.',
+    ),
+    LearnCard(
+      'Küreselleşme',
+      'Maastricht (1992) ile AB kurulur. Türkiye 1996\'da Gümrük Birliği\'ne girer, 1999\'da aday ülke olur. 2001 11 Eylül saldırıları.',
+    ),
+    LearnCard(
+      'Dekolonizasyon',
+      'Hindistan (1947), Çin Halk Cumhuriyeti (1949) ve Afrika ülkeleri bağımsızlığını kazanır. Bağlantısızlar Hareketi iki bloktan uzak durur.',
+    ),
+  ],
+  'AYT_COG2': [
+    LearnCard(
+      'Yerel saat',
+      'Dünya 1°\'lik boylamı 4 dakikada döner. Doğudaki yerin yerel saati ileridedir.',
+      formula: '1° = 4 dakika   ·   15° = 1 saat',
+    ),
+    LearnCard(
+      'Önemli boğazlar',
+      'Cebelitarık: Akdeniz-Atlas · Hürmüz: Basra Körfezi-Umman · Malakka: Hint-Büyük Okyanus · Bering: Asya-Kuzey Amerika.',
+    ),
+    LearnCard(
+      'Kanallar',
+      'Süveyş Kanalı Akdeniz\'i Kızıldeniz\'e, Panama Kanalı Atlas Okyanusu\'nu Büyük Okyanus\'a bağlar; deniz yolunu büyük ölçüde kısaltır.',
+    ),
+    LearnCard(
+      'Kıtaların yer şekilleri',
+      'Asya: Himalayalar, Gobi · Afrika: Nil, Sahra, Atlas · Güney Amerika: Amazon, And · Kuzey Amerika: Mississippi, Kayalık Dağlar · Avrupa: Alpler, Tuna.',
+    ),
+    LearnCard(
+      'Uluslararası örgütler',
+      'NATO: ortak savunma · OPEC: petrol politikası · AB: ekonomik ve siyasi birlik · UNESCO: eğitim, bilim, kültür · Türk Devletleri Teşkilatı.',
+    ),
+    LearnCard(
+      'Enerji kaynakları',
+      'Yenilenebilir: güneş, rüzgâr, jeotermal, hidroelektrik, biyokütle · Yenilenemez: kömür, petrol, doğal gaz, uranyum.',
+    ),
+    LearnCard(
+      'Doğal afetler',
+      'Deprem: kırılmalar · Heyelan: yamaç kayması · Çığ: kar kütlesi kayması · Tsunami: deniz tabanı kaynaklı dev dalgalar · Erozyon: toprak taşınması.',
+    ),
+    LearnCard(
+      'Afetlerden korunma',
+      'Depreme dayanıklı yapı, fay hatlarından uzak yerleşim, ağaçlandırma (erozyon ve heyelan), dere yataklarına yapı yapmamak (sel).',
+    ),
+    LearnCard(
+      'Küresel iklim değişimi',
+      'Sera gazlarının artması küresel ısınmaya yol açar; buzullar erir, deniz seviyesi yükselir, kuraklık artar.',
+    ),
+    LearnCard(
+      'Jeopolitik konum',
+      'Türkiye; boğazları, Asya-Avrupa geçişi ve enerji koridorları üzerindeki konumuyla jeopolitik açıdan önemlidir.',
+    ),
+  ],
+  'AYT_FELG': [
+    LearnCard(
+      'Mantık bağlaçları',
+      '∧ (ve): ikisi de doğruysa doğru · ∨ (veya): biri doğruysa doğru · → (ise): yalnız 1 → 0 yanlış · ↔ (ancak ve ancak): değerler aynıysa doğru.',
+    ),
+    LearnCard(
+      'Akıl yürütme',
+      'Tümdengelim: genelden özele, sonuç zorunlu · Tümevarım: özelden genele · Analoji: benzerlikten sonuç çıkarma.',
+    ),
+    LearnCard(
+      'Psikoloji ekolleri',
+      'Yapısalcılık: Wundt · İşlevselcilik: James · Davranışçılık: Watson, Skinner · Gestalt: Wertheimer · Psikanaliz: Freud · Hümanist: Maslow, Rogers.',
+    ),
+    LearnCard(
+      'Savunma mekanizmaları',
+      'Yansıtma: kendi duygusunu başkasına yükleme · Mantığa bürüme: bahane bulma · Yüceltme: dürtüyü değerli işe yönlendirme · Yer değiştirme: öfkeyi başka hedefe yöneltme.',
+    ),
+    LearnCard(
+      'Öğrenme',
+      'Klasik koşullanma (Pavlov): uyarıcıların eşleşmesi · Edimsel koşullanma (Skinner): pekiştirme ve ceza ile öğrenme.',
+    ),
+    LearnCard(
+      'Piaget\'nin dönemleri',
+      'Duyusal-motor (0-2) · İşlem öncesi (2-7) · Somut işlemler (7-11) · Soyut işlemler (11+).',
+    ),
+    LearnCard(
+      'Sosyolojinin kurucuları',
+      'Comte: "sosyoloji" terimi, pozitivizm · Durkheim: mekanik ve organik dayanışma · Weber: anlayıcı sosyoloji · İbn Haldun: umran ilmi.',
+    ),
+    LearnCard(
+      'Toplumsal yapı',
+      'Statü: toplumdaki konum · Rol: statüden beklenen davranış · Norm: davranış kuralları · Dikey hareketlilik: tabakalar arası geçiş.',
+    ),
+    LearnCard(
+      'Bilgi felsefesi',
+      'Rasyonalizm: bilginin kaynağı akıl (Descartes) · Empirizm: deneyim (Locke) · Kritisizm: akıl ve deneyim birlikte (Kant) · Sezgicilik: Bergson.',
+    ),
+    LearnCard(
+      'Ahlak felsefesi',
+      'Hazcılık: Epikür · Faydacılık: Bentham, Mill · Ödev ahlakı: Kant · Varoluşçuluk: Sartre — insan önce var olur, sonra kendini yapar.',
+    ),
+  ],
+  'AYT_DIN': [
+    LearnCard(
+      'Hint ve Çin dinleri',
+      'Hinduizm: Vedalar, kast sistemi · Budizm: Buda, Nirvana · Taoizm: Lao Tzu · Konfüçyüsçülük: Konfüçyüs, atalara saygı · Şintoizm: Japonya, kami.',
+    ),
+    LearnCard(
+      'Yahudilik',
+      'Kutsal kitap Tevrat, yorumları Talmud. İbadet yeri sinagog; Cumartesi (Sebt) kutsal gündür.',
+    ),
+    LearnCard(
+      'Hristiyanlık',
+      'Kutsal kitap İncil, ibadet yeri kilise. Katoliklik (Papa, Vatikan), Ortodoksluk ve Protestanlık (Luther) başlıca mezheplerdir.',
+    ),
+    LearnCard(
+      'İtikadi mezhepler',
+      'İnanç konularındaki yorum farklılıklarıdır. Maturidilik (Ebu Mansur el-Maturidi) ve Eşarilik (Ebu\'l-Hasan el-Eşari).',
+    ),
+    LearnCard(
+      'Fıkhi mezhepler',
+      'İbadet ve muamelattaki yorumlardır. Hanefilik (Ebu Hanife), Şafiilik, Malikilik, Hanbelilik; Caferilik.',
+    ),
+    LearnCard(
+      'Tasavvufi yorumlar',
+      'Yesevilik: Ahmet Yesevi · Mevlevilik: Mevlana · Bektaşilik: Hacı Bektaş Veli · Nakşibendilik: Bahaeddin Nakşibend · Kadirilik: Abdülkadir Geylani.',
+    ),
+    LearnCard(
+      'Allah\'ın sıfatları',
+      'Zati: Vücud, Kıdem, Beka, Vahdaniyet, Muhalefetün li\'l-havadis, Kıyam bi-nefsihi · Subuti: Hayat, İlim, Semi, Basar, İrade, Kudret, Kelam, Tekvin.',
+    ),
+    LearnCard(
+      'Kur\'an-ı Kerim',
+      '114 sure, 30 cüz. İlk sure Fatiha, en uzun Bakara, son Nas. Hz. Ebubekir döneminde kitap hâline getirildi, Hz. Osman döneminde çoğaltıldı.',
+    ),
+    LearnCard(
+      'Hadis kaynakları',
+      'Kütüb-i Sitte: Buhari, Müslim, Ebu Davud, Tirmizi, Nesai ve İbn Mace\'nin derlediği altı temel hadis kitabı.',
+    ),
+    LearnCard(
+      'Ahlak kavramları',
+      'Takva: Allah\'tan sakınma · İhsan: Allah\'ı görüyormuş gibi kulluk · İsar: başkasını kendine tercih etme · Zühd: dünyaya gönül bağlamama.',
+    ),
+  ],
 };

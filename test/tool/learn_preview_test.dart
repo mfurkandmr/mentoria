@@ -143,6 +143,16 @@ void main() {
     await tester.tap(find.text(q.options[(q.answer + 1) % 5]));
     await grab();
 
+    // AYT sekmesi ve bir AYT sorusu.
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('AYT'));
+    await grab();
+    await tester.tap(find.text('Fizik'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Soru çöz'));
+    await grab();
+
     final w = frames.first.width.toDouble();
     final h = frames.first.height.toDouble();
     final n = frames.length;

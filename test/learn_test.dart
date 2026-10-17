@@ -27,7 +27,7 @@ void main() {
   group('soru havuzu (telifsiz, özgün)', () {
     test('her ders: havuz = günlük hak × 30, geçerli ve benzersiz sorular', () {
       final idPattern = RegExp(
-        r'^TYT_[A-Z]{3}-[0-9]{4}$',
+        r'^(TYT|AYT)_[A-Z0-9]{3,4}-[0-9]{4}$',
       ); // sunucudaki CHECK ile aynı
       var total = 0;
       for (final s in practiceSubjects) {
@@ -60,7 +60,7 @@ void main() {
         }
         total += qs.length;
       }
-      expect(total, 3300);
+      expect(total, 7200, reason: 'TYT 3300 + AYT 3900');
     });
 
     test('her dersin bilgi kartları var', () {

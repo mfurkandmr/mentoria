@@ -2,8 +2,8 @@
 
     python tool/questions/make_questions.py assets/learn/questions
 
-Havuz büyüklüğü = günlük hak × 30: Türkçe ve Matematik 20 × 30 = 600, diğer
-TYT dersleri 10 × 30 = 300. Üretim sabit tohumla yapılır; her çalıştırmada
+Havuz büyüklüğü = günlük hak × 30: TYT Türkçe, TYT/AYT Matematik ve AYT
+Edebiyat 20 × 30 = 600, diğer dersler 10 × 30 = 300. Üretim sabit tohumla yapılır; her çalıştırmada
 aynı sorular çıkar (soru kimlikleri değişmez, öğrencinin geçmişi bozulmaz).
 """
 import json
@@ -12,6 +12,17 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 
+import ayt_biy  # noqa: E402
+import ayt_cog1  # noqa: E402
+import ayt_cog2  # noqa: E402
+import ayt_din  # noqa: E402
+import ayt_edb  # noqa: E402
+import ayt_felg  # noqa: E402
+import ayt_fiz  # noqa: E402
+import ayt_kim  # noqa: E402
+import ayt_mat  # noqa: E402
+import ayt_tar1  # noqa: E402
+import ayt_tar2  # noqa: E402
 import biy  # noqa: E402
 import cog  # noqa: E402
 import din  # noqa: E402
@@ -23,8 +34,10 @@ import tar  # noqa: E402
 import tur  # noqa: E402
 from common import build  # noqa: E402
 
-DAILY = {'TYT_TUR': 20, 'TYT_MAT': 20}
-MODULES = [tur, mat, fiz, kim, biy, tar, cog, fel, din]
+DAILY = {'TYT_TUR': 20, 'TYT_MAT': 20, 'AYT_MAT': 20, 'AYT_EDB': 20}
+# Sıra değişmemeli: tohum sıraya bağlı (TYT kimlikleri sabit kalsın).
+MODULES = [tur, mat, fiz, kim, biy, tar, cog, fel, din,
+           ayt_mat, ayt_fiz, ayt_kim, ayt_biy, ayt_edb, ayt_tar1, ayt_cog1, ayt_tar2, ayt_cog2, ayt_felg, ayt_din]
 
 
 def validate(code, items):

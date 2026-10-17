@@ -1121,3 +1121,31 @@ Din Kültürü):
 - Testler: `test/learn_daily_test.dart`. Önizleme:
   `flutter test test/tool/daily_question_preview_test.dart` →
   `build/daily_question_preview.png`.
+
+## 27. Eğitim: AYT dersleri
+
+- Eğitim sekmesinin üstünde **TYT | AYT** seçimi. AYT'de 11 ders: Matematik,
+  Fizik, Kimya, Biyoloji, Türk Dili ve Edebiyatı, Tarih-1, Coğrafya-1,
+  Tarih-2, Coğrafya-2, Felsefe Grubu, Din Kültürü.
+- **Günlük hak:** AYT Matematik ve AYT Edebiyat 20, diğerleri 10 (AYT'de
+  günde 130). Sunucu: `20261018220000_practice_ayt` (ders kodu ve soru
+  kimliği kısıtları genişledi, `practice_daily_limit` güncellendi).
+- **Havuz = hak × 30:** 2 × 600 + 9 × 300 = **3.900 AYT sorusu**; toplam
+  7.200 (`assets/learn/questions/AYT_*.json`). Üretici:
+  `tool/questions/ayt_*.py`. TYT modüllerinden sonra çalışır, TYT
+  kimlikleri değişmedi.
+  - Sayısal derslerde (logaritma, polinom, türev, integral, karmaşık sayı,
+    olasılık; Newton, atışlar, kondansatör, indüksiyon, fotoelektrik; gaz,
+    molarite, pH, Kc, Hess, Faraday; genetik olasılıklar, Hardy-Weinberg,
+    mRNA) cevaplar hesaplanır.
+  - Mantıkta doğruluk değeri soruları ifade ağacıyla hesaplanır.
+  - Edebiyattaki hece sayısı soruları özgün dizelerden sayılır.
+  - Sözel dersler yazar-eser, dönem, kavram ve kronoloji tablolarından
+    üretilir. Ortak yardımcılar `common.py` içinde: `relation_gens`,
+    `define_gens`, `chrono_gens`, `fact_gen`.
+- 116 yeni AYT bilgi kartı (`learn_cards.dart`).
+- Ders adları karışmasın diye `practiceSubjectLabel()` kullanılıyor: koç
+  karnesi ve başlıklarda "AYT Matematik" yazılır.
+- Günün Sorusu yalnızca TYT derslerinden gelir (9 günlük döngü).
+- Sorular bir öğretmen tarafından gözden geçirilmeli; özellikle sözel
+  tabloların sınıflandırmaları.
