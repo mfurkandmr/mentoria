@@ -3,8 +3,8 @@
 Bu dosya, son iki büyük özelliğin (white label ve öğrenci avatarı) ne yaptığını,
 nasıl çalıştığını ve nelere dikkat edilmesi gerektiğini anlatır.
 
-> **Güncel durum (17 Ekim 2026):** Depodaki 33 migration'ın hepsi canlı
-> projede (`lmbykdvvxormfiaomysn`; Günün Sorusu ve AYT dahil). `send-push` sürüm 5 canlı ve
+> **Güncel durum (17 Ekim 2026):** Depodaki 34 migration'ın hepsi canlı
+> projede (`lmbykdvvxormfiaomysn`; Günün Sorusu, AYT ve düello dahil). `send-push` sürüm 6 canlı ve
 > depodakiyle aynı; Vault'ta `push_function_url` / `push_webhook_secret` var.
 > `meeting-reminders` cron işi çalışıyor (hatasız). **Telefon bildirimi gerçek
 > cihazda doğrulandı:** 19:10'da bir görüşme hatırlatması FCM'e iletildi
@@ -1153,8 +1153,9 @@ Din Kültürü):
 ## 28. Arkadaş düellosu
 
 `20261018230000_duels` (geri alma: `…_duels.down.sql`, test: `duels_test.mjs`).
-**Henüz canlıda değil.** Canlıya alırken send-push yeniden deploy edilmeli
-(sürüm 6: `duel`, `duel_result`).
+**Canlıda** (send-push sürüm 6: `duel`, `duel_result`). Canlıdaki cevap
+anahtarı ders başına bir rakam dizisiyle yüklendi; 7.200 satır, md5 yerel
+havuzla aynı. Havuz değişirse canlıdaki anahtar da yenilenmeli.
 
 - **Akış:**
   - Eğitim sekmesinin başındaki turuncu karttan ya da `/student/duels`
