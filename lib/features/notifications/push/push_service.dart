@@ -154,6 +154,7 @@ class PushService {
           '/student/mistakes',
           '/student/daily',
           '/student/duels',
+          '/student/plan',
         }.contains(route)
         ? router.push(route)
         : router.go(route);

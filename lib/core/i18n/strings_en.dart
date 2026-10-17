@@ -1472,6 +1472,9 @@ const enStrings = <String, String>{
       '{subject}: +{n} nets (1 net ≈ {c} points)',
 
   // Haftalık plan
+  'Haftalık planın hazır 📅': 'Your weekly plan is ready 📅',
+  '{from} {week} haftasının planını hazırladı. Göz at, yaptıkça işaretle!':
+      '{from} has prepared your plan for the week of {week}. Take a look and tick items off as you go!',
   'Bugünün planı': 'Today’s plan',
   'Hafta %{p}': 'Week {p}%',
   'Bugün için madde yok. Haftanın planına bak.':
@@ -1494,8 +1497,7 @@ const enStrings = <String, String>{
   'Madde yok': 'No items',
   'Soru 1-1000, süre 5-600 dakika olmalı.':
       'Questions must be 1-1000 and time 5-600 minutes.',
-  'Bir güne en çok 12 madde eklenebilir.':
-      'A day can have at most 12 items.',
+  'Bir güne en çok 12 madde eklenebilir.': 'A day can have at most 12 items.',
   'Geçmiş haftalara madde eklenemez.': 'You can’t add items to past weeks.',
   '{day} için madde': 'Item for {day}',
   'ör. Problemler': 'e.g. Word problems',

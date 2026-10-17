@@ -3,8 +3,8 @@
 Bu dosya, son iki büyük özelliğin (white label ve öğrenci avatarı) ne yaptığını,
 nasıl çalıştığını ve nelere dikkat edilmesi gerektiğini anlatır.
 
-> **Güncel durum (17 Ekim 2026):** Depodaki 35 migration'ın hepsi canlı
-> projede (`lmbykdvvxormfiaomysn`; Günün Sorusu, AYT, düello, plan ve deneme eğilimi dahil). `send-push` sürüm 6 canlı ve
+> **Güncel durum (17 Ekim 2026):** Depodaki 36 migration'ın hepsi canlı
+> projede (`lmbykdvvxormfiaomysn`; Günün Sorusu, AYT, düello, plan ve deneme eğilimi dahil). `send-push` sürüm 7 canlı ve
 > depodakiyle aynı; Vault'ta `push_function_url` / `push_webhook_secret` var.
 > `meeting-reminders` cron işi çalışıyor (hatasız). **Telefon bildirimi gerçek
 > cihazda doğrulandı:** 19:10'da bir görüşme hatırlatması FCM'e iletildi
@@ -1237,7 +1237,10 @@ havuzla aynı. Havuz değişirse canlıdaki anahtar da yenilenmeli.
   - Veli, çocuğunun ekranındaki Plan sekmesinde salt okunur görür.
   - Sunucu kuralları: günde en çok 12 madde, geçmiş haftaya ekleme yok,
     öğrenci maddeyi değiştiremez ve silemez.
-  - Bildirim gönderilmiyor.
+  - **Bildirim** (`20261018250000_plan_notifications`): koç ya da müdür bir
+    haftaya madde ekleyince öğrenciye "Haftalık planın hazır 📅" gider.
+    Aynı hafta için 30 dakikada bir kez gönderilir (kopyalama da tek
+    bildirim); geçmiş hafta için gönderilmez. Test: `plan_notify_test.mjs`.
 - **Son 5 denemede değişim** (`exam_trends`):
   - Koç ve müdür ana sayfasında TYT / AYT seçmeli kart; en çok yükselen ve
     en çok düşen 5 öğrenciyi gösterir.

@@ -33,7 +33,10 @@ enum NotificationKind {
   duel(Icons.sports_kabaddi_rounded),
 
   /// Öğrenciye: düello sonuçlandı.
-  duelResult(Icons.emoji_events_rounded, 'duel_result');
+  duelResult(Icons.emoji_events_rounded, 'duel_result'),
+
+  /// Öğrenciye: koçu haftalık planı hazırladı.
+  plan(Icons.event_note_rounded);
 
   const NotificationKind(this.icon, [this._db]);
   final IconData icon;
@@ -101,6 +104,7 @@ class AppNotification {
       }),
       _ => tr('Düello berabere bitti 🤝'),
     },
+    NotificationKind.plan => tr('Haftalık planın hazır 📅'),
   };
 
   String get body => switch (kind) {
@@ -151,7 +155,17 @@ class AppNotification {
       '{subject} düellosu sonuçlandı. Sonuca bak.',
       {'subject': _subjectName(data['subject'])},
     ),
+    NotificationKind.plan => tr(
+      '{from} {week} haftasının planını hazırladı. Göz at, yaptıkça işaretle!',
+      {'from': data['from'] ?? '', 'week': _weekLabel(data['week'])},
+    ),
   };
+
+  /// "13 Ekim" (haftanın pazartesisi).
+  static String _weekLabel(Object? iso) {
+    final d = DateTime.tryParse('${iso ?? ''}');
+    return d == null ? '' : DateFormat('d MMMM', localeTag).format(d);
+  }
 
   static String _subjectName(Object? code) =>
       code == null ? '' : practiceSubjectLabel('$code');
@@ -190,6 +204,7 @@ class AppNotification {
     NotificationKind.weeklyReport => '${data['route'] ?? '/parent'}',
     NotificationKind.dailyQuestion => '/student/daily',
     NotificationKind.duel || NotificationKind.duelResult => '/student/duels',
+    NotificationKind.plan => '/student/plan',
   };
 
   AppNotification markRead() => AppNotification(

@@ -37,7 +37,7 @@ type NotificationRow = {
   id: string;
   user_id: string;
   kind: 'assignment' | 'exam' | 'task' | 'note' | 'deletion_request' | 'meeting'
-    | 'review' | 'weekly_report' | 'daily_question' | 'duel' | 'duel_result';
+    | 'review' | 'weekly_report' | 'daily_question' | 'duel' | 'duel_result' | 'plan';
   data: Record<string, unknown>;
 };
 
@@ -135,6 +135,17 @@ function texts(n: NotificationRow): { title: string; body: string; route: string
         body: `${subjectName(d.subject)} düellosu sonuçlandı. Sonuca bak.`,
         route: '/student/duels',
       };
+    case 'plan': {
+      const w = new Date(`${s(d.week)}T12:00:00Z`);
+      const week = isNaN(w.getTime())
+        ? ''
+        : w.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', timeZone: 'Europe/Istanbul' });
+      return {
+        title: 'Haftalık planın hazır 📅',
+        body: `${s(d.from)} ${week} haftasının planını hazırladı. Göz at, yaptıkça işaretle!`,
+        route: '/student/plan',
+      };
+    }
   }
 }
 
