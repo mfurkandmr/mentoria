@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/i18n/i18n.dart';
 import '../../auth/data/auth_repository.dart';
+import '../../learn/data/practice_repository.dart';
 import '../../../core/constants/exam_subjects.dart';
 
 enum NotificationKind {
@@ -26,7 +27,13 @@ enum NotificationKind {
   weeklyReport(Icons.auto_awesome_rounded, 'weekly_report'),
 
   /// Öğrenciye: sabah 09.00'da Günün Sorusu.
-  dailyQuestion(Icons.wb_sunny_rounded, 'daily_question');
+  dailyQuestion(Icons.wb_sunny_rounded, 'daily_question'),
+
+  /// Öğrenciye: bir arkadaşı düelloya çağırdı.
+  duel(Icons.sports_kabaddi_rounded),
+
+  /// Öğrenciye: düello sonuçlandı.
+  duelResult(Icons.emoji_events_rounded, 'duel_result');
 
   const NotificationKind(this.icon, [this._db]);
   final IconData icon;
@@ -84,6 +91,16 @@ class AppNotification {
       'child': data['child'] ?? '',
     }),
     NotificationKind.dailyQuestion => tr('Günün Sorusu hazır ☀️'),
+    NotificationKind.duel => tr('{from} seni düelloya çağırdı ⚔️', {
+      'from': data['from'] ?? '',
+    }),
+    NotificationKind.duelResult => switch (data['result']) {
+      'won' => tr('Düelloyu kazandın! 🏆'),
+      'lost' => tr('Düello sonucu: {name} kazandı', {
+        'name': data['opponent'] ?? '',
+      }),
+      _ => tr('Düello berabere bitti 🤝'),
+    },
   };
 
   String get body => switch (kind) {
@@ -126,7 +143,18 @@ class AppNotification {
             ? ''
             : subjectByCode('${data['subject']}').name,
       }),
+    NotificationKind.duel => tr(
+      '{subject} · 10 soru. Aynı soruları çözün, kim daha iyi görelim!',
+      {'subject': _subjectName(data['subject'])},
+    ),
+    NotificationKind.duelResult => tr(
+      '{subject} düellosu sonuçlandı. Sonuca bak.',
+      {'subject': _subjectName(data['subject'])},
+    ),
   };
+
+  static String _subjectName(Object? code) =>
+      code == null ? '' : practiceSubjectLabel('$code');
 
   /// "Yarın 11:00 · Ayşe Koç ile görüşmen var"
   String _meetingBody() {
@@ -161,6 +189,7 @@ class AppNotification {
     NotificationKind.review => '/student/mistakes',
     NotificationKind.weeklyReport => '${data['route'] ?? '/parent'}',
     NotificationKind.dailyQuestion => '/student/daily',
+    NotificationKind.duel || NotificationKind.duelResult => '/student/duels',
   };
 
   AppNotification markRead() => AppNotification(

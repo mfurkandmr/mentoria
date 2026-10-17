@@ -1149,3 +1149,45 @@ Din Kültürü):
 - Günün Sorusu yalnızca TYT derslerinden gelir (9 günlük döngü).
 - Sorular bir öğretmen tarafından gözden geçirilmeli; özellikle sözel
   tabloların sınıflandırmaları.
+
+## 28. Arkadaş düellosu
+
+`20261018230000_duels` (geri alma: `…_duels.down.sql`, test: `duels_test.mjs`).
+**Henüz canlıda değil.** Canlıya alırken send-push yeniden deploy edilmeli
+(sürüm 6: `duel`, `duel_result`).
+
+- **Akış:**
+  - Eğitim sekmesinin başındaki turuncu karttan ya da `/student/duels`
+    adresinden açılır.
+  - "Düello başlat" ile ders (TYT ya da AYT) ve aynı dershaneden bir arkadaş
+    seçilir; arkadaşa bildirim gider.
+  - İkisi de aynı 10 soruyu çözer; sorular sunucuda rastgele seçilir.
+- **Kurallar** test başlamadan önce kurallar ekranında gösterilir:
+  - En çok doğru yapan kazanır.
+  - **Doğrular eşitse testi daha kısa sürede bitiren kazanır.**
+  - Süre "Başla"ya basınca başlar; başlayan oyuncu 30 dakika içinde
+    bitirmelidir.
+  - Soruyu cevaplayınca sonrakine geçilir, geri dönülmez ("Boş geç" var).
+  - Davet 48 saat geçerlidir. Süresi dolan ve iki taraf bitirmemiş düello
+    sonuçsuz kalır.
+- **Hile koruması:**
+  - Puan ve süre istemciden alınmaz. Doğrular sunucudaki cevap anahtarından
+    (`practice_keys`, 7.200 satır) sayılır; süre `start_duel` ile
+    `finish_duel` arası sunucu saatidir.
+  - Sorular "Başla"dan önce görünmez.
+  - Rakibin puanı sen bitirene kadar gizlidir.
+  - Tablolara doğrudan erişim yok; her şey fonksiyonlarla.
+  - Aynı ikili arasında tek açık düello olur; günde en çok 10 davet.
+- **Ödül:**
+  - Yeni kural `{"type": "duel_wins", "count": n}`.
+  - 1 galibiyet: madalya (`acc_duel_medal`), 5: defne tacı (`acc_laurel`),
+    10: şampiyon pelerini (`outfit_champion`).
+  - Parça, kazanan uygulamayı açınca `claim_avatar_unlocks` ile açılır;
+    "yeni parça" bildirimi de böylece çıkar.
+- **Cevap anahtarı havuzla aynı olmalı.** Havuz yeniden üretilirse şu komut
+  da çalıştırılmalı; `duels_test.mjs` farkı yakalar:
+  `python tool/questions/make_keys_sql.py`.
+- **Demo:** Can'dan bekleyen bir davet ve Zeynep'le kazanılmış bir düello
+  var. Demoda rakip, sen bitirince hemen "oynar".
+- **Testler:** `test/duel_test.dart`. Önizleme:
+  `flutter test test/tool/duel_preview_test.dart` → `build/duel_preview.png`.

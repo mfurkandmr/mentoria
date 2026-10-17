@@ -117,6 +117,8 @@ const name = '20261018170000_avatars_more';
 await asSuper();
 await db.query(`insert into public.user_unlocked_items (user_id, item_id, tenant_id) select $1, i, tenant_id from public.profiles, unnest(array[25, 33]::smallint[]) i where id = $1`, [can]);
 await db.query(`update public.profiles set avatar = '{"hair": 25, "skin": 6, "outfit": 33, "accessory": 15}' where id = $1`, [can]);
+// Sonraki migration'lar ters sırayla önce geri alınır (düello ödülleri).
+await db.exec(read(rbDir, '20261018230000_duels.down.sql'));
 await db.exec(read(rbDir, `${name}.down.sql`));
 const after = await one(`select (select avatar from public.profiles where id = $1) e, (select avatar from public.profiles where id = $2) c, (select count(*)::int from public.avatar_items) n`, [elif, can]);
 check(after.n === 17, 'yeni parçalar silindi', after.n);
@@ -127,6 +129,7 @@ check(!(await claim()).length, 'eski kurallarla yeni bir şey açılmaz');
 await asSuper();
 await db.exec(read(migDir, `${name}.sql`));
 check((await one(`select count(*)::int n from public.avatar_items`)).n === 43, 'yeniden uygulandı');
+await db.exec(read(migDir, '20261018230000_duels.sql'));
 await asUser(elif);
 check((await claim()).includes(33), 'yeniden uygulanınca hak edilenler yine açılır');
 

@@ -16,6 +16,7 @@ import '../../auth/data/auth_repository.dart';
 import '../../student/presentation/home_sky.dart';
 import '../data/learn_cards.dart';
 import '../data/practice_repository.dart';
+import '../../duel/presentation/duel_screens.dart';
 import 'notebook_button.dart';
 
 /// Derslerin rengi ve simgesi (AYT dersleri TYT karşılığının rengini alır).
@@ -106,6 +107,8 @@ class _LearnHomeState extends ConsumerState<_LearnHome> {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
             children: [
+              const DuelEntryCard(),
+              const SizedBox(height: 12),
               SegmentedButton<bool>(
                 segments: [
                   ButtonSegment(value: false, label: Text(tr('TYT'))),

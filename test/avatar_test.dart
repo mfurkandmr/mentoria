@@ -115,6 +115,10 @@ void main() {
         const AvatarRule({'type': 'exams', 'count': 5}).describe(),
         '5 denemeye gir',
       );
+      expect(
+        const AvatarRule({'type': 'duel_wins', 'count': 5}).describe(),
+        '5 düello kazan',
+      );
       expect(const AvatarRule({'type': 'uzaylı'}).describe(), 'Yakında');
     });
   });
@@ -123,13 +127,13 @@ void main() {
     final sql = Directory('supabase/migrations')
         .listSync()
         .whereType<File>()
-        .where((f) => f.path.contains('avatars'))
+        .where((f) => f.path.contains('avatars') || f.path.contains('duels'))
         .map((f) => f.readAsStringSync())
         .join('\n');
     final rows = RegExp(
       r"\(\s*\d+,\s*'(hair|skin|outfit|accessory)',\s*'([a-z0-9_]+)'",
     ).allMatches(sql).toList();
-    expect(rows.length, 43, reason: 'başlangıç seti 17 + yeni 26 parça');
+    expect(rows.length, 46, reason: 'başlangıç 17 + 26 + düello ödülleri 3');
     final counts = <String, int>{};
     for (final m in rows) {
       counts[m.group(1)!] = (counts[m.group(1)!] ?? 0) + 1;
@@ -137,7 +141,7 @@ void main() {
       final path = AvatarAssets.path(category, m.group(2)!);
       expect(File(path).existsSync(), isTrue, reason: path);
     }
-    expect(counts, {'hair': 14, 'skin': 6, 'outfit': 11, 'accessory': 12});
+    expect(counts, {'hair': 14, 'skin': 6, 'outfit': 12, 'accessory': 14});
     // Demo kataloğu veritabanıyla aynı.
     expect(
       InMemoryAvatarRepository.catalog.map((i) => i.assetName).toSet(),

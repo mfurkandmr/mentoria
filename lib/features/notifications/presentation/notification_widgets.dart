@@ -26,6 +26,7 @@ void openNotification(BuildContext context, AppNotification n) {
     '/student/homework',
     '/student/mistakes',
     '/student/daily',
+    '/student/duels',
   }.contains(n.route)) {
     router.push(n.route);
   } else {
@@ -180,6 +181,8 @@ class NotificationTile extends StatelessWidget {
                   NotificationKind.review => context.brand.danger,
                   NotificationKind.weeklyReport => context.brand.primary,
                   NotificationKind.dailyQuestion => const Color(0xFFFFB020),
+                  NotificationKind.duel => const Color(0xFFFF7A45),
+                  NotificationKind.duelResult => const Color(0xFFFFB020),
                 },
                 foregroundColor:
                     n.kind == NotificationKind.exam ||

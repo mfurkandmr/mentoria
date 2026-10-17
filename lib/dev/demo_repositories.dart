@@ -1,6 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui';
+
+import 'package:flutter/services.dart' show rootBundle;
 
 import '../core/constants/exam_subjects.dart';
 import '../core/branding/branding.dart';
@@ -17,6 +21,7 @@ import '../features/auth/data/profile.dart';
 import '../features/coaching/data/coaching_repository.dart';
 import '../features/meetings/data/meeting_repository.dart';
 import '../features/mistakes/data/mistake_repository.dart';
+import '../features/duel/data/duel_repository.dart';
 import '../features/learn/data/daily_question_repository.dart';
 import '../features/learn/data/practice_repository.dart';
 import '../features/tracking/data/tracking_models.dart';
@@ -922,6 +927,15 @@ class InMemoryAvatarRepository implements AvatarRepository {
         {'type': 'study_minutes', 'minutes': 6000},
         12,
       ),
+      (
+        44,
+        'accessory',
+        'acc_duel_medal',
+        {'type': 'duel_wins', 'count': 1},
+        13,
+      ),
+      (45, 'accessory', 'acc_laurel', {'type': 'duel_wins', 'count': 5}, 14),
+      (46, 'outfit', 'outfit_champion', {'type': 'duel_wins', 'count': 10}, 12),
     ])
       AvatarItem.fromJson({
         'id': id,
@@ -1471,5 +1485,205 @@ void seedDemoPractice(InMemoryPracticeRepository repo, String studentId) {
         );
       }
     }
+  }
+}
+
+/// Arkadaş düellosu (demo). Rakip, sen bitirdikten hemen sonra "oynar";
+/// böylece sonuç ekranı demoda da görünür. Puan ve süre burada hesaplanır.
+class InMemoryDuelRepository implements DuelRepository {
+  InMemoryDuelRepository({
+    required this.opponents,
+    Future<List<PracticeQuestion>> Function(String subject)? loadPool,
+    this.onWin,
+    DateTime Function()? clock,
+    int seed = 7,
+  }) : loadPool = loadPool ?? _bundlePool,
+       _clock = clock ?? DateTime.now,
+       _rng = math.Random(seed);
+
+  final List<DuelOpponent> opponents;
+
+  /// Soru havuzu (cevap anahtarı için); testler dosyadan okutabilir.
+  Future<List<PracticeQuestion>> Function(String subject) loadPool;
+  final DateTime Function() _clock;
+  final math.Random _rng;
+
+  /// Kazanılan düello sayısıyla çağrılır (demo avatar ödülü için).
+  final void Function(int wins)? onWin;
+
+  final _duels = <String, _DemoDuel>{};
+  int _next = 0;
+
+  static Future<List<PracticeQuestion>> _bundlePool(String subject) async {
+    final raw = await rootBundle.loadString(
+      'assets/learn/questions/$subject.json',
+    );
+    return [
+      for (final j in jsonDecode(raw) as List)
+        PracticeQuestion.fromJson(j as Map<String, dynamic>),
+    ];
+  }
+
+  /// Hazır bir düello ekler (demo verisi ve testler için).
+  void seed({
+    required String opponentId,
+    required String subject,
+    required List<String> questionIds,
+    bool challenger = false,
+    int? theirCorrect,
+    int? theirMs,
+    int? myCorrect,
+    int? myMs,
+    DateTime? createdAt,
+  }) {
+    final id = 'duel-${_next++}';
+    final at = createdAt ?? _clock();
+    _duels[id] =
+        _DemoDuel(
+            id: id,
+            opponent: opponents.firstWhere((o) => o.id == opponentId),
+            subject: subject,
+            questionIds: questionIds,
+            challenger: challenger,
+            createdAt: at,
+          )
+          ..theirCorrect = theirCorrect
+          ..theirMs = theirMs
+          ..myCorrect = myCorrect
+          ..myMs = myMs;
+  }
+
+  @override
+  Future<List<DuelOpponent>> fetchOpponents() async => opponents;
+
+  @override
+  Future<List<Duel>> fetchDuels() async {
+    final now = _clock();
+    final list = _duels.values.toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return [for (final d in list) d.view(now)];
+  }
+
+  @override
+  Future<String> create(String opponentId, String subject) async {
+    final now = _clock();
+    if (_duels.values.any(
+      (d) =>
+          d.opponent.id == opponentId &&
+          d.view(now).status != DuelStatus.done &&
+          d.view(now).status != DuelStatus.expired,
+    )) {
+      throw const DuelException(DuelError.alreadyOpen);
+    }
+    final pool = await loadPool(subject);
+    final ids = [for (final q in pool) q.id]..shuffle(_rng);
+    final id = 'duel-${_next++}';
+    _duels[id] = _DemoDuel(
+      id: id,
+      opponent: opponents.firstWhere((o) => o.id == opponentId),
+      subject: subject,
+      questionIds: ids.take(duelQuestionCount).toList(),
+      challenger: true,
+      createdAt: now,
+    );
+    return id;
+  }
+
+  @override
+  Future<List<String>> start(String duelId) async {
+    final d = _duels[duelId]!;
+    if (d.myCorrect != null) {
+      throw const DuelException(DuelError.alreadyFinished);
+    }
+    d.startedAt ??= _clock();
+    return d.questionIds;
+  }
+
+  @override
+  Future<void> finish(String duelId, List<int> answers) async {
+    final d = _duels[duelId]!;
+    if (d.startedAt == null || d.myCorrect != null) {
+      throw const DuelException(DuelError.alreadyFinished);
+    }
+    final pool = {for (final q in await loadPool(d.subject)) q.id: q.answer};
+    var correct = 0;
+    for (var i = 0; i < d.questionIds.length; i++) {
+      if (pool[d.questionIds[i]] == answers[i]) correct++;
+    }
+    d.myCorrect = correct;
+    d.myMs = _clock().difference(d.startedAt!).inMilliseconds;
+    // Rakip henüz oynamadıysa demoda hemen oynar.
+    d.theirCorrect ??= 4 + _rng.nextInt(6);
+    d.theirMs ??= 60000 + _rng.nextInt(120000);
+    if (d.view(_clock()).result == DuelResult.won) {
+      onWin?.call(
+        _duels.values
+            .where((x) => x.view(_clock()).result == DuelResult.won)
+            .length,
+      );
+    }
+  }
+}
+
+class _DemoDuel {
+  _DemoDuel({
+    required this.id,
+    required this.opponent,
+    required this.subject,
+    required this.questionIds,
+    required this.challenger,
+    required this.createdAt,
+  });
+
+  final String id;
+  final DuelOpponent opponent;
+  final String subject;
+  final List<String> questionIds;
+  final bool challenger;
+  final DateTime createdAt;
+  DateTime? startedAt;
+  int? myCorrect;
+  int? myMs;
+  int? theirCorrect;
+  int? theirMs;
+
+  Duel view(DateTime now) {
+    final mine = myCorrect != null;
+    final theirs = theirCorrect != null;
+    final expires = createdAt.add(const Duration(hours: 48));
+    DuelResult? result;
+    if (mine && theirs) {
+      result = myCorrect! > theirCorrect!
+          ? DuelResult.won
+          : myCorrect! < theirCorrect!
+          ? DuelResult.lost
+          : myMs! < theirMs!
+          ? DuelResult.won
+          : myMs! > theirMs!
+          ? DuelResult.lost
+          : DuelResult.draw;
+    }
+    return Duel(
+      id: id,
+      subject: subject,
+      isChallenger: challenger,
+      opponentName: opponent.name,
+      opponentAvatar: opponent.avatar,
+      createdAt: createdAt,
+      expiresAt: expires,
+      status: result != null
+          ? DuelStatus.done
+          : !mine && (startedAt != null || expires.isAfter(now))
+          ? DuelStatus.yourTurn
+          : mine && expires.isAfter(now)
+          ? DuelStatus.waiting
+          : DuelStatus.expired,
+      myCorrect: myCorrect,
+      myMs: myMs,
+      theirFinished: theirs,
+      theirCorrect: mine ? theirCorrect : null,
+      theirMs: mine ? theirMs : null,
+      result: result,
+    );
   }
 }

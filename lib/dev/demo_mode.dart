@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import '../core/config/env.dart';
 import '../core/constants/exam_subjects.dart';
 import '../features/assignments/data/assignment_repository.dart';
+import '../features/avatar/data/avatar_models.dart';
 import '../features/avatar/data/avatar_repository.dart';
 import '../features/ranking/data/ranking_repository.dart';
 import '../features/auth/data/auth_repository.dart';
@@ -17,6 +18,7 @@ import '../features/admin/data/admin_repository.dart';
 import '../features/coaching/data/coaching_repository.dart';
 import '../features/meetings/data/meeting_repository.dart';
 import '../features/mistakes/data/mistake_repository.dart';
+import '../features/duel/data/duel_repository.dart';
 import '../features/learn/data/daily_question_repository.dart';
 import '../features/learn/data/practice_repository.dart';
 import '../features/tracking/data/tracking_models.dart';
@@ -235,6 +237,7 @@ Future<List<Override>> buildDemoOverrides([
     meetingRepositoryProvider.overrideWithValue(meetings),
     mistakeRepositoryProvider.overrideWithValue(mistakes),
     practiceRepositoryProvider.overrideWithValue(practice),
+    duelRepositoryProvider.overrideWithValue(demoDuels(avatars)),
     dailyQuestionRepositoryProvider.overrideWithValue(
       InMemoryDailyQuestionRepository(
         myId: role == 'student' ? 'demo-student' : null,
@@ -672,4 +675,60 @@ void seedDemoMistakes(InMemoryMistakeRepository repo) {
     card(4, 'TYT_KIM', 'Mol hesabı: birim dönüşümü', stage: 1, dueIn: 2),
     card(5, 'TYT_MAT', 'Üslü sayılar: negatif üs', mastered: true),
   ]);
+}
+
+/// Demo düelloları: Can'dan gelen bir davet (Can bitirdi, sıra sende) ve
+/// Zeynep'le geçmiş bir düello. Kazandıkça avatar ödülü açılır.
+InMemoryDuelRepository demoDuels(InMemoryAvatarRepository avatars) {
+  final repo = InMemoryDuelRepository(
+    opponents: [
+      DuelOpponent(
+        id: 'demo-can',
+        name: 'Can K.',
+        avatar: AvatarConfig.fromJson(const {
+          'hair': 2,
+          'skin': 6,
+          'outfit': 10,
+        }),
+      ),
+      DuelOpponent(
+        id: 'demo-zeynep',
+        name: 'Zeynep A.',
+        avatar: AvatarConfig.fromJson(const {
+          'hair': 21,
+          'skin': 18,
+          'outfit': 29,
+        }),
+      ),
+    ],
+    onWin: (wins) => avatars.pendingUnlocks = [
+      if (wins >= 1) 44,
+      if (wins >= 5) 45,
+      if (wins >= 10) 46,
+    ],
+  );
+  repo.seed(
+    opponentId: 'demo-zeynep',
+    subject: 'TYT_TUR',
+    questionIds: [
+      for (var i = 1; i <= 10; i++) 'TYT_TUR-${'$i'.padLeft(4, '0')}',
+    ],
+    challenger: true,
+    myCorrect: 8,
+    myMs: 125000,
+    theirCorrect: 6,
+    theirMs: 98000,
+    createdAt: DateTime.now().subtract(const Duration(days: 2)),
+  );
+  repo.seed(
+    opponentId: 'demo-can',
+    subject: 'TYT_MAT',
+    questionIds: [
+      for (var i = 11; i <= 20; i++) 'TYT_MAT-${'$i'.padLeft(4, '0')}',
+    ],
+    theirCorrect: 7,
+    theirMs: 95000,
+    createdAt: DateTime.now().subtract(const Duration(hours: 3)),
+  );
+  return repo;
 }

@@ -40,6 +40,8 @@ extension AvatarRuleText on AvatarRule {
         return tr('{n} konuyu bitir', {'n': data['count'] ?? 1});
       case 'exams':
         return tr('{n} denemeye gir', {'n': data['count'] ?? 1});
+      case 'duel_wins':
+        return tr('{n} düello kazan', {'n': data['count'] ?? 1});
       default:
         return tr('Yakında');
     }

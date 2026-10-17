@@ -65,7 +65,7 @@ const zeynep = await signUp(B.code, 'Zeynep Arslan');
 await asUser(elif);
 const cat = await one(`select count(*) filter (where category='hair')::int h, count(*) filter (where category='skin')::int s,
   count(*) filter (where category='outfit')::int o, count(*) filter (where category='accessory')::int a from public.avatar_items`);
-check(cat.h === 14 && cat.s === 6 && cat.o === 11 && cat.a === 12, 'katalog: 14 saç, 6 ten, 11 kıyafet, 12 aksesuar', cat);
+check(cat.h === 14 && cat.s === 6 && cat.o === 12 && cat.a === 14, 'katalog: 14 saç, 6 ten, 12 kıyafet, 14 aksesuar (düello ödülleri dahil)', cat);
 await expectError('öğrenci kataloğa parça ekleyemez', () => db.query(`insert into public.avatar_items (id, category, asset_name) values (99, 'hair', 'hack')`));
 
 // --- Ücretsiz parçalarla kaydet

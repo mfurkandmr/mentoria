@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Mentoria avatar parçası: 200x200, diğer katmanlarla hizalı. Düello madalyası (1 galibiyet). -->
+  <defs><linearGradient id="md" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE68A"/><stop offset="0.55" stop-color="#FFC531"/><stop offset="1" stop-color="#E39A12"/></linearGradient></defs>
+  <g stroke="#2B2350" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M86 146 L96 172 L104 172 L114 146" fill="#E5484D"/>
+    <path d="M94 146 L100 160 L106 146" fill="#4DABF7" stroke-width="3"/>
+    <circle cx="100" cy="182" r="13" fill="url(#md)"/>
+  </g>
+  <path d="M100 175 L102.6 180 L108 180.6 L104 184.4 L105.2 190 L100 187.2 L94.8 190 L96 184.4 L92 180.6 L97.4 180 Z" fill="#FFFFFF" stroke="#2B2350" stroke-width="1.6" stroke-linejoin="round"/>
+</svg>

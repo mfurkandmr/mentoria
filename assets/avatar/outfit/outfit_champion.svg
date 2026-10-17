@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Mentoria avatar parçası: 200x200, diğer katmanlarla hizalı. Şampiyon pelerini (10 galibiyet). -->
+  <defs>
+    <linearGradient id="cp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8E6BFF"/><stop offset="1" stop-color="#4B2DB8"/></linearGradient>
+    <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE68A"/><stop offset="1" stop-color="#E39A12"/></linearGradient>
+  </defs>
+  <g stroke="#2B2350" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M36 200 C36 166 58 148 86 146 L114 146 C142 148 164 166 164 200 Z" fill="url(#cp)"/>
+    <path d="M70 150 L84 146 L100 162 L116 146 L130 150 L118 168 L100 176 L82 168 Z" fill="url(#cg)" stroke-width="3.5"/>
+  </g>
+  <path d="M100 178 L103.5 185 L111 186 L105.5 191 L107 198 L100 194.5 L93 198 L94.5 191 L89 186 L96.5 185 Z" fill="#FFD84D" stroke="#2B2350" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M48 172 Q54 186 52 200 M152 172 Q146 186 148 200" fill="none" stroke="#FFFFFF" stroke-width="4" opacity="0.5"/>
+</svg>

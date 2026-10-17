@@ -26,11 +26,18 @@ const SUBJECTS: Record<string, string> = {
   TYT_DIN: 'Din Kültürü',
 };
 
+const AYT_SUBJECTS: Record<string, string> = {
+  AYT_MAT: 'AYT Matematik', AYT_FIZ: 'AYT Fizik', AYT_KIM: 'AYT Kimya', AYT_BIY: 'AYT Biyoloji',
+  AYT_EDB: 'Türk Dili ve Edebiyatı', AYT_TAR1: 'Tarih-1', AYT_COG1: 'Coğrafya-1', AYT_TAR2: 'Tarih-2',
+  AYT_COG2: 'Coğrafya-2', AYT_FELG: 'Felsefe Grubu', AYT_DIN: 'AYT Din Kültürü',
+};
+const subjectName = (code: unknown) => SUBJECTS[String(code)] ?? AYT_SUBJECTS[String(code)] ?? '';
+
 type NotificationRow = {
   id: string;
   user_id: string;
   kind: 'assignment' | 'exam' | 'task' | 'note' | 'deletion_request' | 'meeting'
-    | 'review' | 'weekly_report' | 'daily_question';
+    | 'review' | 'weekly_report' | 'daily_question' | 'duel' | 'duel_result';
   data: Record<string, unknown>;
 };
 
@@ -111,6 +118,22 @@ function texts(n: NotificationRow): { title: string; body: string; route: string
         title: 'Günün Sorusu hazır ☀️',
         body: `Bugün ${SUBJECTS[s(d.subject)] ?? ''} sorusu seni bekliyor. Çöz, serini büyüt!`,
         route: '/student/daily',
+      };
+    case 'duel':
+      return {
+        title: `${s(d.from)} seni düelloya çağırdı ⚔️`,
+        body: `${subjectName(d.subject)} · 10 soru. Aynı soruları çözün, kim daha iyi görelim!`,
+        route: '/student/duels',
+      };
+    case 'duel_result':
+      return {
+        title: d.result === 'won'
+          ? 'Düelloyu kazandın! 🏆'
+          : d.result === 'lost'
+          ? `Düello sonucu: ${s(d.opponent)} kazandı`
+          : 'Düello berabere bitti 🤝',
+        body: `${subjectName(d.subject)} düellosu sonuçlandı. Sonuca bak.`,
+        route: '/student/duels',
       };
   }
 }

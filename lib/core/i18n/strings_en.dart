@@ -1429,6 +1429,90 @@ const enStrings = <String, String>{
   'TYT': 'TYT',
   'AYT': 'AYT',
 
+  // Arkadaş düellosu
+  '{n} düello kazan': 'Win {n} duels',
+  'Arkadaş düellosu': 'Friend duel',
+  '{n} düello seni bekliyor': '{n} duels are waiting for you',
+  'Arkadaşınla aynı 10 soruyu çöz, kazanan ödül alsın':
+      'Solve the same 10 questions as a friend; the winner gets a reward',
+  'Düello başlat': 'Start a duel',
+  'Henüz düello yok': 'No duels yet',
+  'Bir arkadaşını seç, aynı 10 soruyu çözün. Kim daha iyi, görelim!':
+      'Pick a friend and solve the same 10 questions. Let’s see who’s better!',
+  'Sıra sende': 'Your turn',
+  'Rakibin bekleniyor': 'Waiting for your opponent',
+  'Sonuçlananlar': 'Finished',
+  'Başla': 'Start',
+  'Kabul et': 'Accept',
+  'Bekleniyor': 'Waiting',
+  'Kazandın 🏆': 'You won 🏆',
+  'Kaybettin': 'You lost',
+  'Berabere': 'Draw',
+  'Süresi doldu': 'Expired',
+  '{name} bitirdi, sıra sende': '{name} finished — your turn',
+  '{name} seni düelloya çağırdı': '{name} challenged you to a duel',
+  'Daveti gönderdin, önce sen çöz': 'Invite sent — you solve first',
+  '{c} / 10 doğru · {t}': '{c} / 10 correct · {t}',
+  '{a} - {b} doğru': '{a} - {b} correct',
+  'Düello tamamlanmadı': 'The duel wasn’t completed',
+  'İkiniz de aynı 10 soruyu çözersiniz.':
+      'You both solve the same 10 questions.',
+  'En çok doğru yapan kazanır.': 'Whoever gets the most right wins.',
+  'Doğru sayınız eşitse testi daha kısa sürede bitiren kazanır.':
+      'If you get the same number right, whoever finishes faster wins.',
+  'Süre "Başla"ya bastığın anda başlar ve durmaz. 30 dakika içinde bitirmelisin.':
+      'The clock starts the moment you tap "Start" and doesn’t stop. You must finish within 30 minutes.',
+  'Cevabı seçince sonraki soruya geçersin, geri dönülmez. Emin değilsen "Boş geç".':
+      'Picking an answer moves you to the next question; you can’t go back. Not sure? Tap "Skip".',
+  "Kazanana avatar ödülü: 1. galibiyette madalya, 5'te defne tacı, 10'da şampiyon pelerini.":
+      'Winners earn avatar rewards: a medal for the 1st win, a laurel wreath at 5, a champion cape at 10.',
+  'Kurallar': 'Rules',
+  'Bu arkadaşınla zaten açık bir düellon var.':
+      'You already have an open duel with this friend.',
+  'Bugün en fazla 10 düello başlatabilirsin.':
+      'You can start at most 10 duels a day.',
+  'Düello başlatılamadı. Tekrar dene.': 'Couldn’t start the duel. Try again.',
+  'Yeni düello': 'New duel',
+  'Rakibini seç': 'Pick your opponent',
+  'Dershanende henüz başka öğrenci yok.':
+      'There are no other students at your school yet.',
+  'Bu düellonun süresi doldu.': 'This duel has expired.',
+  'Düello': 'Duel',
+  'Sen': 'You',
+  '{subject} · 10 soru': '{subject} · 10 questions',
+  '{name} testi bitirdi. Sonucu sen bitirince görünecek.':
+      '{name} has finished. You’ll see their score when you finish.',
+  "Süre Başla'ya bastığında başlar.": 'The clock starts when you tap Start.',
+  '30 dakika doldu; bu düello tamamlanamadı.':
+      '30 minutes are up; this duel couldn’t be completed.',
+  'Cevaplar gönderilemedi. İnternet bağlantını kontrol et.':
+      'Couldn’t send your answers. Check your internet connection.',
+  'Düellodan çıkılsın mı?': 'Leave the duel?',
+  'Süre işlemeye devam eder ve cevapların kaydedilmez. 30 dakika içinde dönüp baştan çözebilirsin.':
+      'The clock keeps running and your answers won’t be saved. You can come back within 30 minutes and start over.',
+  'Soru {n} / {t}': 'Question {n} / {t}',
+  'Boş geç': 'Skip',
+  'Düello sonucu': 'Duel result',
+  'Kazandın!': 'You won!',
+  '{name} kazandı': '{name} won',
+  'Berabere!': 'It’s a draw!',
+  '{name} bitirince sonuç gelecek; sana bildirim göndereceğiz.':
+      'The result comes when {name} finishes; we’ll notify you.',
+  'Doğru sayınız eşit; testi daha kısa sürede bitiren kazandı.':
+      'You got the same number right; whoever finished faster won.',
+  'En çok doğru yapan kazandı.': 'Whoever got the most right won.',
+  "Galibiyetler avatar ödülü açar: 1. galibiyette madalya, 5'te defne tacı, 10'da şampiyon pelerini.":
+      'Wins unlock avatar rewards: a medal for the 1st win, a laurel wreath at 5, a champion cape at 10.',
+  'Cevapların': 'Your answers',
+  '{from} seni düelloya çağırdı ⚔️': '{from} challenged you to a duel ⚔️',
+  'Düelloyu kazandın! 🏆': 'You won the duel! 🏆',
+  'Düello sonucu: {name} kazandı': 'Duel result: {name} won',
+  'Düello berabere bitti 🤝': 'The duel ended in a draw 🤝',
+  '{subject} · 10 soru. Aynı soruları çözün, kim daha iyi görelim!':
+      '{subject} · 10 questions. Solve the same ones — let’s see who’s better!',
+  '{subject} düellosu sonuçlandı. Sonuca bak.':
+      'Your {subject} duel is over. See the result.',
+
   // Bildirim kanalı
   'Mentoria bildirimleri': 'Mentoria notifications',
   'Ödev, görüşme, mesaj ve deneme bildirimleri':
