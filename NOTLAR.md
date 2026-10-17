@@ -1192,3 +1192,23 @@ havuzla aynı. Havuz değişirse canlıdaki anahtar da yenilenmeli.
   var. Demoda rakip, sen bitirince hemen "oynar".
 - **Testler:** `test/duel_test.dart`. Önizleme:
   `flutter test test/tool/duel_preview_test.dart` → `build/duel_preview.png`.
+
+## 29. Sıkça sorulan sorular (her panel için)
+
+- Profil ekranında "Sıkça sorulan sorular" kartı (tüm roller aynı
+  `ProfileScreen`'i kullanır); kart, giriş yapan rolün sorularını açar.
+- **İçerik:**
+  - Öğrenci 15 soru, koç 11, kurum müdürü 8, veli 6 soru içerir.
+  - Hepsine ortak 4 "Uygulama" sorusu eklenir.
+  - Süper admine ayrıca "Platform yönetimi" bölümü görünür.
+- **Ekran:** arama kutusu var (Türkçe karakterleri yok sayar). Aramada
+  cevaplar açık gelir. En altta "cevabı bulamadın mı?" satırında kime
+  ulaşılacağı yazar.
+- **Tek kaynak:** `tool/faq/faq_content.py` (Türkçe + İngilizce).
+  - `python tool/faq/make_faq.py` çalıştırılınca
+    `lib/features/help/data/faq.dart` ile `strings_en.dart` içindeki SSS
+    bloğu üretilir.
+  - Bu iki dosyayı elle düzenleme. Yeni özellik eklenince ilgili soruyu da
+    buraya ekle.
+- **Test:** `test/faq_test.dart`. Önizleme:
+  `flutter test test/tool/faq_preview_test.dart` → `build/faq_preview.png`.

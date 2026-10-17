@@ -16,6 +16,7 @@ import '../../auth/data/profile.dart';
 import '../../auth/presentation/auth_error.dart';
 import '../../auth/presentation/reset_password_screen.dart';
 import '../../coaching/presentation/coaching_widgets.dart';
+import '../../help/presentation/faq_screen.dart';
 import '../data/account_repository.dart';
 import '../../../shared/widgets/effects.dart';
 import '../../../core/i18n/i18n.dart';
@@ -91,6 +92,8 @@ class ProfileScreen extends ConsumerWidget {
                     const _ParentInviteCard(),
                   ],
                   const _PlatformCard(),
+                  const SizedBox(height: 12),
+                  FaqCard(role: profile.role),
                   const SizedBox(height: 12),
                   const AppearanceCard(),
                   const SizedBox(height: 12),
