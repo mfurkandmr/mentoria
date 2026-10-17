@@ -17,6 +17,7 @@ import '../features/admin/data/admin_repository.dart';
 import '../features/coaching/data/coaching_repository.dart';
 import '../features/meetings/data/meeting_repository.dart';
 import '../features/mistakes/data/mistake_repository.dart';
+import '../features/learn/data/practice_repository.dart';
 import '../features/tracking/data/tracking_models.dart';
 import '../features/tracking/data/tracking_repository.dart';
 import 'demo_repositories.dart';
@@ -230,6 +231,7 @@ Future<List<Override>> buildDemoOverrides([
     notificationRepositoryProvider.overrideWithValue(notifications),
     meetingRepositoryProvider.overrideWithValue(meetings),
     mistakeRepositoryProvider.overrideWithValue(mistakes),
+    practiceRepositoryProvider.overrideWithValue(InMemoryPracticeRepository()),
     tenantRepositoryProvider.overrideWithValue(
       InMemoryTenantRepository(
         tenants: demoTenants(),

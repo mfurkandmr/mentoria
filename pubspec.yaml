@@ -51,6 +51,8 @@ flutter:
     - assets/avatar/reward/
     # Uygulamaya özel sesler (üretici: tool/make_sounds.py)
     - assets/sounds/
+    # Eğitim: telifsiz soru havuzu (üretici: tool/questions/make_questions.py)
+    - assets/learn/questions/
 
 # Uygulama ikonları: dart run flutter_launcher_icons
 flutter_launcher_icons:

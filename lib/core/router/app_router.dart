@@ -20,6 +20,7 @@ import '../../features/admin/presentation/admin_home_screen.dart';
 import '../../features/import/presentation/import_screen.dart';
 import '../../features/intro/intro_screen.dart';
 import '../../features/garden/presentation/garden_screen.dart';
+import '../../features/learn/presentation/learn_screen.dart';
 import '../../features/mistakes/presentation/mistakes_screen.dart';
 import '../../features/parent/presentation/parent_child_screen.dart';
 import '../../features/parent/presentation/parent_home_screen.dart';
@@ -187,6 +188,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, _, shell) => StudentShell(shell: shell),
         branches: [
           _branch('/student', const StudentHomeScreen()),
+          _branch('/student/learn', const LearnScreen()),
           _branch('/student/exams', const ExamsScreen()),
           _branch('/student/questions', const QuestionsScreen()),
           _branch('/student/topics', const TopicsScreen()),

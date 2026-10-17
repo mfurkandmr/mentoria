@@ -1359,6 +1359,34 @@ const enStrings = <String, String>{
       '🔮 At this pace, ≈ {p} / {q} net in 5 exams',
   '{s} net grafiği: ilk {a}, son {b}': '{s} net chart: first {a}, last {b}',
 
+  // Eğitim
+  'Eğitim': 'Learn',
+  'Bugünkü çalışman': 'Today’s practice',
+  'soru çözüldü · her gün yenilenir': 'questions solved · resets every day',
+  '{s}: bugün {u} / {l} soru': '{s}: {u} / {l} questions today',
+  'Bugünlük tamam ✓': 'Done for today ✓',
+  '{n} soru hakkın var': '{n} questions left',
+  '{n} bilgi kartı': '{n} info cards',
+  'Bilgi kartları': 'Info cards',
+  'Soru çöz': 'Practice',
+  '{t} kartı, çevirmek için dokun': '{t} card, tap to flip',
+  'Çevirmek için dokun': 'Tap to flip',
+  'Bugünkü hakkın doldu. Yarın yeni sorular seni bekliyor!':
+      'You’ve used today’s questions. New ones are waiting tomorrow!',
+  'Cevap kaydedilemedi. İnternet bağlantını kontrol et.':
+      'Couldn’t save your answer. Check your internet connection.',
+  'Soru {n} / {l}': 'Question {n} / {l}',
+  '🔥 {n} doğru üst üste': '🔥 {n} correct in a row',
+  'Doğru!': 'Correct!',
+  'Doğru cevap: {l}': 'Correct answer: {l}',
+  'Sonraki soru': 'Next question',
+  'doğru': 'correct',
+  'yanlış': 'wrong',
+  'Bugünlük bu ders tamam!': 'This subject is done for today!',
+  '{c} / {n} doğru': '{c} / {n} correct',
+  'Günlük {l} soru hakkını kullandın. Yarın havuzdan yepyeni sorular gelecek. 🐝':
+      'You’ve used your {l} daily questions. Brand-new ones arrive tomorrow. 🐝',
+
   // Bildirim kanalı
   'Mentoria bildirimleri': 'Mentoria notifications',
   'Ödev, görüşme, mesaj ve deneme bildirimleri':

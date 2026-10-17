@@ -1056,3 +1056,38 @@ denemelerden hesaplanır (`lib/features/exams/data/exam_analysis.dart`, test
 
 Önizleme: `flutter test test/tool/exam_analysis_preview_test.dart` →
 `build/exam_analysis_preview.png`.
+
+---
+
+## 25. Eğitim sekmesi: bilgi kartları ve telifsiz soru havuzu
+
+Öğrenci alt menüsünde yeni **Eğitim** sekmesi (Ana Sayfa'dan sonra). 9 TYT
+dersi (Türkçe, Matematik, Fizik, Kimya, Biyoloji, Tarih, Coğrafya, Felsefe,
+Din Kültürü):
+
+- **Bilgi kartları** (`lib/features/learn/data/learn_cards.dart`): ders başına
+  10-15 kart; dokununca dönen kart, arkada formül + kısa bilgi.
+- **Soru çöz:** 5 şıklı (A-E) sorular, anında doğru/yanlış ve kısa çözüm,
+  üst üste doğrularda alev rozeti, her 5 doğruda konfeti.
+- **Günlük hak:** Türkçe ve Matematik 20, diğerleri 10 (günde toplam 110).
+  Sınır sunucuda (`20261018200000_practice`, `guard_practice_answer`
+  tetikleyicisi, Türkiye günü); istemci aşamaz. Test: `practice_test.mjs`.
+- **Havuz = hak × 30:** Türkçe ve Matematik 600, diğerleri 300 → **3.300
+  soru** (`assets/learn/questions/<ders>.json`, ~830 KB). Her öğrenci için
+  sabit karışık sıra; havuz bitene kadar hiçbir soru tekrar gelmez (30 gün),
+  sonra en uzun süredir görülmeyenler döner.
+- **Telif:** sorular bu depoda özgün üretilir: `python tool/questions/make_questions.py`
+  (sabit tohum; aynı komut aynı soruları üretir). Sayısal sorular (matematik,
+  fizik, kimya hesapları, genetik çaprazlama, DNA, harita ölçeği, saat farkı)
+  parametreli şablonlardan hesaplanır, cevap her zaman doğrudur. Sözel dersler
+  (Türkçe ses bilgisi kurala göre hesaplanır; eş/zıt anlam, tarih, coğrafya,
+  felsefe, din) bilgi tablolarından üretilir; tabloları düzeltmek / büyütmek
+  için `tool/questions/<ders>.py` dosyaları. Üretici her soruyu denetler
+  (5 farklı şık, geçerli cevap); `test/learn_test.dart` havuzu doğrular.
+- Cevaplar `practice_answers` tablosunda; koç, müdür ve veli görebilir
+  (ileride koç ekranına "çözülen soru / isabet" eklenebilir).
+- Bilinen sınırlar: sözel derslerde soru kökleri çeşitli ama kalıplar az
+  (ör. Tarih'te kronoloji ağırlıklı); havuz büyütüldükçe yeni şablonlar
+  eklenmeli. Sorular bir öğretmen tarafından gözden geçirilmeli.
+
+Önizleme: `flutter test test/tool/learn_preview_test.dart` → `build/learn_preview.png`.

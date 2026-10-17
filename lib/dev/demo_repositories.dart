@@ -17,6 +17,7 @@ import '../features/auth/data/profile.dart';
 import '../features/coaching/data/coaching_repository.dart';
 import '../features/meetings/data/meeting_repository.dart';
 import '../features/mistakes/data/mistake_repository.dart';
+import '../features/learn/data/practice_repository.dart';
 import '../features/tracking/data/tracking_models.dart';
 import '../features/tracking/data/tracking_repository.dart';
 
@@ -1334,4 +1335,42 @@ class InMemoryMistakeRepository implements MistakeRepository {
 
   @override
   Future<Uint8List?> loadPhoto(String path) async => photos[path];
+}
+
+/// Bellekte günlük soru cevapları; sunucudaki günlük hak sınırı burada da.
+class InMemoryPracticeRepository implements PracticeRepository {
+  InMemoryPracticeRepository({DateTime Function()? clock})
+    : _clock = clock ?? DateTime.now;
+
+  final DateTime Function() _clock;
+  final answers = <String, List<PracticeAnswer>>{};
+
+  @override
+  Future<List<PracticeAnswer>> fetchAnswers(String studentId) async => [
+    ...?answers[studentId],
+  ];
+
+  @override
+  Future<void> submit(
+    String studentId, {
+    required String subject,
+    required String questionId,
+    required bool correct,
+  }) async {
+    final now = _clock();
+    final today = DateTime(now.year, now.month, now.day);
+    final list = answers.putIfAbsent(studentId, () => []);
+    final used = list
+        .where((a) => a.subject == subject && a.answeredOn == today)
+        .length;
+    if (used >= practiceDailyLimit(subject)) throw const DailyLimitReached();
+    list.add(
+      PracticeAnswer(
+        subject: subject,
+        questionId: questionId,
+        correct: correct,
+        answeredOn: today,
+      ),
+    );
+  }
 }

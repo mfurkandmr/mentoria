@@ -7,7 +7,7 @@ import '../../../shared/widgets/exit_guard.dart';
 import '../../../shared/widgets/honey_nav_bar.dart';
 import '../../notifications/presentation/notification_widgets.dart';
 
-/// Öğrenci alt menüsü: Ana Sayfa · Denemeler · Soru · Konular · Süre
+/// Öğrenci alt menüsü: Ana Sayfa · Eğitim · Denemeler · Soru · Konular · Süre
 class StudentShell extends StatelessWidget {
   const StudentShell({super.key, required this.shell});
 
@@ -33,6 +33,11 @@ class StudentShell extends StatelessWidget {
                 icon: Icons.home_outlined,
                 selectedIcon: Icons.home_rounded,
                 label: tr('Ana Sayfa'),
+              ),
+              HoneyNavItem(
+                icon: Icons.school_outlined,
+                selectedIcon: Icons.school_rounded,
+                label: tr('Eğitim'),
               ),
               HoneyNavItem(
                 icon: Icons.insights_outlined,
