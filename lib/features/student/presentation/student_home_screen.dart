@@ -29,6 +29,8 @@ import '../../tracking/presentation/questions_view.dart';
 import '../../tracking/presentation/study_view.dart';
 import '../../../core/settings/app_settings.dart';
 import '../data/bizz_shake.dart';
+import '../../recap/data/week_recap.dart';
+import '../../recap/presentation/recap_card.dart';
 import 'home_cards.dart';
 import 'home_sky.dart';
 import '../../ranking/data/ranking_repository.dart';
@@ -139,6 +141,16 @@ class StudentHomeScreen extends ConsumerWidget {
             ),
           ),
         ],
+      ),
+      // Haftanın Bal Raporu: son 7 günün hikayesi.
+      RecapCard(
+        firstName: profile.firstName,
+        recap: WeekRecap.compute(
+          logs: logs,
+          sessions: sessions,
+          exams: exams,
+          now: now,
+        ),
       ),
       IntrinsicHeight(
         child: Row(

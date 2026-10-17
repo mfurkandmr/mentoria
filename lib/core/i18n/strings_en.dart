@@ -1147,6 +1147,73 @@ const enStrings = <String, String>{
   '{n} konuyu bitir': 'Finish {n} topics',
   '{n} denemeye gir': 'Take {n} practice exams',
 
+  // Haftanın Bal Raporu
+  'İstikrar Arısı': 'Steady Bee',
+  'Keskin Nişancı Arı': 'Sharpshooter Bee',
+  'Gece Kuşu Arı': 'Night Owl Bee',
+  'Sabahçı Arı': 'Early Bird Bee',
+  'Maratoncu Arı': 'Marathon Bee',
+  'Soru Avcısı Arı': 'Question Hunter Bee',
+  "Haftanın her günü kovandaydın. Bu istikrar YKS'de altın değerinde.":
+      'You were in the hive every day this week. That consistency is gold for the exam.',
+  'Az yanlış, çok doğru. Soruları gözünü kırpmadan vurdun.':
+      'Few mistakes, lots of right answers. You hit every question dead on.',
+  'Şehir uyurken sen çalıştın. Uykunu da ihmal etme!':
+      'You studied while the city slept. Don’t forget to sleep too!',
+  'Güneşten önce kalktın, balı ilk sen topladın.':
+      'Up before the sun, you collected the honey first.',
+  'Uzun ve derin odaklandın. Dikkat kasın çok güçlü.':
+      'Long, deep focus. Your attention muscle is strong.',
+  'Soruları tek tek avladın. Kovan seninle gurur duyuyor.':
+      'You hunted down question after question. The hive is proud of you.',
+  'Bu hafta kovan sessiz. Raporu doldurmaya başla!':
+      'The hive is quiet this week. Start filling your report!',
+  '{n} soru · {d} aktif gün · {emoji} {persona}':
+      '{n} questions · {d} active days · {emoji} {persona}',
+  'Haftanın Bal Raporu': 'Weekly Honey Report',
+  'YENİ · HAFTALIK': 'NEW · WEEKLY',
+  'İzle': 'Watch',
+  'Bu haftaki Bal Raporum 🐝 #Mentoria':
+      'My Honey Report this week 🐝 #Mentoria',
+  'Önceki': 'Previous',
+  'Sonraki': 'Next',
+  '{name}, haftanın Bal Raporu hazır!':
+      '{name}, your weekly Honey Report is ready!',
+  'Bu hafta kovanda neler yaptığına bir bakalım. 🐝':
+      'Let’s see what you did in the hive this week. 🐝',
+  'Bu hafta kovan biraz sessizdi, {name}.':
+      'The hive was a little quiet this week, {name}.',
+  'Bir soru kaydı ya da bir pomodoro ile başla; gelecek hafta raporun parıl parıl olsun! ✨':
+      'Start with one question log or one pomodoro, and next week’s report will shine! ✨',
+  'Soru avı': 'Question hunt',
+  'soru çözdün': 'questions solved',
+  'Geçen haftadan %{n} fazla!': '{n}% more than last week!',
+  'Geçen haftadan %{n} az, toparlanıyoruz!':
+      '{n}% less than last week, let’s bounce back!',
+  '{n} doğru = {jars} kavanoz bal 🍯': '{n} correct = {jars} jars of honey 🍯',
+  'Odak zamanı': 'Focus time',
+  'saat {m} dk': 'h {m} min',
+  'odaklandın': 'of focus',
+  '{n} pomodoro · {s} oturum': '{n} pomodoros · {s} sessions',
+  'Haftanın ritmi': 'Your week’s rhythm',
+  '{n} günün {d} günü kovandaydın': 'You were in the hive {d} of {n} days',
+  'En parlak günün: {day} · {n} soru':
+      'Your brightest day: {day} · {n} questions',
+  'Favori dersin': 'Your favourite subject',
+  '{n} soruyla haftanın yıldızı': 'Star of the week with {n} questions',
+  'isabet': 'accuracy',
+  'Deneme cephesi': 'Exam front',
+  '{n} denemeye girdin': 'You took {n} practice exams',
+  'en iyi netin': 'your best net',
+  'Bu haftaki arı tipin': 'Your bee type this week',
+  'Yeniden izle': 'Watch again',
+  'Paylaş': 'Share',
+  'Bal Raporu': 'Honey Report',
+  'saat odak': 'hours focus',
+  'dk odak': 'min focus',
+  'aktif gün': 'active days',
+  'Favori ders: {s}': 'Favourite subject: {s}',
+
   // Bildirim kanalı
   'Mentoria bildirimleri': 'Mentoria notifications',
   'Ödev, görüşme, mesaj ve deneme bildirimleri':

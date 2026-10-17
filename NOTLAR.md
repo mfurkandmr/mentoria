@@ -966,3 +966,31 @@ anahtar dosyaları depoda yok (`env.json` .gitignore'da).
 4. Canlı için ayrı bir Supabase projesi önerilir (geliştirme verisi
    karışmasın); orada Point-in-Time Recovery yedeği ve *SSL enforcement*
    açık olsun. Müdür / süper-admin hesapları için MFA düşünülebilir.
+
+---
+
+## 22. Haftanın Bal Raporu (Instagram hikayesi tarzı haftalık özet)
+
+Öğrenci ana sayfasında parıldayan bir kart → tam ekran, kendiliğinden ilerleyen
+hikaye (sağa dokun: sonraki, sola: önceki, basılı tut: durdur, üstte
+ilerleme çubukları). Son 7 gün, ana sayfanın zaten yüklediği verilerden
+hesaplanır (`WeekRecap.compute`, `lib/features/recap/`), ek sorgu yok.
+
+Sayfalar (veri yoksa o sayfa atlanır):
+1. Giriş: gece moru, Bızz, tarih aralığı.
+2. Soru avı: dev sayaç, yağan bal damlaları, geçen haftaya göre %,
+   "N doğru = X kavanoz bal".
+3. Odak zamanı: dolan halka, saat/dk, pomodoro karşılığı.
+4. Haftanın ritmi: 7 gün sütunu sırayla yükselir, en iyi güne taç.
+5. Favori ders: ders adı + isabet halkası.
+6. Deneme cephesi: deneme sayısı, en iyi net.
+7. Arı tipi: dönen ışık huzmeleri önünde 3B dönerek gelen rozet + ses ve
+   titreşim. Tipler: İstikrar (7/7 gün), Keskin Nişancı (%85+ isabet),
+   Gece Kuşu (oturumların çoğu 21:00 sonrası), Sabahçı (09:00 öncesi),
+   Maratoncu (ortalama 45+ dk), Soru Avcısı (varsayılan).
+8. Özet kartı + konfeti: "Paylaş" kartı resim olarak paylaşır (share_plus),
+   "Yeniden izle".
+
+Boş haftada tek, cesaretlendiren sayfa. "Hareketi azalt" açıksa sayfalar
+kendiliğinden geçmez. Önizleme: `flutter test test/tool/recap_preview_test.dart`
+→ `build/recap_preview.png` (Windows yazı tipleriyle). Test: `test/recap_test.dart`.
