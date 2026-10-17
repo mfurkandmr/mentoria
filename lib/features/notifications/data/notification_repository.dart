@@ -23,7 +23,10 @@ enum NotificationKind {
   review(Icons.replay_circle_filled_rounded),
 
   /// Veliye: çocuğunun haftalık özeti.
-  weeklyReport(Icons.auto_awesome_rounded, 'weekly_report');
+  weeklyReport(Icons.auto_awesome_rounded, 'weekly_report'),
+
+  /// Öğrenciye: sabah 09.00'da Günün Sorusu.
+  dailyQuestion(Icons.wb_sunny_rounded, 'daily_question');
 
   const NotificationKind(this.icon, [this._db]);
   final IconData icon;
@@ -80,6 +83,7 @@ class AppNotification {
     NotificationKind.weeklyReport => tr('{child} için haftalık Bal Raporu 🐝', {
       'child': data['child'] ?? '',
     }),
+    NotificationKind.dailyQuestion => tr('Günün Sorusu hazır ☀️'),
   };
 
   String get body => switch (kind) {
@@ -116,6 +120,12 @@ class AppNotification {
         'd': data['days'] ?? 0,
       },
     ),
+    NotificationKind.dailyQuestion =>
+      tr('Bugün {subject} sorusu seni bekliyor. Çöz, serini büyüt!', {
+        'subject': data['subject'] == null
+            ? ''
+            : subjectByCode('${data['subject']}').name,
+      }),
   };
 
   /// "Yarın 11:00 · Ayşe Koç ile görüşmen var"
@@ -150,6 +160,7 @@ class AppNotification {
     NotificationKind.meeting => '/student',
     NotificationKind.review => '/student/mistakes',
     NotificationKind.weeklyReport => '${data['route'] ?? '/parent'}',
+    NotificationKind.dailyQuestion => '/student/daily',
   };
 
   AppNotification markRead() => AppNotification(

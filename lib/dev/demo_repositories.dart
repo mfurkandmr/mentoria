@@ -17,6 +17,7 @@ import '../features/auth/data/profile.dart';
 import '../features/coaching/data/coaching_repository.dart';
 import '../features/meetings/data/meeting_repository.dart';
 import '../features/mistakes/data/mistake_repository.dart';
+import '../features/learn/data/daily_question_repository.dart';
 import '../features/learn/data/practice_repository.dart';
 import '../features/tracking/data/tracking_models.dart';
 import '../features/tracking/data/tracking_repository.dart';
@@ -1372,5 +1373,103 @@ class InMemoryPracticeRepository implements PracticeRepository {
         answeredOn: today,
       ),
     );
+  }
+}
+
+/// Günün Sorusu (demo): ders güne göre döner, soru öğrenci + güne göre.
+/// Seri, önceki günlerin doğru cevaplarıyla başlatılabilir ([pastCorrectDays]).
+class InMemoryDailyQuestionRepository implements DailyQuestionRepository {
+  InMemoryDailyQuestionRepository({
+    this.myId,
+    int pastCorrectDays = 0,
+    DateTime Function()? clock,
+  }) : _clock = clock ?? DateTime.now {
+    final today = _today();
+    for (var k = 1; k <= pastCorrectDays; k++) {
+      answers[today.subtract(Duration(days: k))] = true;
+    }
+  }
+
+  /// Öğrenci değilse null.
+  final String? myId;
+  final DateTime Function() _clock;
+  final answers = <DateTime, bool>{};
+
+  DateTime _today() {
+    final n = _clock();
+    return DateTime(n.year, n.month, n.day);
+  }
+
+  String questionFor(DateTime day) {
+    final d = day.difference(DateTime(2026)).inDays;
+    final h = myId.hashCode.abs();
+    final subject = practiceSubjects[(d + h) % practiceSubjects.length];
+    final pool = practiceDailyLimit(subject) * 30;
+    final n = 1 + (d * 7919 + h) % pool;
+    return '$subject-${n.toString().padLeft(4, '0')}';
+  }
+
+  @override
+  Future<DailyQuestionState?> fetchToday() async {
+    if (myId == null) return null;
+    final today = _today();
+    var day = answers.containsKey(today)
+        ? today
+        : today.subtract(const Duration(days: 1));
+    var streak = 0;
+    while (answers[day] == true) {
+      streak++;
+      day = day.subtract(const Duration(days: 1));
+    }
+    return DailyQuestionState(
+      questionId: questionFor(today),
+      answered: answers.containsKey(today),
+      correct: answers[today],
+      streak: streak,
+    );
+  }
+
+  @override
+  Future<void> answer(
+    String studentId, {
+    required String questionId,
+    required bool correct,
+  }) async {
+    final today = _today();
+    if (answers.containsKey(today) || questionId != questionFor(today)) {
+      throw StateError('NOT_TODAYS_QUESTION');
+    }
+    answers[today] = correct;
+  }
+}
+
+/// Demo öğrencisine son 7 güne yayılmış Eğitim cevapları (koçun karnesi boş
+/// görünmesin). Bugün boş bırakılır; öğrencinin günlük hakkı tam kalsın.
+void seedDemoPractice(InMemoryPracticeRepository repo, String studentId) {
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  const plan = {
+    'TYT_MAT': (12, 0.75),
+    'TYT_TUR': (10, 0.85),
+    'TYT_FIZ': (6, 0.45),
+  };
+  final list = repo.answers.putIfAbsent(studentId, () => []);
+  var n = 0;
+  for (var k = 6; k >= 1; k--) {
+    final day = today.subtract(Duration(days: k));
+    for (final MapEntry(key: subject, value: (count, rate)) in plan.entries) {
+      final c = k.isEven ? count : count ~/ 2;
+      for (var i = 0; i < c; i++) {
+        n++;
+        list.add(
+          PracticeAnswer(
+            subject: subject,
+            questionId: '$subject-${n.toString().padLeft(4, '0')}',
+            correct: (i + 1) / c <= rate,
+            answeredOn: day,
+          ),
+        );
+      }
+    }
   }
 }

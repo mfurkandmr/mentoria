@@ -17,6 +17,7 @@ import '../features/admin/data/admin_repository.dart';
 import '../features/coaching/data/coaching_repository.dart';
 import '../features/meetings/data/meeting_repository.dart';
 import '../features/mistakes/data/mistake_repository.dart';
+import '../features/learn/data/daily_question_repository.dart';
 import '../features/learn/data/practice_repository.dart';
 import '../features/tracking/data/tracking_models.dart';
 import '../features/tracking/data/tracking_repository.dart';
@@ -40,6 +41,8 @@ Future<List<Override>> buildDemoOverrides([
   );
   await seedDemoAssignments(assignments, 'demo-student', topics);
   final coaching = InMemoryCoachingRepository();
+  final practice = InMemoryPracticeRepository();
+  seedDemoPractice(practice, 'demo-student');
   await seedDemoTracking(tracking, 'demo-student');
   await seedDemoTracking(tracking, 'demo-can', scale: 0.5);
   await seedDemoCoaching(coaching, 'demo-student');
@@ -231,7 +234,13 @@ Future<List<Override>> buildDemoOverrides([
     notificationRepositoryProvider.overrideWithValue(notifications),
     meetingRepositoryProvider.overrideWithValue(meetings),
     mistakeRepositoryProvider.overrideWithValue(mistakes),
-    practiceRepositoryProvider.overrideWithValue(InMemoryPracticeRepository()),
+    practiceRepositoryProvider.overrideWithValue(practice),
+    dailyQuestionRepositoryProvider.overrideWithValue(
+      InMemoryDailyQuestionRepository(
+        myId: role == 'student' ? 'demo-student' : null,
+        pastCorrectDays: 4,
+      ),
+    ),
     tenantRepositoryProvider.overrideWithValue(
       InMemoryTenantRepository(
         tenants: demoTenants(),

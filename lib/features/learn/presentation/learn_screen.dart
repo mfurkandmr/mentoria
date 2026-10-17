@@ -16,6 +16,7 @@ import '../../auth/data/auth_repository.dart';
 import '../../student/presentation/home_sky.dart';
 import '../data/learn_cards.dart';
 import '../data/practice_repository.dart';
+import 'notebook_button.dart';
 
 /// Derslerin rengi ve simgesi.
 ({Color color, IconData icon}) subjectLook(String code) => switch (code) {
@@ -876,16 +877,16 @@ class _QuizViewState extends ConsumerState<_QuizView> {
         ),
         const SizedBox(height: 8),
         for (var k = 0; k < q.options.length; k++)
-          _OptionTile(
+          OptionTile(
             letter: 'ABCDE'[k],
             text: q.options[k],
             state: !answered
-                ? _OptState.idle
+                ? OptState.idle
                 : k == q.answer
-                ? _OptState.right
+                ? OptState.right
                 : k == _picked
-                ? _OptState.wrong
-                : _OptState.dim,
+                ? OptState.wrong
+                : OptState.dim,
             onTap: answered ? null : () => _pick(k),
           ),
         if (answered) ...[
@@ -929,6 +930,14 @@ class _QuizViewState extends ConsumerState<_QuizView> {
               ),
             ),
           ),
+          if (_picked != q.answer) ...[
+            const SizedBox(height: 10),
+            AddToNotebookButton(
+              key: ValueKey(q.id),
+              studentId: widget.studentId,
+              question: q,
+            ),
+          ],
           const SizedBox(height: 12),
           FilledButton.icon(
             onPressed: _saving ? null : _next,
@@ -949,10 +958,11 @@ class _QuizViewState extends ConsumerState<_QuizView> {
   }
 }
 
-enum _OptState { idle, right, wrong, dim }
+enum OptState { idle, right, wrong, dim }
 
-class _OptionTile extends StatelessWidget {
-  const _OptionTile({
+class OptionTile extends StatelessWidget {
+  const OptionTile({
+    super.key,
     required this.letter,
     required this.text,
     required this.state,
@@ -960,29 +970,29 @@ class _OptionTile extends StatelessWidget {
   });
   final String letter;
   final String text;
-  final _OptState state;
+  final OptState state;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final brand = context.brand;
     final (bg, border, icon) = switch (state) {
-      _OptState.right => (
+      OptState.right => (
         brand.success.withValues(alpha: 0.14),
         brand.success,
         Icons.check_circle_rounded,
       ),
-      _OptState.wrong => (
+      OptState.wrong => (
         brand.danger.withValues(alpha: 0.12),
         brand.danger,
         Icons.cancel_rounded,
       ),
-      _OptState.dim => (
+      OptState.dim => (
         Colors.transparent,
         brand.ink.withValues(alpha: 0.12),
         null,
       ),
-      _OptState.idle => (
+      OptState.idle => (
         Theme.of(context).cardColor,
         brand.ink.withValues(alpha: 0.15),
         null,
@@ -993,9 +1003,9 @@ class _OptionTile extends StatelessWidget {
       child: Semantics(
         button: onTap != null,
         label:
-            '$letter: $text${state == _OptState.right
+            '$letter: $text${state == OptState.right
                 ? ', ${tr('doğru')}'
-                : state == _OptState.wrong
+                : state == OptState.wrong
                 ? ', ${tr('yanlış')}'
                 : ''}',
         excludeSemantics: true,
@@ -1015,14 +1025,14 @@ class _OptionTile extends StatelessWidget {
                   CircleAvatar(
                     radius: 15,
                     backgroundColor:
-                        state == _OptState.idle || state == _OptState.dim
+                        state == OptState.idle || state == OptState.dim
                         ? brand.ink.withValues(alpha: 0.08)
                         : border,
                     child: Text(
                       letter,
                       style: TextStyle(
                         fontWeight: FontWeight.w900,
-                        color: state == _OptState.idle || state == _OptState.dim
+                        color: state == OptState.idle || state == OptState.dim
                             ? brand.ink
                             : Colors.white,
                       ),
@@ -1034,7 +1044,7 @@ class _OptionTile extends StatelessWidget {
                       text,
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
-                        color: state == _OptState.dim
+                        color: state == OptState.dim
                             ? brand.ink.withValues(alpha: 0.5)
                             : null,
                       ),

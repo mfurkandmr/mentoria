@@ -20,11 +20,17 @@ type ServiceAccount = {
   token_uri?: string;
 };
 
+const SUBJECTS: Record<string, string> = {
+  TYT_TUR: 'Türkçe', TYT_MAT: 'Matematik', TYT_FIZ: 'Fizik', TYT_KIM: 'Kimya',
+  TYT_BIY: 'Biyoloji', TYT_TAR: 'Tarih', TYT_COG: 'Coğrafya', TYT_FEL: 'Felsefe',
+  TYT_DIN: 'Din Kültürü',
+};
+
 type NotificationRow = {
   id: string;
   user_id: string;
   kind: 'assignment' | 'exam' | 'task' | 'note' | 'deletion_request' | 'meeting'
-    | 'review' | 'weekly_report';
+    | 'review' | 'weekly_report' | 'daily_question';
   data: Record<string, unknown>;
 };
 
@@ -99,6 +105,12 @@ function texts(n: NotificationRow): { title: string; body: string; route: string
         title: `${s(d.child)} için haftalık Bal Raporu 🐝`,
         body: `Bu hafta ${s(d.questions)} soru çözdü, ${s(d.minutes)} dk odaklandı, ${s(d.days)} gün çalıştı.`,
         route: s(d.route) || '/parent',
+      };
+    case 'daily_question':
+      return {
+        title: 'Günün Sorusu hazır ☀️',
+        body: `Bugün ${SUBJECTS[s(d.subject)] ?? ''} sorusu seni bekliyor. Çöz, serini büyüt!`,
+        route: '/student/daily',
       };
   }
 }

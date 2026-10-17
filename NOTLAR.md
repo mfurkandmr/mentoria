@@ -1085,9 +1085,39 @@ Din Kültürü):
   için `tool/questions/<ders>.py` dosyaları. Üretici her soruyu denetler
   (5 farklı şık, geçerli cevap); `test/learn_test.dart` havuzu doğrular.
 - Cevaplar `practice_answers` tablosunda; koç, müdür ve veli görebilir
-  (ileride koç ekranına "çözülen soru / isabet" eklenebilir).
+  (koç ekranında "Eğitim" sekmesi, bkz. §26).
 - Bilinen sınırlar: sözel derslerde soru kökleri çeşitli ama kalıplar az
   (ör. Tarih'te kronoloji ağırlıklı); havuz büyütüldükçe yeni şablonlar
   eklenmeli. Sorular bir öğretmen tarafından gözden geçirilmeli.
 
 Önizleme: `flutter test test/tool/learn_preview_test.dart` → `build/learn_preview.png`.
+
+## 26. Yanlışı deftere at, Günün Sorusu, koçun Eğitim karnesi
+
+- **Yanlışı tek dokunuşla Hata Defteri'ne at:** Eğitim'de (ve Günün
+  Sorusu'nda) yanlış cevaptan sonra "Hata Defteri'ne ekle" düğmesi; kart
+  soru metni + doğru şık + kısa çözümle oluşur (en çok 500 karakter,
+  `notebook_button.dart`), 1-3-7-21 gün tekrarına girer.
+- **Günün Sorusu** (`20261018210000_daily_question`, **henüz canlıda değil**):
+  - Her öğrenciye her gün tek soru; ders güne göre döner (9 günde 9 ders,
+    öğrenciler farklı dersten başlar), soru öğrenci + güne göre seçilir
+    (`daily_question_id`, havuzla aynı kimlikler). Günlük hakkı harcamaz.
+  - `daily_answers`: günde bir cevap, yalnızca o günün sorusu kabul edilir
+    (`NOT_TODAYS_QUESTION`), değiştirilemez / silinemez.
+  - `my_daily_question()`: bugünkü soru, cevap durumu ve **seri** (art arda
+    doğru cevaplanan günler; yanlış cevap seriyi sıfırlar, cevapsız bugün
+    seriyi bozmaz).
+  - pg_cron `daily-question` (`0 6 * * *` = 09.00 TR) →
+    `send_daily_questions()`: o gün cevaplamamış öğrencilere
+    `daily_question` bildirimi (günde bir kez). send-push'a da eklendi →
+    canlıya alırken **send-push yeniden deploy** edilmeli (sürüm 5).
+  - Uygulama: ana sayfada turuncu "Günün Sorusu" kartı (alev serisiyle),
+    `/student/daily` ekranı; bildirim oraya açılır.
+  - Test: `supabase/tests/daily_question_test.mjs`.
+- **Koçun Eğitim karnesi:** öğrenci detayında yeni "Eğitim" sekmesi
+  (`learn_report_view.dart`, hesap `practice_report.dart`): toplam soru,
+  isabet, son 7 gün grafiği, ders ders isabet çubuğu ve en çok yanlış
+  yapılan konu; en zayıf ders %70 altındaysa öneri notu.
+- Testler: `test/learn_daily_test.dart`. Önizleme:
+  `flutter test test/tool/daily_question_preview_test.dart` →
+  `build/daily_question_preview.png`.

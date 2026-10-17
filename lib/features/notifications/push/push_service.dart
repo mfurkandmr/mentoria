@@ -149,7 +149,11 @@ class PushService {
     if (route is! String || !route.startsWith('/')) return;
     final router = _ref.read(routerProvider);
     // Ödev listesi üstüne açılır (geri tuşu çalışsın), diğerleri sekmeye gider.
-    const {'/student/homework', '/student/mistakes'}.contains(route)
+    const {
+          '/student/homework',
+          '/student/mistakes',
+          '/student/daily',
+        }.contains(route)
         ? router.push(route)
         : router.go(route);
   }

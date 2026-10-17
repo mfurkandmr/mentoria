@@ -1387,6 +1387,45 @@ const enStrings = <String, String>{
   'Günlük {l} soru hakkını kullandın. Yarın havuzdan yepyeni sorular gelecek. 🐝':
       'You’ve used your {l} daily questions. Brand-new ones arrive tomorrow. 🐝',
 
+  // Hata Defteri'ne ekle, Günün Sorusu, Eğitim karnesi
+  'Doğru cevap': 'Correct answer',
+  "Hata Defteri'ne ekle": 'Add to Mistake Notebook',
+  'Deftere eklendi · yarın yeniden sorulacak':
+      'Added · you’ll see it again tomorrow',
+  'Günün Sorusu': 'Question of the Day',
+  '{subject} · çöz, serini büyüt': '{subject} · solve it, grow your streak',
+  'Bugünkü soruyu bildin ✓ Yarın yenisi gelir':
+      'You got today’s question ✓ A new one comes tomorrow',
+  'Bugünkü soru çözüldü · yarın yenisi gelir':
+      'Today’s question is done · a new one comes tomorrow',
+  '🔥 {n} gün': '🔥 {n} days',
+  'Günün Sorusu öğrencilere özel.': 'The Question of the Day is for students.',
+  'Bugünkü soru yüklenemedi.': 'Couldn’t load today’s question.',
+  'Günlük hakkını harcamaz': 'Doesn’t use your daily questions',
+  'Doğru! Serin {n} gün 🔥': 'Correct! Your streak is {n} days 🔥',
+  'Bu sefer olmadı. Seri sıfırlandı, yarın yeniden başla!':
+      'Not this time. Your streak reset — start again tomorrow!',
+  "Yarın sabah 09.00'da yeni soru gelecek.":
+      'A new question arrives tomorrow at 09:00.',
+  'Günün Sorusu hazır ☀️': 'Question of the Day is ready ☀️',
+  'Bugün {subject} sorusu seni bekliyor. Çöz, serini büyüt!':
+      'Today’s {subject} question is waiting. Solve it, grow your streak!',
+  'Henüz soru çözülmedi': 'No questions solved yet',
+  'Öğrenci Eğitim sekmesinde soru çözdükçe karnesi burada oluşur.':
+      'As the student solves questions in the Learn tab, their report appears here.',
+  'Toplam': 'Total',
+  'tüm zamanlar': 'all time',
+  'En zayıf ders: {subject} (%{p} isabet).':
+      'Weakest subject: {subject} ({p}% accuracy).',
+  'En zayıf ders: {subject} (%{p} isabet). Önce "{topic}" konusuna odaklanılabilir.':
+      'Weakest subject: {subject} ({p}% accuracy). Focusing on "{topic}" first could help.',
+  'Eğitim sekmesinde günlük çözülen soru':
+      'Questions solved per day in the Learn tab',
+  'Ders ders': 'By subject',
+  'Çözülen soru, isabet ve en çok yanlış yapılan konu':
+      'Questions solved, accuracy and the most-missed topic',
+  'En çok yanlış: {topic} ({n})': 'Most missed: {topic} ({n})',
+
   // Bildirim kanalı
   'Mentoria bildirimleri': 'Mentoria notifications',
   'Ödev, görüşme, mesaj ve deneme bildirimleri':

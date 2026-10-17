@@ -227,6 +227,8 @@ void main() {
       final repo =
           container.read(practiceRepositoryProvider)
               as InMemoryPracticeRepository;
+      // Demo geçmişi (koç karnesi için) bu senaryoyu etkilemesin.
+      repo.answers.clear();
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,

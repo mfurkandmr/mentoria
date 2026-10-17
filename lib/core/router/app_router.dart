@@ -21,6 +21,7 @@ import '../../features/import/presentation/import_screen.dart';
 import '../../features/intro/intro_screen.dart';
 import '../../features/garden/presentation/garden_screen.dart';
 import '../../features/learn/presentation/learn_screen.dart';
+import '../../features/learn/presentation/daily_question_screen.dart';
 import '../../features/mistakes/presentation/mistakes_screen.dart';
 import '../../features/parent/presentation/parent_child_screen.dart';
 import '../../features/parent/presentation/parent_home_screen.dart';
@@ -173,6 +174,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/student/mistakes',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (_, _) => const MistakesScreen(),
+      ),
+      GoRoute(
+        path: '/student/daily',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, _) => const DailyQuestionScreen(),
       ),
       GoRoute(
         path: '/student/garden',

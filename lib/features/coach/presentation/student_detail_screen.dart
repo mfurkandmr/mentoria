@@ -12,6 +12,7 @@ import '../../auth/data/auth_repository.dart';
 import '../../auth/data/profile.dart';
 import '../../coaching/presentation/coaching_widgets.dart';
 import '../../exams/presentation/exams_screen.dart';
+import '../../learn/presentation/learn_report_view.dart';
 import '../../meetings/presentation/meeting_widgets.dart';
 import '../../tracking/presentation/questions_view.dart';
 import '../../tracking/presentation/study_view.dart';
@@ -49,6 +50,7 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
     tr('Ödevler'),
     tr('Notlar'),
     tr('Hata Defteri'),
+    tr('Eğitim'),
   ];
   late final TabController _controller =
       TabController(length: _tabs.length, vsync: this)..addListener(() {
@@ -214,6 +216,7 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
                   children: [NotesList(studentId: id, canWrite: isCoach)],
                 ),
                 MistakesView(studentId: id, readOnly: true, bottomPadding: 32),
+                LearnReportView(studentId: id),
               ],
             ),
           ),
