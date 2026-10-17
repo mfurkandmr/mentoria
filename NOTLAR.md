@@ -1249,3 +1249,29 @@ havuzla aynı. Havuz değişirse canlıdaki anahtar da yenilenmeli.
   - Yalnızca yönetilen öğrenciler (`can_manage_student`) görünür; isme
     dokununca öğrenci detayı açılır.
 - **Testler:** `test/score_plan_trends_test.dart`.
+
+## 31. Tanıtım videoları (koç-müdür, öğrenci-veli)
+
+Araçlar `tool/promo/`:
+
+1. **Ekran görüntüleri:** `flutter test tool/promo/promo_shots_test.dart` →
+   `build/promo/shots/*.png` (1170×2532, demo verisi, gerçek widget'lar).
+   - Normal `flutter test` bu dosyayı çalıştırmaz.
+   - Gerçek Nunito dosyaları `build/promo/fonts/nunito_<ağırlık>.ttf` olmalı.
+     `google_fonts`'un kullandığı fonts.gstatic.com dosyalarıdır (karma
+     değerleri `google_fonts` paketindeki `part_n.dart` içinde).
+   - Emoji için Windows'un Segoe UI Symbol yazı tipi yedek olarak eklenir.
+   - Maskot görselleri de buradan üretilir.
+2. **Kurgu:** `python tool/promo/make_promo.py coach|student`
+   (`--preview` ile sahne başına iki kare).
+   - Telefon çerçevesi, durum çubuğu, kelime kelime gelen başlıklar,
+     yakınlaşma, sayaç sahnesi ve geçişlerle 1080×1920, 30 fps MP4 üretir.
+   - ffmpeg için `pip install imageio-ffmpeg`.
+3. **Müzik:** `python tool/promo/make_music.py <sn> <wav>`. Numpy ile özgün
+   sentez, telifsiz (112 BPM, Dm-Bb-F-C).
+4. **VideoDB:** görüntü ve müzik VideoDB'ye yüklenip zaman çizelgesiyle
+   birleştirilir. Dosyalar herkese açık depoda yalnızca bu dosyaları içeren
+   `promo-assets` dalından okunur.
+
+Uygulamaya yansıyan düzeltme: düellodaki "Başla" düğmesinin yazısı artık
+markanın yazı tipinde (önceden sistem yazı tipine düşüyordu).

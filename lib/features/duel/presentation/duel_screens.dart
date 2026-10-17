@@ -706,10 +706,12 @@ class _DuelIntroScreenState extends ConsumerState<DuelIntroScreen> {
             onPressed: _starting ? null : _start,
             style: FilledButton.styleFrom(
               backgroundColor: _duelColors.last,
+              foregroundColor: Colors.white,
               minimumSize: const Size.fromHeight(56),
-              textStyle: const TextStyle(
+              textStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w900,
+                color: Colors.white,
               ),
             ),
             icon: const Icon(Icons.play_arrow_rounded),
