@@ -224,6 +224,62 @@ void main() {
     expect(find.text('AYT Sayısal Deneme 4'), findsOneWidget);
   });
 
+  testWidgets('deneme analizi: ders ders eğilim, ısı haritası, pencere', (
+    tester,
+  ) async {
+    _phone(tester);
+    final router = GoRouter(
+      initialLocation: '/student/exams',
+      routes: [
+        GoRoute(path: '/student/exams', builder: (_, _) => const ExamsScreen()),
+      ],
+    );
+    await tester.pumpWidget(
+      _app(
+        router: router,
+        profile: _student,
+        exams: InMemoryExamRepository.demo(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Analiz'));
+    await tester.pumpAndSettle();
+    expect(find.text('Toplam net eğilimi'), findsOneWidget);
+    expect(find.text('net / deneme'), findsOneWidget);
+    expect(find.text('En hızlı yükselen'), findsOneWidget);
+    await tester.dragUntilVisible(
+      find.text('Isı haritası'),
+      find.byType(ListView).first,
+      const Offset(0, -200),
+    );
+    await tester.dragUntilVisible(
+      find.text('Ders ders gelişim'),
+      find.byType(ListView).first,
+      const Offset(0, -200),
+    );
+    await tester.dragUntilVisible(
+      find.textContaining('ustalık').last,
+      find.byType(ListView).first,
+      const Offset(0, -200),
+    );
+    expect(find.textContaining('Eğilim:'), findsWidgets);
+
+    // Pencere: tüm denemeler
+    await tester.dragUntilVisible(
+      find.text('Tümü'),
+      find.byType(ListView).first,
+      const Offset(0, 300),
+    );
+    await tester.tap(find.text('Tümü'));
+    await tester.pumpAndSettle();
+    expect(find.text('Toplam net eğilimi'), findsOneWidget);
+
+    // Listeye geri dön
+    await tester.tap(find.text('Sonuçlar'));
+    await tester.pumpAndSettle();
+    expect(find.text('Son net'), findsOneWidget);
+  });
+
   testWidgets('koç listesi, eksik numara uyarısı ve numara girme', (
     tester,
   ) async {

@@ -11,6 +11,7 @@ import '../../auth/data/auth_repository.dart';
 import '../../student/presentation/home_sky.dart';
 import '../data/exam.dart';
 import '../data/exam_repository.dart';
+import 'exam_analysis_view.dart';
 import 'exam_detail_sheet.dart';
 import 'net_trend_chart.dart';
 import '../../../shared/widgets/effects.dart';
@@ -49,6 +50,9 @@ class ExamsView extends ConsumerStatefulWidget {
 class _ExamsViewState extends ConsumerState<ExamsView> {
   ExamType _type = ExamType.tyt;
 
+  /// Deneme listesi yerine ders ders analiz.
+  bool _analysis = false;
+
   @override
   Widget build(BuildContext context) {
     final provider = examsForStudentProvider(widget.studentId);
@@ -72,6 +76,29 @@ class _ExamsViewState extends ConsumerState<ExamsView> {
             ),
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+          child: SizedBox(
+            width: double.infinity,
+            child: SegmentedButton<bool>(
+              showSelectedIcon: false,
+              segments: [
+                ButtonSegment(
+                  value: false,
+                  icon: const Icon(Icons.list_alt_rounded),
+                  label: Text(tr('Sonuçlar')),
+                ),
+                ButtonSegment(
+                  value: true,
+                  icon: const Icon(Icons.query_stats_rounded),
+                  label: Text(tr('Analiz')),
+                ),
+              ],
+              selected: {_analysis},
+              onSelectionChanged: (s) => setState(() => _analysis = s.first),
+            ),
+          ),
+        ),
         Expanded(
           child: exams.when(
             loading: () => const BizzLoader(),
@@ -89,11 +116,13 @@ class _ExamsViewState extends ConsumerState<ExamsView> {
               }
               return RefreshIndicator(
                 onRefresh: () => ref.refresh(provider.future),
-                child: _ExamsList(
-                  stats: stats,
-                  studentId: widget.studentId,
-                  canManage: canManage,
-                ),
+                child: _analysis
+                    ? ExamAnalysisView(key: ValueKey(_type), exams: stats.exams)
+                    : _ExamsList(
+                        stats: stats,
+                        studentId: widget.studentId,
+                        canManage: canManage,
+                      ),
               );
             },
           ),

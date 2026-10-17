@@ -1030,3 +1030,29 @@ Veli ekranında yeni "Bal Raporu" sekmesi (tab=4): paylaşılabilir özet kartı
 
 Önizleme: `flutter test test/tool/new_features_preview_test.dart` →
 `build/new_features_preview.png`. Testler: `test/mistakes_garden_test.dart`.
+
+---
+
+## 24. Deneme analizi (ders ders matematiksel gelişim)
+
+Denemeler ekranında (öğrenci, koç, müdür, veli) TYT / AYT / YDT seçiminin
+altında yeni **Sonuçlar | Analiz** seçimi. Analiz yalnızca uygulamada, var olan
+denemelerden hesaplanır (`lib/features/exams/data/exam_analysis.dart`, test
+`test/exams/exam_analysis_test.dart`):
+
+- **Pencere:** son 5 / son 10 / tüm denemeler.
+- **Toplam net eğilimi:** en küçük kareler doğrusu (net / deneme) ve
+  "bu gidişle 5 deneme sonra ≈ X net" tahmini.
+- **Öne çıkanlar:** en hızlı yükselen ders (deneme başına en çok net
+  kazandıran), dikkat isteyen (en çok düşen; düşen yoksa ustalığı en düşük),
+  en istikrarlı (soru sayısına göre en küçük sapma, en az 3 deneme).
+- **Isı haritası:** ders × deneme, hücrede net, renk netin soru sayısına
+  oranı (kırmızı → sarı → yeşil).
+- **Her ders için kart:** gidişat rozeti (yükselişte / düşüşte / dalgalı /
+  istikrarlı; eşik: soru sayısı / 80 net/deneme ve uyum ≥ %25), net grafiği
+  üstünde kesikli eğilim çizgisi, eğim ve uyum (R²), son / ortalama / en iyi,
+  isabet (doğru / (doğru+yanlış)), boş oranı, ustalık (ortalama / soru sayısı)
+  ve soru sayısıyla sınırlı 5 deneme sonrası tahmini.
+
+Önizleme: `flutter test test/tool/exam_analysis_preview_test.dart` →
+`build/exam_analysis_preview.png`.

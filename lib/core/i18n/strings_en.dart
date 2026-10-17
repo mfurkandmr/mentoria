@@ -1324,6 +1324,41 @@ const enStrings = <String, String>{
   'Her pazar akşamı bu özeti bildirim olarak da alırsın.':
       'You’ll also get this summary as a notification every Sunday evening.',
 
+  // Deneme analizi
+  'Analiz': 'Analysis',
+  'Son 5': 'Last 5',
+  'Son 10': 'Last 10',
+  'Yükselişte': 'Rising',
+  'Düşüşte': 'Falling',
+  'Dalgalı': 'Fluctuating',
+  'İstikrarlı': 'Steady',
+  'Tek deneme': 'Single exam',
+  '{v} net/deneme': '{v} net/exam',
+  'Analiz için en az 2 deneme gerekiyor.':
+      'At least 2 exams are needed for analysis.',
+  'Ders ders gelişim': 'Progress by subject',
+  '{n} deneme · kesikli çizgi eğilimi gösterir':
+      '{n} exams · the dashed line shows the trend',
+  'Toplam net eğilimi': 'Total net trend',
+  'net / deneme': 'net / exam',
+  'Bu gidişle 5 deneme sonra ≈ {p} net (şu an {n})':
+      'At this pace, ≈ {p} net in 5 exams (now {n})',
+  'En hızlı yükselen': 'Fastest rising',
+  'Dikkat isteyen': 'Needs attention',
+  '{s} · %{p} ustalık': '{s} · {p}% mastery',
+  'En istikrarlı': 'Most consistent',
+  'Isı haritası': 'Heat map',
+  'Hücredeki sayı net; renk o dersteki doluluk oranı':
+      'The number is the net; the colour shows how full the subject is',
+  'Eğilim: {v} · uyum %{r}': 'Trend: {v} · fit {r}%',
+  'Son': 'Last',
+  'Ortalama': 'Average',
+  'İsabet': 'Accuracy',
+  '%{p} ustalık': '{p}% mastery',
+  '🔮 Bu gidişle 5 deneme sonra ≈ {p} / {q} net':
+      '🔮 At this pace, ≈ {p} / {q} net in 5 exams',
+  '{s} net grafiği: ilk {a}, son {b}': '{s} net chart: first {a}, last {b}',
+
   // Bildirim kanalı
   'Mentoria bildirimleri': 'Mentoria notifications',
   'Ödev, görüşme, mesaj ve deneme bildirimleri':
