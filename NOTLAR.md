@@ -3,8 +3,8 @@
 Bu dosya, son iki büyük özelliğin (white label ve öğrenci avatarı) ne yaptığını,
 nasıl çalıştığını ve nelere dikkat edilmesi gerektiğini anlatır.
 
-> **Güncel durum (16 Ekim 2026, genel kontrol):** Depodaki 29 migration'ın
-> hepsi canlı projede (`lmbykdvvxormfiaomysn`). `send-push` sürüm 3 canlı ve
+> **Güncel durum (16 Ekim 2026, genel kontrol):** Depodaki 30 migration'ın
+> hepsi canlı projede (`lmbykdvvxormfiaomysn`). `send-push` sürüm 4 canlı ve
 > depodakiyle aynı; Vault'ta `push_function_url` / `push_webhook_secret` var.
 > `meeting-reminders` cron işi çalışıyor (hatasız). **Telefon bildirimi gerçek
 > cihazda doğrulandı:** 19:10'da bir görüşme hatırlatması FCM'e iletildi
