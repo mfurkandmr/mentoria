@@ -21,6 +21,7 @@ import '../features/auth/data/profile.dart';
 import '../features/coaching/data/coaching_repository.dart';
 import '../features/meetings/data/meeting_repository.dart';
 import '../features/mistakes/data/mistake_repository.dart';
+import '../features/plan/data/plan_repository.dart';
 import '../features/duel/data/duel_repository.dart';
 import '../features/learn/data/daily_question_repository.dart';
 import '../features/learn/data/practice_repository.dart';
@@ -1685,5 +1686,104 @@ class _DemoDuel {
       theirMs: mine ? theirMs : null,
       result: result,
     );
+  }
+}
+
+/// Haftalık plan (demo). Sunucudaki gibi günde en çok 12 madde.
+class InMemoryPlanRepository implements PlanRepository {
+  final items = <PlanItem>[];
+  int _next = 0;
+
+  @override
+  Future<List<PlanItem>> fetchWeek(String studentId, DateTime weekStart) async {
+    final end = weekStart.add(const Duration(days: 7));
+    return items
+        .where(
+          (i) =>
+              i.studentId == studentId &&
+              !i.day.isBefore(weekStart) &&
+              i.day.isBefore(end),
+        )
+        .toList()
+      ..sort((a, b) => a.day.compareTo(b.day));
+  }
+
+  @override
+  Future<void> add(String studentId, PlanDraft d) async {
+    final day = DateTime(d.day.year, d.day.month, d.day.day);
+    if (items.where((i) => i.studentId == studentId && i.day == day).length >=
+        12) {
+      throw const PlanException('PLAN_DAY_FULL');
+    }
+    items.add(
+      PlanItem(
+        id: 'plan-${_next++}',
+        studentId: studentId,
+        day: day,
+        subject: d.subject,
+        topic: d.topic,
+        questionCount: d.questionCount,
+        minutes: d.minutes,
+        note: d.note,
+      ),
+    );
+  }
+
+  @override
+  Future<void> delete(String itemId) async =>
+      items.removeWhere((i) => i.id == itemId);
+
+  @override
+  Future<void> setDone(String itemId, bool done) async {
+    final i = items.indexWhere((x) => x.id == itemId);
+    final x = items[i];
+    items[i] = PlanItem(
+      id: x.id,
+      studentId: x.studentId,
+      day: x.day,
+      subject: x.subject,
+      topic: x.topic,
+      questionCount: x.questionCount,
+      minutes: x.minutes,
+      note: x.note,
+      doneAt: done ? DateTime.now() : null,
+    );
+  }
+}
+
+/// Demo öğrencisinin bu haftalık planı: geçen günler kısmen yapılmış.
+Future<void> seedDemoPlan(InMemoryPlanRepository repo, String studentId) async {
+  final start = weekStartOf(DateTime.now());
+  final plan = [
+    (0, 'TYT_MAT', 'Problemler', 40, null),
+    (0, 'TYT_TUR', 'Paragraf', 30, null),
+    (1, 'AYT_MAT', 'Türev', 25, 45),
+    (1, 'TYT_FIZ', 'Hareket', 20, null),
+    (2, 'TYT_KIM', 'Mol kavramı', 20, null),
+    (2, 'TYT_MAT', 'Fonksiyonlar', 30, null),
+    (3, 'TYT_TUR', 'Dil bilgisi', 30, null),
+    (3, 'AYT_FIZ', 'Atışlar', null, 60),
+    (4, 'TYT_MAT', 'Deneme çözümü', 40, 75),
+    (5, 'TYT_BIY', 'Hücre', 20, null),
+    (6, 'TYT_TUR', 'Paragraf', 40, null),
+  ];
+  final today = DateTime.now();
+  for (final (d, subject, topic, q, m) in plan) {
+    await repo.add(
+      studentId,
+      PlanDraft(
+        day: start.add(Duration(days: d)),
+        subject: subject,
+        topic: topic,
+        questionCount: q,
+        minutes: m,
+      ),
+    );
+    final item = repo.items.last;
+    // Bugünden önceki günlerin maddeleri (biri hariç) yapılmış.
+    if (item.day.isBefore(DateTime(today.year, today.month, today.day)) &&
+        repo.items.length % 4 != 0) {
+      await repo.setDone(item.id, true);
+    }
   }
 }

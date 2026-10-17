@@ -1429,6 +1429,79 @@ const enStrings = <String, String>{
   'TYT': 'TYT',
   'AYT': 'AYT',
 
+  // Deneme eğilimi (koç / müdür ana sayfası)
+  'Son 5 denemede değişim': 'Change over the last 5 exams',
+  'İlk ve son denemenin toplam neti karşılaştırılır':
+      'Compares the total net of the first and latest exam',
+  'Karşılaştırmak için en az 2 {type} denemesi olan öğrenci yok.':
+      'No student has at least 2 {type} exams to compare.',
+  'En çok yükselen': 'Biggest rises',
+  'Yükselen öğrenci yok.': 'No students are rising.',
+  'En çok düşen': 'Biggest drops',
+  'Düşen öğrenci yok. 🎉': 'No students are dropping. 🎉',
+  '{a} → {b} net · {n} deneme': '{a} → {b} net · {n} exams',
+
+  // YKS puan hesaplayıcı
+  'Plan': 'Plan',
+  'Puan hesapla': 'Score calculator',
+  'Tahmini {type} yerleştirme puanın': 'Your estimated {type} placement score',
+  'Ham puan {raw} · diploma notunu girersen OBP eklenir':
+      'Raw score {raw} · enter your diploma grade to add OBP',
+  'Ham puan {raw} · OBP katkısı +{obp}': 'Raw score {raw} · OBP bonus +{obp}',
+  'Hedef puan': 'Target score',
+  'Hedef bölümünün geçen yılki taban puanını yazabilirsin':
+      'You can enter last year’s minimum score for your target programme',
+  '{type} hedef puanı': '{type} target score',
+  'Netlerin': 'Your nets',
+  'Son denemelerinden dolduruldu; değiştirip deneyebilirsin':
+      'Filled from your latest exams; change them to try scenarios',
+  'Sıfırla': 'Reset',
+  'Diploma notu (OBP)': 'Diploma grade (OBP)',
+  'Diploma notu (50-100)': 'Diploma grade (50-100)',
+  'Geçen yıl bir programa yerleştim': 'I was placed in a programme last year',
+  'OBP katkısı yarıya iner': 'The OBP bonus is halved',
+  'Puanlar tahminidir. ÖSYM puanları adayların ortalaması ve standart sapmasıyla hesaplar; gerçek puanın birkaç puan farklı olabilir.':
+      'Scores are estimates. ÖSYM calculates scores using candidates’ averages and standard deviations, so your real score may differ by a few points.',
+  'Hedefinin {p} puan üstündesin 🎉': 'You’re {p} points above your target 🎉',
+  'Hedefe {p} puan kaldı': '{p} points to your target',
+  'Tek bir dersten kapanmıyor; birkaç derste birden net artırmalısın.':
+      'One subject alone won’t close the gap; raise your nets in several subjects.',
+  'Tek başına şu derslerden biriyle kapanır:':
+      'Any one of these subjects alone closes the gap:',
+  '{subject}: +{n} net (1 net ≈ {c} puan)':
+      '{subject}: +{n} nets (1 net ≈ {c} points)',
+
+  // Haftalık plan
+  'Bugünün planı': 'Today’s plan',
+  'Hafta %{p}': 'Week {p}%',
+  'Bugün için madde yok. Haftanın planına bak.':
+      'Nothing planned for today. See the week’s plan.',
+  '+{n} madde daha': '+{n} more items',
+  'Haftalık plan': 'Weekly plan',
+  'Silinemedi. Tekrar dene.': 'Couldn’t delete. Try again.',
+  'Geçen hafta plan yok.': 'There was no plan last week.',
+  'Geçen haftanın planı kopyalandı.': 'Last week’s plan was copied.',
+  '{n} madde kopyalanamadı.': '{n} items couldn’t be copied.',
+  'Bu haftaya dön': 'Back to this week',
+  '{d} / {n} madde · %{p}': '{d} / {n} items · {p}%',
+  'Bu hafta için plan yok': 'No plan for this week',
+  'Günlere madde ekle ya da geçen haftanın planını kopyala.':
+      'Add items to the days or copy last week’s plan.',
+  'Koçun plan hazırlayınca burada görünecek.':
+      'It will appear here once your coach makes a plan.',
+  'Geçen haftayı kopyala': 'Copy last week',
+  'Madde ekle': 'Add item',
+  'Madde yok': 'No items',
+  'Soru 1-1000, süre 5-600 dakika olmalı.':
+      'Questions must be 1-1000 and time 5-600 minutes.',
+  'Bir güne en çok 12 madde eklenebilir.':
+      'A day can have at most 12 items.',
+  'Geçmiş haftalara madde eklenemez.': 'You can’t add items to past weeks.',
+  '{day} için madde': 'Item for {day}',
+  'ör. Problemler': 'e.g. Word problems',
+  'Soru hedefi': 'Question goal',
+  'Süre (dk)': 'Time (min)',
+
   // Sıkça sorulan sorular (ekran)
   'Sıkça sorulan sorular': 'Frequently asked questions',
   'Öğrenci paneli hakkında': 'About the student panel',

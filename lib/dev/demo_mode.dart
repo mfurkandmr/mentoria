@@ -15,9 +15,11 @@ import '../features/exams/data/exam.dart';
 import '../features/exams/data/exam_repository.dart';
 import '../features/account/data/account_repository.dart';
 import '../features/admin/data/admin_repository.dart';
+import '../features/coach/data/exam_trends.dart';
 import '../features/coaching/data/coaching_repository.dart';
 import '../features/meetings/data/meeting_repository.dart';
 import '../features/mistakes/data/mistake_repository.dart';
+import '../features/plan/data/plan_repository.dart';
 import '../features/duel/data/duel_repository.dart';
 import '../features/learn/data/daily_question_repository.dart';
 import '../features/learn/data/practice_repository.dart';
@@ -44,6 +46,8 @@ Future<List<Override>> buildDemoOverrides([
   await seedDemoAssignments(assignments, 'demo-student', topics);
   final coaching = InMemoryCoachingRepository();
   final practice = InMemoryPracticeRepository();
+  final plan = InMemoryPlanRepository();
+  await seedDemoPlan(plan, 'demo-student');
   seedDemoPractice(practice, 'demo-student');
   await seedDemoTracking(tracking, 'demo-student');
   await seedDemoTracking(tracking, 'demo-can', scale: 0.5);
@@ -238,6 +242,12 @@ Future<List<Override>> buildDemoOverrides([
     mistakeRepositoryProvider.overrideWithValue(mistakes),
     practiceRepositoryProvider.overrideWithValue(practice),
     duelRepositoryProvider.overrideWithValue(demoDuels(avatars)),
+    planRepositoryProvider.overrideWithValue(plan),
+    examTrendRepositoryProvider.overrideWithValue(
+      InMemoryExamTrendRepository(exams, {
+        for (final e in demoStudents().entries) e.key: e.value.$1,
+      }),
+    ),
     dailyQuestionRepositoryProvider.overrideWithValue(
       InMemoryDailyQuestionRepository(
         myId: role == 'student' ? 'demo-student' : null,
@@ -731,4 +741,35 @@ InMemoryDuelRepository demoDuels(InMemoryAvatarRepository avatars) {
     createdAt: DateTime.now().subtract(const Duration(hours: 3)),
   );
   return repo;
+}
+
+/// Deneme eğilimi (demo): demo denemelerinden, sunucudakiyle aynı kuralla
+/// (son 5 deneme, en az 2).
+class InMemoryExamTrendRepository implements ExamTrendRepository {
+  InMemoryExamTrendRepository(this.exams, this.names);
+
+  final InMemoryExamRepository exams;
+  final Map<String, String> names;
+
+  @override
+  Future<List<ExamTrend>> fetch(ExamType type) async {
+    final out = <ExamTrend>[];
+    for (final e in names.entries) {
+      final list =
+          exams.examsOf(e.key).where((x) => x.examType == type).toList()
+            ..sort(Exam.byDate);
+      final last5 = list.length > 5 ? list.sublist(list.length - 5) : list;
+      if (last5.length < 2) continue;
+      out.add(
+        ExamTrend(
+          studentId: e.key,
+          name: e.value,
+          examCount: last5.length,
+          firstNet: last5.first.totalNet,
+          lastNet: last5.last.totalNet,
+        ),
+      );
+    }
+    return out..sort((a, b) => b.delta.compareTo(a.delta));
+  }
 }

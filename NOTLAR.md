@@ -1212,3 +1212,37 @@ havuzla aynı. Havuz değişirse canlıdaki anahtar da yenilenmeli.
     buraya ekle.
 - **Test:** `test/faq_test.dart`. Önizleme:
   `flutter test test/tool/faq_preview_test.dart` → `build/faq_preview.png`.
+
+## 30. YKS puan hesaplayıcı, haftalık plan, yükselen / düşen öğrenciler
+
+`20261018240000_plan_and_trends` (geri alma `…_plan_and_trends.down.sql`, test
+`plan_test.mjs`).
+
+- **Puan hesaplayıcı** (`/student/score`; Denemeler ekranının sağ üstündeki
+  hesap makinesi):
+  - Netler her sınav türünün en son denemesinden dolar; değiştirilebilir.
+  - TYT, SAY, EA, SÖZ ve DİL puanı hesaplanır; diploma notuyla OBP katkısı
+    eklenir (×5 ×0,12; geçen yıl yerleştiyse ×0,06).
+  - Hedef puan girilirse "hedefe X puan kaldı" ve tek başına açığı kapatan
+    dersler gösterilir (1 net en çok puan getiren önce).
+  - Katsayılar **yaklaşık** (`yks_score.dart`); ekranda tahmin olduğu yazar.
+    Sıralama tahmini yok (ÖSYM tabloları her yıl değişir).
+  - Hedef ve diploma notu cihazda tutulur (SharedPreferences).
+- **Haftalık plan** (`plan_items`):
+  - Koç ya da müdür öğrenci detayındaki **Plan** sekmesinden gün gün madde
+    ekler (ders, konu, soru / dakika hedefi, not); "Geçen haftayı kopyala"
+    var.
+  - Öğrenci ana sayfadaki "Bugünün planı" kartından `/student/plan`
+    ekranına gider ve yalnızca işaretler.
+  - Veli, çocuğunun ekranındaki Plan sekmesinde salt okunur görür.
+  - Sunucu kuralları: günde en çok 12 madde, geçmiş haftaya ekleme yok,
+    öğrenci maddeyi değiştiremez ve silemez.
+  - Bildirim gönderilmiyor.
+- **Son 5 denemede değişim** (`exam_trends`):
+  - Koç ve müdür ana sayfasında TYT / AYT seçmeli kart; en çok yükselen ve
+    en çok düşen 5 öğrenciyi gösterir.
+  - Her öğrencinin son 5 denemesinin ilk ve son toplam neti karşılaştırılır
+    (en az 2 deneme gerekir).
+  - Yalnızca yönetilen öğrenciler (`can_manage_student`) görünür; isme
+    dokununca öğrenci detayı açılır.
+- **Testler:** `test/score_plan_trends_test.dart`.

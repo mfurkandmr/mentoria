@@ -9,6 +9,7 @@ import '../../tracking/presentation/questions_view.dart';
 import '../../tracking/presentation/study_view.dart';
 import '../../tracking/presentation/topics_view.dart';
 import '../../exams/data/exam_repository.dart';
+import '../../plan/presentation/plan_widgets.dart';
 import '../../mistakes/presentation/mistake_widgets.dart';
 import '../../recap/data/week_recap.dart';
 import '../../recap/presentation/recap_story_screen.dart';
@@ -35,8 +36,8 @@ class ParentChildScreen extends ConsumerWidget {
     final name = children.where((c) => c.id == childId).firstOrNull?.fullName;
 
     return DefaultTabController(
-      length: 6,
-      initialIndex: initialTab.clamp(0, 5),
+      length: 7,
+      initialIndex: initialTab.clamp(0, 6),
       child: Scaffold(
         appBar: SkyAppBar(
           title: Text(name ?? tr('Gelişim')),
@@ -50,6 +51,7 @@ class ParentChildScreen extends ConsumerWidget {
               Tab(text: tr('Süre')),
               Tab(text: tr('Bal Raporu')),
               Tab(text: tr('Hata Defteri')),
+              Tab(text: tr('Plan')),
             ],
           ),
         ),
@@ -64,6 +66,7 @@ class ParentChildScreen extends ConsumerWidget {
             ),
             _ParentRecap(childId: childId, name: name),
             MistakesView(studentId: childId, readOnly: true, bottomPadding: 32),
+            WeeklyPlanView(studentId: childId),
           ],
         ),
       ),

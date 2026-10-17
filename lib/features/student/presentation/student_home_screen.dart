@@ -33,6 +33,7 @@ import '../../recap/data/week_recap.dart';
 import '../../recap/presentation/recap_card.dart';
 import 'home_cards.dart';
 import '../../learn/presentation/daily_question_screen.dart';
+import '../../plan/presentation/plan_widgets.dart';
 import 'home_shortcuts.dart';
 import '../../mistakes/data/mistake_repository.dart';
 import '../../garden/presentation/garden_screen.dart';
@@ -160,6 +161,7 @@ class StudentHomeScreen extends ConsumerWidget {
       ),
       // Günün Sorusu, Hata Defteri ve Odak Bahçesi kısayolları.
       const DailyQuestionCard(),
+      PlanTodayCard(studentId: id),
       HomeShortcuts(studentId: id),
       IntrinsicHeight(
         child: Row(

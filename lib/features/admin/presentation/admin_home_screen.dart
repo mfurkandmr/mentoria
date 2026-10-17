@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../coach/presentation/exam_trends_card.dart';
 import '../../../core/branding/branding_providers.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -243,6 +244,7 @@ class _OverviewTab extends ConsumerWidget {
           onTap: () => onGoTo(1),
         ),
       const _SuccessRankingCard(),
+      const ExamTrendsCard(basePath: '/admin'),
       CoachMeetingsReport(
         coaches: [
           for (final m in members)

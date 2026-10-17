@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/exam_subjects.dart';
 import '../../../core/theme/brand_theme.dart';
@@ -25,7 +26,16 @@ class ExamsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(currentProfileProvider).value;
     return Scaffold(
-      appBar: SkyAppBar(title: Text(tr('Denemeler'))),
+      appBar: SkyAppBar(
+        title: Text(tr('Denemeler')),
+        actions: [
+          IconButton(
+            tooltip: tr('Puan hesapla'),
+            icon: const Icon(Icons.calculate_rounded),
+            onPressed: () => context.push('/student/score'),
+          ),
+        ],
+      ),
       body: profile == null
           ? const BizzLoader()
           : ExamsView(studentId: profile.id),
