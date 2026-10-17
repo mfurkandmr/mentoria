@@ -3,8 +3,8 @@
 Bu dosya, son iki büyük özelliğin (white label ve öğrenci avatarı) ne yaptığını,
 nasıl çalıştığını ve nelere dikkat edilmesi gerektiğini anlatır.
 
-> **Güncel durum (16 Ekim 2026, genel kontrol):** Depodaki 31 migration'ın
-> hepsi canlı projede (`lmbykdvvxormfiaomysn`). `send-push` sürüm 4 canlı ve
+> **Güncel durum (17 Ekim 2026):** Depodaki 33 migration'ın hepsi canlı
+> projede (`lmbykdvvxormfiaomysn`; Günün Sorusu ve AYT dahil). `send-push` sürüm 5 canlı ve
 > depodakiyle aynı; Vault'ta `push_function_url` / `push_webhook_secret` var.
 > `meeting-reminders` cron işi çalışıyor (hatasız). **Telefon bildirimi gerçek
 > cihazda doğrulandı:** 19:10'da bir görüşme hatırlatması FCM'e iletildi
@@ -1098,7 +1098,7 @@ Din Kültürü):
   Sorusu'nda) yanlış cevaptan sonra "Hata Defteri'ne ekle" düğmesi; kart
   soru metni + doğru şık + kısa çözümle oluşur (en çok 500 karakter,
   `notebook_button.dart`), 1-3-7-21 gün tekrarına girer.
-- **Günün Sorusu** (`20261018210000_daily_question`, **henüz canlıda değil**):
+- **Günün Sorusu** (`20261018210000_daily_question`, canlıda):
   - Her öğrenciye her gün tek soru; ders güne göre döner (9 günde 9 ders,
     öğrenciler farklı dersten başlar), soru öğrenci + güne göre seçilir
     (`daily_question_id`, havuzla aynı kimlikler). Günlük hakkı harcamaz.
@@ -1110,7 +1110,7 @@ Din Kültürü):
   - pg_cron `daily-question` (`0 6 * * *` = 09.00 TR) →
     `send_daily_questions()`: o gün cevaplamamış öğrencilere
     `daily_question` bildirimi (günde bir kez). send-push'a da eklendi →
-    canlıya alırken **send-push yeniden deploy** edilmeli (sürüm 5).
+    send-push sürüm 5 canlıda.
   - Uygulama: ana sayfada turuncu "Günün Sorusu" kartı (alev serisiyle),
     `/student/daily` ekranı; bildirim oraya açılır.
   - Test: `supabase/tests/daily_question_test.mjs`.
