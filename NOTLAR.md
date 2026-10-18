@@ -711,6 +711,13 @@ ekranından değiştirebilir.
   açmalı; açılmamışsa uygulama bir kez "Alarmlar ve hatırlatıcılar" iznini
   ister, yoksa zil birkaç dakika gecikebilir), `RECEIVE_BOOT_COMPLETED`,
   `VIBRATE`; manifest'te plugin alıcıları; Gradle'da core library desugaring.
+- **R8 kuralları (`android/app/proguard-rules.pro`):** sürüm derlemesinde
+  R8, eklentinin zamanlanmış bildirimleri saklamak için kullandığı Gson
+  sınıflarını siliyordu. `zonedSchedule` hata veriyor, alarm kurulamıyor ve
+  zil ancak uygulama açılınca çalıyordu (kullanıcı şikâyeti). Dosyada
+  `com.dexterous.**` ve Gson `TypeToken` kuralları var; dosya `build.gradle.kts`
+  release'te bağlı. Debug derlemesi küçültme yapmadığı için sorun orada
+  görünmez.
 - **iOS:** özel zil sesleri uygulama paketine eklenmedi (Mac/Xcode gerekir);
   iOS'ta varsayılan bildirim sesi çalar.
 - **Test edilmeyen:** gerçek bir Android telefonda zamanlanmış bildirimin
