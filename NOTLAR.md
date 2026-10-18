@@ -1281,6 +1281,13 @@ Araçlar `tool/promo/`:
    Fmaj7-Am7-Dm7-Bbmaj7, elektrikli piyano, pad, çan, yankı; davul yok.
    Ortalama ses ≈ -19 dB. `vuruş_sn` anında esinti ve çan (ekranlar telefona
    girer).
+   - **Kullanılan (v3):** sentez müzikler beğenilmedi. Yayındaki videolarda
+     hazır parça var: "Spark of Inspiration", Shane Ivers, CC BY 4.0
+     (silvermansound.com). Künye şart; son 4,6 sn'de alt kenarda yazılır.
+     Birleştirme: `python tool/promo/mix_track.py <görüntü.mp4> <mp3> <çıktı.mp4> "<künye>"`.
+   - **Geçiş (v3):** kafe girişinden sunuma Bızz'ın kanadı ekranı süpürerek
+     geçer (`WingSweep`); sonraki sahne süpürme başlarken başlar
+     (`Scene.handoff`).
 4. **VideoDB:** görüntü ve müzik VideoDB'ye yüklenip zaman çizelgesiyle
    birleştirilir. Dosyalar herkese açık depoda yalnızca bu dosyaları içeren
    `promo-assets` dalından okunur.

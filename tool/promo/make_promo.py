@@ -329,6 +329,8 @@ class Scene:
 
 def safe_paste(fr, im, x, y):
     x, y = int(x), int(y)
+    if x >= fr.size[0] or y >= fr.size[1] or x + im.size[0] <= 0 or y + im.size[1] <= 0:
+        return
     fr.alpha_composite(im, dest=(max(0, x), max(0, y)), source=(max(0, -x), max(0, -y)))
 
 
@@ -496,17 +498,14 @@ def cafe_intro(photo, phone_xy, orbit_c, shots, caption):
     n = len(cards)
     glow = orb(90, (255, 230, 170), 255)
     head = Headline(caption, None, size=74, top=170)
-    dur = 5.8
-    T_CONV, T_IN, T_DIVE = 3.2, 4.3, 4.35
+    T_CONV, T_IN = 3.2, 4.3
+    sweep = WingSweep(4.45)
+    dur = sweep.end
 
     def camera(t):
-        s = 1.0 + 0.10 * ease_in_out(t / T_DIVE)
-        cx = lerp(W / 2, px, 0.3 * ease_in_out(t / T_DIVE))
-        cy = lerp(H / 2, py, 0.3 * ease_in_out(t / T_DIVE))
-        dz = ease_in_out((t - T_DIVE) / 0.85) ** 1.4
-        if dz > 0:
-            s *= math.exp(math.log(10) * dz)
-            cx, cy = lerp(cx, px, min(1, dz * 4)), lerp(cy, py, min(1, dz * 4))
+        k = ease_in_out(t / T_IN)
+        s = 1.0 + 0.10 * k
+        cx, cy = lerp(W / 2, px, 0.3 * k), lerp(H / 2, py, 0.3 * k)
         hw, hh = W / (2 * s), H / (2 * s)
         cx = min(max(cx, hw), W - hw)
         cy = min(max(cy, hh), img.size[1] - hh)
@@ -558,17 +557,109 @@ def cafe_intro(photo, phone_xy, orbit_c, shots, caption):
             safe_paste(fr, faded(gi, g), sx - gi.size[0] / 2, sy - gi.size[1] / 2)
         fr.alpha_composite(vig)
         head.draw(fr, t - 0.5, 1 - ease_out_cubic((t - 3.0) / 0.5))
-        # Dalış sonunda sıcak beyaz ışık
-        w = ease_in_out((t - 4.85) / 0.45)
-        if w > 0:
-            fr = Image.blend(fr, Image.new('RGBA', (W, H), (255, 246, 228, 255)), w)
         if t < 0.4:
             fr = Image.blend(Image.new('RGBA', (W, H), (0, 0, 0, 255)), fr, ease_in_out(t / 0.4))
+        if t >= sweep.start and scene.next is not None:
+            fr = sweep.apply(fr, scene.next.frame(t - sweep.start), t)
+        else:
+            fr = sweep.apply(fr, None, t)
         return fr
 
-    sc = Scene(dur, None)
-    sc.frame = frame
-    return sc
+    scene = Scene(dur, None)
+    scene.frame = frame
+    # Sonraki sahne kanat süpürmesi başlarken başlar; o arada kareyi bu sahne çizer.
+    scene.handoff = dur - sweep.start
+    scene.next = None
+    return scene
+
+
+WING_FILL, WING_LINE = (216, 234, 254), (156, 203, 255)
+
+
+class WingSweep:
+    """Bızz köşeden belirir, dev kanadı ekranı silecek gibi süpürür; kanadın
+    geçtiği yerde sonraki sahne görünür."""
+
+    def __init__(self, start, length=1.05):
+        self.start, self.len = start, length
+        self.end = start + length + 0.25
+        self.pivot = (40, 1990)
+        self.a0, self.a1 = math.radians(8), math.radians(-100)
+        bz = Image.open(f'{SHOTS}/bizz_idle.png').convert('RGBA')
+        self.bizz = scaled(bz.crop(bz.getbbox()), 520 / bz.getbbox()[2])
+        rng = np.random.default_rng(4)
+        self.dust = [(rng.random(), rng.random() * 0.25, rng.random()) for _ in range(60)]
+
+    def angle(self, t):
+        u = (t - self.start) / self.len
+        return lerp(self.a0, self.a1, ease_in_out(u))
+
+    def wing_pts(self, ang, L=2750, Wd=980, ss=2):
+        px, py = self.pivot
+        out = []
+        steps = 48
+        for side in (1, -1):
+            rng_ = range(steps + 1) if side == 1 else range(steps, -1, -1)
+            for k in rng_:
+                u = k / steps
+                hw = Wd / 2 * math.sin(math.pi * u ** 0.75) * side
+                x, y = u * L, hw
+                out.append(((px + x * math.cos(ang) - y * math.sin(ang)) * ss,
+                            (py + x * math.sin(ang) + y * math.cos(ang)) * ss))
+        return out
+
+    def apply(self, fr, nxt, t):
+        u = (t - self.start) / self.len
+        pb = ease_out_back((t - self.start + 0.25) / 0.35, 1.6)  # Bızz girişi
+        leave = ease_in_out((t - self.start - self.len) / 0.25)
+        if pb <= 0:
+            return fr
+        ang = self.angle(t)
+        px, py = self.pivot
+        if nxt is not None and u > 0:
+            ss = 2
+            mask = Image.new('L', (W * ss, H * ss), 0)
+            md = ImageDraw.Draw(mask)
+            if u >= 1:
+                mask = Image.new('L', (W, H), 255)
+            else:
+                arc = [(px * ss, py * ss)]
+                for k in range(41):
+                    a = lerp(self.a0 + 0.3, ang, k / 40)
+                    arc.append(((px + 3200 * math.cos(a)) * ss, (py + 3200 * math.sin(a)) * ss))
+                md.polygon(arc, fill=255)
+                mask = mask.resize((W, H), Image.BILINEAR).filter(ImageFilter.GaussianBlur(3))
+            fr = Image.composite(nxt.convert('RGBA'), fr, mask)
+        if 0 < u < 1.05:
+            ss = 2
+            layer = Image.new('RGBA', (W * ss, H * ss), (0, 0, 0, 0))
+            d = ImageDraw.Draw(layer)
+            pts = self.wing_pts(ang)
+            d.polygon(pts, fill=WING_FILL + (215,))
+            d.line(pts + [pts[0]], fill=WING_LINE + (255,), width=30, joint='curve')
+            for k, frac in enumerate((-0.22, -0.07, 0.08, 0.22)):  # damarlar
+                a = ang + frac * 0.5
+                d.line([(px * ss, py * ss), ((px + 2300 * math.cos(a)) * ss, (py + 2300 * math.sin(a)) * ss)],
+                       fill=WING_LINE + (150,), width=12)
+            # Parlak kenar
+            hi = [((px + r * math.cos(ang - 0.11)) * ss, (py + r * math.sin(ang - 0.11)) * ss) for r in (500, 2300)]
+            d.line(hi, fill=(255, 255, 255, 170), width=26)
+            layer = layer.resize((W, H), Image.LANCZOS)
+            fr.alpha_composite(layer)
+            # Ön kenarda bal tozu
+            dd = ImageDraw.Draw(fr)
+            for r, off, sz in self.dust:
+                a = ang - 0.2 - off
+                x, y = px + (300 + r * 2300) * math.cos(a), py + (300 + r * 2300) * math.sin(a)
+                rr = 3 + sz * 7
+                dd.ellipse((x - rr, y - rr, x + rr, y + rr), fill=(255, 214, 90, int(200 * (1 - off * 3))))
+        # Bızz köşede
+        b = scaled(self.bizz, max(pb, 0.01))
+        bob = 12 * math.sin(t * 9)
+        bx = 120 - b.size[0] / 2 - leave * 500
+        by = 1760 - b.size[1] / 2 + bob + leave * 400
+        safe_paste(fr, b, bx, by)
+        return fr
 
 
 class SwapPhone:
@@ -669,6 +760,7 @@ def coach_video():
     scenes.append(ph('a03_admin_inactive', ['Hareketsiz öğrenciyi', 'kaçırma'], 'Bu hafta çalışmayanlar tek listede', Background(*T, 10)))
     scenes.append(brand_scene(4.6, Background('#160F3D', '#5B3CC4', 11), 'bizz_happy',
                               ['Öğrenciniz büyürken', 'siz izleyin.'], None, 'Davet kodunuzla hemen başlayın'))
+    scenes[0].next = scenes[1]
     return 'mentoria_koc_mudur', scenes
 
 
@@ -707,17 +799,18 @@ def student_video():
                       Background(*T, 31)))
     scenes.append(brand_scene(4.6, Background('#160F3D', '#5B3CC4', 32), 'bizz_happy',
                               ['Hedefine birlikte', 'uçalım!'], None, 'Mentoria ile hemen başla 🐝'))
+    scenes[0].next = scenes[1]
     return 'mentoria_ogrenci_veli', scenes
 
 
 def render(name, scenes):
-    total = sum(s.dur for s in scenes) - TRANS * (len(scenes) - 1)
+    total = sum(s.dur for s in scenes) - sum(getattr(s, 'handoff', TRANS) for s in scenes[:-1])
     nframes = int(total * FPS)
     starts = []
     acc = 0.0
     for s in scenes:
         starts.append(acc)
-        acc += s.dur - TRANS
+        acc += s.dur - getattr(s, 'handoff', TRANS)
     path = f'{OUT}/{name}_visual.mp4'
     cmd = [imageio_ffmpeg.get_ffmpeg_exe(), '-y', '-loglevel', 'error', '-f', 'rawvideo', '-pix_fmt', 'rgb24',
            '-s', f'{W}x{H}', '-r', str(FPS), '-i', '-', '-c:v', 'libx264', '-preset', 'medium', '-crf', '17',
@@ -728,7 +821,7 @@ def render(name, scenes):
         active = [(k, s) for k, s in enumerate(scenes) if starts[k] <= t < starts[k] + s.dur]
         k, s = active[0]
         fr = s.frame(t - starts[k]).convert('RGB')
-        if len(active) > 1:
+        if len(active) > 1 and not hasattr(s, 'handoff'):
             k2, s2 = active[1]
             tt = (t - starts[k2]) / TRANS
             a = ease_in_out(tt)
@@ -772,7 +865,7 @@ if __name__ == '__main__':
     name, scenes = coach_video() if which == 'coach' else student_video()
     if len(sys.argv) > 2 and sys.argv[2] == '--intro':
         s = scenes[0]
-        times = [0.6, 1.5, 2.5, 3.3, 3.8, 4.2, 4.5, 4.9, 5.3]
+        times = [2.5, 4.2, 4.35, 4.55, 4.75, 4.95, 5.15, 5.35, 5.6]
         sheet = Image.new('RGB', (len(times) * 368, 648), (20, 20, 20))
         for k, t in enumerate(times):
             sheet.paste(s.frame(t).convert('RGB').resize((360, 640), Image.LANCZOS), (k * 368, 0))
