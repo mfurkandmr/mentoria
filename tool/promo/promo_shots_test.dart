@@ -15,16 +15,31 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:mentoria/core/branding/branding.dart';
+import 'package:mentoria/core/branding/branding_providers.dart';
 import 'package:mentoria/core/constants/exam_subjects.dart';
 import 'package:mentoria/core/theme/app_theme.dart';
 import 'package:mentoria/core/theme/brand_theme.dart';
 import 'package:mentoria/dev/demo_mode.dart';
 import 'package:mentoria/dev/demo_repositories.dart';
 import 'package:mentoria/features/admin/presentation/admin_home_screen.dart';
+import 'package:mentoria/features/assignments/presentation/assign_homework_screen.dart';
+import 'package:mentoria/features/assignments/presentation/student_homework_screen.dart';
+import 'package:mentoria/features/auth/presentation/login_screen.dart';
+import 'package:mentoria/features/avatar/presentation/leaderboard_screen.dart';
+import 'package:mentoria/features/coach/presentation/invite_sheet.dart';
+import 'package:mentoria/features/exams/presentation/exams_screen.dart';
+import 'package:mentoria/features/import/presentation/import_screen.dart';
+import 'package:mentoria/features/notifications/presentation/notification_widgets.dart';
+import 'package:mentoria/features/ranking/presentation/success_ranking_screen.dart';
+import 'package:mentoria/features/tracking/presentation/questions_view.dart';
+import 'package:mentoria/features/tracking/presentation/study_view.dart';
+import 'package:mentoria/features/tracking/presentation/topics_view.dart';
 import 'package:mentoria/features/avatar/data/avatar_repository.dart';
 import 'package:mentoria/features/avatar/presentation/avatar_editor_screen.dart';
 import 'package:mentoria/features/coach/presentation/coach_home_screen.dart';
@@ -53,6 +68,29 @@ import 'package:mentoria/shared/widgets/bizz.dart';
 import 'package:mentoria/shared/widgets/brand_logo.dart';
 
 const _out = 'build/promo/shots';
+
+/// Kurum logoları (build/promo/logos/*.png) yerel sunucudan; testin sahte
+/// HTTP istemcisi yerine gerçek istemci kullanılır.
+HttpServer? _logoServer;
+
+Future<String> _logo(WidgetTester tester, String name) async {
+  HttpOverrides.global = null;
+  // Yazı tipleri zaten yüklü; google_fonts ağdan indirmeye çalışmasın.
+  GoogleFonts.config.allowRuntimeFetching = false;
+  _logoServer ??= (await tester.runAsync(() async {
+    final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+    server.listen((req) {
+      final f = File('build/promo/logos${req.uri.path}');
+      // Boşta bekleyen bağlantı sahte zamanlayıcı bırakmasın.
+      req.response.persistentConnection = false;
+      req.response.headers.contentType = ContentType('image', 'png');
+      req.response.add(f.readAsBytesSync());
+      req.response.close();
+    });
+    return server;
+  }))!;
+  return 'http://127.0.0.1:${_logoServer!.port}/$name.png';
+}
 bool _fontsLoaded = false;
 
 Future<void> _loadFont(String family, List<String> files) async {
@@ -128,6 +166,7 @@ Future<void> shoot(
   Future<void> Function(ProviderContainer c)? interact,
   Future<void> Function(ProviderContainer c)? prepare,
   Branding brand = Branding.mentoria,
+  List<Override> overrides = const [],
 }) async {
   await _fonts(tester);
   Motion.enabled = false;
@@ -141,6 +180,7 @@ Future<void> shoot(
   final c = ProviderContainer(
     overrides: [
       ...await buildDemoOverrides(role),
+      ...overrides,
       for (final s in practiceSubjects)
         questionPoolProvider(s).overrideWith((ref) async => _pool(s)),
     ],
@@ -359,6 +399,8 @@ void main() {
   // ------------------------------------------------------------ Beyaz etiket
   final yildiz = demoTenants()[1];
   const zirve = Branding(
+    tenantId: 'demo-zirve',
+    slug: 'zirve',
     name: 'Zirve Akademi',
     primary: Color(0xFF34D399),
     secondary: Color(0xFFF97316),
@@ -369,9 +411,40 @@ void main() {
         interact: (_) => scrollTo(t, find.text('Günün Sorusu'), extra: 60)));
     testWidgets('w_learn_$tag', (t) => shoot(t, 'w_learn_$tag', 'student', const LearnScreen(), brand: brand));
   }
+  Future<Branding> logoBrand(WidgetTester t, String tag) async =>
+      (tag == 'yildiz' ? yildiz : zirve).copyWith(logoUrl: await _logo(t, tag));
+  for (final tag in ['yildiz', 'zirve']) {
+    testWidgets('l_login_$tag', (t) async => shoot(t, 'l_login_$tag', 'student', const LoginScreen(),
+        brand: await logoBrand(t, tag)));
+    testWidgets('l_home_$tag', (t) async => shoot(t, 'l_home_$tag', 'student', const StudentHomeScreen(),
+        brand: await logoBrand(t, tag), interact: (_) => scrollTo(t, find.text('Günün Sorusu'), extra: 60)));
+    for (final (shot, target, extra) in [
+      ('l_editor_$tag', null, 0.0),
+      ('l_editor_fonts_$tag', 'Baloo 2', 200.0),
+      ('l_editor_logo_$tag', 'Logo seç', 300.0),
+    ]) {
+      testWidgets(shot, (t) async {
+        final brand = await logoBrand(t, tag);
+        return shoot(t, shot, 'admin', const TenantEditorScreen(selfService: true), brand: brand,
+            overrides: [tenantBrandingProvider.overrideWith((ref) async => brand)],
+            interact: target == null ? null : (_) => scrollTo(t, find.text(target), extra: extra));
+      });
+    }
+  }
+  testWidgets('l_login_mentoria', (t) => shoot(t, 'l_login_mentoria', 'student', const LoginScreen()));
+
   testWidgets('w_editor', (t) => shoot(t, 'w_editor', 'admin', const TenantEditorScreen(selfService: true)));
   testWidgets('w_editor_fonts', (t) => shoot(t, 'w_editor_fonts', 'admin', const TenantEditorScreen(selfService: true),
       interact: (_) => scrollTo(t, find.text('Baloo 2'), extra: 120)));
+
+  // ------------------------------------------------------------ Öğrenci (ek)
+  testWidgets('s17_questions', (t) => shoot(t, 's17_questions', 'student', const QuestionsScreen()));
+  testWidgets('s18_study', (t) => shoot(t, 's18_study', 'student', const StudyScreen()));
+  testWidgets('s19_topics', (t) => shoot(t, 's19_topics', 'student', const TopicsScreen()));
+  testWidgets('s20_exams', (t) => shoot(t, 's20_exams', 'student', const ExamsScreen()));
+  testWidgets('s21_homework', (t) => shoot(t, 's21_homework', 'student', const StudentHomeworkScreen()));
+  testWidgets('s22_leaderboard', (t) => shoot(t, 's22_leaderboard', 'student', const LeaderboardScreen()));
+  testWidgets('s23_notifications', (t) => shoot(t, 's23_notifications', 'student', const NotificationsScreen()));
 
   // ------------------------------------------------------------ Veli
   testWidgets('p01_parent_home', (t) => shoot(t, 'p01_parent_home', 'parent', const ParentHomeScreen()));
@@ -408,7 +481,41 @@ void main() {
         }));
   }
 
+  for (final (name, tab) in [
+    ('c08_detail_questions', 'Sorular'),
+    ('c09_detail_topics', 'Konular'),
+    ('c10_detail_study', 'Süre'),
+    ('c11_detail_tasks', 'Görevler'),
+    ('c12_detail_homework', 'Ödevler'),
+    ('c13_detail_notes', 'Notlar'),
+  ]) {
+    testWidgets(name, (t) => shoot(t, name, 'coach',
+        const StudentDetailScreen(studentId: 'demo-student', basePath: '/coach'),
+        interact: (_) async {
+          final tabFinder = find.widgetWithText(Tab, tab);
+          await t.ensureVisible(tabFinder);
+          await t.pumpAndSettle();
+          await t.tap(tabFinder);
+          await settle(t, 4);
+        }));
+  }
+  testWidgets('c14_assign', (t) => shoot(t, 'c14_assign', 'coach',
+      const AssignHomeworkScreen(initialStudentId: 'demo-student')));
+  testWidgets('c15_import', (t) => shoot(t, 'c15_import', 'coach', const ImportScreen(
+    initialFileName: 'TG TYT 9.xlsx',
+    initialSheets: {
+      'Sonuçlar': [
+        ['Öğrenci No', 'Ad Soyad', 'Türkçe D', 'Türkçe Y', 'Matematik D', 'Matematik Y'],
+        ['01042', 'Elif Yılmaz', '34', '4', '26', '5'],
+        ['1077', 'Zeynep Arslan', '28', '6', '18', '8'],
+        ['2031', 'Can Kaya', '25', '9', '15', '10'],
+      ],
+    },
+  )));
+  testWidgets('c16_invite', (t) => shoot(t, 'c16_invite', 'coach', const Scaffold(body: SafeArea(child: InviteSheet()))));
+
   // ------------------------------------------------------------ Müdür
+  testWidgets('a04_ranking', (t) => shoot(t, 'a04_ranking', 'admin', const SuccessRankingScreen()));
   testWidgets('a01_admin_home', (t) => shoot(t, 'a01_admin_home', 'admin', const AdminHomeScreen()));
 
   testWidgets('a02_admin_more', (t) => shoot(t, 'a02_admin_more', 'admin', const AdminHomeScreen(),

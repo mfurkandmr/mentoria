@@ -640,9 +640,12 @@ class _BizzPainter extends CustomPainter {
 
 /// "mentoria" yazı logosu.
 class MentoriaWordmark extends StatelessWidget {
-  const MentoriaWordmark({super.key, this.fontSize = 32});
+  const MentoriaWordmark({super.key, this.fontSize = 32, this.onDark = false});
 
   final double fontSize;
+
+  /// Koyu zeminde (gökyüzü başlığı) "mento" beyaz yazılır.
+  final bool onDark;
 
   @override
   Widget build(BuildContext context) {
@@ -650,6 +653,7 @@ class MentoriaWordmark extends StatelessWidget {
       fontSize: fontSize,
       fontWeight: FontWeight.w900,
       letterSpacing: -0.5,
+      color: onDark ? Colors.white : null,
     );
     return Text.rich(
       TextSpan(

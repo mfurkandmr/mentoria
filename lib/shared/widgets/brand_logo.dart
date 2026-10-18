@@ -6,9 +6,17 @@ import 'bizz.dart';
 /// Uygulamanın her yerindeki logo. Varsayılan markada "mentoria" yazı
 /// logosu; dershanede kendi logosu ve adı (logo yüklenemezse baş harfi).
 class BrandLogo extends StatelessWidget {
-  const BrandLogo({super.key, this.fontSize = 32, this.showName = true});
+  const BrandLogo({
+    super.key,
+    this.fontSize = 32,
+    this.showName = true,
+    this.onDark = false,
+  });
 
   final double fontSize;
+
+  /// Koyu zeminde (gökyüzü başlığı) ad beyaz yazılır.
+  final bool onDark;
 
   /// Logonun yanında dershane adı yazsın mı.
   final bool showName;
@@ -16,7 +24,9 @@ class BrandLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final b = context.brand;
-    if (b.isDefaultBrand) return MentoriaWordmark(fontSize: fontSize);
+    if (b.isDefaultBrand) {
+      return MentoriaWordmark(fontSize: fontSize, onDark: onDark);
+    }
 
     final size = fontSize * 1.35;
     final mark = b.logoUrl == null
@@ -49,6 +59,7 @@ class BrandLogo extends StatelessWidget {
               fontSize: fontSize * 0.78,
               fontWeight: FontWeight.w900,
               letterSpacing: -0.3,
+              color: onDark ? Colors.white : null,
             ),
           ),
         ),

@@ -73,7 +73,9 @@ class ManagerSkyAppBar extends StatelessWidget {
                 child: IgnorePointer(
                   child: Opacity(
                     opacity: 1 - open,
-                    child: const Center(child: BrandLogo(fontSize: 22)),
+                    child: const Center(
+                      child: BrandLogo(fontSize: 22, onDark: true),
+                    ),
                   ),
                 ),
               ),

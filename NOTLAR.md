@@ -1267,30 +1267,26 @@ Araçlar `tool/promo/`:
    - Telefon çerçevesi, durum çubuğu, kelime kelime gelen başlıklar,
      yakınlaşma, sayaç sahnesi ve geçişlerle 1080×1920, 30 fps MP4 üretir.
    - ffmpeg için `pip install imageio-ffmpeg`.
-   - `--intro` ile kafe girişinin kare dizisi.
-   - **Kafe girişi (v2):** Figma'da üretilmiş kafe fotoğrafları
-     (`build/promo/cafe_coach.png`, `cafe_student.png`, 864×1536). Telefonlu
-     adamın etrafında uygulama ekranları döner, birleşip telefona girer,
-     kamera telefona dalar. Telefon ve yörünge merkezi fotoğraf piksel
-     koordinatıyla `coach_video()` / `student_video()` içinde verilir.
-   - **Özelleştirme sahnesi (koç-müdür videosu):** `w_editor*` ve
-     `w_learn_<marka>` görüntüleri; harness tüm marka yazı tiplerini
-     `build/promo/fonts/all/manifest.txt` listesinden yükler.
-3. **Müzik:** `python tool/promo/make_music.py <sn> <wav> [tohum] [vuruş_sn]`.
-   Numpy ile özgün sentez, telifsiz. Yumuşak arka plan: 76 BPM,
-   Fmaj7-Am7-Dm7-Bbmaj7, elektrikli piyano, pad, çan, yankı; davul yok.
-   Ortalama ses ≈ -19 dB. `vuruş_sn` anında esinti ve çan (ekranlar telefona
-   girer).
-   - **Kullanılan (v3):** sentez müzikler beğenilmedi. Yayındaki videolarda
-     hazır parça var: "Spark of Inspiration", Shane Ivers, CC BY 4.0
-     (silvermansound.com). Künye şart; son 4,6 sn'de alt kenarda yazılır.
-     Birleştirme: `python tool/promo/mix_track.py <görüntü.mp4> <mp3> <çıktı.mp4> "<künye>"`.
-   - **Geçiş (v3):** kafe girişinden sunuma Bızz'ın kanadı ekranı süpürerek
-     geçer (`WingSweep`); sonraki sahne süpürme başlarken başlar
-     (`Scene.handoff`).
-4. **VideoDB:** görüntü ve müzik VideoDB'ye yüklenip zaman çizelgesiyle
-   birleştirilir. Dosyalar herkese açık depoda yalnızca bu dosyaları içeren
-   `promo-assets` dalından okunur.
+   - **Özelleştirme bölümü (koç-müdür videosu):** giriş kartı (üç marka
+     rozeti, 1 Logo · 2 Renk · 3 Yazı tipi), kurum görünümü ekranı adım adım,
+     üç markanın giriş ekranı yan yana ve iki markanın ana sayfası.
+     Görüntüler `l_*`: örnek kurum logoları `build/promo/logos/*.png`
+     dosyalarından, harness içindeki yerel bir HTTP sunucusuyla yüklenir.
+     Harness tüm marka yazı tiplerini `build/promo/fonts/all/manifest.txt`
+     listesinden yükler.
+   - Kafede telefonlu adam girişi denendi, beğenilmedi ve kaldırıldı.
+3. **Müzik:** sentezlenmiş müzikler beğenilmedi. Videolarda hazır parça var:
+   "Spark of Inspiration", Shane Ivers, CC BY 4.0 (silvermansound.com).
+   - MP3 `build/promo/music_dl/` altında.
+   - Künye şart; son 4,6 sn'de alt kenarda yazılır.
+   - `make_promo.py` render'dan sonra `mix_track.py` ile müziği ve künyeyi
+     ekler. Elle: `python tool/promo/mix_track.py <görüntü.mp4> <mp3> <çıktı.mp4> "<künye>"`.
+4. **VideoDB:** son MP4'ler VideoDB'ye yüklenir. Dosyalar herkese açık
+   depoda yalnızca bu dosyaları içeren `promo-assets` dalından okunur.
 
-Uygulamaya yansıyan düzeltme: düellodaki "Başla" düğmesinin yazısı artık
-markanın yazı tipinde (önceden sistem yazı tipine düşüyordu).
+Uygulamaya yansıyan düzeltmeler:
+- Düellodaki "Başla" düğmesinin yazısı artık markanın yazı tipinde (önceden
+  sistem yazı tipine düşüyordu).
+- Öğrenci ve koç/müdür ana sayfasında başlık kayınca görünen kurum adı ve
+  "mento" yazısı koyu gökyüzünde koyu renkteydi, okunmuyordu. Artık beyaz
+  (`BrandLogo(onDark: true)`).
