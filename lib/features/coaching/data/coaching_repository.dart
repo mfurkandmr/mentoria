@@ -1,3 +1,4 @@
+import '../../../core/cache/static_cache.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -132,7 +133,7 @@ class SupabaseCoachingRepository implements CoachingRepository {
   @override
   Future<void> createTask(String studentId, TaskDraft d) async {
     if (d.subjectCode != null && _idByCode == null) {
-      final rows = await _client.from('subjects').select('id, code');
+      final rows = await StaticCache.subjects(_client);
       _idByCode = {for (final r in rows) r['code'] as String: r['id'] as int};
     }
     await _client.from('tasks').insert({

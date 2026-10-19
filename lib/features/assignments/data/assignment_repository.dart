@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/constants/exam_subjects.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../auth/data/auth_repository.dart';
+import '../../student/data/home_seed.dart';
 import '../../tracking/data/tracking_models.dart';
 
 /// Ödev paketindeki tek madde: bir ders, isteğe bağlı konu ve soru sayısı.
@@ -127,16 +128,19 @@ class SupabaseAssignmentRepository implements AssignmentRepository {
 
   @override
   Future<List<Assignment>> fetchAssignments(String studentId) async {
-    final rows = await _client
-        .from('assignments')
-        .select(
-          'id, title, note, due_on, created_at, '
-          'coach:profiles!assignments_coach_id_fkey(full_name), '
-          'assignment_items(id, question_count, note, sort, done, '
-          'subjects(code), topics(id, name))',
-        )
-        .eq('student_id', studentId)
-        .order('created_at', ascending: false);
+    final seed = await HomeSeed.take(studentId, 'assignments');
+    final List rows =
+        seed?.value as List? ??
+        await _client
+            .from('assignments')
+            .select(
+              'id, title, note, due_on, created_at, '
+              'coach:profiles!assignments_coach_id_fkey(full_name), '
+              'assignment_items(id, question_count, note, sort, done, '
+              'subjects(code), topics(id, name))',
+            )
+            .eq('student_id', studentId)
+            .order('created_at', ascending: false);
     return [
       for (final r in rows)
         Assignment(

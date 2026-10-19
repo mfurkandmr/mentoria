@@ -57,6 +57,8 @@ class StudentHomeScreen extends ConsumerWidget {
     final today = dateOnly(now);
     final phase = DayPhase.of(now);
 
+    // Önce: aşağıdaki verilerin çoğu tek istekte gelsin (bkz. HomeSeed).
+    ref.watch(studentHomePrimeProvider(id));
     final logs = ref.watch(questionLogsProvider(id)).value ?? const [];
     final sessions = ref.watch(studySessionsProvider(id)).value ?? const [];
     final goals = ref.watch(goalsProvider(id)).value;
@@ -107,6 +109,9 @@ class StudentHomeScreen extends ConsumerWidget {
     Future<void> refresh() async {
       // Kurum adı/logosu değiştiyse yenilensin.
       ref.invalidate(tenantBrandingProvider);
+      // Paket, aşağıdakiler yeniden çekilmeden önce başlasın.
+      ref.invalidate(studentHomePrimeProvider(id));
+      ref.read(studentHomePrimeProvider(id));
       ref.invalidate(successStatusProvider);
       ref.invalidate(questionLogsProvider(id));
       ref.invalidate(studySessionsProvider(id));

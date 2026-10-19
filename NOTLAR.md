@@ -1326,3 +1326,49 @@ Uygulamaya yansıyan düzeltmeler:
   ekranla görünür.
 - **Testler:** `supabase/tests/announcements_test.mjs` ve
   `test/announcements_test.dart`; SSS'ye dört soru eklendi.
+
+## 33. Yük azaltma (aynı anda binlerce öğrenci)
+
+Senaryo: deneme sonucu açıklanınca binlerce öğrenci aynı anda uygulamayı açar.
+Migration `20261019120000_scale_load` (rollback'i var), `send-push` v9.
+
+- **Bildirimler Realtime'dan çıktı.** Önceden her açık uygulama kalıcı bir
+  Realtime bağlantısı tutuyordu (planlarda eş zamanlı bağlantı sınırı var).
+  `SupabaseNotificationRepository.watch` artık tek sorguyla çekiyor ve
+  `NotificationRefresh.ping()` gelince yeniden çekiyor. Ping'i tetikleyenler:
+  FCM ön plan mesajı (`push_service`), uygulamanın öne gelmesi
+  (`AppLifecycleListener`) ve okundu işaretleme. Push gelmeyen durumlar (web,
+  izin yok) için uygulama öndeyken 5 dakikada bir de yokluyor.
+  `notifications` tablosu `supabase_realtime` yayınından çıkarıldı.
+- **Öğrenci ana sayfası tek istekte.** `student_home(p_student, p_since,
+  p_since_ts)` (SECURITY INVOKER, RLS aynen geçerli) soru kayıtlarını,
+  oturumları, hedefleri, konu ilerlemesini, denemeleri ve ödevleri PostgREST
+  sorgularıyla aynı JSON biçiminde döndürüyor.
+  - Uygulamada `HomeSeed` (`lib/features/student/data/home_seed.dart`) var.
+    Ana sayfa `studentHomePrimeProvider`'ı izleyince RPC başlıyor. Supabase
+    repository'leri (tracking, exams, assignments) ilk okumada kendi
+    parçalarını `HomeSeed.take` ile alıyor. Her parça bir kez kullanılır ve
+    30 saniyeden eski paket kullanılmaz; sonraki yenilemeler normal sorguyla
+    gelir.
+  - Paket gelmezse sessizce eski sorgulara dönülür. Provider'lar
+    değişmediği için demo ve testler etkilenmez.
+- **Toplu push'lar zamana yayılır.** Son 10 saniyede 30'dan az bildirim
+  varsa push eskisi gibi anında gider. Fazlaysa `push_queue`'ya saniyede 40
+  olacak şekilde sıra zamanı yazılır (5.000 bildirim yaklaşık 2 dakika).
+  pg_cron `drain-push-queue` 15 saniyede bir vadesi gelenleri 100'lük
+  paketlerle `send-push`'a yollar. `send-push` hem `notification_id` hem
+  `notification_ids` (en çok 200) kabul ediyor ve FCM'e aynı anda en fazla 25
+  istek atıyor. Böylece duyuru, deneme paketi ve Günün Sorusu ani yük
+  yaratmıyor.
+- **Koç/müdür panelleri.** `student_summaries()` ve `exam_trends()` önceden
+  platformdaki tüm öğrencileri tek tek `can_manage_student()`'tan
+  geçiriyordu. Artık önce `my_managed_students()` ile yönetilen öğrenciler
+  bulunuyor (koç: `coach_students`, müdür: kurum); sonuç aynı. Hazır özet
+  tablosu bu ölçekte gerekmedi.
+- **Cihaz önbelleği.** `StaticCache` (`lib/core/cache/static_cache.dart`)
+  ders listesini (4 repository ortak kullanıyor), konuları ve avatar
+  parçalarını SharedPreferences'ta tutuyor. Konular ve dersler 3 gün, avatar
+  parçaları 1 gün saklanıyor. Seed değişirse `StaticCache.version`'ı artır.
+- **Yük testi:** `tool/loadtest/` (k6, README'de). Canlıda değil, staging'de
+  çalıştırılmalı. Henüz çalıştırılmadı.
+- **Testler:** `supabase/tests/scale_test.mjs`, `test/scale_cache_test.dart`.

@@ -1,8 +1,10 @@
+import '../../../core/cache/static_cache.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/constants/exam_subjects.dart';
 import '../../auth/data/auth_repository.dart';
+import '../../student/data/home_seed.dart';
 import 'exam.dart';
 
 abstract interface class ExamRepository {
@@ -31,7 +33,7 @@ class SupabaseExamRepository implements ExamRepository {
 
   Future<Map<String, int>> _loadSubjectIds() async {
     if (_subjectIds != null) return _subjectIds!;
-    final rows = await _client.from('subjects').select('id, code');
+    final rows = await StaticCache.subjects(_client);
     return _subjectIds = {
       for (final r in rows) r['code'] as String: r['id'] as int,
     };
@@ -39,16 +41,19 @@ class SupabaseExamRepository implements ExamRepository {
 
   @override
   Future<List<Exam>> fetchExams({required String studentId}) async {
-    final rows = await _client
-        .from('exams')
-        .select(
-          'id, exam_type, field, name, publisher, taken_on, created_at, '
-          'exam_subject_results(correct, wrong, blank, subjects(code))',
-        )
-        .eq('student_id', studentId)
-        .order('taken_on', ascending: false)
-        // Aynı gündeki denemelerde en son girilen önce gelsin.
-        .order('created_at', ascending: false);
+    final seed = await HomeSeed.take(studentId, 'exams');
+    final List rows =
+        seed?.value as List? ??
+        await _client
+            .from('exams')
+            .select(
+              'id, exam_type, field, name, publisher, taken_on, created_at, '
+              'exam_subject_results(correct, wrong, blank, subjects(code))',
+            )
+            .eq('student_id', studentId)
+            .order('taken_on', ascending: false)
+            // Aynı gündeki denemelerde en son girilen önce gelsin.
+            .order('created_at', ascending: false);
 
     return [
       for (final r in rows)

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -231,38 +233,111 @@ abstract interface class NotificationRepository {
   Future<void> markRead(String id);
 }
 
+/// "Bildirimleri yeniden çek" sinyali: uygulama açıkken FCM mesajı gelince,
+/// uygulama öne gelince ve okundu işaretlenince tetiklenir.
+///
+/// Realtime yerine bu kullanılıyor: her açık uygulama kalıcı bir Realtime
+/// bağlantısı tutmasın (Supabase planlarında eş zamanlı bağlantı sınırı var,
+/// deneme sonucu açıklanınca binlerce kişi aynı anda girebiliyor).
+abstract final class NotificationRefresh {
+  static final _pings = StreamController<void>.broadcast();
+
+  static Stream<void> get stream => _pings.stream;
+
+  static void ping() => _pings.add(null);
+}
+
 class SupabaseNotificationRepository implements NotificationRepository {
   SupabaseNotificationRepository(this._client);
 
   final SupabaseClient _client;
 
-  @override
-  Stream<List<AppNotification>> watch(String userId) => _client
-      .from('notifications')
-      .stream(primaryKey: ['id'])
-      .eq('user_id', userId)
-      .order('created_at')
-      .limit(50)
-      .map(
-        (rows) => [
-          for (final r in rows)
-            if (NotificationKind.tryDb(r['kind'] as String) != null)
-              AppNotification.fromJson(r),
-        ],
-      );
+  /// Push gelmeyen durumlar için (web, izin verilmemiş) yedek yoklama.
+  static const pollEvery = Duration(minutes: 5);
+
+  Future<List<AppNotification>> _fetch(String userId) async {
+    final rows = await _client
+        .from('notifications')
+        .select('id, kind, data, ref_id, created_at, read_at')
+        .eq('user_id', userId)
+        .order('created_at', ascending: false)
+        .limit(50);
+    return [
+      for (final r in rows)
+        if (NotificationKind.tryDb(r['kind'] as String) != null)
+          AppNotification.fromJson(r),
+    ];
+  }
 
   @override
-  Future<void> markAllRead(String userId) => _client
-      .from('notifications')
-      .update({'read_at': DateTime.now().toUtc().toIso8601String()})
-      .eq('user_id', userId)
-      .isFilter('read_at', null);
+  Stream<List<AppNotification>> watch(String userId) {
+    late final StreamController<List<AppNotification>> out;
+    StreamSubscription<void>? pings;
+    Timer? poll;
+    var loading = false;
+    var again = false;
+    var hasData = false;
+
+    Future<void> load() async {
+      // Üst üste gelen sinyaller tek istekte birleşsin.
+      if (loading) {
+        again = true;
+        return;
+      }
+      loading = true;
+      try {
+        do {
+          again = false;
+          final list = await _fetch(userId);
+          if (out.isClosed) return;
+          out.add(list);
+          hasData = true;
+        } while (again);
+      } catch (e, st) {
+        // Elde liste varken (ör. bağlantı koptu) ekranı hataya çevirme.
+        if (!hasData && !out.isClosed) out.addError(e, st);
+      } finally {
+        loading = false;
+      }
+    }
+
+    out = StreamController<List<AppNotification>>(
+      onListen: () {
+        unawaited(load());
+        pings = NotificationRefresh.stream.listen((_) => unawaited(load()));
+        poll = Timer.periodic(pollEvery, (_) {
+          final state = WidgetsBinding.instance.lifecycleState;
+          if (state == null || state == AppLifecycleState.resumed) {
+            unawaited(load());
+          }
+        });
+      },
+      onCancel: () async {
+        poll?.cancel();
+        await pings?.cancel();
+      },
+    );
+    return out.stream;
+  }
 
   @override
-  Future<void> markRead(String id) => _client
-      .from('notifications')
-      .update({'read_at': DateTime.now().toUtc().toIso8601String()})
-      .eq('id', id);
+  Future<void> markAllRead(String userId) async {
+    await _client
+        .from('notifications')
+        .update({'read_at': DateTime.now().toUtc().toIso8601String()})
+        .eq('user_id', userId)
+        .isFilter('read_at', null);
+    NotificationRefresh.ping();
+  }
+
+  @override
+  Future<void> markRead(String id) async {
+    await _client
+        .from('notifications')
+        .update({'read_at': DateTime.now().toUtc().toIso8601String()})
+        .eq('id', id);
+    NotificationRefresh.ping();
+  }
 }
 
 final notificationRepositoryProvider = Provider<NotificationRepository>(

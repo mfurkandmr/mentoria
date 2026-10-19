@@ -1,3 +1,4 @@
+import '../../../core/cache/static_cache.dart';
 import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -154,7 +155,7 @@ class SupabaseMistakeRepository implements MistakeRepository {
 
   Future<void> _loadSubjects() async {
     if (_idByCode != null) return;
-    final rows = await _client.from('subjects').select('id, code');
+    final rows = await StaticCache.subjects(_client);
     _idByCode = {for (final r in rows) r['code'] as String: r['id'] as int};
     _codeById = {for (final e in _idByCode!.entries) e.value: e.key};
   }

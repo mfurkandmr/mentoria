@@ -1,8 +1,10 @@
 // Yeni bildirim → kullanıcının telefonlarına FCM ile gönder.
 //
 // Çağıran: notifications tablosundaki `push_on_notification` tetikleyicisi
-// (pg_net). Gövde yalnızca {"notification_id": "..."}; içerik ve cihaz
-// adresleri burada service role ile okunur, dışarıdan gelen veriye güvenilmez.
+// (pg_net, tekli: {"notification_id": "..."}) ya da yoğun anlarda push_queue'yu
+// boşaltan drain_push_queue() (toplu: {"notification_ids": [...]}, en çok 100).
+// İçerik ve cihaz adresleri burada service role ile okunur, dışarıdan gelen
+// veriye güvenilmez.
 //
 // Gerekli gizli değerler (Supabase → Edge Functions → Secrets):
 //   PUSH_WEBHOOK_SECRET   tetikleyiciyle paylaşılan parola (Vault'takiyle aynı)
@@ -219,13 +221,17 @@ Deno.serve(async (req) => {
   if (!saRaw) return json({ error: 'FCM_SERVICE_ACCOUNT eksik' }, 500);
   const sa = JSON.parse(saRaw) as ServiceAccount;
 
-  let notificationId: string | undefined;
+  // Tekli: {"notification_id": "..."}; toplu (push_queue): {"notification_ids": [...]}.
+  let ids: string[] = [];
   try {
-    notificationId = (await req.json())?.notification_id;
+    const b = await req.json();
+    if (Array.isArray(b?.notification_ids)) ids = b.notification_ids.map(String);
+    else if (b?.notification_id) ids = [String(b.notification_id)];
   } catch {
     // boş gövde
   }
-  if (!notificationId) return json({ error: 'notification_id gerekli' }, 400);
+  ids = [...new Set(ids)].slice(0, 200);
+  if (!ids.length) return json({ error: 'notification_id gerekli' }, 400);
 
   const db = createClient(
     Deno.env.get('SUPABASE_URL')!,
@@ -233,27 +239,35 @@ Deno.serve(async (req) => {
     { auth: { persistSession: false } },
   );
 
-  const { data: n, error } = await db
+  const { data, error } = await db
     .from('notifications')
     .select('id, user_id, kind, data')
-    .eq('id', notificationId)
-    .maybeSingle<NotificationRow>();
+    .in('id', ids);
+  const rows = data as NotificationRow[] | null;
   if (error) return json({ error: error.message }, 500);
-  if (!n) return json({ sent: 0, reason: 'bildirim yok' });
+  if (!rows?.length) return json({ sent: 0, reason: 'bildirim yok' });
 
-  const { data: devices } = await db
+  const { data: devices, error: devErr } = await db
     .from('device_tokens')
-    .select('token')
-    .eq('user_id', n.user_id);
+    .select('user_id, token')
+    .in('user_id', [...new Set(rows.map((n) => n.user_id))]);
+  if (devErr) return json({ error: devErr.message }, 500);
   if (!devices?.length) return json({ sent: 0, reason: 'cihaz yok' });
 
-  const { title, body, route } = texts(n);
+  const tokensOf = new Map<string, string[]>();
+  for (const d of devices) {
+    tokensOf.set(d.user_id, [...(tokensOf.get(d.user_id) ?? []), d.token]);
+  }
+  const jobs = rows.flatMap((n) => (tokensOf.get(n.user_id) ?? []).map((token) => ({ n, token })));
+  if (!jobs.length) return json({ sent: 0, reason: 'cihaz yok' });
+
   const auth = await accessToken(sa);
   const url = `https://fcm.googleapis.com/v1/projects/${sa.project_id}/messages:send`;
 
   let sent = 0;
   const stale: string[] = [];
-  await Promise.all(devices.map(async ({ token }) => {
+  const sendOne = async ({ n, token }: { n: NotificationRow; token: string }) => {
+    const { title, body, route } = texts(n);
     const res = await fetch(url, {
       method: 'POST',
       headers: { Authorization: `Bearer ${auth}`, 'Content-Type': 'application/json' },
@@ -284,6 +298,19 @@ Deno.serve(async (req) => {
       stale.push(token);
     } else {
       console.error('FCM hatası', res.status, err.slice(0, 300));
+    }
+  };
+
+  // Toplu gönderimde FCM'e aynı anda en fazla 25 istek.
+  let next = 0;
+  await Promise.all(Array.from({ length: Math.min(25, jobs.length) }, async () => {
+    while (next < jobs.length) {
+      const job = jobs[next++];
+      try {
+        await sendOne(job);
+      } catch (e) {
+        console.error('FCM isteği başarısız', String(e).slice(0, 300));
+      }
     }
   }));
 

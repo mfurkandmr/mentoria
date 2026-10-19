@@ -1,3 +1,4 @@
+import '../../../core/cache/static_cache.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -30,12 +31,16 @@ class SupabaseAvatarRepository implements AvatarRepository {
 
   @override
   Future<List<AvatarItem>> fetchCatalog() async {
-    final rows = await _client
-        .from('avatar_items')
-        .select('id, category, asset_name, unlock_rule, sort')
-        .eq('is_active', true)
-        .order('category')
-        .order('sort');
+    final rows = await StaticCache.rows(
+      'avatar_items',
+      () => _client
+          .from('avatar_items')
+          .select('id, category, asset_name, unlock_rule, sort')
+          .eq('is_active', true)
+          .order('category')
+          .order('sort'),
+      maxAge: const Duration(days: 1),
+    );
     return [for (final r in rows) AvatarItem.fromJson(r)];
   }
 

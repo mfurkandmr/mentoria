@@ -1,7 +1,9 @@
+import '../../../core/cache/static_cache.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../auth/data/auth_repository.dart';
+import '../../student/data/home_seed.dart';
 import 'tracking_models.dart';
 
 /// Soru, konu, çalışma süresi ve hedef verileri.
@@ -41,9 +43,25 @@ class SupabaseTrackingRepository implements TrackingRepository {
   Map<String, int>? _idByCode;
   Map<int, String>? _codeById;
 
+  /// Ana sayfa paketini tek RPC ile çekmeye başlar (bkz. [HomeSeed]).
+  void primeHome(String studentId) {
+    final since = last30DaysSince();
+    HomeSeed.prime(studentId, since, () async {
+      final r = await _client.rpc(
+        'student_home',
+        params: {
+          'p_student': studentId,
+          'p_since': isoDate(since),
+          'p_since_ts': since.toUtc().toIso8601String(),
+        },
+      );
+      return (r as Map).cast<String, dynamic>();
+    });
+  }
+
   Future<void> _loadSubjects() async {
     if (_idByCode != null) return;
-    final rows = await _client.from('subjects').select('id, code');
+    final rows = await StaticCache.subjects(_client);
     _idByCode = {for (final r in rows) r['code'] as String: r['id'] as int};
     _codeById = {for (final e in _idByCode!.entries) e.value: e.key};
   }
@@ -53,16 +71,19 @@ class SupabaseTrackingRepository implements TrackingRepository {
     String studentId, {
     required DateTime since,
   }) async {
-    final rows = await _client
-        .from('question_logs')
-        .select(
-          'id, correct, wrong, blank, logged_on, source, topic_id, '
-          'subjects(code), topics(name)',
-        )
-        .eq('student_id', studentId)
-        .gte('logged_on', isoDate(since))
-        .order('logged_on', ascending: false)
-        .order('created_at', ascending: false);
+    final seed = await HomeSeed.take(studentId, 'logs', since: since);
+    final List rows =
+        seed?.value as List? ??
+        await _client
+            .from('question_logs')
+            .select(
+              'id, correct, wrong, blank, logged_on, source, topic_id, '
+              'subjects(code), topics(name)',
+            )
+            .eq('student_id', studentId)
+            .gte('logged_on', isoDate(since))
+            .order('logged_on', ascending: false)
+            .order('created_at', ascending: false);
     return [
       for (final r in rows)
         QuestionLog(
@@ -101,10 +122,13 @@ class SupabaseTrackingRepository implements TrackingRepository {
   @override
   Future<List<Topic>> fetchTopics() async {
     await _loadSubjects();
-    final rows = await _client
-        .from('topics')
-        .select('id, subject_id, name, sort')
-        .order('sort');
+    final rows = await StaticCache.rows(
+      'topics',
+      () => _client
+          .from('topics')
+          .select('id, subject_id, name, sort')
+          .order('sort'),
+    );
     return [
       for (final r in rows)
         Topic(
@@ -118,10 +142,13 @@ class SupabaseTrackingRepository implements TrackingRepository {
 
   @override
   Future<Map<int, TopicStatus>> fetchTopicProgress(String studentId) async {
-    final rows = await _client
-        .from('topic_progress')
-        .select('topic_id, status')
-        .eq('student_id', studentId);
+    final seed = await HomeSeed.take(studentId, 'topic_progress');
+    final List rows =
+        seed?.value as List? ??
+        await _client
+            .from('topic_progress')
+            .select('topic_id, status')
+            .eq('student_id', studentId);
     return {
       for (final r in rows)
         r['topic_id'] as int: TopicStatus.fromDb(r['status'] as String),
@@ -147,12 +174,15 @@ class SupabaseTrackingRepository implements TrackingRepository {
     String studentId, {
     required DateTime since,
   }) async {
-    final rows = await _client
-        .from('study_sessions')
-        .select('id, type, started_at, duration_sec, subjects(code)')
-        .eq('student_id', studentId)
-        .gte('started_at', since.toUtc().toIso8601String())
-        .order('started_at', ascending: false);
+    final seed = await HomeSeed.take(studentId, 'sessions', since: since);
+    final List rows =
+        seed?.value as List? ??
+        await _client
+            .from('study_sessions')
+            .select('id, type, started_at, duration_sec, subjects(code)')
+            .eq('student_id', studentId)
+            .gte('started_at', since.toUtc().toIso8601String())
+            .order('started_at', ascending: false);
     return [
       for (final r in rows)
         StudySession(
@@ -189,11 +219,14 @@ class SupabaseTrackingRepository implements TrackingRepository {
 
   @override
   Future<Goals> fetchGoals(String studentId) async {
-    final r = await _client
-        .from('goals')
-        .select()
-        .eq('student_id', studentId)
-        .maybeSingle();
+    final seed = await HomeSeed.take(studentId, 'goals');
+    final r = seed != null
+        ? seed.value as Map<String, dynamic>?
+        : await _client
+              .from('goals')
+              .select()
+              .eq('student_id', studentId)
+              .maybeSingle();
     if (r == null) return const Goals();
     return Goals(
       dailyQuestions: r['daily_questions'] as int?,
@@ -222,12 +255,27 @@ final trackingRepositoryProvider = Provider<TrackingRepository>(
   (ref) => SupabaseTrackingRepository(ref.watch(supabaseClientProvider)),
 );
 
+/// Son 30 günlük listelerin başlangıç günü (bugün dahil 30 gün).
+DateTime last30DaysSince() =>
+    dateOnly(DateTime.now()).subtract(const Duration(days: 29));
+
+/// Öğrenci ana sayfası açılınca bir kez (yenilemede yeniden) okunur: ana
+/// sayfanın verisini tek istekte çekmeye başlar. Demoda (bellek içi
+/// repository) bir şey yapmaz.
+final studentHomePrimeProvider = Provider.family<void, String>((
+  ref,
+  studentId,
+) {
+  final repo = ref.watch(trackingRepositoryProvider);
+  if (repo is SupabaseTrackingRepository) repo.primeHome(studentId);
+});
+
 /// Son 30 günün soru kayıtları.
 final questionLogsProvider = FutureProvider.family<List<QuestionLog>, String>((
   ref,
   studentId,
 ) {
-  final since = dateOnly(DateTime.now()).subtract(const Duration(days: 29));
+  final since = last30DaysSince();
   return ref
       .watch(trackingRepositoryProvider)
       .fetchQuestionLogs(studentId, since: since);
@@ -247,7 +295,7 @@ final topicProgressProvider =
 /// Son 30 günün çalışma oturumları.
 final studySessionsProvider = FutureProvider.family<List<StudySession>, String>(
   (ref, studentId) {
-    final since = dateOnly(DateTime.now()).subtract(const Duration(days: 29));
+    final since = last30DaysSince();
     return ref
         .watch(trackingRepositoryProvider)
         .fetchSessions(studentId, since: since);

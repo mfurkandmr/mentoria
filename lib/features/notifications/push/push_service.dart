@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart' show AppLifecycleListener;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -11,6 +12,7 @@ import '../../../core/config/env.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../core/router/app_router.dart';
 import '../../auth/data/auth_repository.dart';
+import '../data/notification_repository.dart';
 
 /// Uygulama kapalıyken/arka plandayken gelen bildirim. Bildirimi sistem
 /// kendisi gösterir; burada yapılacak bir şey yok (Firebase bu fonksiyonun
@@ -97,6 +99,8 @@ class PushService {
     if (initial != null) _open(initial);
     // Arka plandayken bildirime dokunulduysa.
     FirebaseMessaging.onMessageOpenedApp.listen(_open);
+    // Uygulama açıkken gelen push: listeyi tazele, kartı InAppNotifier gösterir.
+    FirebaseMessaging.onMessage.listen((_) => NotificationRefresh.ping());
   }
 
   /// Giriş yapan kullanıcı için izin ister ve cihaz adresini kaydeder.
@@ -178,6 +182,9 @@ final pushServiceProvider = Provider<PushService>((ref) {
 final pushBootstrapProvider = Provider<void>((ref) {
   final push = ref.watch(pushServiceProvider);
   unawaited(push.start());
+  // Arka plandayken gelenler için: uygulama öne gelince bildirimleri tazele.
+  final lifecycle = AppLifecycleListener(onResume: NotificationRefresh.ping);
+  ref.onDispose(lifecycle.dispose);
   ref.listen(currentProfileProvider, (_, next) {
     final profile = next.value;
     if (profile != null) unawaited(push.register(profile.id));

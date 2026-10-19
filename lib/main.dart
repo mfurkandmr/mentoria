@@ -1,3 +1,4 @@
+import 'core/cache/static_cache.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,6 +20,7 @@ Future<void> main() async {
   await initializeDateFormatting('tr_TR');
   await initializeDateFormatting('en_US');
   final prefs = await SharedPreferences.getInstance();
+  StaticCache.init(prefs);
 
   if (Env.isConfigured && !Env.isDemo) {
     await Supabase.initialize(
