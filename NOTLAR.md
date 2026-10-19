@@ -1369,6 +1369,22 @@ Migration `20261019120000_scale_load` (rollback'i var), `send-push` v9.
   ders listesini (4 repository ortak kullanıyor), konuları ve avatar
   parçalarını SharedPreferences'ta tutuyor. Konular ve dersler 3 gün, avatar
   parçaları 1 gün saklanıyor. Seed değişirse `StaticCache.version`'ı artır.
-- **Yük testi:** `tool/loadtest/` (k6, README'de). Canlıda değil, staging'de
-  çalıştırılmalı. Henüz çalıştırılmadı.
+- **Yük testi:** `tool/loadtest/` (k6, README'de). Canlıda değil, test
+  projesinde çalıştırılmalı.
+  - 19 Ekim 2026 sonucu. Test projesi `Mentoria-Test`
+    (`iruiyvfndxhkuiwbekuf`): ücretsiz plan, Frankfurt, 1000 öğrenci, 20.000
+    soru kaydı, 3.000 deneme. 30 hesap oturum açtı; k6 Türkiye'deki
+    bilgisayardan çalıştı.
+
+    | Senaryo | Yöntem | Açılış | İstek | Ort. açılış | p95 | Hata |
+    |---|---|---|---|---|---|---|
+    | ~2,5 dk'ya yayılmış | yeni | 1074 | 5.370 | 126 ms | 184 ms | 0 |
+    | ~2,5 dk'ya yayılmış | eski | 1074 | 10.740 | 218 ms | 308 ms | 0 |
+    | ~35 sn'ye sıkışmış | yeni | 1256 | 6.280 | 122 ms | 180 ms | 0 |
+    | ~35 sn'ye sıkışmış | eski | 1256 | 12.560 | 241 ms | 398 ms | 0 |
+
+  - İsteklerin büyük kısmı ağ gecikmesi (~65 ms). 1000 kişide iki yöntem de
+    sorunsuz; yenisi istek sayısını yarıya, açılış süresini yaklaşık yarıya
+    indiriyor.
+  - Realtime bağlantı sınırı bu testte ölçülmedi.
 - **Testler:** `supabase/tests/scale_test.mjs`, `test/scale_cache_test.dart`.

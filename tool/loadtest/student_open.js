@@ -9,6 +9,7 @@
 //          -e USERS=users.json -e RATE=40 -e MODE=new student_open.js
 //
 // RATE: saniyede açılış. 40/sn × 2 dk ≈ 5.000 öğrenci.
+// RAMP: tepeye çıkış süresi (varsayılan 30s), HOLD: tepede kalma (varsayılan 2m).
 
 import http from 'k6/http';
 import { check, group } from 'k6';
@@ -20,6 +21,7 @@ const KEY = __ENV.ANON_KEY;
 const MODE = __ENV.MODE || 'new';
 const RATE = Number(__ENV.RATE || 40);
 const HOLD = __ENV.HOLD || '2m';
+const RAMP = __ENV.RAMP || '30s';
 
 const users = new SharedArray('users', () => JSON.parse(open(__ENV.USERS || 'users.json')));
 
@@ -34,7 +36,7 @@ export const options = {
       preAllocatedVUs: Math.max(50, RATE * 2),
       maxVUs: Math.max(200, RATE * 10),
       stages: [
-        { target: RATE, duration: '30s' }, // push'lar yayıldıkça artan açılış
+        { target: RATE, duration: RAMP }, // push'lar yayıldıkça artan açılış
         { target: RATE, duration: HOLD },
         { target: 0, duration: '15s' },
       ],
