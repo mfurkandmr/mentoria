@@ -93,7 +93,10 @@ class _StudyTimerCardState extends ConsumerState<StudyTimerCard> {
   /// Bitiş alarmı bildirim olarak kurulabildi mi? Kurulamadıysa (web, izin
   /// yok) süre bitince sesi uygulama kendisi çalar.
   bool _alarmSet = false;
-  bool _askedExact = false;
+
+  /// Zilin telefon kilitliyken de zamanında çalması için gereken izinler.
+  AlarmHealth _health = AlarmHealth.ok;
+  AppLifecycleListener? _lifecycle;
 
   static const _stateKey = 'pomodoro_state';
 
@@ -102,6 +105,16 @@ class _StudyTimerCardState extends ConsumerState<StudyTimerCard> {
     super.initState();
     // Uygulama kapatılıp açıldıysa süren zamanlayıcıyı geri yükle.
     WidgetsBinding.instance.addPostFrameCallback((_) => _restore());
+    unawaited(_checkHealth());
+    // Ayarlardan izin verip geri dönünce uyarı kalksın.
+    _lifecycle = AppLifecycleListener(
+      onResume: () => unawaited(_checkHealth()),
+    );
+  }
+
+  Future<void> _checkHealth() async {
+    final h = await PomodoroAlarm.health();
+    if (mounted && h != _health) setState(() => _health = h);
   }
 
   @override
@@ -109,6 +122,7 @@ class _StudyTimerCardState extends ConsumerState<StudyTimerCard> {
     // Alarm ve sayaç bildirimi bilerek iptal edilmez: zamanlayıcı arka planda
     // sürer, durum cihazda saklıdır.
     _ticker?.cancel();
+    _lifecycle?.dispose();
     super.dispose();
   }
 
@@ -198,10 +212,8 @@ class _StudyTimerCardState extends ConsumerState<StudyTimerCard> {
     _alarmSet = await PomodoroAlarm.schedule(
       at: end,
       tone: tone,
-      title: tr('Pomodoro bitti! 🐝'),
-      body: tr('{n} dakikalık odak tamamlandı. Mola zamanı.', {
-        'n': _workMinutes,
-      }),
+      title: _workDoneTitle,
+      body: _workDoneBody,
     );
     await PomodoroAlarm.showRunning(
       title: tr('Odak · {subject}', {'subject': _subjectName}),
@@ -209,7 +221,34 @@ class _StudyTimerCardState extends ConsumerState<StudyTimerCard> {
       endsAt: end,
     );
     _persist();
-    _maybeAskExact();
+    // Bildirim izni az önce soruldu; uyarıyı güncelle.
+    unawaited(_checkHealth());
+  }
+
+  String get _workDoneTitle => tr('Pomodoro bitti! 🐝');
+  String get _workDoneBody =>
+      tr('{n} dakikalık odak tamamlandı. Mola zamanı.', {'n': _workMinutes});
+  String get _restDoneTitle => tr('Mola bitti');
+  String get _restDoneBody => tr('Yeni bir pomodoroya hazır mısın? 🐝');
+
+  /// Süre doldu: alarm kurulduysa ve sistem ertelediyse hemen çalsın;
+  /// hiç kurulamadıysa sesi uygulama çalsın.
+  void _ringAtEnd({required bool rest}) {
+    final tone = _tone;
+    if (!_alarmSet) {
+      unawaited(PomodoroAlarm.ringNow(tone));
+      return;
+    }
+    unawaited(
+      PomodoroAlarm.fireIfLate(
+        rest: rest,
+        tone: tone,
+        title: rest ? _restDoneTitle : _workDoneTitle,
+        body: rest ? _restDoneBody : _workDoneBody,
+      ).then((ok) {
+        if (!ok) unawaited(PomodoroAlarm.ringNow(tone));
+      }),
+    );
   }
 
   Future<void> _armRest() async {
@@ -218,8 +257,10 @@ class _StudyTimerCardState extends ConsumerState<StudyTimerCard> {
     _alarmSet = await PomodoroAlarm.schedule(
       at: end,
       tone: tone,
-      title: tr('Mola bitti'),
-      body: tr('Yeni bir pomodoroya hazır mısın? 🐝'),
+      title: _restDoneTitle,
+      body: _restDoneBody,
+      // Ayrı kimlik: henüz çalmamış odak alarmını silmesin.
+      rest: true,
     );
     await PomodoroAlarm.showRunning(
       title: tr('Mola'),
@@ -227,28 +268,6 @@ class _StudyTimerCardState extends ConsumerState<StudyTimerCard> {
       endsAt: end,
     );
     _persist();
-  }
-
-  /// Android 14+: tam zamanlı alarm izni yoksa bir kez sor (yoksa zil
-  /// birkaç dakika gecikebilir).
-  Future<void> _maybeAskExact() async {
-    if (_askedExact || !_alarmSet) return;
-    _askedExact = true;
-    if (await PomodoroAlarm.exactAllowed() || !mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        duration: const Duration(seconds: 8),
-        content: Text(
-          tr(
-            'Zilin tam zamanında çalması için "Alarmlar ve hatırlatıcılar" iznini aç.',
-          ),
-        ),
-        action: SnackBarAction(
-          label: tr('İzin ver'),
-          onPressed: PomodoroAlarm.requestExact,
-        ),
-      ),
-    );
   }
 
   // --- Akış -----------------------------------------------------------------
@@ -268,7 +287,7 @@ class _StudyTimerCardState extends ConsumerState<StudyTimerCard> {
     }
     if (_phase == _Phase.rest && !DateTime.now().isBefore(_restEnd!)) {
       _ticker?.cancel();
-      if (!_alarmSet) PomodoroAlarm.ringNow(_tone);
+      _ringAtEnd(rest: true);
       PomodoroAlarm.cancelRunning();
       _alarmSet = false;
       setState(() => _phase = _Phase.idle);
@@ -324,9 +343,9 @@ class _StudyTimerCardState extends ConsumerState<StudyTimerCard> {
         ? DateTime.now().subtract(_elapsed - Duration(minutes: _workMinutes))
         : DateTime.now();
     if (pomodoroDone) {
-      // Çalmış alarm bildirimi kalsın; yalnızca sayaç kalkar. Bildirim
-      // kurulamadıysa sesi uygulama çalar.
-      if (!_alarmSet) PomodoroAlarm.ringNow(_tone);
+      // Çalmış alarm bildirimi kalsın; yalnızca sayaç kalkar. Sistem zili
+      // ertelediyse şimdi çalar; bildirim kurulamadıysa sesi uygulama çalar.
+      _ringAtEnd(rest: false);
       PomodoroAlarm.cancelRunning();
     } else {
       PomodoroAlarm.cancel();
@@ -502,6 +521,20 @@ class _StudyTimerCardState extends ConsumerState<StudyTimerCard> {
               const SizedBox(height: 10),
               _ToneButton(tone: _tone, onTap: _pickTone),
             ],
+            if (_mode == SessionType.pomodoro && _health != AlarmHealth.ok) ...[
+              const SizedBox(height: 12),
+              _AlarmHealthBanner(
+                health: _health,
+                onFix: () async {
+                  if (_health == AlarmHealth.exactOff) {
+                    await PomodoroAlarm.requestExact();
+                  } else {
+                    await PomodoroAlarm.requestNotifications();
+                  }
+                  await _checkHealth();
+                },
+              ),
+            ],
             const SizedBox(height: 20),
             _BreathingGlow(
               active: _phase == _Phase.work,
@@ -579,6 +612,50 @@ class _StudyTimerCardState extends ConsumerState<StudyTimerCard> {
             ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Zil telefon kilitliyken zamanında çalamayacaksa: neden ve düzeltme düğmesi.
+class _AlarmHealthBanner extends StatelessWidget {
+  const _AlarmHealthBanner({required this.health, required this.onFix});
+
+  final AlarmHealth health;
+  final VoidCallback onFix;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    final exact = health == AlarmHealth.exactOff;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 10, 8, 10),
+      decoration: BoxDecoration(
+        color: context.brand.danger.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: context.brand.danger.withValues(alpha: 0.5)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.alarm_off_rounded, color: context.brand.danger),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              exact
+                  ? tr(
+                      'Telefon kilitliyken zilin zamanında çalması için "Alarmlar ve hatırlatıcılar" iznini aç.',
+                    )
+                  : tr(
+                      'Bildirimler kapalı: zil yalnızca uygulama açıkken çalar.',
+                    ),
+              style: text.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+            ),
+          ),
+          TextButton(
+            onPressed: onFix,
+            child: Text(exact ? tr('İzni aç') : tr('İzin ver')),
+          ),
+        ],
       ),
     );
   }

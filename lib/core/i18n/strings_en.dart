@@ -1054,9 +1054,12 @@ const enStrings = <String, String>{
   'Bitince {tone}': 'Then {tone}',
   'Mola bitti': 'Break over',
   'Yeni bir pomodoroya hazır mısın? 🐝': 'Ready for another pomodoro? 🐝',
-  'Zilin tam zamanında çalması için "Alarmlar ve hatırlatıcılar" iznini aç.':
-      'Turn on "Alarms & reminders" so the bell rings right on time.',
   'İzin ver': 'Allow',
+  'Telefon kilitliyken zilin zamanında çalması için "Alarmlar ve hatırlatıcılar" iznini aç.':
+      'To ring on time while the phone is locked, turn on "Alarms & reminders".',
+  'Bildirimler kapalı: zil yalnızca uygulama açıkken çalar.':
+      'Notifications are off: the bell only rings while the app is open.',
+  'İzni aç': 'Turn on',
   'Uygulamadan çıksan da süre bitince: {tone}':
       'Even if you leave the app, when time is up: {tone}',
   'Bitiş sesi': 'End sound',

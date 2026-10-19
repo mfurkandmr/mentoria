@@ -718,6 +718,22 @@ ekranından değiştirebilir.
   `com.dexterous.**` ve Gson `TypeToken` kuralları var; dosya `build.gradle.kts`
   release'te bağlı. Debug derlemesi küçültme yapmadığı için sorun orada
   görünmez.
+- **Zil uygulamaya girmeden çalmıyordu (19 Ekim, ikinci düzeltme):**
+  - Odak ve mola alarmı aynı bildirim kimliğini (7001) kullanıyordu. Sistem
+    odak alarmını ertelediğinde (tam alarm izni yok, Doze) uygulama telefon
+    uyanınca odağı bitirip mola alarmını kuruyor, bu da bekleyen odak alarmını
+    siliyordu. Artık odak 7001, mola 7003.
+  - İzin varsa alarm `AndroidScheduleMode.alarmClock` ile kuruluyor (saat
+    uygulamaları gibi; Doze ve üretici pil tasarrufu ertelemez, kilit
+    ekranında saat simgesi görünür). İzin yoksa `inexactAllowWhileIdle`.
+  - Uygulama süre dolduğunu fark edince `PomodoroAlarm.fireIfLate` alarmın
+    hâlâ bekleyip beklemediğine bakıyor (`pendingNotificationRequests`).
+    Bekliyorsa iptal edip zili hemen çalıyor.
+  - Tek seferlik 8 saniyelik uyarı kaldırıldı. Yerine, izin kapalı olduğu
+    sürece zamanlayıcı kartında uyarı ve "İzni aç" düğmesi var
+    (`AlarmHealth`: bildirim kapalı / tam alarm izni yok). Kart, ayarlardan
+    dönünce kendini yeniliyor.
+  - Henüz gerçek telefonda denenmedi; yeni APK gerekiyor.
 - **iOS:** özel zil sesleri uygulama paketine eklenmedi (Mac/Xcode gerekir);
   iOS'ta varsayılan bildirim sesi çalar.
 - **Test edilmeyen:** gerçek bir Android telefonda zamanlanmış bildirimin

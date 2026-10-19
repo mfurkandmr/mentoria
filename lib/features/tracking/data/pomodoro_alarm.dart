@@ -37,18 +37,37 @@ enum AlarmTone {
       AlarmTone.values.where((t) => t.key == key).firstOrNull ?? fallback;
 }
 
+/// Zilin telefonda tam zamanında çalıp çalamayacağı.
+enum AlarmHealth {
+  /// Bildirim izni var, tam zamanlı alarm izni var.
+  ok,
+
+  /// Bildirimler kapalı: zil ancak uygulama açıkken çalar.
+  notificationsOff,
+
+  /// Android 14+: "Alarmlar ve hatırlatıcılar" izni yok. Telefon kilitliyken
+  /// sistem zili erteler; çoğu zaman ancak telefon açılınca çalar.
+  exactOff,
+}
+
 /// Pomodoro alarmı: süre bitince seçilen zil ya da titreşimle bildirim.
 ///
 /// Bitiş anına **zamanlanmış yerel bildirim** kurulur; böylece uygulama arka
-/// plandayken, hatta kapatılmışken de tam zamanında çalar. Çalışırken bildirim
-/// çubuğunda geri sayan bir "Odak" bildirimi durur. Bildirim kurulamazsa
-/// (web, izin yok) [schedule] false döner; zamanlayıcı ekrandayken sesi
-/// uygulama kendisi çalar ([ringNow]).
+/// plandayken, hatta kapatılmışken de çalar. İzin varsa Android'in "alarm
+/// saati" modu kullanılır: Doze ve üretici pil tasarrufu bunu ertelemez.
+/// Çalışırken bildirim çubuğunda geri sayan bir "Odak" bildirimi durur.
+/// Bildirim kurulamazsa (web, izin yok) [schedule] false döner; zamanlayıcı
+/// ekrandayken sesi uygulama kendisi çalar ([ringNow]).
+///
+/// Odak ve mola alarmları ayrı kimlik taşır: odak bitince kurulan mola alarmı,
+/// henüz çalmamış (gecikmiş) odak alarmını silmez. Uygulama süre dolduğunu
+/// fark ettiğinde alarm hâlâ bekliyorsa [fireIfLate] onu hemen çaldırır.
 class PomodoroAlarm {
   PomodoroAlarm._();
 
-  static const _alarmId = 7001;
+  static const _workAlarmId = 7001;
   static const _runningId = 7002;
+  static const _restAlarmId = 7003;
   static const _runningChannel = 'pomodoro_running';
   static final _vibration = Int64List.fromList([0, 700, 300, 700, 300, 1000]);
 
@@ -139,14 +158,20 @@ class PomodoroAlarm {
     iOS: DarwinNotificationDetails(presentSound: !t.silent),
   );
 
-  /// [at] anına alarmı kurar (önceki alarmın yerine). Kurulabildiyse true.
+  static int _idFor({required bool rest}) => rest ? _restAlarmId : _workAlarmId;
+
+  /// [at] anına odak ([rest] false) ya da mola alarmını kurar (aynı türdeki
+  /// önceki alarmın yerine). Kurulabildiyse true.
   static Future<bool> schedule({
     required DateTime at,
     required AlarmTone tone,
     required String title,
     required String body,
+    bool rest = false,
   }) async {
-    debugLog?.call('schedule ${tone.key} ${at.toIso8601String()}');
+    debugLog?.call(
+      'schedule ${rest ? 'rest' : 'work'} ${tone.key} ${at.toIso8601String()}',
+    );
     if (!supported || !await _init()) return false;
     try {
       final android = _plugin
@@ -164,15 +189,18 @@ class PomodoroAlarm {
       if (!allowed) return false;
       final exact = await android?.canScheduleExactNotifications() ?? true;
       await _plugin.zonedSchedule(
-        id: _alarmId,
+        id: _idFor(rest: rest),
         scheduledDate: tz.TZDateTime.from(at, tz.UTC),
         notificationDetails: _details(tone),
-        // Tam alarm izni yoksa yine kurulur, ama birkaç dakika gecikebilir.
+        // Alarm saati modu (saat uygulamaları gibi): telefon kilitliyken de
+        // tam zamanında çalar, kilit ekranında saat simgesi görünür. Tam
+        // alarm izni yoksa yine kurulur ama sistem erteleyebilir.
         androidScheduleMode: exact
-            ? AndroidScheduleMode.exactAllowWhileIdle
+            ? AndroidScheduleMode.alarmClock
             : AndroidScheduleMode.inexactAllowWhileIdle,
         title: title,
         body: body,
+        payload: rest ? 'rest' : 'work',
       );
       return true;
     } catch (e) {
@@ -220,6 +248,67 @@ class PomodoroAlarm {
     }
   }
 
+  /// Süre doldu ve uygulama bunu fark etti: alarm hâlâ bekliyorsa (sistem
+  /// ertelemiş) iptal edip zili hemen çaldırır. Zaten çaldıysa bir şey yapmaz.
+  /// Bildirim gösterilemezse false döner (sesi uygulama çalmalı).
+  static Future<bool> fireIfLate({
+    required bool rest,
+    required AlarmTone tone,
+    required String title,
+    required String body,
+  }) async {
+    debugLog?.call('fireIfLate ${rest ? 'rest' : 'work'}');
+    // Zamanlanmış bildirim olmayan platformda alarm da kurulmamıştır.
+    if (!supported) return true;
+    if (!await _init()) return false;
+    final id = _idFor(rest: rest);
+    try {
+      final pending = await _plugin.pendingNotificationRequests();
+      if (!pending.any((p) => p.id == id)) return true;
+      await _plugin.cancel(id: id);
+      await _plugin.show(
+        id: id,
+        title: title,
+        body: body,
+        notificationDetails: _details(tone),
+      );
+      return true;
+    } catch (e) {
+      debugPrint('Gecikmiş alarm çalınamadı: $e');
+      return false;
+    }
+  }
+
+  /// Zilin tam zamanında çalabilmesi için gereken izinlerin durumu.
+  static Future<AlarmHealth> health() async {
+    if (!supported || !await _init()) return AlarmHealth.ok;
+    final android = _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+    if (android == null) return AlarmHealth.ok;
+    try {
+      if (await android.areNotificationsEnabled() == false) {
+        return AlarmHealth.notificationsOff;
+      }
+      if (await android.canScheduleExactNotifications() == false) {
+        return AlarmHealth.exactOff;
+      }
+    } catch (_) {}
+    return AlarmHealth.ok;
+  }
+
+  /// Bildirim iznini ister (Android 13+). Verildiyse true.
+  static Future<bool> requestNotifications() async {
+    if (!supported || !await _init()) return true;
+    return await _plugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >()
+            ?.requestNotificationsPermission() ??
+        true;
+  }
+
   /// Süren sayaç bildirimini kaldırır (çalmış alarm bildirimi kalır).
   static Future<void> cancelRunning() async {
     debugLog?.call('cancelRunning');
@@ -229,12 +318,13 @@ class PomodoroAlarm {
     } catch (_) {}
   }
 
-  /// Kurulu alarmı ve sayacı iptal eder (duraklatma, elle bitirme).
+  /// Kurulu alarmları ve sayacı iptal eder (duraklatma, elle bitirme).
   static Future<void> cancel() async {
     debugLog?.call('cancel');
     if (!supported || !await _init()) return;
     try {
-      await _plugin.cancel(id: _alarmId);
+      await _plugin.cancel(id: _workAlarmId);
+      await _plugin.cancel(id: _restAlarmId);
       await _plugin.cancel(id: _runningId);
     } catch (_) {}
   }

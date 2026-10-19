@@ -81,7 +81,7 @@ void main() {
     await tester.pump();
 
     final schedule = log.firstWhere((e) => e.startsWith('schedule '));
-    expect(schedule, startsWith('schedule bal '));
+    expect(schedule, startsWith('schedule work bal '));
     final at = DateTime.parse(schedule.split(' ').last);
     expect(
       at.difference(before).inMinutes,
@@ -146,7 +146,7 @@ void main() {
 
     await tester.tap(find.text('Başlat'));
     await tester.pump();
-    expect(log.first, startsWith('schedule vibrate '));
+    expect(log.first, startsWith('schedule work vibrate '));
     await tester.tap(find.text('Bitir ve kaydet'));
     await tester.pump();
   });
@@ -192,8 +192,13 @@ void main() {
         isEmpty,
         reason: 'bildirim zaten çaldı; uygulama ikinci kez çalmaz',
       );
+      expect(
+        log,
+        contains('fireIfLate work'),
+        reason: 'sistem zili ertelediyse uygulama fark edince hemen çalsın',
+      );
       expect(find.text('Mola'), findsWidgets, reason: 'mola sürüyor');
-      final rest = log.firstWhere((e) => e.startsWith('schedule '));
+      final rest = log.firstWhere((e) => e.startsWith('schedule rest '));
       final restAt = DateTime.parse(rest.split(' ').last);
       expect(
         restAt.difference(now).inMinutes,
