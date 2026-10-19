@@ -1,3 +1,4 @@
+import '../../../core/cache/timed_cache.dart';
 import '../../../core/cache/static_cache.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -110,3 +111,10 @@ final avatarUnlocksProvider = FutureProvider<AvatarUnlocks>((ref) async {
   final unlocked = await repo.fetchMyUnlocks();
   return AvatarUnlocks(unlocked: unlocked, fresh: fresh);
 });
+
+/// Liderlik tablosu sayfaları 2 dakika bellekte (hesap değişince sıfırlanır).
+final leaderboardCacheProvider =
+    Provider<TimedCache<int, List<LeaderboardEntry>>>((ref) {
+      ref.watch(currentProfileProvider.select((p) => p.value?.id));
+      return TimedCache();
+    });

@@ -56,14 +56,20 @@ class _SuccessRankingScreenState extends ConsumerState<SuccessRankingScreen> {
       _error = null;
     });
     try {
-      final page = await ref
-          .read(successRankingRepositoryProvider)
-          .fetchRanking(
-            examType: _type,
-            field: _type == ExamType.ayt ? _effectiveField : null,
-            limit: SuccessRankingScreen.pageSize,
-            offset: _entries.length,
-          );
+      final type = _type;
+      final field = type == ExamType.ayt ? _effectiveField : null;
+      final offset = _entries.length;
+      final page = await ref.read(successRankingCacheProvider).get(
+        (type, field, offset),
+        () => ref
+            .read(successRankingRepositoryProvider)
+            .fetchRanking(
+              examType: type,
+              field: field,
+              limit: SuccessRankingScreen.pageSize,
+              offset: offset,
+            ),
+      );
       if (!mounted || gen != _generation) return;
       setState(() {
         _entries.addAll(page);
@@ -199,7 +205,14 @@ class _SuccessRankingScreenState extends ConsumerState<SuccessRankingScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(tr('Başarı sıralaması'))),
-      body: RefreshIndicator(onRefresh: _reload, child: body),
+      body: RefreshIndicator(
+        onRefresh: () {
+          // Aşağı çekince önbellek değil, sunucudaki güncel sıralama.
+          ref.read(successRankingCacheProvider).clear();
+          return _reload();
+        },
+        child: body,
+      ),
     );
   }
 }

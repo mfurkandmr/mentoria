@@ -1,3 +1,4 @@
+import '../../../core/cache/timed_cache.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -170,6 +171,10 @@ final announcementRepositoryProvider = Provider<AnnouncementRepository>(
   (ref) => SupabaseAnnouncementRepository(ref.watch(supabaseClientProvider)),
 );
 
-final announcementsProvider = FutureProvider.autoDispose<List<Announcement>>(
-  (ref) => ref.watch(announcementRepositoryProvider).fetch(),
-);
+/// Ekrandan çıkınca 2 dakika daha tutulur: geri gelince yeniden indirilmez.
+final announcementsProvider = FutureProvider.autoDispose<List<Announcement>>((
+  ref,
+) {
+  ref.cacheFor(const Duration(minutes: 2));
+  return ref.watch(announcementRepositoryProvider).fetch();
+});

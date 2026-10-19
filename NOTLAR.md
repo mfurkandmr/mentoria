@@ -1428,5 +1428,15 @@ Migration: `20261019130000_home_counts_cleanup_import` (rollback'i var).
   - Çıkışta `HomeSeed.clearDisk()` cihazdaki paketleri siliyor.
 - **Testler:** `supabase/tests/home_counts_test.mjs`,
   `test/scale_cache_test.dart` (cihaz önbelleği ve toplu yükleme).
-- **Test projesi (`Mentoria-Test`):** bu migration oraya henüz uygulanmadı.
-  5000 kişilik testten önce uygulanmalı.
+- **Test projesi (`Mentoria-Test`):** bu migration oraya da uygulandı.
+- **Ekranlar arası kısa önbellek:**
+  - Provider'ların neredeyse hepsi zaten oturum boyunca bellekte
+    (autoDispose değil), yani sekme geçişinde yeniden indirmiyor.
+  - Her açılışta baştan indiren üç yer vardı: başarı sıralaması, avatar
+    liderlik tablosu ve duyurular.
+  - İlk ikisi `TimedCache` (`lib/core/cache/timed_cache.dart`) ile sayfaları
+    2 dakika tutuyor. Önbellek kullanıcıya bağlı:
+    `successRankingCacheProvider`, `leaderboardCacheProvider`. Aşağı çekince
+    temizleniyor.
+  - Duyurular `ref.cacheFor(2 dk)` ile ekrandan çıkınca 2 dakika daha
+    tutuluyor.

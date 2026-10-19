@@ -5,6 +5,7 @@ import 'package:mentoria/core/constants/exam_subjects.dart';
 import 'package:mentoria/dev/demo_mode.dart';
 import 'package:mentoria/features/exams/data/exam.dart';
 import 'package:mentoria/core/cache/static_cache.dart';
+import 'package:mentoria/core/cache/timed_cache.dart';
 import 'package:mentoria/features/student/data/home_seed.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -288,5 +289,35 @@ void main() {
     expect(repo.examsOf('b').single.results.single.correct, 10);
     final batches = await repo.fetchMyBatches();
     expect(batches.single.studentCount, 2);
+  });
+
+  group('TimedCache', () {
+    test('süre içinde aynı anahtar tek istek, temizleyince yeniden', () async {
+      final cache = TimedCache<int, String>();
+      var calls = 0;
+      Future<String> load() async => 'sayfa ${++calls}';
+      expect(await cache.get(0, load), 'sayfa 1');
+      expect(await cache.get(0, load), 'sayfa 1');
+      expect(await cache.get(20, load), 'sayfa 2');
+      cache.clear();
+      expect(await cache.get(0, load), 'sayfa 3');
+    });
+
+    test('süre dolunca yeniden çeker', () async {
+      final cache = TimedCache<int, int>(ttl: Duration.zero);
+      var calls = 0;
+      await cache.get(0, () async => ++calls);
+      await cache.get(0, () async => ++calls);
+      expect(calls, 2);
+    });
+
+    test('hata saklanmaz', () async {
+      final cache = TimedCache<int, int>();
+      await expectLater(
+        cache.get(0, () async => throw Exception('ağ yok')),
+        throwsException,
+      );
+      expect(await cache.get(0, () async => 7), 7);
+    });
   });
 }

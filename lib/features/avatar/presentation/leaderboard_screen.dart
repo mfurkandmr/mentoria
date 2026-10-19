@@ -50,11 +50,17 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
       _error = null;
     });
     try {
+      final offset = _entries.length;
       final page = await ref
-          .read(avatarRepositoryProvider)
-          .fetchLeaderboard(
-            limit: LeaderboardScreen.pageSize,
-            offset: _entries.length,
+          .read(leaderboardCacheProvider)
+          .get(
+            offset,
+            () => ref
+                .read(avatarRepositoryProvider)
+                .fetchLeaderboard(
+                  limit: LeaderboardScreen.pageSize,
+                  offset: offset,
+                ),
           );
       if (!mounted) return;
       setState(() {
@@ -73,6 +79,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
   }
 
   Future<void> _refresh() async {
+    ref.read(leaderboardCacheProvider).clear();
     setState(() {
       _entries.clear();
       _hasMore = true;

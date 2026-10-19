@@ -1,3 +1,4 @@
+import '../../../core/cache/timed_cache.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -158,3 +159,13 @@ final successStatusProvider = FutureProvider<SuccessStatus>((ref) async {
 final myAvatarRewardProvider = Provider<AvatarReward?>(
   (ref) => ref.watch(successStatusProvider).value?.reward,
 );
+
+/// Sıralama sayfaları 2 dakika bellekte: TYT/AYT arasında gidip gelince ya da
+/// ekrana dönünce yeniden indirilmez (hesap değişince sıfırlanır).
+final successRankingCacheProvider =
+    Provider<TimedCache<(ExamType, FieldType?, int), List<SuccessRankEntry>>>((
+      ref,
+    ) {
+      ref.watch(currentProfileProvider.select((p) => p.value?.id));
+      return TimedCache();
+    });
