@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../announcements/presentation/announcement_widgets.dart';
 import '../../../core/branding/branding_providers.dart';
 import '../../avatar/presentation/student_avatar.dart';
 import '../../avatar/data/avatar_repository.dart';
@@ -127,6 +128,8 @@ class StudentHomeScreen extends ConsumerWidget {
       // Koçla sıradaki görüşme (planlı görüşme yoksa görünmez).
       NextMeetingCard(studentId: id),
       _TodayCard(studentId: id),
+      // Son 14 günde duyuru geldiyse.
+      const AnnouncementsHomeCard(),
       Row(
         children: [
           Expanded(

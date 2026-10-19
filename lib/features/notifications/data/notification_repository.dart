@@ -36,7 +36,10 @@ enum NotificationKind {
   duelResult(Icons.emoji_events_rounded, 'duel_result'),
 
   /// Öğrenciye: koçu haftalık planı hazırladı.
-  plan(Icons.event_note_rounded);
+  plan(Icons.event_note_rounded),
+
+  /// Herkese: kurum müdürünün ya da koçun duyurusu.
+  announcement(Icons.campaign_rounded);
 
   const NotificationKind(this.icon, [this._db]);
   final IconData icon;
@@ -105,6 +108,7 @@ class AppNotification {
       _ => tr('Düello berabere bitti 🤝'),
     },
     NotificationKind.plan => tr('Haftalık planın hazır 📅'),
+    NotificationKind.announcement => '📣 ${data['title'] ?? ''}',
   };
 
   String get body => switch (kind) {
@@ -159,6 +163,7 @@ class AppNotification {
       '{from} {week} haftasının planını hazırladı. Göz at, yaptıkça işaretle!',
       {'from': data['from'] ?? '', 'week': _weekLabel(data['week'])},
     ),
+    NotificationKind.announcement => '${data['body'] ?? ''}',
   };
 
   /// "13 Ekim" (haftanın pazartesisi).
@@ -205,6 +210,8 @@ class AppNotification {
     NotificationKind.dailyQuestion => '/student/daily',
     NotificationKind.duel || NotificationKind.duelResult => '/student/duels',
     NotificationKind.plan => '/student/plan',
+    NotificationKind.announcement =>
+      '${data['route'] ?? '/student/announcements'}',
   };
 
   AppNotification markRead() => AppNotification(

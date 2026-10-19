@@ -119,6 +119,12 @@ List<FaqSection> _student() => [
         'Haftanın özetini hikâye biçiminde gösteren karttır: çözdüğün sorular, odak süren ve haftanın öne çıkanları. İstersen paylaşabilirsin.',
       ),
     ),
+    FaqItem(
+      tr('Duyuruları nerede görürüm?'),
+      tr(
+        'Kurumun ya da koçun duyuru yapınca bildirim gelir ve son duyuru ana sayfanda görünür. Hepsi için "Duyurular" kartında "Tümü"ne dokun.',
+      ),
+    ),
   ]),
   FaqSection(tr('Hesap'), Icons.manage_accounts_rounded, [
     FaqItem(
@@ -174,6 +180,12 @@ List<FaqSection> _coach() => [
       tr('Notlarımı öğrenci görür mü?'),
       tr(
         'Evet, öğrenciye yazdığın notlar öğrencinin ana sayfasında görünür ve bildirim olarak gider.',
+      ),
+    ),
+    FaqItem(
+      tr('Öğrencilerime toplu duyuru yapabilir miyim?'),
+      tr(
+        'Evet. Ana sayfadaki "Duyurular" kartında "Yeni duyuru"ya dokun; öğrencilerine ya da onların velilerine tek seferde bildirim gönderirsin.',
       ),
     ),
   ]),
@@ -233,6 +245,12 @@ List<FaqSection> _admin() => [
         'Evet. Ana sayfadaki "Kurum görünümü: logo, renk ve yazı tipi" düğmesiyle logoyu, renkleri ve yazı tipini; "Kurum adını değiştir" ile kurumun adını düzenleyebilirsin.',
       ),
     ),
+    FaqItem(
+      tr('Toplu duyuru nasıl gönderirim?'),
+      tr(
+        'Ana sayfadaki "Duyurular" kartında "Yeni duyuru"ya dokun. Herkes, öğrenciler, veliler ya da koçlardan birini seç, başlığı ve metni yaz. Duyuru herkese bildirim olarak gider; 24 saatte en fazla 10 duyuru gönderebilirsin.',
+      ),
+    ),
   ]),
   FaqSection(tr('Takip'), Icons.insights_rounded, [
     FaqItem(
@@ -290,6 +308,12 @@ List<FaqSection> _parent() => [
       tr('Haftalık rapor ne zaman gelir?'),
       tr(
         'Her pazar akşamı haftanın özeti bildirim olarak gelir: çözülen soru, odak süresi ve çalışılan gün sayısı.',
+      ),
+    ),
+    FaqItem(
+      tr('Kurumun duyurularını nereden görürüm?'),
+      tr(
+        'Kurum ya da koç velilere duyuru yapınca bildirim gelir; son duyuru ana sayfanda "Duyurular" kartında görünür.',
       ),
     ),
     FaqItem(

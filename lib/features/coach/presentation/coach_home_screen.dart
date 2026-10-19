@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'exam_trends_card.dart';
+import '../../announcements/presentation/announcement_widgets.dart';
 import '../../../core/branding/branding_providers.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../core/theme/brand_theme.dart';
@@ -252,6 +253,7 @@ class _CoachBodyState extends State<_CoachBody> {
             {'count': missingNumbers},
           ),
         ),
+      const AnnouncementsHomeCard(),
       const WeekMeetingsSection(),
       const ExamTrendsCard(basePath: '/coach'),
       PanelSectionTitle(

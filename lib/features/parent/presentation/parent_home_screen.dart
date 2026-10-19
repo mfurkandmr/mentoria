@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../announcements/presentation/announcement_widgets.dart';
 import '../../../core/branding/branding_providers.dart';
 import '../../../core/constants/exam_subjects.dart';
 import '../../../core/i18n/i18n.dart';
@@ -229,6 +230,8 @@ class _ParentBody extends StatelessWidget {
               ),
           ],
         ),
+      // Son 14 günde kurumdan ya da koçtan duyuru geldiyse.
+      const AnnouncementsHomeCard(),
       PanelSectionTitle(
         title: tr('{name} bu hafta', {'name': child.fullName}),
         subtitle: tr('Son 7 gün'),

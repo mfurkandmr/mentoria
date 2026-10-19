@@ -3,8 +3,8 @@
 Bu dosya, son iki büyük özelliğin (white label ve öğrenci avatarı) ne yaptığını,
 nasıl çalıştığını ve nelere dikkat edilmesi gerektiğini anlatır.
 
-> **Güncel durum (17 Ekim 2026):** Depodaki 36 migration'ın hepsi canlı
-> projede (`lmbykdvvxormfiaomysn`; Günün Sorusu, AYT, düello, plan ve deneme eğilimi dahil). `send-push` sürüm 7 canlı ve
+> **Güncel durum (19 Ekim 2026):** Depodaki 37 migration'ın hepsi canlı
+> projede (`lmbykdvvxormfiaomysn`; Günün Sorusu, AYT, düello, plan, deneme eğilimi ve toplu duyuru dahil). `send-push` sürüm 8 canlı ve
 > depodakiyle aynı; Vault'ta `push_function_url` / `push_webhook_secret` var.
 > `meeting-reminders` cron işi çalışıyor (hatasız). **Telefon bildirimi gerçek
 > cihazda doğrulandı:** 19:10'da bir görüşme hatırlatması FCM'e iletildi
@@ -1297,3 +1297,32 @@ Uygulamaya yansıyan düzeltmeler:
 - Öğrenci ve koç/müdür ana sayfasında başlık kayınca görünen kurum adı ve
   "mento" yazısı koyu gökyüzünde koyu renkteydi, okunmuyordu. Artık beyaz
   (`BrandLogo(onDark: true)`).
+
+## 32. Toplu duyuru
+
+- **Kim kime:** kurum müdürü herkese, öğrencilere, velilere ya da koçlara;
+  koç kendi öğrencilerine ya da onların velilerine. Öğrenci ve veli
+  gönderemez.
+- **Veritabanı** (`20261019100000_announcements`):
+  - `announcements` tablosu; istemci doğrudan yazamaz.
+  - `send_announcement(kitle, başlık, metin)` alıcıları sunucuda bulur, her
+    alıcıya `announcement` bildirimi yazar (rota alıcının paneline göre) ve
+    alıcı sayısını döner.
+  - Hatalar: `ANNOUNCE_INVALID` (başlık 2-80, metin 1-600 karakter),
+    `ANNOUNCE_LIMIT` (gönderen başına 24 saatte 10), `ANNOUNCE_NO_RECIPIENTS`,
+    `NOT_ALLOWED`.
+  - `my_announcements()`: bana gelenler (bildirim satırları üzerinden) ve
+    gönderdiklerim; müdür kurumdaki tüm gönderilenleri görür. Alıcı sayısı
+    yalnızca gönderene ve müdüre.
+- **Telefon bildirimi:** mevcut push tetikleyicisi; `send-push` v8'de
+  `announcement` türü (başlık "📣 …", metin 180 karakterde kısaltılır).
+- **Uygulama** (`lib/features/announcements/`):
+  - "Duyurular" ekranı: `/student|coach|admin|parent/announcements`.
+  - Ana sayfa kartı (`AnnouncementsHomeCard`): koç ve müdürde her zaman
+    "Yeni duyuru" düğmesiyle; öğrenci ve velide yalnızca son 14 günde
+    duyuru geldiyse.
+  - Gönderme penceresi kitle seçer ve gönderim öncesi onay ister.
+- Veli ve koç panelinde bildirim listesi olmadığı için duyurular bu kart ve
+  ekranla görünür.
+- **Testler:** `supabase/tests/announcements_test.mjs` ve
+  `test/announcements_test.dart`; SSS'ye dört soru eklendi.

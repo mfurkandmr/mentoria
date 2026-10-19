@@ -1606,6 +1606,54 @@ const enStrings = <String, String>{
   '{subject} düellosu sonuçlandı. Sonuca bak.':
       'Your {subject} duel is over. See the result.',
 
+  // Toplu duyuru
+  'Cumartesi TYT denemesi': 'TYT mock exam on Saturday',
+  "Bu cumartesi saat 10.00'da kurumumuzda TYT deneme sınavı var. Kimliğini ve kurşun kalemini unutma!":
+      "There is a TYT mock exam at our school this Saturday at 10:00. Don't forget your ID and pencil!",
+  'Paragraf haftası başlıyor': 'Paragraph week starts',
+  "Bu hafta her gün 20 paragraf sorusu çözüyoruz. Takıldığın soruları Hata Defteri'ne ekle, görüşmede bakalım.":
+      "This week we solve 20 paragraph questions every day. Add the ones you get stuck on to your Mistake Notebook and we'll go over them in our meeting.",
+  'Herkes': 'Everyone',
+  'Veliler': 'Parents',
+  'Öğrencilerim': 'My students',
+  'Öğrencilerimin velileri': "My students' parents",
+  'Kurumdaki tüm öğrenci, veli ve koçlar':
+      'All students, parents and coaches in the school',
+  'Kurumdaki tüm öğrenciler': 'All students in the school',
+  'Kurumdaki öğrencilerin velileri': 'Parents of students in the school',
+  'Kurumdaki tüm koçlar': 'All coaches in the school',
+  'Koçu olduğun öğrenciler': 'Students you coach',
+  'Koçu olduğun öğrencilerin velileri': 'Parents of the students you coach',
+  'Başlık 2-80, metin 1-600 karakter olmalı.':
+      'Title must be 2-80 and text 1-600 characters.',
+  '24 saatte en fazla 10 duyuru gönderebilirsin.':
+      'You can send at most 10 announcements in 24 hours.',
+  'Bu kitlede henüz kimse yok, duyuru gönderilmedi.':
+      'Nobody is in this audience yet; the announcement was not sent.',
+  'Bu duyuruyu gönderme yetkin yok.':
+      'You are not allowed to send this announcement.',
+  'Duyuru gönderilemedi.': 'The announcement could not be sent.',
+  'Duyurular': 'Announcements',
+  'Yeni duyuru': 'New announcement',
+  'Henüz duyuru yok': 'No announcements yet',
+  'Deneme günü, tatil ya da önemli bir hatırlatma: tek seferde herkese ulaştır.':
+      'Exam day, a holiday or an important reminder: reach everyone at once.',
+  'Kurumun ya da koçun duyuru yapınca burada görürsün.':
+      "When your school or coach makes an announcement, you'll see it here.",
+  'Sen · {audience}': 'You · {audience}',
+  'Sen · {audience} · {n} kişi': 'You · {audience} · {n} people',
+  '{audience} · {n} kişi': '{audience} · {n} people',
+  'Tek seferde öğrencilere, velilere ya da koçlara':
+      'To students, parents or coaches at once',
+  'Duyuru gönderilsin mi?': 'Send the announcement?',
+  '"{title}" duyurusu {audience} kitlesine bildirim olarak gidecek. Gönderdikten sonra geri alınamaz.':
+      'The announcement "{title}" will be sent as a notification to: {audience}. It cannot be undone once sent.',
+  'Duyuru {n} kişiye gönderildi 📣': 'Announcement sent to {n} people 📣',
+  'Kime?': 'To whom?',
+  'Başlık': 'Title',
+  'Örn. Cumartesi TYT denemesi': 'E.g. TYT mock exam on Saturday',
+  'Duyuru metni': 'Announcement text',
+
   // SSS (üretildi: python tool/faq/make_faq.py; elle düzenleme)
   'Başlarken': 'Getting started',
   'Nasıl kayıt olurum?': 'How do I sign up?',
@@ -1651,6 +1699,9 @@ const enStrings = <String, String>{
   'Haftanın Bal Raporu nedir?': 'What is the Weekly Honey Report?',
   'Haftanın özetini hikâye biçiminde gösteren karttır: çözdüğün sorular, odak süren ve haftanın öne çıkanları. İstersen paylaşabilirsin.':
       'A story-style card that sums up your week: questions solved, focus time and your highlights. You can share it if you like.',
+  'Duyuruları nerede görürüm?': 'Where can I see announcements?',
+  'Kurumun ya da koçun duyuru yapınca bildirim gelir ve son duyuru ana sayfanda görünür. Hepsi için "Duyurular" kartında "Tümü"ne dokun.':
+      'When your school or coach makes an announcement you get a notification and the latest one appears on your home screen. Tap "All" on the "Announcements" card to see them all.',
   'Hesap': 'Account',
   'Velimi nasıl bağlarım?': 'How do I link a parent?',
   'Profilinde "Veli davet kodu oluştur"a dokun ve kodu velinle paylaş. Velin bu kodla kayıt olunca gelişimini görebilir.':
@@ -1679,6 +1730,10 @@ const enStrings = <String, String>{
   'Notlarımı öğrenci görür mü?': 'Can the student see my notes?',
   'Evet, öğrenciye yazdığın notlar öğrencinin ana sayfasında görünür ve bildirim olarak gider.':
       'Yes. Notes you write to a student appear on their home screen and are sent as a notification.',
+  'Öğrencilerime toplu duyuru yapabilir miyim?':
+      'Can I send an announcement to all my students?',
+  'Evet. Ana sayfadaki "Duyurular" kartında "Yeni duyuru"ya dokun; öğrencilerine ya da onların velilerine tek seferde bildirim gönderirsin.':
+      'Yes. Tap "New announcement" on the "Announcements" card on the home screen to notify your students or their parents at once.',
   'Deneme sonuçlarını toplu nasıl yüklerim?':
       'How do I upload exam results in bulk?',
   '"Deneme yükle" ile Excel (.xlsx, .xls), CSV ya da TXT dosyasını seç. Satırlar öğrencilerin okul numarasıyla eşleşir; ders sütunları kendiliğinden tanınır. Kaydetmeden önce önizlersin.':
@@ -1710,6 +1765,10 @@ const enStrings = <String, String>{
       'Can I change how my school looks in the app?',
   'Evet. Ana sayfadaki "Kurum görünümü: logo, renk ve yazı tipi" düğmesiyle logoyu, renkleri ve yazı tipini; "Kurum adını değiştir" ile kurumun adını düzenleyebilirsin.':
       'Yes. Use the "Branding: logo, colors and font" button on the home screen for the logo, colours and font, and "Rename institution" for its name.',
+  'Toplu duyuru nasıl gönderirim?':
+      'How do I send an announcement to everyone?',
+  'Ana sayfadaki "Duyurular" kartında "Yeni duyuru"ya dokun. Herkes, öğrenciler, veliler ya da koçlardan birini seç, başlığı ve metni yaz. Duyuru herkese bildirim olarak gider; 24 saatte en fazla 10 duyuru gönderebilirsin.':
+      'Tap "New announcement" on the "Announcements" card on the home screen. Choose everyone, students, parents or coaches, then write a title and text. It is sent to everyone as a notification; you can send up to 10 announcements in 24 hours.',
   'Takip': 'Following progress',
   'Hangi öğrenciler bu hafta çalışmadı?':
       'Which students didn’t study this week?',
@@ -1739,6 +1798,10 @@ const enStrings = <String, String>{
   'Haftalık rapor ne zaman gelir?': 'When does the weekly report arrive?',
   'Her pazar akşamı haftanın özeti bildirim olarak gelir: çözülen soru, odak süresi ve çalışılan gün sayısı.':
       'Every Sunday evening you get the week’s summary as a notification: questions solved, focus time and days studied.',
+  'Kurumun duyurularını nereden görürüm?':
+      'Where do I see the school’s announcements?',
+  'Kurum ya da koç velilere duyuru yapınca bildirim gelir; son duyuru ana sayfanda "Duyurular" kartında görünür.':
+      'When the school or coach makes an announcement to parents you get a notification, and the latest one appears on the "Announcements" card on your home screen.',
   'Verilerde değişiklik yapabilir miyim?': 'Can I change any data?',
   'Hayır. Veli paneli yalnızca izlemek içindir; kayıtları çocuğun ve koçu girer.':
       'No. The parent panel is view-only; your child and their coach enter the records.',

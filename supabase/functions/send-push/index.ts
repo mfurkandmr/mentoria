@@ -37,7 +37,8 @@ type NotificationRow = {
   id: string;
   user_id: string;
   kind: 'assignment' | 'exam' | 'task' | 'note' | 'deletion_request' | 'meeting'
-    | 'review' | 'weekly_report' | 'daily_question' | 'duel' | 'duel_result' | 'plan';
+    | 'review' | 'weekly_report' | 'daily_question' | 'duel' | 'duel_result' | 'plan'
+    | 'announcement';
   data: Record<string, unknown>;
 };
 
@@ -146,6 +147,12 @@ function texts(n: NotificationRow): { title: string; body: string; route: string
         route: '/student/plan',
       };
     }
+    case 'announcement':
+      return {
+        title: `📣 ${s(d.title)}`,
+        body: s(d.body).length > 180 ? `${s(d.body).slice(0, 177)}…` : s(d.body),
+        route: s(d.route) || '/',
+      };
   }
 }
 

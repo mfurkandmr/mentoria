@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../announcements/presentation/announcement_widgets.dart';
 import '../../coach/presentation/exam_trends_card.dart';
 import '../../../core/branding/branding_providers.dart';
 import 'package:flutter/services.dart';
@@ -243,6 +244,7 @@ class _OverviewTab extends ConsumerWidget {
               '${tr('Deneme dosyaları numarayla eşleştirildiği için numaraları gir.')}',
           onTap: () => onGoTo(1),
         ),
+      const AnnouncementsHomeCard(),
       const _SuccessRankingCard(),
       const ExamTrendsCard(basePath: '/admin'),
       CoachMeetingsReport(

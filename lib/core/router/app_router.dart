@@ -14,6 +14,7 @@ import '../../features/tenants/presentation/tenant_link_screen.dart';
 import '../branding/branding_providers.dart';
 import '../../features/assignments/presentation/assign_homework_screen.dart';
 import '../../features/assignments/presentation/student_homework_screen.dart';
+import '../../features/announcements/presentation/announcement_widgets.dart';
 import '../../features/notifications/presentation/notification_widgets.dart';
 import '../../features/account/presentation/profile_screen.dart';
 import '../../features/admin/presentation/admin_home_screen.dart';
@@ -204,6 +205,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, _) => const GardenScreen(),
       ),
       GoRoute(
+        path: '/student/announcements',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, _) => const AnnouncementsScreen(),
+      ),
+      GoRoute(
         path: '/student/notifications',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (_, _) => const NotificationsScreen(),
@@ -227,6 +233,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(path: 'profile', builder: (_, _) => const ProfileScreen()),
           GoRoute(
+            path: 'announcements',
+            builder: (_, _) => const AnnouncementsScreen(),
+          ),
+          GoRoute(
             path: 'child/:id',
             builder: (_, state) => ParentChildScreen(
               childId: state.pathParameters['id']!,
@@ -248,6 +258,11 @@ GoRoute _managerRoutes(String base, Widget home) => GoRoute(
   routes: [
     GoRoute(path: 'profile', builder: (_, _) => const ProfileScreen()),
     GoRoute(path: 'import', builder: (_, _) => const ImportScreen()),
+    // Toplu duyuru: gönderilenler ve gelenler.
+    GoRoute(
+      path: 'announcements',
+      builder: (_, _) => const AnnouncementsScreen(),
+    ),
     // Yüklenen denemeler: son 7 gündekiler silinebilir.
     GoRoute(
       path: 'exams',

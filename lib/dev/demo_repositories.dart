@@ -9,6 +9,8 @@ import 'package:flutter/services.dart' show rootBundle;
 import '../core/constants/exam_subjects.dart';
 import '../core/branding/branding.dart';
 import '../core/theme/app_fonts.dart';
+import '../core/i18n/i18n.dart';
+import '../features/announcements/data/announcement_repository.dart';
 import '../features/assignments/data/assignment_repository.dart';
 import '../features/avatar/data/avatar_models.dart';
 import '../features/avatar/data/avatar_repository.dart';
@@ -1786,4 +1788,139 @@ Future<void> seedDemoPlan(InMemoryPlanRepository repo, String studentId) async {
       await repo.setDone(item.id, true);
     }
   }
+}
+
+/// Bellekte duyurular (demo ve testler için). Kim neyi görür sunucudaki
+/// my_announcements() gibi: rolüne gelenler + gönderdikleri (müdür: hepsi).
+class InMemoryAnnouncementRepository implements AnnouncementRepository {
+  InMemoryAnnouncementRepository({
+    required this.role,
+    required this.myName,
+    this.audienceSizes = const {
+      AnnouncementAudience.everyone: 42,
+      AnnouncementAudience.students: 24,
+      AnnouncementAudience.parents: 14,
+      AnnouncementAudience.coaches: 4,
+      AnnouncementAudience.myStudents: 3,
+      AnnouncementAudience.myParents: 2,
+    },
+  });
+
+  final UserRole role;
+  final String myName;
+  final Map<AnnouncementAudience, int> audienceSizes;
+
+  /// (duyuru, gönderen rolü)
+  final _items = <(Announcement, UserRole)>[];
+  var _seq = 0;
+
+  /// Sunucudaki alıcı kuralları: [from] rolünün [a] kitlesine [role] dahil mi?
+  bool _reaches(UserRole from, AnnouncementAudience a) => switch (a) {
+    AnnouncementAudience.everyone => role != UserRole.admin,
+    AnnouncementAudience.students ||
+    AnnouncementAudience.myStudents => role == UserRole.student,
+    AnnouncementAudience.parents ||
+    AnnouncementAudience.myParents => role == UserRole.parent,
+    AnnouncementAudience.coaches => role == UserRole.coach,
+  };
+
+  void seed({
+    required UserRole from,
+    required String sender,
+    required AnnouncementAudience audience,
+    required String title,
+    required String body,
+    required DateTime at,
+  }) => _items.add((
+    Announcement(
+      id: 'a${_seq++}',
+      title: title,
+      body: body,
+      audience: audience,
+      senderName: sender,
+      recipients: audienceSizes[audience],
+      createdAt: at,
+    ),
+    from,
+  ));
+
+  @override
+  Future<List<Announcement>> fetch() async {
+    final out = <Announcement>[];
+    for (final (a, from) in _items) {
+      final mine = a.senderName == myName && from == role;
+      if (mine || role == UserRole.admin || _reaches(from, a.audience)) {
+        final showCount = mine || role == UserRole.admin;
+        out.add(
+          Announcement(
+            id: a.id,
+            title: a.title,
+            body: a.body,
+            audience: a.audience,
+            senderName: a.senderName,
+            sentByMe: mine,
+            recipients: showCount ? a.recipients : null,
+            createdAt: a.createdAt,
+          ),
+        );
+      }
+    }
+    return out..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+  }
+
+  @override
+  Future<int> send(
+    AnnouncementAudience audience,
+    String title,
+    String body,
+  ) async {
+    if (!AnnouncementAudience.forRole(role).contains(audience)) {
+      throw const AnnouncementException(AnnouncementError.notAllowed);
+    }
+    if (title.trim().length < 2 ||
+        title.trim().length > 80 ||
+        body.trim().isEmpty ||
+        body.trim().length > 600) {
+      throw const AnnouncementException(AnnouncementError.invalid);
+    }
+    final n = audienceSizes[audience] ?? 0;
+    if (n == 0) {
+      throw const AnnouncementException(AnnouncementError.noRecipients);
+    }
+    seed(
+      from: role,
+      sender: myName,
+      audience: audience,
+      title: title.trim(),
+      body: body.trim(),
+      at: DateTime.now(),
+    );
+    return n;
+  }
+}
+
+/// Demo duyuruları: müdürün kurum geneline ve koçun öğrencilerine birer
+/// duyurusu.
+void seedDemoAnnouncements(InMemoryAnnouncementRepository repo) {
+  final now = DateTime.now();
+  repo.seed(
+    from: UserRole.admin,
+    sender: 'Mehmet Demir',
+    audience: AnnouncementAudience.everyone,
+    title: tr('Cumartesi TYT denemesi'),
+    body: tr(
+      'Bu cumartesi saat 10.00\'da kurumumuzda TYT deneme sınavı var. Kimliğini ve kurşun kalemini unutma!',
+    ),
+    at: now.subtract(const Duration(hours: 5)),
+  );
+  repo.seed(
+    from: UserRole.coach,
+    sender: 'Ayşe Koç',
+    audience: AnnouncementAudience.myStudents,
+    title: tr('Paragraf haftası başlıyor'),
+    body: tr(
+      'Bu hafta her gün 20 paragraf sorusu çözüyoruz. Takıldığın soruları Hata Defteri\'ne ekle, görüşmede bakalım.',
+    ),
+    at: now.subtract(const Duration(days: 1, hours: 2)),
+  );
 }

@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../core/config/env.dart';
 import '../core/constants/exam_subjects.dart';
+import '../features/announcements/data/announcement_repository.dart';
 import '../features/assignments/data/assignment_repository.dart';
 import '../features/avatar/data/avatar_models.dart';
 import '../features/avatar/data/avatar_repository.dart';
@@ -146,6 +147,11 @@ Future<List<Override>> buildDemoOverrides([
       role: UserRole.student,
     ),
   };
+  final announcements = InMemoryAnnouncementRepository(
+    role: profile.role,
+    myName: profile.fullName,
+  );
+  seedDemoAnnouncements(announcements);
 
   final account = InMemoryAccountRepository(
     ProfileDetails(
@@ -243,6 +249,7 @@ Future<List<Override>> buildDemoOverrides([
     practiceRepositoryProvider.overrideWithValue(practice),
     duelRepositoryProvider.overrideWithValue(demoDuels(avatars)),
     planRepositoryProvider.overrideWithValue(plan),
+    announcementRepositoryProvider.overrideWithValue(announcements),
     examTrendRepositoryProvider.overrideWithValue(
       InMemoryExamTrendRepository(exams, {
         for (final e in demoStudents().entries) e.key: e.value.$1,
