@@ -1,3 +1,4 @@
+import '../../student/presentation/home_sky.dart';
 import '../../mistakes/presentation/mistake_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -128,7 +129,8 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
     };
 
     return Scaffold(
-      appBar: AppBar(
+      // Öğrenci ve veli ekranlarıyla aynı gökyüzü üst çubuğu.
+      appBar: SkyAppBar(
         title: Text(student?.fullName ?? tr('Öğrenci')),
         actions: [
           if (canManage)

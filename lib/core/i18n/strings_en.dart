@@ -1935,4 +1935,15 @@ const enStrings = <String, String>{
   'Aydınlatma Metni': 'Privacy Notice',
   'Açık Rıza Metni': 'Explicit Consent Text',
   'Veli Onay Metni': 'Parental Consent Text',
+
+  // Zorunlu güncelleme
+  'Yeni sürüm gerekli': 'New version required',
+  'Uygulamanın bu sürümü artık desteklenmiyor. Devam etmek için en yeni sürümü yükle; verilerin kaybolmaz.':
+      'This version of the app is no longer supported. Install the latest version to continue; your data won\'t be lost.',
+  'Güncelle': 'Update',
+  'Yeni sürümü kurumundan ya da koçundan isteyebilirsin.':
+      'You can ask your institution or coach for the new version.',
+  'Senin sürümün: {v}': 'Your version: {v}',
+  // Koç listesi
+  'Silme talebi': 'Deletion request',
 };

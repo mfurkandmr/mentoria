@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/branding/branding_providers.dart';
+import 'core/config/app_version.dart';
 import 'core/config/env.dart';
 import 'core/i18n/i18n.dart';
 import 'core/router/app_router.dart';
@@ -10,6 +11,7 @@ import 'core/settings/app_settings.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/brand_theme.dart';
 import 'features/notifications/push/push_service.dart';
+import 'shared/widgets/update_required_screen.dart';
 
 class MentoriaApp extends ConsumerWidget {
   const MentoriaApp({super.key});
@@ -23,6 +25,9 @@ class MentoriaApp extends ConsumerWidget {
     if (!Env.isDemo && Env.isConfigured) ref.watch(pushBootstrapProvider);
     // Dershane markası: renkler, logo ve uygulama adı çalışma anında değişir.
     final brand = BrandTheme.fromBranding(ref.watch(activeBrandingProvider));
+    // Sunucu daha yeni bir sürüm istiyorsa başka hiçbir ekran açılmaz.
+    final gate = ref.watch(updateGateProvider).value;
+    final mustUpdate = gate != null && gate.requiredFor();
 
     return MaterialApp.router(
       title: brand.appName,
@@ -39,8 +44,10 @@ class MentoriaApp extends ConsumerWidget {
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       routerConfig: router,
       // Dil değişince tüm metinlerin yeniden çevrilmesi için alt ağacı yenile.
-      builder: (context, child) =>
-          KeyedSubtree(key: ValueKey(settings.language), child: child!),
+      builder: (context, child) => KeyedSubtree(
+        key: ValueKey(settings.language),
+        child: mustUpdate ? UpdateRequiredScreen(gate: gate) : child!,
+      ),
     );
   }
 }

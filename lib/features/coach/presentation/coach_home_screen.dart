@@ -40,6 +40,7 @@ class CoachHomeScreen extends ConsumerWidget {
       // Kurum adı/logosu değiştiyse yenilensin.
       ref.invalidate(tenantBrandingProvider);
       invalidateMeetings(ref);
+      ref.invalidate(deletionRequestsProvider);
       return ref.refresh(studentSummariesProvider.future);
     }
 
@@ -71,6 +72,8 @@ class CoachHomeScreen extends ConsumerWidget {
           sliver: SliverToBoxAdapter(
             child: _CoachBody(
               students: list,
+              deletionRequests:
+                  ref.watch(deletionRequestsProvider).value ?? const {},
               onInvite: () => _openInvite(context),
             ),
           ),
@@ -142,9 +145,16 @@ class CoachHomeScreen extends ConsumerWidget {
 }
 
 class _CoachBody extends StatefulWidget {
-  const _CoachBody({required this.students, required this.onInvite});
+  const _CoachBody({
+    required this.students,
+    required this.onInvite,
+    this.deletionRequests = const {},
+  });
 
   final List<StudentSummary> students;
+
+  /// Öğrenci kimliği → silme talebi tarihi.
+  final Map<String, DateTime> deletionRequests;
   final VoidCallback onInvite;
 
   @override
@@ -274,6 +284,7 @@ class _CoachBodyState extends State<_CoachBody> {
           key: ValueKey(s.id),
           student: s,
           maxWeekQuestions: maxWeek,
+          deletionRequested: widget.deletionRequests.containsKey(s.id),
           onTap: () => context.push('/coach/students/${s.id}'),
         ),
       if (students.isNotEmpty && visible.isEmpty)

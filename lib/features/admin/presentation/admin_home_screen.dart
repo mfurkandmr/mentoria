@@ -284,6 +284,9 @@ class _OverviewTab extends ConsumerWidget {
             key: ValueKey('inactive-${s.id}'),
             student: s,
             showCoach: true,
+            deletionRequested:
+                (ref.watch(deletionRequestsProvider).value ?? const {})
+                    .containsKey(s.id),
             onTap: () => context.push('/admin/students/${s.id}'),
           ),
     ];
@@ -775,6 +778,10 @@ class _StudentsTabState extends ConsumerState<_StudentsTab> {
                     StudentCard(
                       student: s,
                       showCoach: true,
+                      deletionRequested:
+                          (ref.watch(deletionRequestsProvider).value ??
+                                  const {})
+                              .containsKey(s.id),
                       maxWeekQuestions: all.fold<int>(
                         0,
                         (a, s) => s.weekQuestions > a ? s.weekQuestions : a,

@@ -398,8 +398,8 @@ koyar).
   - `flutter test`: 69 test (talep + geri alma, diyalog kapanışı, koç
     şeridi, talep yoksa şerit yok).
 - **Canlıda** (16 Ekim 2026).
-- **Yapılmadı:** koç ana sayfasındaki öğrenci listesinde talep rozeti; Google
-  Play'in istediği web üzerinden silme talebi sayfası.
+- **Yapıldı (19 Ekim, §37):** koç ve müdür öğrenci listelerinde talep rozeti.
+- **Yapılmadı:** Google Play'in istediği web üzerinden silme talebi sayfası.
 
 ---
 
@@ -538,8 +538,7 @@ Koç/müdür panelleriyle aynı görsel dil artık her yerde.
   çipleri.
 - **Yeni rota** `/parent/child/:id?tab=0..3`: `ParentChildScreen`
   (Denemeler · Sorular · Konular · Süre sekmeleri, salt okunur).
-- **Yapılmadı:** koçun öğrenci detay ekranının üst çubuğu hâlâ düz `AppBar`
-  (içerik yeni tasarımda).
+- **Yapıldı (19 Ekim, §37):** koçun öğrenci detay ekranında da `SkyAppBar`.
 
 ---
 
@@ -968,11 +967,12 @@ anahtar dosyaları depoda yok (`env.json` .gitignore'da).
 - Mağaza imzası hazır: `android/key.properties` varsa onunla imzalanır
   (yoksa hata ayıklama anahtarı). Anahtar oluşturma:
   ```
-  keytool -genkey -v -keystore C:nahtarlar\mentoria.jks -keyalg RSA -keysize 2048 -validity 10000 -alias mentoria
+  keytool -genkeypair -keystore C:\anahtarlar\mentoria.jks -storetype PKCS12 -keyalg RSA -keysize 2048 -validity 10000 -alias mentoria
   ```
-  `android/key.properties`:
+  `android/key.properties` (yolda `/` kullan; `\` properties dosyasında kaçış
+  karakteri sayılır ve yol bozulur):
   ```
-  storeFile=C:\anahtarlar\mentoria.jks
+  storeFile=C:/anahtarlar/mentoria.jks
   storePassword=...
   keyAlias=mentoria
   keyPassword=...
@@ -1544,3 +1544,33 @@ Edge Function `storage-cleanup` v1.
 - KVKK metinlerinden ve veri envanterinden Google Fonts aktarımı çıkarıldı.
 - Yazı tipleri SIL Open Font License ya da Apache 2.0 lisanslı; lisans
   bilgisi dosyaların içinde (metadata).
+
+## 37. Yayın hazırlığı (19 Ekim 2026)
+
+Kontrol listesi: `docs/YAYIN_ONCESI.md` (panel adımları, telefonda deneme
+turu, mağaza hesapları açılınca yapılacaklar).
+
+- **Kod GitHub'da:** 13 commit gönderildi; bundan sonra commit'ler düzenli
+  gönderilecek.
+- **İmza anahtarı:** `C:\anahtarlar\mentoria.jks` (PKCS12, alias `mentoria`,
+  SHA-256 `ED:2D:E8:F4:…:21:F5`). Parola `android/key.properties`'te (git'e
+  girmez). Yedeklenmeli. Bu anahtarla imzalanan ilk APK için telefonlardaki
+  eski sürüm bir kez kaldırılmalı.
+- **Zorunlu güncelleme:**
+  - Migration `20261019160000_app_config` (rollback'i var).
+  - Tek satırlık `app_config` tablosu (`min_build`, `update_url`,
+    `message`). Girişten önce de okunur; uygulamadan yazılamaz.
+  - Uygulama açılışta `updateGateProvider` ile bakar; `appBuild < min_build`
+    ise `UpdateRequiredScreen` dışında hiçbir ekran açılmaz.
+  - Sunucuya ulaşılamazsa uygulama açılır.
+  - Sürüm `0.2.0+2` (`pubspec.yaml` ve `lib/core/config/app_version.dart`;
+    `test/app_version_test.dart` eşleşmeyi denetler). `url_launcher`
+    doğrudan bağımlılık oldu (zaten dolaylı olarak vardı).
+  - Testte yakalandı: güvenlik sıkılaştırması yeni tablolarda varsayılan
+    yetkiyi kapattığı için `grant select ... to anon, authenticated` açıkça
+    yazıldı.
+- **Koç listesinde silme talebi rozeti:** `StudentCard(deletionRequested:)`.
+  Koç ana sayfasında ve müdürün iki öğrenci listesinde
+  (`deletionRequestsProvider`). Test: `test/coach_deletion_badge_test.dart`.
+- **Koçun öğrenci detayı:** düz `AppBar` yerine `SkyAppBar` (öğrenci ve veli
+  ekranlarıyla aynı). Demo web'de (`build/web_coach`) görsel olarak bakıldı.

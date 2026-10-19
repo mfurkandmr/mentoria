@@ -126,9 +126,14 @@ class StudentCard extends StatelessWidget {
     this.maxWeekQuestions = 0,
     this.showCoach = false,
     this.trailing,
+    this.deletionRequested = false,
   });
 
   final StudentSummary student;
+
+  /// Öğrenci hesabının silinmesini istedi (koç/müdür sonuçlandırmalı;
+  /// 29 günde sonuçlanmazsa sunucu siler).
+  final bool deletionRequested;
   final VoidCallback onTap;
 
   /// Listedeki en yüksek haftalık soru sayısı (ilerleme çubuğu ölçeği).
@@ -199,6 +204,12 @@ class StudentCard extends StatelessWidget {
                 spacing: 6,
                 runSpacing: 6,
                 children: [
+                  if (deletionRequested)
+                    InfoPill(
+                      icon: Icons.person_remove_outlined,
+                      text: tr('Silme talebi'),
+                      color: brand.danger,
+                    ),
                   InfoPill(
                     icon: Icons.edit_note_rounded,
                     text: tr('{n} soru', {'n': s.weekQuestions}),
