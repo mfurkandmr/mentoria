@@ -69,8 +69,8 @@
 
 **Kalanlar:**
 
-- [ ] Google Fonts: yazı tipleri uygulamaya gömülsün (Google'a IP aktarımı
-      kalksın). Yazı tipi dosyalarının indirilmesi için onay gerekiyor.
+- [x] Google Fonts: yazı tipleri uygulamaya gömüldü (`assets/google_fonts`,
+      `tool/fonts/fetch_fonts.py`); Google'a IP aktarımı kalktı.
 - [ ] Saklama görevleri: lisansı biten kurum, uzun süre kullanılmayan hesap,
       eski duyurular (süreler senden bekleniyor)
 - [ ] Web'den hesap silme talebi sayfası (Google Play zorunluluğu)

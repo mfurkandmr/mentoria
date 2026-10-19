@@ -1523,3 +1523,24 @@ Edge Function `storage-cleanup` v1.
   `test/auth/invite_signup_test.dart` (güncellendi). Sıralama testleri artık
   rıza veriyor.
 - **Test projesi (`Mentoria-Test`):** bu migration oraya uygulanmadı.
+
+## 36. Yazı tipleri uygulamada (KVKK)
+
+- Önceden `google_fonts` yazı tiplerini çalışırken fonts.gstatic.com'dan
+  indiriyordu; bu da kullanıcının IP adresinin Google'a gitmesi demekti.
+- Artık 10 yazı tipinin uygulamada kullanılan kalınlıkları (400–900) ve
+  Nunito'nun eğik sürümleri `assets/google_fonts/` klasöründe: 54 dosya,
+  yaklaşık 10 MB (APK'da sıkıştırılmış hâli daha küçük).
+- `main()` içinde `GoogleFonts.config.allowRuntimeFetching = false`.
+- `tool/fonts/fetch_fonts.py`, dosyaların adresini ve SHA-256 özetini
+  google_fonts paketinin kendi listesinden okur, indirir ve doğrular.
+  google_fonts sürümü değişirse ya da `AppFont`'a yazı tipi eklenirse yeniden
+  çalıştırılır.
+- Test: `test/bundled_fonts_test.dart`, her yazı tipi ve kalınlığın
+  internetsiz yüklendiğini denetler. Dosya eksikse test başarısız olur; paket
+  hata yolunda takıldığı için bu zaman aşımıyla olur.
+- Yan etki: testlerdeki "google_fonts was unable to load font" uyarıları
+  kalktı.
+- KVKK metinlerinden ve veri envanterinden Google Fonts aktarımı çıkarıldı.
+- Yazı tipleri SIL Open Font License ya da Apache 2.0 lisanslı; lisans
+  bilgisi dosyaların içinde (metadata).

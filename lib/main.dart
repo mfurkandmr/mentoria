@@ -1,3 +1,4 @@
+import 'package:google_fonts/google_fonts.dart';
 import 'features/student/data/home_seed.dart';
 import 'core/cache/static_cache.dart';
 import 'package:flutter/foundation.dart';
@@ -22,6 +23,9 @@ Future<void> main() async {
   await initializeDateFormatting('en_US');
   final prefs = await SharedPreferences.getInstance();
   StaticCache.init(prefs);
+  // KVKK: yazı tipleri uygulamanın içinde (assets/google_fonts); çalışırken
+  // Google'dan indirilmez, kullanıcının IP adresi Google'a gitmez.
+  GoogleFonts.config.allowRuntimeFetching = false;
   HomeSeed.init(prefs);
 
   if (Env.isConfigured && !Env.isDemo) {

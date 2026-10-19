@@ -63,15 +63,16 @@ bağlı olduğundan:
 | Aynı kurumdaki diğer öğrenciler | Sıralamada kısaltılmış ad ("El***"), avatar ve net; düello rakibinin adı | Oyunlaştırma | Yurt içi |
 | Supabase Inc. (veri işleyen) | Bütün sunucu verileri | Barındırma, veritabanı, kimlik doğrulama, dosya depolama | **Yurt dışı:** AB (Frankfurt, AWS eu-central-1); şirket ABD merkezli |
 | Google LLC: Firebase Cloud Messaging | Cihaz bildirim adresi, bildirim başlığı ve metni | Telefon bildirimi göndermek | **Yurt dışı** (ABD ve diğer Google veri merkezleri) |
-| Google LLC: Google Fonts | IP adresi, cihaz/tarayıcı bilgisi | Yazı tiplerinin indirilmesi | **Yurt dışı.** Yazı tipleri uygulamaya gömülürse bu aktarım kalkar (önerilir). |
 | E-posta gönderimi (Supabase Auth) | E-posta adresi, doğrulama kodu | Kayıt doğrulama, şifre sıfırlama | **Yurt dışı** (Supabase'in e-posta sağlayıcısı; [kendi SMTP sağlayıcınız kullanılacaksa adı]) |
 
 ## Koddan çıkan düzeltilecek noktalar
 
-1. **Hata defteri fotoğrafları** hesap silinince depodan silinmiyor
-   (`mistake-photos`). Silme işlemine eklenmeli.
-2. **Google Fonts** yazı tiplerini çalışma anında Google'dan indiriyor. Yazı
-   tipleri uygulama içine gömülürse IP aktarımı kalkar.
+1. ~~**Hata defteri fotoğrafları** hesap silinince depodan silinmiyor.~~
+   **Giderildi:** `storage-cleanup` (NOTLAR §35).
+2. ~~**Google Fonts** yazı tiplerini çalışma anında Google'dan indiriyor.~~
+   **Giderildi (19 Ekim 2026):** yazı tipleri uygulamaya gömüldü
+   (`assets/google_fonts`), çalışma anında indirme kapalı. Google'a IP
+   aktarımı yok.
 3. **Rıza kaydı** yalnızca tarih tutuyor (`kvkk_consent_at`); hangi metnin
    hangi sürümünün onaylandığı ve rızanın geri çekilip çekilmediği
    tutulmuyor.

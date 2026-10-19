@@ -75,8 +75,6 @@ yükleme, not, ödev, plan) ve uygulamayı kullandıkça otomatik olarak
   - Supabase Inc.: veritabanı, kimlik doğrulama ve dosya depolama.
     Sunucular Almanya'da (Frankfurt).
   - Google LLC (Firebase Cloud Messaging): telefon bildirimi gönderimi.
-  - [Google Fonts: yazı tipi indirme. Yazı tipleri uygulamaya gömülürse bu
-    satır kaldırılacak.]
   - [E-posta gönderim sağlayıcısı]
 - **Yetkili kamu kurumları:** yasal zorunluluk hâlinde.
 
