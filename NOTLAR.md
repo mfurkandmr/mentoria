@@ -1574,3 +1574,32 @@ turu, mağaza hesapları açılınca yapılacaklar).
   (`deletionRequestsProvider`). Test: `test/coach_deletion_badge_test.dart`.
 - **Koçun öğrenci detayı:** düz `AppBar` yerine `SkyAppBar` (öğrenci ve veli
   ekranlarıyla aynı). Demo web'de (`build/web_coach`) görsel olarak bakıldı.
+
+## 38. CI ve çökme raporlama
+
+- **CI (GitHub Actions)** `.github/workflows/ci.yml`: her push ve pull
+  request'te iki iş çalışır.
+  - `flutter`: Flutter 3.44.6, `dart format` denetimi, `dart analyze`,
+    `flutter test`.
+  - `sql`: Node 22, `supabase/tests` içinde `npm test` (PGlite).
+  - Gizli anahtar gerekmez. Sonuçlar GitHub → Actions sekmesinde.
+  - Yerelde Flutter sürümü değişirse iş akışındaki `flutter-version` de
+    güncellenmeli.
+- **Çökme raporlama (Firebase Crashlytics):**
+  - `firebase_crashlytics` paketi ve Android Gradle eklentisi
+    `com.google.firebase.crashlytics` 3.0.6. Eklenti olmadan SDK açılışta
+    "build ID eksik" hatası verir.
+  - `lib/core/crash/crash_reporting.dart`: yalnızca telefonda ve sürüm
+    derlemesinde açık. `FlutterError.onError` ve `PlatformDispatcher.onError`
+    hataları Crashlytics'e gider.
+  - Kullanıcı kimliği gönderilmez; yalnızca `build` anahtarı eklenir.
+  - KVKK metinlerine (envanter, aydınlatma, gizlilik politikası ve mağaza
+    formu) eklendi.
+  - Firebase konsolunda Crashlytics sekmesi ilk raporla açılır; gerekirse
+    "Enable" denir.
+  - Mağaza derlemesi `--obfuscate` ile yapılırsa Dart yığınlarını okumak
+    için sembol yüklenmeli:
+    `firebase crashlytics:symbols:upload --app=<Android app id> build/symbols`.
+  - iOS'ta Xcode'da dSYM yükleme betiği eklenecek (Mac gerekiyor).
+- Release derlemesi Crashlytics eklentisi ve yeni imza anahtarıyla denendi:
+  APK 76,8 MB; imza parmak izi `ED:2D:E8:…`.

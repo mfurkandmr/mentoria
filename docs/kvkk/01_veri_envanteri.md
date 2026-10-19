@@ -23,6 +23,7 @@ tabloya yeni kişisel veri alanı eklendiğinde burası da güncellenmeli.
 |---|---|---|---|---|
 | Kimlik | Ad soyad, öğrenci numarası (isteğe bağlı) | Tüm roller | `profiles` | Sözleşmenin ifası (5/2-c) |
 | İletişim | E-posta adresi | Tüm roller | Supabase Auth (`auth.users`) | Sözleşmenin ifası (5/2-c) |
+| Hata raporları | Çökme anındaki hata yığını, cihaz modeli, işletim sistemi ve uygulama sürümü, rastgele kurulum kimliği. **Ad, e-posta ve kullanıcı kimliği gönderilmez.** | Uygulama (yalnızca Android/iOS, sürüm derlemesi) | Firebase Crashlytics | Meşru menfaat (5/2-f): hataları bulup gidermek |
 | Hesap güvenliği | Şifre (yalnızca özeti, açık hâli saklanmaz), oturum anahtarları, giriş zamanları, IP adresi ve tarayıcı/cihaz bilgisi (Supabase Auth kayıtları) | Tüm roller | Supabase Auth | Hukuki yükümlülük (5/2-ç; 5651 sayılı Kanun), meşru menfaat (5/2-f) |
 | Eğitim / sınav | Hedef sınav yılı, alan (SAY/EA/SÖZ/DİL), deneme sonuçları (doğru/yanlış/boş/net), yanlış yapılan konular | Öğrenci; koç ve kurum (toplu yükleme) | `profiles`, `exams`, `exam_subject_results`, `exam_wrong_topics` | Sözleşmenin ifası (5/2-c) |
 | Çalışma kayıtları | Çözülen soru sayıları, konu ilerlemesi, pomodoro/çalışma süreleri, hedefler (hedef üniversite, bölüm, sıralama), haftalık plan, Günün Sorusu ve alıştırma cevapları, düello sonuçları | Öğrenci; koç (plan, hedef) | `question_logs`, `topic_progress`, `study_sessions`, `goals`, `plan_items`, `daily_answers`, `practice_answers`, `duels` | Sözleşmenin ifası (5/2-c) |
@@ -37,7 +38,8 @@ tabloya yeni kişisel veri alanı eklendiğinde burası da güncellenmeli.
 **Toplanmayanlar:** T.C. kimlik numarası, doğum tarihi (henüz; yaş kontrolü
 için doğum yılı eklenecek), telefon numarası, adres, konum, sağlık verisi ve
 diğer özel nitelikli veriler, yüz veya biyometrik veri, reklam kimliği.
-Uygulamada analiz/reklam SDK'sı yoktur.
+Uygulamada analiz ya da reklam SDK'sı yoktur; yalnızca çökme raporlama
+(Firebase Crashlytics) vardır.
 
 **Telefon sensörü:** Ana sayfadaki "Bızz'ı salla" etkileşimi ivmeölçeri
 yalnızca cihaz içinde kullanır; veri kaydedilmez ve gönderilmez.
@@ -63,6 +65,7 @@ bağlı olduğundan:
 | Aynı kurumdaki diğer öğrenciler | Sıralamada kısaltılmış ad ("El***"), avatar ve net; düello rakibinin adı | Oyunlaştırma | Yurt içi |
 | Supabase Inc. (veri işleyen) | Bütün sunucu verileri | Barındırma, veritabanı, kimlik doğrulama, dosya depolama | **Yurt dışı:** AB (Frankfurt, AWS eu-central-1); şirket ABD merkezli |
 | Google LLC: Firebase Cloud Messaging | Cihaz bildirim adresi, bildirim başlığı ve metni | Telefon bildirimi göndermek | **Yurt dışı** (ABD ve diğer Google veri merkezleri) |
+| Google LLC: Firebase Crashlytics | Hata raporu (yukarıdaki "Hata raporları" satırı) | Uygulama hatalarını bulup gidermek | **Yurt dışı** (ABD ve diğer Google veri merkezleri) |
 | E-posta gönderimi (Supabase Auth) | E-posta adresi, doğrulama kodu | Kayıt doğrulama, şifre sıfırlama | **Yurt dışı** (Supabase'in e-posta sağlayıcısı; [kendi SMTP sağlayıcınız kullanılacaksa adı]) |
 
 ## Koddan çıkan düzeltilecek noktalar

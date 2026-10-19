@@ -1,0 +1,62 @@
+# Her gönderimde (push) ve pull request'te testler.
+#   flutter: biçim, analiz, 260+ Dart testi
+#   sql:     migration'lar + RLS / kiracı ayrımı / geri alma testleri (PGlite)
+# Gizli anahtar gerekmez: testler demo depolarıyla ve yerel veritabanıyla çalışır.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  flutter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          # Yereldeki sürümle aynı (flutter --version).
+          flutter-version: 3.44.6
+          cache: true
+
+      - name: Paketler
+        run: flutter pub get
+
+      - name: Biçim (dart format)
+        run: dart format --output=none --set-exit-if-changed lib test
+
+      - name: Analiz
+        run: dart analyze lib test
+
+      - name: Testler
+        run: flutter test --reporter expanded
+
+  sql:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: supabase/tests
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: supabase/tests/package-lock.json
+
+      - name: Paketler
+        run: npm ci
+
+      - name: Migration ve RLS testleri
+        run: npm test

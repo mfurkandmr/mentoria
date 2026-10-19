@@ -27,6 +27,18 @@
       protection"): tek tıkla açılır. Supabase güvenlik uyarısı veriyor.
 - [ ] **E-posta şablonu** ("Confirm signup"): `supabase/templates/confirm_signup.html`.
 
+### Firebase konsolu
+- [ ] Crashlytics: ilk çökme raporu gelince sekme açılır; açılmazsa
+      Crashlytics → "Enable". Test için yeni APK'da bilerek hata
+      oluşturmaya gerek yok; ilk gerçek hata yeterli.
+
+### GitHub
+- [ ] **Depo şu an herkese açık (public).** Kod, NOTLAR.md ve KVKK taslakları
+      herkes tarafından görülebiliyor. Önerilen: Settings → General → Danger
+      Zone → "Change repository visibility" → Private. (CI özel depoda da
+      çalışır; ayda 2.000 dakika ücretsiz.) `promo-assets` dalındaki videolar
+      bir yerden bağlantıyla kullanılıyorsa önce onları başka yere taşı.
+
 ### Alan adı
 - [ ] Bir alan adı al (ör. `mentoria.app`). Gerekenler:
   - SMTP (yukarıda)

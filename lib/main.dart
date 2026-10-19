@@ -1,3 +1,4 @@
+import 'core/crash/crash_reporting.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'features/student/data/home_seed.dart';
 import 'core/cache/static_cache.dart';
@@ -43,6 +44,8 @@ Future<void> main() async {
   // Telefon bildirimleri (Android/iOS). Başarısız olursa uygulama çalışmaya
   // devam eder; bildirimler yalnızca uygulama içinde görünür.
   await initFirebase();
+  // Telefonda, sürüm derlemesinde yakalanmamış hatalar Crashlytics'e.
+  await initCrashReporting();
 
   runApp(
     ProviderScope(

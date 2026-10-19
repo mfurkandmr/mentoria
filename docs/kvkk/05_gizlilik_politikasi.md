@@ -12,7 +12,8 @@
 - Mentoria, YKS'ye hazırlanan öğrencilerin çalışmalarını koçları ve
   kurumlarıyla birlikte takip ettiği bir uygulamadır.
 - Yalnızca bu hizmet için gereken verileri toplarız. Reklam göstermeyiz,
-  verilerinizi satmayız, izleme veya analiz aracı kullanmayız.
+  verilerinizi satmayız, izleme veya analiz aracı kullanmayız. Uygulama
+  çökerse hatayı düzeltebilmek için kimliksiz bir çökme raporu alırız.
 - 18 yaşından küçük kullanıcılarımız vardır; onlar için veli onayı alınır.
 - Hesabınızı uygulamadan silebilir, verilerinizi indirebilirsiniz.
 
@@ -58,7 +59,7 @@ alır; bireysel katılan öğrenciler için uygulama veliden onay ister.
 
 | Soru | Cevap |
 |---|---|
-| Toplanan veri türleri | Ad, e-posta, kullanıcı kimliği, uygulama içi etkinlik (çalışma ve deneme kayıtları), fotoğraf (hata defteri, kullanıcı yükler), cihaz kimliği (bildirim adresi) |
+| Toplanan veri türleri | Ad, e-posta, kullanıcı kimliği, uygulama içi etkinlik (çalışma ve deneme kayıtları), fotoğraf (hata defteri, kullanıcı yükler), cihaz kimliği (bildirim adresi), çökme kayıtları ve tanılama (Crashlytics; kimliksiz) |
 | İzleme/reklam için kullanılıyor mu? | Hayır |
 | Üçüncü kişilerle paylaşılıyor mu? | Yalnızca hizmet sağlayıcılarla (Supabase, Google FCM); satış yok |
 | Aktarım sırasında şifreli mi? | Evet |

@@ -43,11 +43,14 @@ aydınlatma metni ayrıca geçerlidir.
 - **Bildirim:** uygulama içi bildirimler ve telefonunuza bildirim
   gönderebilmek için cihaz bildirim adresi.
 - **Avatar ve oyunlaştırma:** seçtiğiniz avatar, kazandığınız parçalar.
+- **Hata raporları:** uygulama telefonunuzda çökerse hatanın teknik
+  ayrıntısı, cihaz modeli, işletim sistemi ve uygulama sürümü. Bu raporda
+  adınız, e-postanız ya da kullanıcı kimliğiniz bulunmaz.
 - **Veli bilgisi:** velinizi davet ederseniz velinizin adı ve e-postası.
 
 Telefon numaranız, adresiniz, T.C. kimlik numaranız, konumunuz ve sağlık
 bilginiz **istenmez ve işlenmez**. Uygulamada reklam ya da kullanıcı izleme
-aracı yoktur.
+aracı yoktur; yalnızca çökme raporlama vardır.
 
 ## 3. Verilerinizi neden işliyoruz ve hukuki sebebi nedir?
 
@@ -86,6 +89,7 @@ yükleme, not, ödev, plan) ve uygulamayı kullandıkça otomatik olarak
   - Supabase Inc.: veritabanı, kimlik doğrulama ve dosya depolama.
     Sunucular Almanya'da (Frankfurt).
   - Google LLC (Firebase Cloud Messaging): telefon bildirimi gönderimi.
+  - Google LLC (Firebase Crashlytics): uygulama çökme raporları.
   - [E-posta gönderim sağlayıcısı]
 - **Yetkili kamu kurumları:** yasal zorunluluk hâlinde.
 
