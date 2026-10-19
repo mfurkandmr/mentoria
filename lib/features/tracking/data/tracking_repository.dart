@@ -44,7 +44,7 @@ class SupabaseTrackingRepository implements TrackingRepository {
   Map<int, String>? _codeById;
 
   /// Ana sayfa paketini tek RPC ile çekmeye başlar (bkz. [HomeSeed]).
-  void primeHome(String studentId) {
+  void primeHome(String studentId, {void Function()? onFresh}) {
     final since = last30DaysSince();
     HomeSeed.prime(studentId, since, () async {
       final r = await _client.rpc(
@@ -53,10 +53,26 @@ class SupabaseTrackingRepository implements TrackingRepository {
           'p_student': studentId,
           'p_since': isoDate(since),
           'p_since_ts': since.toUtc().toIso8601String(),
+          'p_today': isoDate(dateOnly(DateTime.now())),
         },
       );
       return (r as Map).cast<String, dynamic>();
-    });
+    }, onFresh: onFresh);
+  }
+
+  /// Ana sayfa kısayollarının sayıları (tüm oturumları/kartları indirmeden).
+  Future<Map<String, dynamic>> fetchShortcutCounts(String studentId) async {
+    final seed = await HomeSeed.take(studentId, 'shortcuts');
+    final r =
+        seed?.value ??
+        await _client.rpc(
+          'student_shortcut_counts',
+          params: {
+            'p_student': studentId,
+            'p_today': isoDate(dateOnly(DateTime.now())),
+          },
+        );
+    return (r as Map).cast<String, dynamic>();
   }
 
   Future<void> _loadSubjects() async {
@@ -258,17 +274,6 @@ final trackingRepositoryProvider = Provider<TrackingRepository>(
 /// Son 30 günlük listelerin başlangıç günü (bugün dahil 30 gün).
 DateTime last30DaysSince() =>
     dateOnly(DateTime.now()).subtract(const Duration(days: 29));
-
-/// Öğrenci ana sayfası açılınca bir kez (yenilemede yeniden) okunur: ana
-/// sayfanın verisini tek istekte çekmeye başlar. Demoda (bellek içi
-/// repository) bir şey yapmaz.
-final studentHomePrimeProvider = Provider.family<void, String>((
-  ref,
-  studentId,
-) {
-  final repo = ref.watch(trackingRepositoryProvider);
-  if (repo is SupabaseTrackingRepository) repo.primeHome(studentId);
-});
 
 /// Son 30 günün soru kayıtları.
 final questionLogsProvider = FutureProvider.family<List<QuestionLog>, String>((

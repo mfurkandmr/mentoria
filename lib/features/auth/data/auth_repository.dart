@@ -1,3 +1,4 @@
+import '../../student/data/home_seed.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -78,6 +79,8 @@ class AuthRepository {
     try {
       await beforeSignOut?.call();
     } catch (_) {}
+    // Cihazda bu hesabın ana sayfası kalmasın.
+    await HomeSeed.clearDisk();
     await _client.auth.signOut();
   }
 

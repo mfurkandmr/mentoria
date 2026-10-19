@@ -244,28 +244,37 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
     final repo = ref.read(examRepositoryProvider);
     // Bu yüklemedeki tüm denemeler tek paket: Denemeler ekranından birlikte
     // silinebilir.
-    final batchId = newBatchId();
+    final draft = ExamDraft(
+      examType: _type,
+      field: _field,
+      name: _name.text.trim(),
+      publisher: _publisher.text.trim().isEmpty ? null : _publisher.text.trim(),
+      takenOn: _date,
+      results: const [],
+      imported: true,
+      batchId: newBatchId(),
+    );
+    String label(int i) => rows[i].name.isEmpty ? rows[i].number : rows[i].name;
     final failed = <String>[];
-    for (final (i, studentId) in targets) {
+    // Öğrenci başına ayrı istek yerine 200'lük parçalar (tek istek / parça).
+    const chunk = 200;
+    for (var start = 0; start < targets.length; start += chunk) {
+      final part = targets.skip(start).take(chunk).toList();
       try {
-        await repo.createExam(
-          studentId: studentId,
-          draft: ExamDraft(
-            examType: _type,
-            field: _field,
-            name: _name.text.trim(),
-            publisher: _publisher.text.trim().isEmpty
-                ? null
-                : _publisher.text.trim(),
-            takenOn: _date,
-            results: rows[i].results,
-            imported: true,
-            batchId: batchId,
-          ),
-        );
-        if (mounted) setState(() => _savedCount++);
+        final bad = (await repo.createExamBatch(
+          draft: draft,
+          rows: [
+            for (final (i, studentId) in part) (studentId, rows[i].results),
+          ],
+        )).toSet();
+        for (final (i, studentId) in part) {
+          if (bad.contains(studentId)) failed.add(label(i));
+        }
+        if (mounted) {
+          setState(() => _savedCount += part.length - bad.length);
+        }
       } catch (_) {
-        failed.add(rows[i].name.isEmpty ? rows[i].number : rows[i].name);
+        failed.addAll([for (final (i, _) in part) label(i)]);
       }
     }
     ref.invalidate(examsForStudentProvider);

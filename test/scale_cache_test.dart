@@ -1,4 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mentoria/core/constants/exam_subjects.dart';
+import 'package:mentoria/dev/demo_mode.dart';
+import 'package:mentoria/features/exams/data/exam.dart';
 import 'package:mentoria/core/cache/static_cache.dart';
 import 'package:mentoria/features/student/data/home_seed.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -127,5 +132,161 @@ void main() {
       fail = false;
       expect(await StaticCache.rows('err_t', load), hasLength(1));
     });
+  });
+
+  group('HomeSeed cihaz önbelleği', () {
+    final since = DateTime(2026, 10, 1);
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+      HomeSeed.init(await SharedPreferences.getInstance());
+      await HomeSeed.clearDisk();
+    });
+
+    test(
+      'ikinci açılışta önce cihazdaki paket, taze gelince onFresh',
+      () async {
+        HomeSeed.prime(
+          's1',
+          since,
+          () async => {
+            'logs': [1],
+          },
+        );
+        expect((await HomeSeed.take('s1', 'logs', since: since))?.value, [1]);
+        await Future<void>.delayed(Duration.zero);
+
+        // Uygulama yeniden açıldı: sunucu henüz cevap vermedi.
+        HomeSeed.reset();
+        final server = Completer<Map<String, dynamic>>();
+        var refreshed = 0;
+        HomeSeed.prime(
+          's1',
+          DateTime(2026, 10, 2), // gün değişmiş olsa da cihazdaki gösterilir
+          () => server.future,
+          onFresh: () => refreshed++,
+        );
+        expect(
+          (await HomeSeed.take(
+            's1',
+            'logs',
+            since: DateTime(2026, 10, 2),
+          ))?.value,
+          [1],
+        );
+
+        server.complete({
+          'logs': [2],
+        });
+        await Future<void>.delayed(Duration.zero);
+        expect(refreshed, 1);
+        expect(
+          (await HomeSeed.take(
+            's1',
+            'logs',
+            since: DateTime(2026, 10, 2),
+          ))?.value,
+          [2],
+        );
+      },
+    );
+
+    test('sunucuya ulaşılamazsa cihazdaki gösterilmeye devam eder', () async {
+      HomeSeed.prime('s1', since, () async => {'goals': 'eski'});
+      await HomeSeed.take('s1', 'goals');
+      await Future<void>.delayed(Duration.zero);
+      HomeSeed.reset();
+      var refreshed = 0;
+      HomeSeed.prime(
+        's1',
+        since,
+        () async => throw Exception('internet yok'),
+        onFresh: () => refreshed++,
+      );
+      expect((await HomeSeed.take('s1', 'goals'))?.value, 'eski');
+      await Future<void>.delayed(Duration.zero);
+      expect(refreshed, 0);
+    });
+
+    test('aşağı çekip yenilemede cihazdaki atlanır', () async {
+      HomeSeed.prime(
+        's1',
+        since,
+        () async => {
+          'logs': [1],
+        },
+      );
+      await HomeSeed.take('s1', 'logs');
+      await Future<void>.delayed(Duration.zero);
+      HomeSeed.skipDiskOnce();
+      final server = Completer<Map<String, dynamic>>();
+      HomeSeed.prime('s1', since, () => server.future);
+      final pending = HomeSeed.take('s1', 'logs', since: since);
+      server.complete({
+        'logs': [3],
+      });
+      expect((await pending)?.value, [3]);
+    });
+
+    test('başka öğrencinin paketi kullanılmaz, çıkışta silinir', () async {
+      HomeSeed.prime(
+        's1',
+        since,
+        () async => {
+          'logs': [1],
+        },
+      );
+      await HomeSeed.take('s1', 'logs');
+      await Future<void>.delayed(Duration.zero);
+      final server = Completer<Map<String, dynamic>>();
+      HomeSeed.prime('s2', since, () => server.future);
+      final pending = HomeSeed.take('s2', 'logs', since: since);
+      server.complete({
+        'logs': [9],
+      });
+      expect((await pending)?.value, [9]);
+
+      await HomeSeed.clearDisk();
+      final again = Completer<Map<String, dynamic>>();
+      HomeSeed.prime('s1', since, () => again.future);
+      final p2 = HomeSeed.take('s1', 'logs', since: since);
+      again.complete({
+        'logs': [5],
+      });
+      expect((await p2)?.value, [5]);
+    });
+  });
+
+  test('toplu deneme yükleme: herkese aynı paket, kendi sonuçları', () async {
+    final repo = InMemoryExamRepository();
+    final batch = newBatchId();
+    final failed = await repo.createExamBatch(
+      draft: ExamDraft(
+        examType: ExamType.tyt,
+        name: 'Özdebir TYT-3',
+        takenOn: DateTime(2026, 10, 18),
+        results: const [],
+        imported: true,
+        batchId: batch,
+      ),
+      rows: [
+        (
+          'a',
+          const [
+            SubjectResult(code: 'TYT_MAT', correct: 30, wrong: 5, blank: 5),
+          ],
+        ),
+        (
+          'b',
+          const [
+            SubjectResult(code: 'TYT_MAT', correct: 10, wrong: 5, blank: 25),
+          ],
+        ),
+      ],
+    );
+    expect(failed, isEmpty);
+    expect(repo.examsOf('a').single.results.single.correct, 30);
+    expect(repo.examsOf('b').single.results.single.correct, 10);
+    final batches = await repo.fetchMyBatches();
+    expect(batches.single.studentCount, 2);
   });
 }

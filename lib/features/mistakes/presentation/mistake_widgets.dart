@@ -1,3 +1,4 @@
+import '../../student/data/home_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -545,6 +546,7 @@ Future<void> showMistakeDetail(
                   final nav = Navigator.of(context);
                   await ref.read(mistakeRepositoryProvider).deleteCard(card);
                   ref.invalidate(mistakeCardsProvider(card.studentId));
+                  ref.invalidate(shortcutCountsProvider(card.studentId));
                   nav.pop();
                 },
                 icon: const Icon(Icons.delete_outline),
@@ -634,6 +636,7 @@ class _AddMistakeSheetState extends ConsumerState<_AddMistakeSheet> {
             ),
           );
       ref.invalidate(mistakeCardsProvider(widget.studentId));
+      ref.invalidate(shortcutCountsProvider(widget.studentId));
       if (!mounted) return;
       HapticFeedback.mediumImpact();
       Navigator.of(context).pop();
@@ -861,6 +864,7 @@ class _MistakeReviewScreenState extends ConsumerState<MistakeReviewScreen> {
       });
       if (_i == widget.cards.length) {
         ref.invalidate(mistakeCardsProvider(widget.studentId));
+        ref.invalidate(shortcutCountsProvider(widget.studentId));
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted && _solved > 0) celebrate(context);
         });

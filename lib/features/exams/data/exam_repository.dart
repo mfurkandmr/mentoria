@@ -14,6 +14,14 @@ abstract interface class ExamRepository {
     required ExamDraft draft,
   });
 
+  /// Aynı denemeyi birçok öğrenciye ekler (toplu yükleme, tek istek).
+  /// [draft]'ın sonuçları yerine her öğrencinin kendi sonuçları kullanılır.
+  /// Kaydedilemeyen öğrencilerin kimliklerini döner.
+  Future<List<String>> createExamBatch({
+    required ExamDraft draft,
+    required List<(String studentId, List<SubjectResult> results)> rows,
+  });
+
   /// Düzeltme süresi geçmişse [ExamLockedException].
   Future<void> deleteExam(String examId);
 
@@ -118,6 +126,42 @@ class SupabaseExamRepository implements ExamRepository {
       await _client.from('exams').delete().eq('id', examId);
       rethrow;
     }
+  }
+
+  @override
+  Future<List<String>> createExamBatch({
+    required ExamDraft draft,
+    required List<(String studentId, List<SubjectResult> results)> rows,
+  }) async {
+    final r = await _client.rpc(
+      'import_exam_batch',
+      params: {
+        'p_batch': draft.batchId,
+        'p_exam': {
+          'exam_type': draft.examType.db,
+          'field': draft.field?.db,
+          'name': draft.name,
+          'publisher': draft.publisher,
+          'taken_on': draft.takenOn.toIso8601String().substring(0, 10),
+        },
+        'p_rows': [
+          for (final (studentId, results) in rows)
+            {
+              'student_id': studentId,
+              'results': [
+                for (final s in results)
+                  {
+                    'code': s.code,
+                    'correct': s.correct,
+                    'wrong': s.wrong,
+                    'blank': s.blank,
+                  },
+              ],
+            },
+        ],
+      },
+    );
+    return [for (final id in (r as Map)['failed'] as List) '$id'];
   }
 
   @override

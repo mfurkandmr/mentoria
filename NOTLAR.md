@@ -1388,3 +1388,45 @@ Migration `20261019120000_scale_load` (rollback'i var), `send-push` v9.
     indiriyor.
   - Realtime bağlantı sınırı bu testte ölçülmedi.
 - **Testler:** `supabase/tests/scale_test.mjs`, `test/scale_cache_test.dart`.
+
+## 34. Zamanla büyüyen yükler ve anında açılan ana sayfa
+
+Migration: `20261019130000_home_counts_cleanup_import` (rollback'i var).
+
+- **Kısayol sayıları:** ana sayfadaki Odak Bahçesi ve Hata Defteri
+  kısayolları önceden öğrencinin bütün oturumlarını ve bütün hata kartlarını
+  indiriyordu. Artık yalnızca sayılar geliyor:
+  - Sunucuda `student_shortcut_counts(p_student, p_today)`, ayrıca
+    `student_home` paketinde `shortcuts` anahtarı.
+  - Uygulamada `shortcutCountsProvider` (`lib/features/student/data/home_providers.dart`).
+  - Kurallar uygulamadakiyle aynı: 20 dakikadan kısa pomodoro solmuş sayılır;
+    tekrar zamanı = ustalaşılmamış ve `due_on` bugün ya da önce.
+  - Pomodoro kaydı ve hata defteri değişikliklerinden sonra bu provider da
+    yenileniyor (`study_view`, `mistake_widgets`, `notebook_button`).
+  - `student_home` artık 4 parametreli (`p_today` eklendi). Eski 3
+    parametreli sürüm kaldırıldı.
+- **Bildirim temizliği:** pg_cron `cleanup-notifications` her gece 03.30'da
+  (TR) 90 günden eski bildirimleri siliyor.
+  - Duyurular silinmez, çünkü `my_announcements()` bildirim satırlarından
+    okuyor.
+  - `cleanup_old_notifications(p_days)` en az 30 gün tutar.
+- **Toplu deneme yükleme:** `import_exam_batch(p_batch, p_exam, p_rows)`
+  (SECURITY INVOKER, RLS aynen geçerli).
+  - Öğrenci başına ayrı alt işlem açılır; yetkisiz öğrenci ya da hatalı
+    ders kodu yalnız o satırı düşürür ve `failed` listesinde döner.
+  - En çok 500 satır kabul edilir; içe aktarma ekranı 200'lük parçalar
+    yollar. 300 öğrenci için yaklaşık 900 istek yerine 2 istek gidiyor.
+  - `ExamRepository.createExamBatch` (InMemory karşılığı tek tek ekler).
+- **Anında açılan ana sayfa:**
+  - `HomeSeed`, son gelen ana sayfa paketini cihazda saklıyor
+    (`home_bundle.<öğrenci>`, en çok 7 gün).
+  - Sonraki açılışta ekran önce bu paketle hemen çiziliyor. Taze paket gelince
+    `studentHomePrimeProvider`'daki `onFresh` ilgili provider'ları yeniliyor;
+    eski değer yenilenirken ekranda kalıyor, yani titreme yok.
+  - İnternet yoksa son görülen ana sayfa açılıyor.
+  - Aşağı çekip yenilemede cihazdaki paket atlanıyor (`HomeSeed.skipDiskOnce`).
+  - Çıkışta `HomeSeed.clearDisk()` cihazdaki paketleri siliyor.
+- **Testler:** `supabase/tests/home_counts_test.mjs`,
+  `test/scale_cache_test.dart` (cihaz önbelleği ve toplu yükleme).
+- **Test projesi (`Mentoria-Test`):** bu migration oraya henüz uygulanmadı.
+  5000 kişilik testten önce uygulanmalı.

@@ -36,6 +36,8 @@ import 'home_cards.dart';
 import '../../learn/presentation/daily_question_screen.dart';
 import '../../plan/presentation/plan_widgets.dart';
 import 'home_shortcuts.dart';
+import '../data/home_providers.dart';
+import '../data/home_seed.dart';
 import '../../mistakes/data/mistake_repository.dart';
 import '../../garden/presentation/garden_screen.dart';
 import 'home_sky.dart';
@@ -109,7 +111,9 @@ class StudentHomeScreen extends ConsumerWidget {
     Future<void> refresh() async {
       // Kurum adı/logosu değiştiyse yenilensin.
       ref.invalidate(tenantBrandingProvider);
-      // Paket, aşağıdakiler yeniden çekilmeden önce başlasın.
+      // Paket, aşağıdakiler yeniden çekilmeden önce başlasın; aşağı çekince
+      // cihazdaki eski paket değil, doğrudan sunucudaki gelsin.
+      HomeSeed.skipDiskOnce();
       ref.invalidate(studentHomePrimeProvider(id));
       ref.read(studentHomePrimeProvider(id));
       ref.invalidate(successStatusProvider);
@@ -122,6 +126,7 @@ class StudentHomeScreen extends ConsumerWidget {
       ref.invalidate(meetingSchedulesProvider(id));
       ref.invalidate(mistakeCardsProvider(id));
       ref.invalidate(allSessionsProvider(id));
+      ref.invalidate(shortcutCountsProvider(id));
       await Future.wait([
         ref.read(questionLogsProvider(id).future),
         ref.read(studySessionsProvider(id).future),

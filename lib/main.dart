@@ -1,3 +1,4 @@
+import 'features/student/data/home_seed.dart';
 import 'core/cache/static_cache.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,7 @@ Future<void> main() async {
   await initializeDateFormatting('en_US');
   final prefs = await SharedPreferences.getInstance();
   StaticCache.init(prefs);
+  HomeSeed.init(prefs);
 
   if (Env.isConfigured && !Env.isDemo) {
     await Supabase.initialize(

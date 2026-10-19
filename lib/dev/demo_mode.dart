@@ -322,6 +322,34 @@ class InMemoryExamRepository implements ExamRepository {
   List<Exam> examsOf(String studentId) => _byStudent[studentId] ?? const [];
 
   @override
+  Future<List<String>> createExamBatch({
+    required ExamDraft draft,
+    required List<(String studentId, List<SubjectResult> results)> rows,
+  }) async {
+    final failed = <String>[];
+    for (final (studentId, results) in rows) {
+      try {
+        await createExam(
+          studentId: studentId,
+          draft: ExamDraft(
+            examType: draft.examType,
+            field: draft.field,
+            name: draft.name,
+            publisher: draft.publisher,
+            takenOn: draft.takenOn,
+            results: results,
+            imported: true,
+            batchId: draft.batchId,
+          ),
+        );
+      } catch (_) {
+        failed.add(studentId);
+      }
+    }
+    return failed;
+  }
+
+  @override
   Future<List<Exam>> fetchExams({required String studentId}) async =>
       [...examsOf(studentId)]..sort((a, b) => Exam.byDate(b, a));
 

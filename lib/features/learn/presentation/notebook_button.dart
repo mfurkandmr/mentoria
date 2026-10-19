@@ -1,3 +1,4 @@
+import '../../student/data/home_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -51,6 +52,7 @@ class _AddToNotebookButtonState extends ConsumerState<AddToNotebookButton> {
             ),
           );
       ref.invalidate(mistakeCardsProvider(widget.studentId));
+      ref.invalidate(shortcutCountsProvider(widget.studentId));
       if (!mounted) return;
       HapticFeedback.mediumImpact();
       setState(() => _added = true);

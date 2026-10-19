@@ -4,9 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/i18n.dart';
 import '../../../shared/widgets/effects.dart';
-import '../../garden/data/garden.dart';
-import '../../garden/presentation/garden_screen.dart';
-import '../../mistakes/data/mistake_repository.dart';
+import '../data/home_providers.dart';
 
 /// Ana sayfada yan yana iki kısayol: Hata Defteri ve Odak Bahçesi.
 class HomeShortcuts extends ConsumerWidget {
@@ -16,13 +14,10 @@ class HomeShortcuts extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cards = ref.watch(mistakeCardsProvider(studentId)).value ?? const [];
-    final due = cards.where((c) => c.isDue(DateTime.now())).length;
-    final sessions =
-        ref.watch(allSessionsProvider(studentId)).value ?? const [];
-    final flowers = sessions
-        .where((s) => FlowerSize.of(s) != FlowerSize.wilted)
-        .length;
+    // Yalnızca sayılar (tüm oturumlar / kartlar indirilmez).
+    final counts = ref.watch(shortcutCountsProvider(studentId)).value;
+    final due = counts?.mistakesDue ?? 0;
+    final flowers = counts?.flowers ?? 0;
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -34,7 +29,7 @@ class HomeShortcuts extends ConsumerWidget {
               title: tr('Hata Defteri'),
               subtitle: due > 0
                   ? tr('{n} soru tekrar bekliyor', {'n': due})
-                  : cards.isEmpty
+                  : (counts?.mistakesTotal ?? 0) == 0
                   ? tr('Yanlışlarını unutma')
                   : tr('Bugünlük tekrar yok ✓'),
               badge: due > 0 ? '$due' : null,

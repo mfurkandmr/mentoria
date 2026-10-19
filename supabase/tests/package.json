@@ -4,7 +4,7 @@
   "type": "module",
   "description": "Supabase ÅŸemasÄ± ve RLS testleri (PGlite ile, internet/Supabase gerekmez).",
   "scripts": {
-    "test": "node rls_test.mjs ../.. && node tenant_test.mjs ../.. && node avatar_test.mjs ../.. && node push_test.mjs ../.. && node deletion_request_test.mjs ../.. && node success_ranking_test.mjs ../.. && node exam_batches_test.mjs ../.. && node meetings_test.mjs ../.. && node tenant_fonts_test.mjs ../.. && node signup_confirm_test.mjs ../.. && node avatars_more_test.mjs ../.. && node security_test.mjs ../.. && node mistakes_test.mjs ../.. && node practice_test.mjs ../.. && node daily_question_test.mjs ../.. && node duels_test.mjs ../.. && node plan_test.mjs ../.. && node plan_notify_test.mjs ../.. && node announcements_test.mjs ../.. && node scale_test.mjs ../.."
+    "test": "node rls_test.mjs ../.. && node tenant_test.mjs ../.. && node avatar_test.mjs ../.. && node push_test.mjs ../.. && node deletion_request_test.mjs ../.. && node success_ranking_test.mjs ../.. && node exam_batches_test.mjs ../.. && node meetings_test.mjs ../.. && node tenant_fonts_test.mjs ../.. && node signup_confirm_test.mjs ../.. && node avatars_more_test.mjs ../.. && node security_test.mjs ../.. && node mistakes_test.mjs ../.. && node practice_test.mjs ../.. && node daily_question_test.mjs ../.. && node duels_test.mjs ../.. && node plan_test.mjs ../.. && node plan_notify_test.mjs ../.. && node announcements_test.mjs ../.. && node scale_test.mjs ../.. && node home_counts_test.mjs ../.."
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.3.7"

@@ -1,3 +1,4 @@
+import '../../student/data/home_providers.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
@@ -355,6 +356,7 @@ class _StudyTimerCardState extends ConsumerState<StudyTimerCard> {
           );
       ref.invalidate(studySessionsProvider(widget.studentId));
       ref.invalidate(allSessionsProvider(widget.studentId));
+      ref.invalidate(shortcutCountsProvider(widget.studentId));
       ref.invalidate(studentSummariesProvider);
       if (!mounted) return;
       // Her oturum Odak Bahçesi'ne bir çiçek eker.
