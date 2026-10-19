@@ -91,6 +91,12 @@ await exam(A.coach, s.Can, 'AYT', 20, 'SAY');
 await exam(A.coach, s.Ece, 'AYT', 50, 'EA');
 await exam(B.coach, zeynep, 'TYT', 110);
 
+// KVKK (20261019150000): sıralamada yalnızca rıza verenler görünür. Buradaki
+// öğrenciler yetişkin ve rıza vermiş sayılır (rıza kuralları kvkk_test.mjs'te).
+await asSuper();
+await db.exec(`update public.profiles set birth_year = 2000 where role = 'student';
+  insert into public.consents (user_id, kind, granted, version, source)
+  select id, 'ranking', true, 'test', 'self' from public.profiles where role = 'student'`);
 // --- Kapalıyken
 await asUser(s.Can);
 await expectError('kapalıyken öğrenci sıralamayı göremez', () => db.query(`select * from public.success_leaderboard('TYT')`), 'RANKING_DISABLED');

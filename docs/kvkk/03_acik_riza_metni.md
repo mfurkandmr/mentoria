@@ -33,28 +33,22 @@ Kurumum başarı sıralamasını açarsa; adımın kısaltması (ör. "El***"),
 avatarım ve deneme netimin aynı kurumdaki diğer öğrencilere sıralama
 listesinde gösterilmesine izin veriyorum.
 
-*İzin vermezsen:* sıralamada görünmezsin ama kendi sıranı sen görmeye devam
-edersin. [Ürün kararı: kendi sırası gösterilecek mi?]
+*İzin vermezsen:* sıralamada görünmezsin; listeyi yine de görebilirsin.
+İzni istediğin zaman "Gizlilik ve izinler" sayfasından açıp kapatabilirsin.
 
 ### ☐ 2. Velimin çalışmalarımı görmesi (yalnızca 18 yaş ve üstü)
 
 Davet ettiğim velimin; çalışma sürelerimi, çözdüğüm soru sayılarını, deneme
 sonuçlarımı ve haftalık özetimi görmesine izin veriyorum.
 
-*Not:* Bu kutu yalnızca 18 yaşından büyük öğrencilere gösterilir. 18 yaşından
-küçüklerde veli zaten veli onayı sürecinin parçasıdır. Rıza velinin
-davetinde, davet anında istenir.
+*İzin vermezsen:* velin seni takip edemez. İzni geri çekersen velinin
+bağlantısı kaldırılır.
 
-### ☐ 3. Tanıtım ve kampanya bildirimleri [kullanılacaksa]
+> Not: Bu kutu yalnızca 18 yaşından büyük öğrencilere gösterilir. 18 yaşından
+> küçüklerde veli zaten veli onayı sürecinin parçasıdır. Rıza velinin
+> davetinde, davet anında istenir.
 
-Mentoria'nın yeni özellikler, kampanyalar ve etkinliklerle ilgili bana
-uygulama bildirimi ve e-posta göndermesine izin veriyorum.
-
-*Not:* Ticari elektronik ileti gönderilecekse 6563 sayılı Kanun ve İleti
-Yönetim Sistemi (İYS) kaydı da gerekir. Ödev, deneme sonucu, görüşme
-hatırlatması gibi hizmet bildirimleri bu izne bağlı değildir.
-
-### ☐ 4. Yurt dışına aktarım [yalnızca avukat gerekli görürse]
+### ☐ 3. Yurt dışına aktarım [yalnızca avukat gerekli görürse]
 
 Kişisel verilerimin, Aydınlatma Metni'nde belirtilen hizmet sağlayıcılara
 (Supabase: Almanya'daki sunucular; Google: telefon bildirimi) yurt dışına

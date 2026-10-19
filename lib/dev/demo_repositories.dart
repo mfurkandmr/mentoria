@@ -24,6 +24,7 @@ import '../features/coaching/data/coaching_repository.dart';
 import '../features/meetings/data/meeting_repository.dart';
 import '../features/mistakes/data/mistake_repository.dart';
 import '../features/plan/data/plan_repository.dart';
+import '../features/privacy/data/consent_repository.dart';
 import '../features/duel/data/duel_repository.dart';
 import '../features/learn/data/daily_question_repository.dart';
 import '../features/learn/data/practice_repository.dart';
@@ -312,6 +313,7 @@ class InMemoryAdminRepository implements AdminRepository {
   Future<String> createStudentInvite({
     required String coachId,
     int maxUses = 1,
+    bool guardianStatement = false,
   }) async => _add(UserRole.student, maxUses, coachId);
 
   @override
@@ -1923,4 +1925,89 @@ void seedDemoAnnouncements(InMemoryAnnouncementRepository repo) {
     ),
     at: now.subtract(const Duration(days: 1, hours: 2)),
   );
+}
+
+/// Bellekte tutulan KVKK rıza deposu (demo ve testler için).
+class InMemoryConsentRepository implements ConsentRepository {
+  InMemoryConsentRepository({
+    required this.myId,
+    Map<String, ConsentStatus>? seed,
+    this.parentOf = const {},
+  }) : _byUser = {...?seed};
+
+  final String myId;
+
+  /// Veli kimliği → çocuklarının kimlikleri (veli olarak onay verebilmek için).
+  final Map<String, Set<String>> parentOf;
+  final Map<String, ConsentStatus> _byUser;
+
+  /// Testlerde yapılan değişiklikleri görmek için.
+  ConsentStatus statusOf(String id) => _byUser[id] ?? const ConsentStatus();
+
+  @override
+  Future<ConsentStatus> status({String? userId}) async =>
+      statusOf(userId ?? myId);
+
+  @override
+  Future<void> setConsent(
+    ConsentKind kind, {
+    required bool granted,
+    String? studentId,
+  }) async {
+    final target = studentId ?? myId;
+    if (studentId != null && !(parentOf[myId]?.contains(studentId) ?? false)) {
+      throw StateError('NOT_ALLOWED');
+    }
+    final s = statusOf(target);
+    if (kind == ConsentKind.parentView && s.minor) {
+      throw StateError('MINOR_PARENT_VIEW');
+    }
+    final event = ConsentEvent(
+      kind: kind.db,
+      granted: granted,
+      version: legalVersion,
+      source: studentId == null ? 'self' : 'parent',
+      at: DateTime.now(),
+    );
+    _byUser[target] = switch (kind) {
+      ConsentKind.ranking => s.copyWith(ranking: granted),
+      ConsentKind.parentView => s.copyWith(
+        parentView: granted,
+        hasParent: granted ? s.hasParent : false,
+      ),
+      ConsentKind.guardianApproval => s.copyWith(
+        guardianApproval: granted,
+        guardianSource: 'parent',
+      ),
+      ConsentKind.privacyNotice => s,
+    }.copyWith(history: [event, ...s.history]);
+  }
+
+  @override
+  Future<void> setBirthYear(int year, {String? userId}) async {
+    final target = userId ?? myId;
+    final s = statusOf(target);
+    if (userId == null && s.birthYear != null) {
+      throw StateError('BIRTH_YEAR_LOCKED');
+    }
+    _byUser[target] = s.copyWith(
+      birthYear: year,
+      minor: isMinorBirthYear(year),
+    );
+  }
+
+  @override
+  Future<Map<String, dynamic>> exportMyData() async => {
+    'profile': {'id': myId},
+    'consents': [
+      for (final e in statusOf(myId).history)
+        {
+          'kind': e.kind,
+          'granted': e.granted,
+          'version': e.version,
+          'source': e.source,
+          'created_at': e.at.toIso8601String(),
+        },
+    ],
+  };
 }

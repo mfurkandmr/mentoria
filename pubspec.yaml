@@ -53,6 +53,8 @@ flutter:
     - assets/sounds/
     # Eğitim: telifsiz soru havuzu (üretici: tool/questions/make_questions.py)
     - assets/learn/questions/
+    # KVKK metinleri (üretici: tool/legal/build_legal.py, kaynak docs/kvkk/)
+    - assets/legal/
 
 # Uygulama ikonları: dart run flutter_launcher_icons
 flutter_launcher_icons:

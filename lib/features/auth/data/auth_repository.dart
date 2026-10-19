@@ -1,3 +1,4 @@
+import '../../privacy/data/consent_repository.dart';
 import '../../student/data/home_seed.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,14 +39,26 @@ class AuthRepository {
     required String password,
     required String fullName,
     required String inviteCode,
+    int? birthYear,
+    bool rankingConsent = false,
+    bool guardianApproval = false,
+    bool childRanking = false,
   }) async {
     final res = await _client.auth.signUp(
       email: email,
       password: password,
+      // Profil, rızalar ve veli onayı e-posta doğrulanınca sunucuda yazılır
+      // (apply_signup_invite).
       data: {
         'full_name': fullName.trim(),
         'invite_code': inviteCode.trim().toUpperCase(),
+        // Aydınlatma metni teyidi (rıza değil) ve metin sürümü.
         'kvkk_consent': true,
+        'privacy_version': legalVersion,
+        'birth_year': ?birthYear,
+        'consents': {'ranking': rankingConsent},
+        if (guardianApproval) 'guardian_approval': true,
+        if (childRanking) 'child_ranking': true,
       },
     );
     // Adres zaten doğrulanmış bir hesaba aitse Supabase, hesapları tahmin

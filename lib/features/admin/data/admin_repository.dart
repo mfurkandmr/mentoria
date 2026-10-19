@@ -61,9 +61,13 @@ abstract interface class AdminRepository {
   Future<void> renameOrg(String name);
   Future<List<OrgMember>> fetchMembers();
   Future<String> createCoachInvite({int maxUses = 1});
+
+  /// [guardianStatement]: kurum, 18 yaşından küçük öğrencilerin veli
+  /// onayını kendisinin aldığını beyan eder (KVKK; bkz. docs/kvkk).
   Future<String> createStudentInvite({
     required String coachId,
     int maxUses = 1,
+    bool guardianStatement = false,
   });
   Future<List<OrgInvite>> fetchActiveInvites();
   Future<void> deleteInvite(String code);
@@ -127,6 +131,7 @@ class SupabaseAdminRepository implements AdminRepository {
   Future<String> createStudentInvite({
     required String coachId,
     int maxUses = 1,
+    bool guardianStatement = false,
   }) async {
     final code = await _client.rpc(
       'create_invite',
@@ -134,6 +139,7 @@ class SupabaseAdminRepository implements AdminRepository {
         'p_target_role': 'student',
         'p_coach': coachId,
         'p_max_uses': maxUses,
+        if (guardianStatement) 'p_guardian_statement': true,
       },
     );
     return code as String;

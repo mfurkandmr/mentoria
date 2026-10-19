@@ -1,3 +1,4 @@
+import '../../privacy/presentation/privacy_screen.dart';
 import 'package:flutter/material.dart';
 import '../../announcements/presentation/announcement_widgets.dart';
 import '../../../core/branding/branding_providers.dart';
@@ -135,6 +136,8 @@ class StudentHomeScreen extends ConsumerWidget {
 
     final cards = <Widget>[
       YksCountdownCard(examYear: examYear),
+      // KVKK: doğum yılı eksikse ya da veli onayı bekleniyorsa (yoksa boş).
+      const KvkkHomeCard(),
       // Koçla sıradaki görüşme (planlı görüşme yoksa görünmez).
       NextMeetingCard(studentId: id),
       _TodayCard(studentId: id),

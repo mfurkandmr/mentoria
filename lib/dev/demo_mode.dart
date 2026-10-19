@@ -21,6 +21,7 @@ import '../features/coaching/data/coaching_repository.dart';
 import '../features/meetings/data/meeting_repository.dart';
 import '../features/mistakes/data/mistake_repository.dart';
 import '../features/plan/data/plan_repository.dart';
+import '../features/privacy/data/consent_repository.dart';
 import '../features/duel/data/duel_repository.dart';
 import '../features/learn/data/daily_question_repository.dart';
 import '../features/learn/data/practice_repository.dart';
@@ -34,6 +35,9 @@ import 'demo_repositories.dart';
 Future<List<Override>> buildDemoOverrides([
   String? role,
   bool successRanking = true,
+
+  /// Testler kendi rıza deposunu verebilir (yoksa demo verisiyle).
+  ConsentRepository? consents,
 ]) async {
   role ??= Env.demoRole;
   final exams = InMemoryExamRepository.demo();
@@ -250,6 +254,34 @@ Future<List<Override>> buildDemoOverrides([
     duelRepositoryProvider.overrideWithValue(demoDuels(avatars)),
     planRepositoryProvider.overrideWithValue(plan),
     announcementRepositoryProvider.overrideWithValue(announcements),
+    consentRepositoryProvider.overrideWithValue(
+      consents ??
+          // Demo öğrencisi 17 yaşında; veli onayını kurum aldı, sıralamaya rıza
+          // vermiş. Demo velisi onun velisi.
+          InMemoryConsentRepository(
+            myId: profile.id,
+            parentOf: const {
+              'demo-parent': {'demo-student'},
+            },
+            seed: {
+              'demo-student': ConsentStatus(
+                birthYear: DateTime.now().year - 17,
+                minor: true,
+                privacyNotice: true,
+                ranking: true,
+                guardianApproval: true,
+                guardianSource: 'institution',
+                rankingVisible: true,
+                hasParent: true,
+              ),
+              if (role != 'student')
+                profile.id: const ConsentStatus(
+                  minor: false,
+                  privacyNotice: true,
+                ),
+            },
+          ),
+    ),
     examTrendRepositoryProvider.overrideWithValue(
       InMemoryExamTrendRepository(exams, {
         for (final e in demoStudents().entries) e.key: e.value.$1,
@@ -541,7 +573,10 @@ class InMemoryCoachRepository implements CoachRepository {
   }
 
   @override
-  Future<String> createStudentInvite({int maxUses = 1}) async {
+  Future<String> createStudentInvite({
+    int maxUses = 1,
+    bool guardianStatement = false,
+  }) async {
     final code = 'DEMO${1000 + _invites.length}';
     _invites.insert(
       0,

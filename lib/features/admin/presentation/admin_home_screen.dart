@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../privacy/presentation/guardian_statement_tile.dart';
 import '../../announcements/presentation/announcement_widgets.dart';
 import '../../coach/presentation/exam_trends_card.dart';
 import '../../../core/branding/branding_providers.dart';
@@ -1055,6 +1056,7 @@ class _InviteDialog extends ConsumerStatefulWidget {
 class _InviteDialogState extends ConsumerState<_InviteDialog> {
   late String? _coachId = widget.coachId;
   int _uses = 1;
+  bool _guardianStatement = false;
   String? _code;
   bool _loading = false;
 
@@ -1068,7 +1070,11 @@ class _InviteDialogState extends ConsumerState<_InviteDialog> {
       final repo = ref.read(adminRepositoryProvider);
       final code = widget.role == UserRole.coach
           ? await repo.createCoachInvite(maxUses: _uses)
-          : await repo.createStudentInvite(coachId: _coachId!, maxUses: _uses);
+          : await repo.createStudentInvite(
+              coachId: _coachId!,
+              maxUses: _uses,
+              guardianStatement: _guardianStatement,
+            );
       ref.invalidate(orgInvitesProvider);
       setState(() => _code = code);
     } catch (_) {
@@ -1148,6 +1154,13 @@ class _InviteDialogState extends ConsumerState<_InviteDialog> {
                     selected: {_uses},
                     onSelectionChanged: (s) => setState(() => _uses = s.first),
                   ),
+                  if (!isCoach) ...[
+                    const SizedBox(height: 8),
+                    GuardianStatementTile(
+                      value: _guardianStatement,
+                      onChanged: (v) => setState(() => _guardianStatement = v),
+                    ),
+                  ],
                 ],
               ),
       ),

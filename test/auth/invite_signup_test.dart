@@ -14,6 +14,8 @@ import 'package:supabase_flutter/supabase_flutter.dart' show AuthException;
 class _FakeAuth implements AuthRepository {
   final calls = <String>[];
   String? signedUpEmail;
+  int? birthYear;
+  bool? ranking;
 
   @override
   Future<InviteInfo?> checkInvite(String code) async =>
@@ -25,9 +27,15 @@ class _FakeAuth implements AuthRepository {
     required String password,
     required String fullName,
     required String inviteCode,
+    int? birthYear,
+    bool rankingConsent = false,
+    bool guardianApproval = false,
+    bool childRanking = false,
   }) async {
     calls.add('signUp');
     signedUpEmail = email;
+    this.birthYear = birthYear;
+    ranking = rankingConsent;
     return true;
   }
 
@@ -76,7 +84,7 @@ void main() {
   testWidgets(
     'kayıt: şifre tekrarı eşleşmeli, adres önerisi, kodla doğrulama',
     (tester) async {
-      tester.view.physicalSize = const Size(1080, 3000);
+      tester.view.physicalSize = const Size(1080, 4500);
       tester.view.devicePixelRatio = 3;
       addTearDown(tester.view.reset);
       SharedPreferences.setMockInitialValues({});
@@ -102,14 +110,29 @@ void main() {
       await tester.enterText(fields.at(2), 'elif@gmial.com');
       await tester.enterText(fields.at(3), 'balarisi1');
       await tester.enterText(fields.at(4), 'balarisi2');
-      await tester.tap(find.byType(CheckboxListTile));
+      // KVKK: doğum yılı, aydınlatma teyidi ve isteğe bağlı sıralama rızası.
+      final year = DateTime.now().year - 17;
+      await tester.tap(find.text('Doğum yılı'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('$year').last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text("Aydınlatma Metni'ni okudum."));
+      await tester.tap(
+        find.textContaining('başarı sıralamasında adımın kısaltması'),
+      );
+      expect(
+        find.textContaining('18 yaşından küçüksen velinin onayı gerekir'),
+        findsOneWidget,
+      );
       final submit = find.text('Devam et: e-postamı doğrula');
+      await tester.ensureVisible(submit);
       await tester.tap(submit);
       await tester.pumpAndSettle();
       expect(find.text('Şifreler birbiriyle eşleşmiyor'), findsOneWidget);
       expect(auth.calls, isEmpty);
 
       await tester.enterText(fields.at(4), 'balarisi1');
+      await tester.ensureVisible(submit);
       await tester.tap(submit);
       await tester.pumpAndSettle();
       // Alan adındaki yazım hatası için öneri; kabul edilince düzeltilir.
@@ -120,6 +143,8 @@ void main() {
       await tester.tap(find.text('Evet, düzelt'));
       await tester.pumpAndSettle();
       expect(auth.signedUpEmail, 'elif@gmail.com');
+      expect(auth.birthYear, DateTime.now().year - 17);
+      expect(auth.ranking, isTrue);
 
       // 3. adım: doğrulama kodu.
       expect(

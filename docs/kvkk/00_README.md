@@ -24,8 +24,8 @@
 - [ ] KVKK başvuruları için e-posta adresi (ör. kvkk@...), varsa KEP adresi
 - [ ] Saklama süreleri: silinen hesap ([30] gün), lisansı biten kurum
       ([1 yıl]), uzun süre kullanılmayan hesap ([2 yıl]), duyurular ([1 yıl])
-- [ ] Tanıtım ve kampanya bildirimi gönderilecek mi? (Gönderilecekse İYS
-      kaydı da gerekir.)
+- [x] Tanıtım ve kampanya bildirimi gönderilmeyecek (19 Ekim 2026 kararı).
+      İleride gönderilirse açık rıza maddesi ve İYS kaydı gerekir.
 - [ ] Sorumlu kişiler (saklama-imha politikası 5. bölüm)
 - [ ] Kendi SMTP/e-posta sağlayıcınız var mı? (Doğrulama e-postaları için)
 
@@ -54,31 +54,26 @@
 8. **Koç notlarında özel nitelikli veri:** Serbest metin alanlarına sağlık
    vb. bilgi yazılması riskine karşı uyarı yeterli mi?
 
-## Kod aşaması (metinler kesinleşince)
+## Kod aşaması
 
-Önceden konuşulan plandaki Aşama 2–4 ve envanterde bulunan eksikler:
+**19 Ekim 2026'da yapıldı** (ayrıntı: NOTLAR.md §35):
 
-1. **Kayıt ekranı:**
-   - Aydınlatma metni uygulama içinde tam metin olarak açılsın; kutucuk
-     "okudum" teyidi olsun.
-   - Açık rıza maddeleri ayrı, isteğe bağlı kutucuklar olsun; hiçbiri
-     önceden işaretli olmasın.
-2. **Doğum yılı:** kayıtta sorulsun; 18 yaş altı için veli onayı akışı
-   (kurum beyanı veya veli daveti) eklensin.
-3. **`consents` tablosu:** kullanıcı, madde, metin sürümü, verildi ve geri
-   çekildi tarihleri, veren (kendisi / veli / kurum beyanı). Metin sürümü
-   değişince yeniden onay istensin.
-4. **"Gizlilik ve izinler" ekranı:** rızaları açıp kapatma, metinleri
-   okuma, **verilerimi indir** (KVKK md. 11).
-5. **Başarı sıralaması** kurum ayarına ek olarak öğrencinin rızasına
-   bağlansın.
-6. **Hata defteri fotoğrafları** hesap silinince depodan da silinsin
-   (şu an kalıyor).
-7. **Öğrenci silme talebi** 30 günde sonuçlanmazsa otomatik silinsin.
-8. **Google Fonts:** yazı tipleri uygulamaya gömülsün; Google'a IP aktarımı
-   kalksın.
-9. **Saklama görevleri:** lisansı biten kurum, uzun süre kullanılmayan
-   hesap ve eski duyurular için gece görevleri.
-10. **Not alanları:** koç notu ve görev açıklamasının yanına "sağlık vb.
-    özel bilgi yazmayın" uyarısı.
-11. **Web'den hesap silme talebi sayfası** (Google Play zorunluluğu).
+- [x] Kayıt ekranı: aydınlatma teyidi ayrı, açık rıza maddeleri ayrı ve isteğe bağlı
+- [x] Doğum yılı ve 18 yaş altı için veli onayı (kurum beyanı ya da veli kaydı)
+- [x] `consents` tablosu: sürüm, kaynak, geri çekme geçmişi
+- [x] "Gizlilik ve izinler" ekranı ve verilerimi indir
+- [x] Başarı sıralaması ve avatar liderliği öğrencinin rızasına bağlandı
+- [x] Hata defteri fotoğrafları hesap/kart silinince depodan siliniyor
+- [x] Öğrenci silme talebi 29 günde sonuçlanmazsa otomatik siliniyor
+- [x] Koç notu ve görev açıklamasında özel bilgi uyarısı
+
+**Kalanlar:**
+
+- [ ] Google Fonts: yazı tipleri uygulamaya gömülsün (Google'a IP aktarımı
+      kalksın). Yazı tipi dosyalarının indirilmesi için onay gerekiyor.
+- [ ] Saklama görevleri: lisansı biten kurum, uzun süre kullanılmayan hesap,
+      eski duyurular (süreler senden bekleniyor)
+- [ ] Web'den hesap silme talebi sayfası (Google Play zorunluluğu)
+- [ ] `kvkkContactEmail` ve metinlerdeki `[...]` yerleri doldurulsun; sonra
+      `python tool/legal/build_legal.py` çalıştırılıp `legalVersion` artırılsın
+- [ ] Avukat onayından sonra metin değişirse aynı adım

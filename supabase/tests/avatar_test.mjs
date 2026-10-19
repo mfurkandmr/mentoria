@@ -109,6 +109,12 @@ check(claimed.includes(5) && claimed.includes(12), 'TYT 65 net saçı ve ilk den
 await asUser(can);
 check((await one(`select count(*)::int c from public.user_unlocked_items`)).c === 0, 'başkasının açtığı parçalar görünmez');
 
+// KVKK (20261019150000): sıralamada yalnızca rıza verenler görünür. Buradaki
+// öğrenciler yetişkin ve rıza vermiş sayılır (rıza kuralları kvkk_test.mjs'te).
+await asSuper();
+await db.exec(`update public.profiles set birth_year = 2000 where role = 'student';
+  insert into public.consents (user_id, kind, granted, version, source)
+  select id, 'ranking', true, 'test', 'self' from public.profiles where role = 'student'`);
 // --- Sıralama: aynı dershane, sayfalı, ad + baş harf
 await asUser(can);
 const board = (await db.query(`select * from public.avatar_leaderboard(10, 0)`)).rows;

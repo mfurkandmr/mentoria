@@ -1,3 +1,5 @@
+import '../../privacy/presentation/legal_text_screen.dart';
+import '../../privacy/data/consent_repository.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -41,6 +43,12 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
 
   InviteInfo? _invite;
   bool _kvkk = false;
+
+  // KVKK: öğrencinin doğum yılı; isteğe bağlı rızalar; veli onayı.
+  int? _birthYear;
+  bool _ranking = false;
+  bool _guardian = false;
+  bool _childRanking = false;
   bool _loading = false;
 
   /// Doğrulama kodunun gönderildiği adres; doluysa kod adımındayız.
@@ -146,8 +154,21 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
       if (!mounted || fix == null) return;
       if (fix) _email.text = suggestion;
     }
+    final invite = _invite;
+    if (invite?.role == UserRole.student && _birthYear == null) {
+      _showError(tr('Doğum yılını seç.'));
+      return;
+    }
     if (!_kvkk) {
-      _showError(tr('Devam etmek için aydınlatma metnini onaylamalısın.'));
+      _showError(tr('Devam etmek için Aydınlatma Metni\'ni okuduğunu onayla.'));
+      return;
+    }
+    final guardianNeeded =
+        invite?.role == UserRole.parent && invite!.studentMinor;
+    if (guardianNeeded && !_guardian) {
+      _showError(
+        tr('Çocuğunun Mentoria\'yı kullanabilmesi için veli onayı gerekiyor.'),
+      );
       return;
     }
     setState(() => _loading = true);
@@ -159,6 +180,10 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
             password: _password.text,
             fullName: _name.text,
             inviteCode: _code.text,
+            birthYear: invite?.role == UserRole.student ? _birthYear : null,
+            rankingConsent: invite?.role == UserRole.student && _ranking,
+            guardianApproval: guardianNeeded && _guardian,
+            childRanking: guardianNeeded && _childRanking,
           );
       if (!mounted) return;
       if (codeSent) {
@@ -399,18 +424,27 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
                               ? tr('Şifreler birbiriyle eşleşmiyor')
                               : null,
                         ),
-                        const SizedBox(height: 8),
-                        CheckboxListTile(
-                          value: _kvkk,
-                          onChanged: (v) => setState(() => _kvkk = v ?? false),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(
-                            tr(
-                              'KVKK aydınlatma metnini okudum, kişisel verilerimin işlenmesine onay veriyorum.',
-                            ),
-                            style: text.bodySmall,
+                        if (invite.role == UserRole.student) ...[
+                          const SizedBox(height: 12),
+                          _BirthYearField(
+                            value: _birthYear,
+                            onChanged: (v) => setState(() => _birthYear = v),
                           ),
+                        ],
+                        const SizedBox(height: 8),
+                        _ConsentSection(
+                          role: invite.role,
+                          studentMinor: invite.studentMinor,
+                          birthYear: _birthYear,
+                          notice: _kvkk,
+                          onNotice: (v) => setState(() => _kvkk = v),
+                          ranking: _ranking,
+                          onRanking: (v) => setState(() => _ranking = v),
+                          guardian: _guardian,
+                          onGuardian: (v) => setState(() => _guardian = v),
+                          childRanking: _childRanking,
+                          onChildRanking: (v) =>
+                              setState(() => _childRanking = v),
                         ),
                       ],
                       const SizedBox(height: 20),
@@ -521,6 +555,136 @@ class _InviteBadge extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Öğrenci kaydında doğum yılı (18 yaş altı için veli onayı gerekir).
+class _BirthYearField extends StatelessWidget {
+  const _BirthYearField({required this.value, required this.onChanged});
+
+  final int? value;
+  final ValueChanged<int?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now().year;
+    return DropdownButtonFormField<int>(
+      initialValue: value,
+      isExpanded: true,
+      decoration: InputDecoration(
+        labelText: tr('Doğum yılı'),
+        prefixIcon: const Icon(Icons.cake_outlined),
+      ),
+      items: [
+        for (var y = now - 12; y >= now - 70; y--)
+          DropdownMenuItem(value: y, child: Text('$y')),
+      ],
+      onChanged: onChanged,
+      validator: (v) => v == null ? tr('Doğum yılını seç.') : null,
+    );
+  }
+}
+
+/// KVKK: aydınlatma teyidi (zorunlu), veli onayı (18 altı çocuğun velisi
+/// için zorunlu) ve açık rızalar (isteğe bağlı, ayrı ayrı).
+class _ConsentSection extends StatelessWidget {
+  const _ConsentSection({
+    required this.role,
+    required this.studentMinor,
+    required this.birthYear,
+    required this.notice,
+    required this.onNotice,
+    required this.ranking,
+    required this.onRanking,
+    required this.guardian,
+    required this.onGuardian,
+    required this.childRanking,
+    required this.onChildRanking,
+  });
+
+  final UserRole role;
+  final bool studentMinor;
+  final int? birthYear;
+  final bool notice;
+  final ValueChanged<bool> onNotice;
+  final bool ranking;
+  final ValueChanged<bool> onRanking;
+  final bool guardian;
+  final ValueChanged<bool> onGuardian;
+  final bool childRanking;
+  final ValueChanged<bool> onChildRanking;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    final isStudent = role == UserRole.student;
+    final guardianNeeded = role == UserRole.parent && studentMinor;
+    Widget box(bool v, ValueChanged<bool> on, String label) => CheckboxListTile(
+      value: v,
+      onChanged: (x) => on(x ?? false),
+      controlAffinity: ListTileControlAffinity.leading,
+      contentPadding: EdgeInsets.zero,
+      title: Text(label, style: text.bodySmall),
+    );
+    Widget link(LegalDoc d, String label) => Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: TextButton(
+        onPressed: () => openLegal(context, d),
+        child: Text(label),
+      ),
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (isStudent && birthYear != null && isMinorBirthYear(birthYear))
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Text(
+              tr(
+                '18 yaşından küçüksen velinin onayı gerekir. Kurumun aldıysa bir şey yapmana gerek yok; almadıysa giriş yaptıktan sonra velini davet edersin.',
+              ),
+              style: text.bodySmall,
+            ),
+          ),
+        box(notice, onNotice, tr('Aydınlatma Metni\'ni okudum.')),
+        link(LegalDoc.privacyNotice, tr('Aydınlatma Metni\'ni oku')),
+        if (guardianNeeded) ...[
+          box(
+            guardian,
+            onGuardian,
+            tr(
+              'Çocuğumun Mentoria\'yı kullanmasına ve bu kapsamda kişisel verilerinin işlenmesine yasal temsilcisi olarak onay veriyorum.',
+            ),
+          ),
+          link(LegalDoc.guardianConsent, tr('Veli onay metnini oku')),
+        ],
+        if (isStudent || guardianNeeded) ...[
+          const SizedBox(height: 4),
+          Text(
+            tr('İsteğe bağlı'),
+            style: text.labelLarge?.copyWith(fontWeight: FontWeight.w800),
+          ),
+          if (isStudent)
+            box(
+              ranking,
+              onRanking,
+              tr(
+                'Kurumumdaki başarı sıralamasında adımın kısaltması, avatarım ve netimle görünmek istiyorum.',
+              ),
+            )
+          else
+            box(
+              childRanking,
+              onChildRanking,
+              tr(
+                'Çocuğumun kurumundaki başarı sıralamasında adının kısaltması, avatarı ve netiyle görünmesine izin veriyorum.',
+              ),
+            ),
+          link(LegalDoc.explicitConsent, tr('Açık rıza metnini oku')),
+        ],
+      ],
     );
   }
 }

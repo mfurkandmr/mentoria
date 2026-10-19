@@ -1456,3 +1456,70 @@ Migration: `20261019130000_home_counts_cleanup_import` (rollback'i var).
     temizleniyor.
   - Duyurular `ref.cacheFor(2 dk)` ile ekrandan çıkınca 2 dakika daha
     tutuluyor.
+
+## 35. KVKK: rızalar, yaş, veli onayı, verilerimi indir
+
+Metinler `docs/kvkk/` klasöründe; açık işler `docs/kvkk/00_README.md`
+dosyasında. Migration `20261019150000_kvkk_consents` (rollback'i var),
+Edge Function `storage-cleanup` v1.
+
+- **Metinler uygulamada:**
+  - `tool/legal/build_legal.py`, `docs/kvkk` taslaklarından avukat notlarını
+    (`>` satırları) ve iç bölümleri ayıklayıp `assets/legal/*.md` üretir.
+  - `LegalTextScreen` bunları küçük bir Markdown çözücüyle gösterir.
+  - Metin değişince betiği çalıştır ve `legalVersion`'ı artır.
+- **Rızalar (`consents`):**
+  - Her onay ve geri çekme ayrı satır olarak tutulur; güncel durum türe göre
+    son satırdır.
+  - Türler: `privacy_notice` (aydınlatma teyidi), `ranking`, `parent_view`
+    (18+), `guardian_approval` (18-).
+  - Kaynak `self` / `parent` / `institution`; metin sürümü de saklanır.
+  - Yazma yalnızca `set_consent` ve kayıt tetikleyicisiyle. Okuma:
+    `consent_status()`.
+  - Eski birleşik kutuyu işaretlemiş hesaplar sürüm `0` olarak aktarıldı.
+- **Yaş:**
+  - `profiles.birth_year`; `is_minor()` doğum yılından hesaplar. O yıl 18'ini
+    dolduranlar yıl sonuna kadar küçük sayılır; yıl yoksa küçük sayılır.
+  - Öğrenci yılı bir kez girer (`set_birth_year`); sonra yalnızca koç veya
+    müdür değiştirir.
+  - Mevcut öğrencilere ana sayfada "Doğum yılını gir" kartı (`KvkkHomeCard`)
+    çıkar.
+- **Veli onayı, iki yol:**
+  - Kurum, öğrenci davetinde "veli onayını kurumumuz aldı" kutusunu işaretler
+    (`create_invite(..., p_guardian_statement)`,
+    `invite_codes.guardian_statement_at`). Bu davetle gelen öğrenciye
+    `institution` kaynaklı onay yazılır.
+  - Ya da veli, kayıtta "yasal temsilci olarak onay veriyorum" kutusunu
+    işaretler; kutu `check_invite`'ın `student_minor` alanına göre görünür.
+  - Veli onayı geri çekerse çocuğun hesabı için silme talebi açılır.
+- **Sıralamalar:** `success_scores` ve `avatar_leaderboard` artık yalnızca
+  `ranking_visible()` olanları gösterir: rıza var ve 18 altındaysa ayrıca veli
+  onayı var. **Canlıda şu an sıralamalar boş görünebilir**; öğrenciler yeni
+  APK'dan izin verince dolar.
+- **Yetişkin öğrencinin velisi:** veli davetinden önce `parent_view` rızası
+  istenir (yoksa `PARENT_VIEW_CONSENT_REQUIRED`). Rıza geri çekilince
+  `parent_students` bağı silinir.
+- **Verilerimi indir:** `export_my_data()` (SECURITY INVOKER, yalnızca
+  kişinin kendi satırları). E-posta uygulamada oturumdan eklenir; dosya
+  `share_plus` ile paylaşılır.
+- **Silme talepleri:** `process_overdue_deletion_requests()`, 29 günde
+  sonuçlanmayan talepleri her gece siler (KVKK 30 gün).
+- **Hata defteri fotoğrafları:** kart ya da hesap silinince
+  `storage_cleanup` kuyruğuna girer. pg_cron `storage-cleanup` 10 dakikada bir
+  `storage-cleanup` Edge Function'ını çağırır (Supabase depoyu SQL ile
+  sildirmiyor). Adres `push_function_url`'den türetilir; parola
+  `push_webhook_secret`. Canlıda uçtan uca denendi.
+- **Uygulama:**
+  - Kayıt ekranı: aydınlatma teyidi, doğum yılı, isteğe bağlı sıralama rızası;
+    18 altı çocuğun velisine zorunlu veli onayı.
+  - Profil → "Gizlilik ve izinler" (`PrivacyScreen`): metinler, izin
+    anahtarları, veli onayı durumu, verilerimi indir. Velide her çocuk için
+    onay ve sıralama.
+  - Koç ve müdürün öğrenci davetinde kurum beyanı kutusu
+    (`GuardianStatementTile`).
+  - Koç notu ve görev açıklamasında "özel bilgi yazma" uyarısı.
+  - `kvkkContactEmail` boş: veri sorumlusu bilgileri gelince doldurulacak.
+- **Testler:** `supabase/tests/kvkk_test.mjs`, `test/privacy_test.dart`,
+  `test/auth/invite_signup_test.dart` (güncellendi). Sıralama testleri artık
+  rıza veriyor.
+- **Test projesi (`Mentoria-Test`):** bu migration oraya uygulanmadı.

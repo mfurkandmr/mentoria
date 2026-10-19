@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../privacy/presentation/guardian_statement_tile.dart';
 import '../../../shared/widgets/common.dart';
 import '../../../core/branding/app_links.dart';
 import '../../../core/theme/brand_theme.dart';
@@ -19,6 +20,7 @@ class InviteSheet extends ConsumerStatefulWidget {
 
 class _InviteSheetState extends ConsumerState<InviteSheet> {
   int _maxUses = 1;
+  bool _guardianStatement = false;
   String? _newCode;
   bool _loading = false;
 
@@ -27,7 +29,10 @@ class _InviteSheetState extends ConsumerState<InviteSheet> {
     try {
       final code = await ref
           .read(coachRepositoryProvider)
-          .createStudentInvite(maxUses: _maxUses);
+          .createStudentInvite(
+            maxUses: _maxUses,
+            guardianStatement: _guardianStatement,
+          );
       ref.invalidate(studentInvitesProvider);
       if (mounted) setState(() => _newCode = code);
     } catch (_) {
@@ -91,7 +96,12 @@ class _InviteSheetState extends ConsumerState<InviteSheet> {
                 selected: {_maxUses},
                 onSelectionChanged: (s) => setState(() => _maxUses = s.first),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
+              GuardianStatementTile(
+                value: _guardianStatement,
+                onChanged: (v) => setState(() => _guardianStatement = v),
+              ),
+              const SizedBox(height: 8),
               FilledButton(
                 onPressed: _loading ? null : _create,
                 child: _loading

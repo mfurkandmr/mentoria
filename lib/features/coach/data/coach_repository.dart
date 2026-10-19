@@ -101,7 +101,13 @@ class StudentNumberException implements Exception {
 abstract interface class CoachRepository {
   Future<List<StudentSummary>> fetchStudents();
   Future<void> setStudentNumber(String studentId, String? number);
-  Future<String> createStudentInvite({int maxUses = 1});
+
+  /// [guardianStatement]: kurum, 18 yaşından küçük öğrencilerin veli
+  /// onayını kendisinin aldığını beyan eder (KVKK; bkz. docs/kvkk).
+  Future<String> createStudentInvite({
+    int maxUses = 1,
+    bool guardianStatement = false,
+  });
   Future<List<InviteCode>> fetchActiveStudentInvites();
 
   /// Öğrencinin hesabını ve tüm verilerini kalıcı olarak siler
@@ -151,10 +157,17 @@ class SupabaseCoachRepository implements CoachRepository {
   }
 
   @override
-  Future<String> createStudentInvite({int maxUses = 1}) async {
+  Future<String> createStudentInvite({
+    int maxUses = 1,
+    bool guardianStatement = false,
+  }) async {
     final code = await _client.rpc(
       'create_invite',
-      params: {'p_target_role': 'student', 'p_max_uses': maxUses},
+      params: {
+        'p_target_role': 'student',
+        'p_max_uses': maxUses,
+        if (guardianStatement) 'p_guardian_statement': true,
+      },
     );
     return code as String;
   }

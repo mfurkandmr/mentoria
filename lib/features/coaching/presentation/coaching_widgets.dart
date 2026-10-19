@@ -288,6 +288,9 @@ class _AddTaskSheetState extends ConsumerState<_AddTaskSheet> {
               textCapitalization: TextCapitalization.sentences,
               decoration: InputDecoration(
                 labelText: tr('Açıklama (isteğe bağlı)'),
+                helperText: tr(
+                  'Sağlık, aile durumu gibi özel bilgileri yazma.',
+                ),
               ),
             ),
             const SizedBox(height: 10),
@@ -404,6 +407,7 @@ class _NotesListState extends ConsumerState<NotesList> {
             textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(
               hintText: tr('Öğrencine bir not ya da geri bildirim yaz…'),
+              helperText: tr('Sağlık, aile durumu gibi özel bilgileri yazma.'),
               suffixIcon: IconButton(
                 tooltip: tr('Gönder'),
                 icon: const Icon(Icons.send_rounded),

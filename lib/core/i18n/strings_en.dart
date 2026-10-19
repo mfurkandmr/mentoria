@@ -1837,4 +1837,102 @@ const enStrings = <String, String>{
   'Mentoria bildirimleri': 'Mentoria notifications',
   'Ödev, görüşme, mesaj ve deneme bildirimleri':
       'Homework, meeting, message and exam notifications',
+
+  // KVKK: gizlilik ve izinler, kayıt rızaları
+  '18 yaşından küçük olup olmadığını bilmemiz gerekiyor. Doğum yılını bir kez girmen yeterli.':
+      'We need to know whether you are under 18. You only need to enter your birth year once.',
+  '18 yaşından küçük öğrenciler için gerekli.':
+      'Required for students under 18.',
+  '18 yaşından küçük öğrencilerin velilerinden onayı kurumumuz aldı ve saklıyor.':
+      'Our institution has obtained and keeps the parents\' consent for students under 18.',
+  '18 yaşından küçükler için veli onayı gerekiyor.':
+      'Parental consent is required for under-18s.',
+  '18 yaşından küçüksen velinin onayı gerekir. Kurumun aldıysa bir şey yapmana gerek yok; almadıysa giriş yaptıktan sonra velini davet edersin.':
+      'If you are under 18, your parent\'s consent is required. If your institution has obtained it, you don\'t need to do anything; otherwise you\'ll invite your parent after signing in.',
+  'Aydınlatma Metni\'ni oku': 'Read the Privacy Notice',
+  'Aydınlatma Metni\'ni okudum.': 'I have read the Privacy Notice.',
+  'Açık rıza metnini oku': 'Read the explicit consent text',
+  'Başarı sıralamasında görün': 'Appear in the success ranking',
+  'Başarı sıralamasında görünsün': 'Appear in the success ranking',
+  'Bir kez girilir; sonra yalnızca koçun ya da kurumun değiştirebilir.':
+      'Entered once; after that only your coach or institution can change it.',
+  'Biraz sonra yeniden dene.': 'Try again in a moment.',
+  'Bu kodla katılan öğrencilerden ayrıca veli onayı istenmez.':
+      'Students joining with this code won\'t be asked for parental consent separately.',
+  'Davet ettiğin velin çalışma sürelerini, soru sayılarını ve deneme sonuçlarını görür.':
+      'The parent you invite sees your study time, question counts and exam results.',
+  'Davet ettiğin velin çalışma sürelerini, soru sayılarını, deneme sonuçlarını ve haftalık özetini görür. İzni istediğin zaman "Gizlilik ve izinler"den geri çekebilirsin; o zaman velinin bağlantısı kaldırılır.':
+      'The parent you invite sees your study time, question counts, exam results and weekly summary. You can withdraw this permission at any time in "Privacy & permissions"; your parent\'s link is then removed.',
+  'Devam etmek için Aydınlatma Metni\'ni okuduğunu onayla.':
+      'To continue, confirm that you have read the Privacy Notice.',
+  'Doğum yılı': 'Birth year',
+  'Doğum yılı: {year}': 'Birth year: {year}',
+  'Doğum yılın': 'Your birth year',
+  'Doğum yılını gir': 'Enter your birth year',
+  'Doğum yılını seç.': 'Select your birth year.',
+  'Gizlilik ve izinler': 'Privacy & permissions',
+  'Haklarınla ilgili başvurular için: {email}. En geç 30 gün içinde ücretsiz cevap verilir.':
+      'For requests about your rights: {email}. You\'ll get a free answer within 30 days at the latest.',
+  'Hepsi isteğe bağlı. Kapatsan da Mentoria\'yı kullanmaya devam edersin.':
+      'All optional. You can keep using Mentoria even if you turn them off.',
+  'KVKK metinleri, izinlerin ve verilerini indirme':
+      'Privacy texts, your permissions and downloading your data',
+  'Kaydedilemedi.': 'Couldn\'t save.',
+  'Kurumumdaki başarı sıralamasında adımın kısaltması, avatarım ve netimle görünmek istiyorum.':
+      'I want to appear in my institution\'s success ranking with my shortened name, avatar and net score.',
+  'Kurumundaki diğer öğrenciler adının kısaltmasını (ör. "El***"), avatarını ve netini görür.':
+      'Other students at your institution see your shortened name (e.g. "El***"), avatar and net score.',
+  'Kurumundaki diğer öğrenciler adının kısaltmasını, avatarını ve netini görür.':
+      'Other students at the institution see the shortened name, avatar and net score.',
+  'Mentoria verilerim': 'My Mentoria data',
+  'Mentoria\'daki bütün kayıtların tek bir dosyada (JSON). Kaydedebilir ya da paylaşabilirsin.':
+      'All your Mentoria records in one file (JSON). You can save or share it.',
+  'Mentoria\'yı kullanmasına onay veriyorum':
+      'I consent to my child using Mentoria',
+  'Metin açılamadı': 'Couldn\'t open the text',
+  'Metinler': 'Texts',
+  'Onay kurum kaydında alındı.':
+      'Consent was obtained at institution enrolment.',
+  'Onayı geri çek': 'Withdraw consent',
+  'Onayını geri çekmek istiyor musun?': 'Do you want to withdraw your consent?',
+  'Sağlık, aile durumu gibi özel bilgileri yazma.':
+      'Don\'t write sensitive information such as health or family situation.',
+  'Veli onay metnini oku': 'Read the parental consent text',
+  'Veli onayı bekleniyor': 'Waiting for parental consent',
+  'Veli onayı bekleniyor. 18 yaşından küçük olduğun için velinin onayı gerekiyor. Profil sayfasındaki "Veli bağlantısı"ndan velini davet et; velin kayıt olurken onay verir.':
+      'Waiting for parental consent. Because you are under 18, your parent\'s consent is required. Invite your parent from "Parent link" on your profile; they give consent when signing up.',
+  'Veli onayı gelince sıralamada görünürsün (adının kısaltması, avatarın ve netin).':
+      'You\'ll appear in the ranking once your parent consents (shortened name, avatar and net score).',
+  'Veli onayın kurumun tarafından alındı.':
+      'Your parental consent was obtained by your institution.',
+  'Velim çalışmalarımı görebilsin': 'Let my parent see my progress',
+  'Velin artık çalışmalarını ve denemelerini göremez. İstersen sonra yeniden davet edebilirsin.':
+      'Your parent will no longer see your studies and exams. You can invite them again later.',
+  'Velin onay verdi.': 'Your parent has given consent.',
+  'Velin çalışmalarını görebilsin mi?': 'Let your parent see your progress?',
+  'Velini davet et; kayıt olurken onay verir.':
+      'Invite your parent; they consent when signing up.',
+  'Velinin erişimi kaldırılsın mı?': 'Remove your parent\'s access?',
+  'Veriler hazırlanamadı.': 'Couldn\'t prepare your data.',
+  'Verilerimi indir': 'Download my data',
+  'Verilerinin nasıl işlendiğini buradan okuyabilirsin.':
+      'Read here how your data is processed.',
+  'Yaş ve veli onayı': 'Age and parental consent',
+  'Çocuğumun Mentoria\'yı kullanmasına ve bu kapsamda kişisel verilerinin işlenmesine yasal temsilcisi olarak onay veriyorum.':
+      'As their legal representative, I consent to my child using Mentoria and to the processing of their personal data for this purpose.',
+  'Çocuğumun kurumundaki başarı sıralamasında adının kısaltması, avatarı ve netiyle görünmesine izin veriyorum.':
+      'I allow my child to appear in their institution\'s success ranking with a shortened name, avatar and net score.',
+  'Çocuğunun Mentoria\'yı kullanabilmesi için veli onayı gerekiyor.':
+      'Parental consent is required for your child to use Mentoria.',
+  'Çocuğunun hesabı için silme talebi açılır; koçu ya da kurumu hesabı kapatır. Bu işlem geri alınamaz.':
+      'A deletion request is opened for your child\'s account; their coach or institution closes it. This can\'t be undone.',
+  'Öğrencinin doğum yılı.': 'The student\'s birth year.',
+  'İsteğe bağlı': 'Optional',
+  'İzin veriyorum': 'I allow',
+  'İzinlerin': 'Your permissions',
+  'İşaretlemezsen 18 yaşından küçük öğrenciler velilerini uygulamadan davet edip onay alır.':
+      'If unchecked, students under 18 invite their parents in the app to get consent.',
+  'Aydınlatma Metni': 'Privacy Notice',
+  'Açık Rıza Metni': 'Explicit Consent Text',
+  'Veli Onay Metni': 'Parental Consent Text',
 };

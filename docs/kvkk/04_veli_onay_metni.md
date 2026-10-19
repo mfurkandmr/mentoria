@@ -38,9 +38,6 @@ kişisel verilerinin işlenmesine yasal temsilcisi olarak onay veriyorum.
 kısaltmasının (ör. "El***"), avatarının ve deneme netinin aynı kurumdaki
 diğer öğrencilere gösterilmesine açık rıza veriyorum.
 
-**☐ (İsteğe bağlı) [kullanılacaksa]** Mentoria'nın çocuğuma ve bana tanıtım
-ve kampanya bildirimi göndermesine açık rıza veriyorum.
-
 Bu onaylarımı istediğim zaman uygulamadaki "Gizlilik ve izinler"
 sayfasından veya [KVKK E-POSTA ADRESİ] adresine yazarak geri
 çekebileceğimi biliyorum. Zorunlu onayı geri çekersem çocuğumun hesabı

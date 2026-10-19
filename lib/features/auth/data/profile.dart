@@ -48,11 +48,17 @@ class Profile {
 
 /// `check_invite` RPC sonucu.
 class InviteInfo {
-  const InviteInfo({required this.role, required this.orgName, this.tenant});
+  const InviteInfo({
+    required this.role,
+    required this.orgName,
+    this.tenant,
+    this.studentMinor = false,
+  });
 
   factory InviteInfo.fromJson(Map<String, dynamic> json) => InviteInfo(
     role: UserRole.fromName(json['role'] as String),
     orgName: json['org_name'] as String,
+    studentMinor: json['student_minor'] as bool? ?? false,
     tenant: json['tenant'] is Map
         ? Branding.fromJson(Map<String, dynamic>.from(json['tenant'] as Map))
         : null,
@@ -63,4 +69,7 @@ class InviteInfo {
 
   /// Davetin ait olduğu dershanenin markası.
   final Branding? tenant;
+
+  /// Veli davetinde: çocuk 18 yaşından küçükse true (veli onayı istenir).
+  final bool studentMinor;
 }

@@ -62,8 +62,8 @@ aracı yoktur.
 | Bir hakkın tesisi, kullanılması veya korunması | Md. 5/2-e |
 | Başarı sıralamasında görünmek | **Açık rıza** (md. 5/1), isteğe bağlı |
 | Velinizin çalışmalarınızı görmesi | Velinizi siz davet edersiniz. 18 yaş altında veli onayıyla birlikte; 18 yaş ve üstünde **açık rıza** ile |
-| [Tanıtım ve kampanya bildirimleri, varsa] | **Açık rıza** (md. 5/1), isteğe bağlı |
 
+Mentoria tanıtım veya kampanya amaçlı bildirim ya da e-posta göndermez.
 Açık rıza gerektiren işlemler isteğe bağlıdır. Onay vermeseniz de
 Mentoria'nın temel özelliklerini kullanabilirsiniz.
 

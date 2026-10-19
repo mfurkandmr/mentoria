@@ -1,3 +1,6 @@
+import '../../privacy/presentation/privacy_screen.dart';
+import '../../privacy/presentation/legal_text_screen.dart';
+import '../../privacy/data/consent_repository.dart';
 import 'package:flutter/material.dart';
 import '../../avatar/presentation/student_avatar.dart';
 import '../../avatar/data/avatar_models.dart';
@@ -96,6 +99,18 @@ class ProfileScreen extends ConsumerWidget {
                   FaqCard(role: profile.role),
                   const SizedBox(height: 12),
                   const AppearanceCard(),
+                  const SizedBox(height: 12),
+                  Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.privacy_tip_outlined),
+                      title: Text(tr('Gizlilik ve izinler')),
+                      subtitle: Text(
+                        tr('KVKK metinleri, izinlerin ve verilerini indirme'),
+                      ),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () => openPrivacy(context),
+                    ),
+                  ),
                   const SizedBox(height: 12),
                   const _SecurityCard(),
                   const SizedBox(height: 24),
@@ -246,6 +261,23 @@ class _ParentInviteCardState extends ConsumerState<_ParentInviteCard> {
   bool _loading = false;
 
   Future<void> _create() async {
+    // KVKK: 18 yaşından büyük öğrenci, velisinin verilerini görmesine açık
+    // rıza verir (küçüklerde veli zaten veli onayı sürecinin parçası).
+    final status = await ref.read(myConsentStatusProvider.future);
+    if (!status.minor && !status.parentView) {
+      if (!mounted) return;
+      final ok = await _askParentViewConsent();
+      if (!ok) return;
+      try {
+        await ref
+            .read(consentRepositoryProvider)
+            .setConsent(ConsentKind.parentView, granted: true);
+        ref.invalidate(myConsentStatusProvider);
+      } catch (_) {
+        if (mounted) showMessage(context, tr('Kaydedilemedi.'));
+        return;
+      }
+    }
     setState(() => _loading = true);
     try {
       final code = await ref
@@ -257,6 +289,41 @@ class _ParentInviteCardState extends ConsumerState<_ParentInviteCard> {
     } finally {
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  Future<bool> _askParentViewConsent() async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(tr('Velin çalışmalarını görebilsin mi?')),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              tr(
+                'Davet ettiğin velin çalışma sürelerini, soru sayılarını, deneme sonuçlarını ve haftalık özetini görür. İzni istediğin zaman "Gizlilik ve izinler"den geri çekebilirsin; o zaman velinin bağlantısı kaldırılır.',
+              ),
+            ),
+            TextButton(
+              onPressed: () => openLegal(context, LegalDoc.explicitConsent),
+              child: Text(tr('Açık rıza metnini oku')),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(tr('Vazgeç')),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(tr('İzin veriyorum')),
+          ),
+        ],
+      ),
+    );
+    return ok ?? false;
   }
 
   @override
