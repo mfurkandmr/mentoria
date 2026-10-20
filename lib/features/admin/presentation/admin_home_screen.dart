@@ -16,6 +16,8 @@ import '../../../shared/widgets/common.dart';
 import '../../auth/data/profile.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../coach/data/coach_repository.dart';
+import '../../credits/data/org_credits_repository.dart';
+import '../../credits/presentation/credit_widgets.dart';
 import '../../meetings/data/meeting_repository.dart';
 import '../../meetings/presentation/meeting_widgets.dart';
 import '../../../shared/widgets/honey_nav_bar.dart';
@@ -164,9 +166,7 @@ class _OverviewTab extends ConsumerWidget {
         : tytNets.reduce((a, b) => a + b) / tytNets.length;
     final noNumber = students.where((s) => s.studentNumber == null).length;
     final inactive = students.where((s) => !s.activeThisWeek).toList();
-    final seatsLeft = org.value == null
-        ? null
-        : org.value!.seatLimit - students.length;
+    final credits = ref.watch(orgCreditsProvider).value;
 
     final lines = [
       ...managerBizzLines(students),
@@ -175,18 +175,21 @@ class _OverviewTab extends ConsumerWidget {
           'c': coaches,
           's': students.length,
         }),
-      if (seatsLeft != null && seatsLeft <= 5)
-        seatsLeft <= 0
-            ? tr('Lisans doldu; yeni öğrenci için lisansı artırmalısın.')
-            : tr('Lisansta {n} öğrencilik yer kaldı.', {'n': seatsLeft}),
     ];
 
     final cards = <Widget>[
+      if (credits != null && (credits.low || !credits.isActive))
+        const LowCreditBanner(),
       AsyncView(
         value: org,
         onRetry: () => ref.invalidate(orgProvider),
-        builder: (o) => _OrgCard(org: o, students: students.length),
+        builder: (o) => _OrgCard(
+          org: o,
+          students: students.length,
+          credits: credits?.balance,
+        ),
       ),
+      const OrgCodeCard(),
       StatRow(
         children: [
           GlowStat(
@@ -295,6 +298,8 @@ class _OverviewTab extends ConsumerWidget {
       edgeOffset: 100,
       onRefresh: () async {
         ref.invalidate(orgProvider);
+        ref.invalidate(orgCreditsProvider);
+        ref.invalidate(orgCodeProvider);
         ref.invalidate(orgMembersProvider);
         ref.invalidate(studentSummariesProvider);
         ref.invalidate(successStatusProvider);
@@ -434,10 +439,13 @@ class _SuccessRankingCardState extends ConsumerState<_SuccessRankingCard> {
 }
 
 class _OrgCard extends ConsumerWidget {
-  const _OrgCard({required this.org, required this.students});
+  const _OrgCard({required this.org, required this.students, this.credits});
 
   final OrgInfo org;
   final int students;
+
+  /// Kalan öğrenci kredisi (yüklenmediyse null).
+  final int? credits;
 
   Future<void> _rename(BuildContext context, WidgetRef ref) async {
     final controller = TextEditingController(text: org.name);
@@ -469,10 +477,11 @@ class _OrgCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final text = Theme.of(context).textTheme;
-    final ratio = org.seatLimit == 0
-        ? 1.0
-        : (students / org.seatLimit).clamp(0.0, 1.0);
-    final full = students >= org.seatLimit;
+    // Halka: kayıtlı öğrenciler / (kayıtlı + kalan kredi).
+    final left = credits ?? 0;
+    final total = students + left;
+    final ratio = total == 0 ? 1.0 : (students / total).clamp(0.0, 1.0);
+    final full = credits != null && left <= 0;
     final expiry = org.licenseExpiresAt == null
         ? tr('Süresiz')
         : DateFormat('d MMMM yyyy', localeTag).format(org.licenseExpiresAt!);
@@ -568,10 +577,9 @@ class _OrgCard extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          tr('Öğrenci lisansı: {students} / {p0}', {
-                            'students': students,
-                            'p0': org.seatLimit,
-                          }),
+                          credits == null
+                              ? tr('{n} öğrenci', {'n': students})
+                              : tr('Öğrenci kredisi: {n}', {'n': left}),
                           style: text.titleSmall?.copyWith(
                             color: onCard,
                             fontWeight: FontWeight.w800,
@@ -581,11 +589,9 @@ class _OrgCard extends ConsumerWidget {
                         Text(
                           full
                               ? tr(
-                                  'Lisans dolu. Yeni öğrenci kaydı için lisans artırılmalı.',
+                                  'Kredi bitti. Yeni öğrenci eklenemez; yöneticinizle iletişime geçin.',
                                 )
-                              : tr('{p0} öğrencilik yer var', {
-                                  'p0': org.seatLimit - students,
-                                }),
+                              : tr('{n} öğrenci kayıtlı', {'n': students}),
                           style: text.bodySmall?.copyWith(
                             color: onCard.withValues(alpha: 0.85),
                           ),
@@ -1067,7 +1073,12 @@ class _InviteDialogState extends ConsumerState<_InviteDialog> {
   String? _code;
   bool _loading = false;
 
+  /// Kredi bilinmiyorsa açık; sunucu yine NO_CREDITS ile reddeder.
+  bool get _canAddStudent =>
+      ref.read(orgCreditsProvider).value?.canAddStudent ?? true;
+
   Future<void> _create() async {
+    if (widget.role == UserRole.student && !_canAddStudent) return;
     if (widget.role == UserRole.student && _coachId == null) {
       showMessage(context, tr('Öğrencinin bağlanacağı koçu seç.'));
       return;
@@ -1084,7 +1095,10 @@ class _InviteDialogState extends ConsumerState<_InviteDialog> {
             );
       ref.invalidate(orgInvitesProvider);
       setState(() => _code = code);
-    } catch (_) {
+    } catch (e) {
+      if (e.toString().contains('NO_CREDITS')) {
+        ref.invalidate(orgCreditsProvider);
+      }
       if (mounted) showMessage(context, tr('Kod oluşturulamadı.'));
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -1098,6 +1112,8 @@ class _InviteDialogState extends ConsumerState<_InviteDialog> {
         .toList();
     final text = Theme.of(context).textTheme;
     final isCoach = widget.role == UserRole.coach;
+    final canCreate =
+        isCoach || (ref.watch(orgCreditsProvider).value?.canAddStudent ?? true);
 
     return AlertDialog(
       title: Text(isCoach ? tr('Koç davet et') : tr('Öğrenci davet et')),
@@ -1129,6 +1145,7 @@ class _InviteDialogState extends ConsumerState<_InviteDialog> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   if (!isCoach) ...[
+                    const LowCreditBanner(padding: EdgeInsets.only(bottom: 12)),
                     DropdownButtonFormField<String>(
                       initialValue: _coachId,
                       isExpanded: true,
@@ -1193,7 +1210,7 @@ class _InviteDialogState extends ConsumerState<_InviteDialog> {
                 child: Text(tr('Vazgeç')),
               ),
               TextButton(
-                onPressed: _loading ? null : _create,
+                onPressed: _loading || !canCreate ? null : _create,
                 child: Text(tr('Kod oluştur')),
               ),
             ],

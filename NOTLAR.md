@@ -1622,3 +1622,31 @@ turu, mağaza hesapları açılınca yapılacaklar).
   sürümden anlaşılır, migration gerekmedi).
 - `learn_daily_test`: uzun günün sorularında sonuç kutusu ekranın altında
   kaldığı için test kaydırıp bakıyor (20 Ekim sorusu bunu ortaya çıkardı).
+
+## 40. Kurum kredisi ve kurum kodu (20 Ekim 2026)
+
+Migration `20261020100000_org_credits` (canlıda; geri alma dosyası var).
+`schools` tablosu yok; karşılığı `organizations`. Bitiş tarihi için ayrı
+`plan_expires_at` açılmadı, mevcut `license_expires_at` kullanılıyor.
+
+- **Alanlar:** `credit_balance` (öğrenci kredisi), `invite_code`
+  (`MENTORIA-` + 6 karakter, `generate_org_invite_code()`; 0/O, 1/I yok),
+  `is_active`.
+- **Kredi harcanır:** öğrenci profili eklenince `consume_student_credit`
+  tetikleyicisi 1 düşer; 0'da `NO_CREDITS`. Öğrenci silinse de geri gelmez.
+  Koltuk sayımı (`SEAT_LIMIT_REACHED`) kalktı; `seat_limit` yalnızca yeni
+  kurumun başlangıç kredisi. Mevcut kurum: kalan koltuk kadar kredi (47).
+- **Kredi yükleme:** yalnızca platform yöneticisi:
+  `select public.add_org_credits('<org id>', 100);` ya da SQL ile
+  `update organizations set credit_balance = ...`. Uygulamada fiyat, satın
+  alma, ödeme bağlantısı yok (`test/org_credits_test.dart` bunu tarar).
+- **Kurum kodu:** öğrenci kayıt ekranındaki "Davet kodu" alanına yazar
+  (`check_invite` ve `apply_signup_invite` iki türü de tanır). Öğrenci,
+  kurumda en az öğrencisi olan koça bağlanır (koç yoksa `NO_COACH`).
+  Kodu yalnızca müdür görür (`my_org_invite_code`; tablo sütununun okuma
+  izni kaldırıldı) ve yenileyebilir (`regenerate_org_invite_code`).
+  **organizations'a yeni sütun eklenirse `grant select (sütun)` gerekir.**
+- **Uygulama:** `lib/features/credits/`. `LowCreditBanner` (50'nin altında,
+  yalnızca "Yöneticinizle iletişime geçin"), müdür panelinde kredi ve
+  `OrgCodeCard`, koç ve müdür davet ekranlarında kredi 0 iken "Kod oluştur"
+  kapalı. Kayıtta kredisi biten kurumun kodu form açmadan reddedilir.

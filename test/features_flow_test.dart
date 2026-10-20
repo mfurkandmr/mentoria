@@ -202,7 +202,7 @@ void main() {
     await tester.pumpWidget(await _app('admin', const AdminHomeScreen()));
     await tester.pumpAndSettle();
     expect(find.text('Bal Akademi'), findsOneWidget);
-    expect(find.text('Öğrenci lisansı: 3 / 50'), findsOneWidget);
+    expect(find.text('Öğrenci kredisi: 120'), findsOneWidget);
 
     // Öğrenciler → Zeynep'in koçunu değiştir
     await tester.tap(find.text('Öğrenciler').last);

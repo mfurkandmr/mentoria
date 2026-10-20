@@ -12,6 +12,7 @@ import '../features/notifications/data/notification_repository.dart';
 import '../features/tenants/data/tenant_repository.dart';
 import '../features/auth/data/profile.dart';
 import '../features/coach/data/coach_repository.dart';
+import '../features/credits/data/org_credits_repository.dart';
 import '../features/exams/data/exam.dart';
 import '../features/exams/data/exam_repository.dart';
 import '../features/account/data/account_repository.dart';
@@ -38,6 +39,9 @@ Future<List<Override>> buildDemoOverrides([
 
   /// Testler kendi rıza deposunu verebilir (yoksa demo verisiyle).
   ConsentRepository? consents,
+
+  /// Testler kendi kredi deposunu verebilir (yoksa demo: 120 kredi).
+  OrgCreditsRepository? credits,
 ]) async {
   role ??= Env.demoRole;
   final exams = InMemoryExamRepository.demo();
@@ -246,6 +250,13 @@ Future<List<Override>> buildDemoOverrides([
     coachingRepositoryProvider.overrideWithValue(coaching),
     accountRepositoryProvider.overrideWithValue(account),
     adminRepositoryProvider.overrideWithValue(admin),
+    orgCreditsRepositoryProvider.overrideWithValue(
+      credits ??
+          InMemoryOrgCreditsRepository(
+            balance: role == 'admin' || role == 'coach' ? 120 : null,
+            isAdmin: role == 'admin',
+          ),
+    ),
     assignmentRepositoryProvider.overrideWithValue(assignments),
     notificationRepositoryProvider.overrideWithValue(notifications),
     meetingRepositoryProvider.overrideWithValue(meetings),

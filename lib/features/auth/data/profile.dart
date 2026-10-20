@@ -53,12 +53,14 @@ class InviteInfo {
     required this.orgName,
     this.tenant,
     this.studentMinor = false,
+    this.noCredits = false,
   });
 
   factory InviteInfo.fromJson(Map<String, dynamic> json) => InviteInfo(
     role: UserRole.fromName(json['role'] as String),
     orgName: json['org_name'] as String,
     studentMinor: json['student_minor'] as bool? ?? false,
+    noCredits: json['no_credits'] as bool? ?? false,
     tenant: json['tenant'] is Map
         ? Branding.fromJson(Map<String, dynamic>.from(json['tenant'] as Map))
         : null,
@@ -72,4 +74,7 @@ class InviteInfo {
 
   /// Veli davetinde: çocuk 18 yaşından küçükse true (veli onayı istenir).
   final bool studentMinor;
+
+  /// Öğrenci davetinde: kurumun öğrenci kredisi bitti (kayıt yapılamaz).
+  final bool noCredits;
 }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../credits/data/org_credits_repository.dart';
+import '../../credits/presentation/credit_widgets.dart';
 import '../../privacy/presentation/guardian_statement_tile.dart';
 import '../../../shared/widgets/common.dart';
 import '../../../core/branding/app_links.dart';
@@ -35,7 +37,10 @@ class _InviteSheetState extends ConsumerState<InviteSheet> {
           );
       ref.invalidate(studentInvitesProvider);
       if (mounted) setState(() => _newCode = code);
-    } catch (_) {
+    } catch (e) {
+      if (e.toString().contains('NO_CREDITS')) {
+        ref.invalidate(orgCreditsProvider);
+      }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(tr('Kod oluşturulamadı. Tekrar dene.'))),
@@ -59,6 +64,9 @@ class _InviteSheetState extends ConsumerState<InviteSheet> {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final invites = ref.watch(studentInvitesProvider);
+    // Kredi bilinmiyorsa (yükleniyor/hata) buton açık kalır; sunucu yine
+    // NO_CREDITS ile reddeder.
+    final canAdd = ref.watch(orgCreditsProvider).value?.canAddStudent ?? true;
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -82,6 +90,7 @@ class _InviteSheetState extends ConsumerState<InviteSheet> {
               ),
               style: text.bodyMedium,
             ),
+            const LowCreditBanner(padding: EdgeInsets.only(top: 12)),
             const SizedBox(height: 16),
             if (_newCode == null) ...[
               Text(tr('Kaç öğrenci kullanabilsin?'), style: text.labelLarge),
@@ -103,7 +112,7 @@ class _InviteSheetState extends ConsumerState<InviteSheet> {
               ),
               const SizedBox(height: 8),
               FilledButton(
-                onPressed: _loading ? null : _create,
+                onPressed: _loading || !canAdd ? null : _create,
                 child: _loading
                     ? const SizedBox.square(
                         dimension: 22,

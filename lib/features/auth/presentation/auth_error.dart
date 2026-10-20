@@ -36,10 +36,23 @@ String authErrorMessage(Object error) {
     if (msg.contains('password')) {
       return tr('Şifre en az 8 karakter olmalı.');
     }
+    if (msg.contains('no_credits')) {
+      return tr(
+        'Kurumunun öğrenci kredisi bitti. Kurum yöneticinle iletişime geç.',
+      );
+    }
+    if (msg.contains('no_coach')) {
+      return tr('Kurumunda henüz koç yok. Kurum yöneticinle iletişime geç.');
+    }
+    if (msg.contains('org_inactive')) {
+      return tr(
+        'Kurumun hesabı şu an kapalı. Kurum yöneticinle iletişime geç.',
+      );
+    }
     if (msg.contains('database error')) {
       // handle_new_user tetikleyicisi daveti reddetti.
       return tr(
-        'Davet kodu geçersiz, süresi dolmuş veya kurumun lisans kotası dolu.',
+        'Davet kodu geçersiz ya da süresi dolmuş veya kurumun öğrenci kredisi bitmiş.',
       );
     }
     return error.message;

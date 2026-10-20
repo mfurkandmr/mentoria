@@ -19,6 +19,7 @@ import '../features/tenants/data/tenant_repository.dart';
 import '../features/notifications/data/notification_repository.dart';
 import '../features/account/data/account_repository.dart';
 import '../features/admin/data/admin_repository.dart';
+import '../features/credits/data/org_credits_repository.dart';
 import '../features/auth/data/profile.dart';
 import '../features/coaching/data/coaching_repository.dart';
 import '../features/meetings/data/meeting_repository.dart';
@@ -326,6 +327,37 @@ class InMemoryAdminRepository implements AdminRepository {
   @override
   Future<void> reassignCoach(String studentId, String newCoachId) async =>
       onReassign(studentId, newCoachId);
+}
+
+/// Kurum kredisi ve kurum kodu (müdür ve koç; diğer rollerde null).
+class InMemoryOrgCreditsRepository implements OrgCreditsRepository {
+  InMemoryOrgCreditsRepository({
+    this.balance,
+    this.isActive = true,
+    this.isAdmin = false,
+    this.code = 'MENTORIA-BAL2K7',
+  });
+
+  int? balance;
+  bool isActive;
+  final bool isAdmin;
+  String code;
+  var _n = 0;
+
+  @override
+  Future<OrgCredits?> fetchCredits() async => balance == null
+      ? null
+      : OrgCredits(balance: balance!, isActive: isActive);
+
+  @override
+  Future<String?> fetchOrgCode() async => isAdmin ? code : null;
+
+  @override
+  Future<String> regenerateOrgCode() async {
+    if (!isAdmin) throw StateError('NOT_ALLOWED');
+    _n++;
+    return code = 'MENTORIA-YEN${_n.toString().padLeft(3, '0')}';
+  }
 }
 
 /// Demo için kısa konu listesi (her derse birkaç başlık).

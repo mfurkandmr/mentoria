@@ -79,7 +79,7 @@ await asUser(coach);
 const stuCode = (await rpc(`select public.create_invite('student', null, 3) c`)).c;
 const student = await signUp(stuCode, 'Elif Öğrenci');
 const student2 = await signUp(stuCode, 'Can Öğrenci');
-await expectError('seat limit enforced', () => signUp(stuCode), 'SEAT_LIMIT_REACHED');
+await expectError('kredi bitince kayıt reddedilir', () => signUp(stuCode), 'NO_CREDITS');
 
 // --- Öğrenci veli daveti üretir
 await asUser(student);

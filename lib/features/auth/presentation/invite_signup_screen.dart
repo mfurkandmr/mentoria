@@ -110,6 +110,13 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
       if (!mounted) return;
       if (invite == null) {
         _showError(tr('Bu davet kodu geçersiz veya süresi dolmuş.'));
+      } else if (invite.noCredits) {
+        // Fiyat ya da satın alma yok; yalnızca yöneticiye yönlendirilir.
+        _showError(
+          tr(
+            'Kurumunun öğrenci kredisi bitti. Kurum yöneticinle iletişime geç.',
+          ),
+        );
       } else {
         setState(() => _invite = invite);
         // Davetin dershanesinin markası anında uygulanır ve hatırlanır.
@@ -374,6 +381,9 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
                         textCapitalization: TextCapitalization.characters,
                         decoration: InputDecoration(
                           labelText: tr('Davet kodu'),
+                          helperText: tr(
+                            'Koçunun verdiği kod ya da kurum kodu (MENTORIA-…)',
+                          ),
                           prefixIcon: const Icon(Icons.vpn_key_outlined),
                         ),
                         onFieldSubmitted: (_) => _verifyCode(),

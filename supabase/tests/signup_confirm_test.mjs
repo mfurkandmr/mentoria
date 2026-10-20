@@ -101,15 +101,19 @@ await db.query(`update auth.users set email_confirmed_at = now() + interval '1 m
 await db.query(`update auth.users set email = 'yeni@x.com' where id = $1`, [real]);
 check((await usedCount(studentCode)) === 1, 'tekrar güncelleme daveti yeniden harcamaz');
 
-console.log('Koltuk sınırı doğrulama anında da denetlenir');
+console.log('Kredi doğrulama anında da denetlenir');
+await asSuper();
+await db.query(`update public.organizations set credit_balance = 1 where id = $1`, [org]);
 await asUser(coach);
 const code2 = (await one(`select public.create_invite('student') c`)).c;
-await expectError('koltuk doluyken kayıt anında reddedilir',
-  () => signUp(code2, 'Zeynep Arslan', false), 'SEAT_LIMIT_REACHED');
+await asSuper();
+await db.query(`update public.organizations set credit_balance = 0 where id = $1`, [org]);
+await expectError('kredi bitmişken kayıt anında reddedilir',
+  () => signUp(code2, 'Zeynep Arslan', false), 'NO_CREDITS');
 
 console.log('Panelden / onaysız modda doğrulanmış eklenen kullanıcı');
 await asSuper();
-await db.query(`update public.organizations set seat_limit = 5 where id = $1`, [org]);
+await db.query(`update public.organizations set credit_balance = 5 where id = $1`, [org]);
 const instant = await signUp(code2, 'Zeynep Arslan', true);
 check((await profileOf(instant))?.role === 'student', 'hemen profil oluşur');
 
@@ -121,6 +125,8 @@ await expectError('authenticated apply_signup_invite çağıramaz',
 console.log('Geri alma ve yeniden uygulama');
 const name = '20261018160000_signup_after_email_confirm';
 await asSuper();
+// Eski sürümler koltuk sayar (kredi sonraki migration'da geldi).
+await db.query(`update public.organizations set seat_limit = 100 where id = $1`, [org]);
 await db.exec(read(rbDir, `${name}.down.sql`));
 check(!(await one(`select 1 x from pg_proc where proname = 'apply_signup_invite'`)), 'yardımcı fonksiyon kalktı');
 await asUser(coach);

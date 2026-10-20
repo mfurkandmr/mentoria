@@ -1858,6 +1858,38 @@ const enStrings = <String, String>{
   'Gizlilik Politikası': 'Privacy Policy',
   'Tüm hakları saklıdır.': 'All rights reserved.',
   'Sürüm {v}': 'Version {v}',
+  // Kurum kredisi ve kurum kodu
+  'Öğrenci kredisi: {n}': 'Student credits: {n}',
+  'Kredi bitti. Yeni öğrenci eklenemez; yöneticinizle iletişime geçin.':
+      'No credits left. New students can\'t be added; please contact your administrator.',
+  '{n} öğrenci kayıtlı': '{n} students registered',
+  'Kurumunun öğrenci kredisi bitti. Kurum yöneticinle iletişime geç.':
+      'Your institution has no student credits left. Please contact your institution\'s administrator.',
+  'Kurumunda henüz koç yok. Kurum yöneticinle iletişime geç.':
+      'Your institution has no coaches yet. Please contact your institution\'s administrator.',
+  'Kurumun hesabı şu an kapalı. Kurum yöneticinle iletişime geç.':
+      'Your institution\'s account is currently inactive. Please contact your institution\'s administrator.',
+  'Davet kodu geçersiz ya da süresi dolmuş veya kurumun öğrenci kredisi bitmiş.':
+      'The invite code is invalid or expired, or the institution has no student credits left.',
+  'Koçunun verdiği kod ya da kurum kodu (MENTORIA-…)':
+      'The code from your coach or your institution code (MENTORIA-…)',
+  'Kurum hesabı kapalı': 'Institution account inactive',
+  'Öğrenci krediniz bitti': 'You have no student credits left',
+  'Öğrenci krediniz azalıyor: {n} kaldı':
+      'Student credits running low: {n} left',
+  'Yeni öğrenci eklenemez. Yöneticinizle iletişime geçin.':
+      'New students can\'t be added. Please contact your administrator.',
+  'Yöneticinizle iletişime geçin.': 'Please contact your administrator.',
+  'Kurum kodu yenilensin mi?': 'Renew the institution code?',
+  'Eski kod hemen geçersiz olur. Kodu paylaştığın öğrencilere yenisini göndermen gerekir.':
+      'The old code stops working right away. You\'ll need to send the new one to the students you shared it with.',
+  'Yenile': 'Renew',
+  'Kod yenilenemedi. Tekrar dene.': 'Couldn\'t renew the code. Try again.',
+  'Kurum kodu': 'Institution code',
+  'Öğrenciler kayıt olurken bu kodu yazar; en az öğrencisi olan koça bağlanır. Her yeni öğrenci 1 kredi kullanır.':
+      'Students enter this code when signing up and are assigned to the coach with the fewest students. Each new student uses 1 credit.',
+  'Kodu yenile': 'Renew code',
+  'Kalan öğrenci kredisi: {n}': 'Student credits left: {n}',
   'Açık rıza metnini oku': 'Read the explicit consent text',
   'Başarı sıralamasında görün': 'Appear in the success ranking',
   'Başarı sıralamasında görünsün': 'Appear in the success ranking',

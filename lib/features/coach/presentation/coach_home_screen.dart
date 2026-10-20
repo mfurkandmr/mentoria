@@ -12,6 +12,8 @@ import '../../../shared/widgets/common.dart';
 import '../../../shared/widgets/effects.dart';
 import '../../../shared/widgets/honey_nav_bar.dart';
 import '../../auth/data/auth_repository.dart';
+import '../../credits/data/org_credits_repository.dart';
+import '../../credits/presentation/credit_widgets.dart';
 import '../../meetings/data/meeting_repository.dart';
 import '../../meetings/presentation/meeting_widgets.dart';
 import '../data/coach_repository.dart';
@@ -41,6 +43,7 @@ class CoachHomeScreen extends ConsumerWidget {
       ref.invalidate(tenantBrandingProvider);
       invalidateMeetings(ref);
       ref.invalidate(deletionRequestsProvider);
+      ref.invalidate(orgCreditsProvider);
       return ref.refresh(studentSummariesProvider.future);
     }
 
@@ -300,6 +303,8 @@ class _CoachBodyState extends State<_CoachBody> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // Kredi 50'nin altındaysa; değilse yer kaplamaz.
+        const LowCreditBanner(padding: EdgeInsets.only(bottom: 12)),
         for (final (i, c) in children.indexed) ...[
           if (i > 0) const SizedBox(height: 12),
           staggered(i, c),

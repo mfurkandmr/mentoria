@@ -13,7 +13,6 @@ import 'package:mentoria/features/admin/presentation/admin_home_screen.dart';
 import 'package:mentoria/features/avatar/data/avatar_models.dart';
 import 'package:mentoria/features/avatar/data/avatar_repository.dart';
 import 'package:mentoria/features/avatar/presentation/student_avatar.dart';
-import 'package:mentoria/features/coach/presentation/manager_widgets.dart';
 import 'package:mentoria/features/ranking/presentation/success_ranking_screen.dart';
 import 'package:mentoria/features/student/presentation/student_home_screen.dart';
 import 'package:mentoria/shared/motion.dart';
@@ -211,16 +210,19 @@ void main() {
     );
     await tester.pumpAndSettle();
     final toggle = find.widgetWithText(SwitchListTile, 'Başarı sıralaması');
+    // Genel sekmesinin listesi (diğer sekmelerin listeleri de ağaçta). Öğesi
+    // bir kez bulunur; kaydırınca ilk kart ağaçtan çıkabilir.
+    final overview = find
+        .ancestor(
+          of: find.text('Öğrenci kredisi: 120'),
+          matching: find.byType(Scrollable),
+        )
+        .evaluate()
+        .first;
     await tester.scrollUntilVisible(
       toggle,
       200,
-      // Genel sekmesinin listesi (diğer sekmelerin listeleri de ağaçta).
-      scrollable: find
-          .ancestor(
-            of: find.byType(GlowStat).first,
-            matching: find.byType(Scrollable),
-          )
-          .first,
+      scrollable: find.byElementPredicate((e) => e == overview),
     );
     await tester.pumpAndSettle();
     expect(tester.widget<SwitchListTile>(toggle).value, isFalse);
