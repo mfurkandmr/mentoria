@@ -5,7 +5,7 @@ import '../../auth/data/auth_repository.dart';
 
 /// Yayımlanan KVKK metinlerinin sürümü. Metin değişince artırılır; rıza
 /// kayıtları hangi sürüme verildiğini tutar (bkz. docs/kvkk).
-const legalVersion = '1.0';
+const legalVersion = '1.1';
 
 /// Rıza türleri (veritabanındaki `consents.kind`).
 enum ConsentKind {

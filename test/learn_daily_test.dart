@@ -55,6 +55,16 @@ Future<ProviderContainer> app(WidgetTester tester, Widget home) async {
   return container;
 }
 
+/// Sonuç kutusunun altındaki "yarın yeni soru" satırına kadar kaydırır.
+Future<void> revealResult(WidgetTester tester) async {
+  await tester.scrollUntilVisible(
+    find.text("Yarın sabah 09.00'da yeni soru gelecek."),
+    200,
+    scrollable: find.byType(Scrollable).first,
+  );
+  await tester.pumpAndSettle();
+}
+
 void main() {
   setUpAll(() => initializeDateFormatting('tr_TR'));
 
@@ -199,11 +209,13 @@ void main() {
       final wrong = (q.answer + 1) % q.options.length;
       await tester.tap(find.text(q.options[wrong]));
       await tester.pumpAndSettle();
+      expect(find.text('🔥 0 gün'), findsOneWidget);
+      // Uzun sorularda sonuç kutusu ekranın altında kalır.
+      await revealResult(tester);
       expect(
         find.text('Bu sefer olmadı. Seri sıfırlandı, yarın yeniden başla!'),
         findsOneWidget,
       );
-      expect(find.text('🔥 0 gün'), findsOneWidget);
       expect((await repo.fetchToday())!.answered, isTrue);
 
       await tester.scrollUntilVisible(
@@ -233,6 +245,7 @@ void main() {
       final q = pool(s.subject).firstWhere((q) => q.id == s.questionId);
       await tester.tap(find.text(q.options[q.answer]));
       await tester.pumpAndSettle();
+      await revealResult(tester);
       expect(find.text('Doğru! Serin 5 gün 🔥'), findsOneWidget);
       expect(find.text("Hata Defteri'ne ekle"), findsNothing);
     });

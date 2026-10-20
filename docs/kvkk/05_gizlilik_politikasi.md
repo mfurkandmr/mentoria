@@ -15,13 +15,16 @@
   verilerinizi satmayız, izleme veya analiz aracı kullanmayız. Uygulama
   çökerse hatayı düzeltebilmek için kimliksiz bir çökme raporu alırız.
 - 18 yaşından küçük kullanıcılarımız vardır; onlar için veli onayı alınır.
-- Hesabınızı uygulamadan silebilir, verilerinizi indirebilirsiniz.
+- Hesabınızı uygulamadan silebilir, verilerinizi indirebilirsiniz
+  (Profil → Gizlilik ve izinler → Verilerimi indir).
 
 ## Ayrıntılar
 
 Hangi verileri neden işlediğimiz, kimlerle paylaştığımız, ne kadar
 sakladığımız ve haklarınız **KVKK Aydınlatma Metni**'nde ayrıntılı olarak
-yer alır: [AYDINLATMA METNİ BAĞLANTISI]
+yer alır. Uygulamada Profil → Gizlilik ve izinler bölümünden, web
+sitesinde [AYDINLATMA METNİ BAĞLANTISI] adresinden okuyabilirsiniz.
+Hizmet'in kullanım kuralları ise **Kullanım Koşulları**'nda yazılıdır.
 
 ## Çocukların gizliliği
 
@@ -44,14 +47,20 @@ alır; bireysel katılan öğrenciler için uygulama veliden onay ister.
   Profil'den silebilir. Öğrenciler Profil → Güvenlik → "Hesabımın
   silinmesini iste" ile talep açar; silme işlemini koçu ya da kurumu yapar.
   Talep **30 gün** içinde tamamlanmazsa Mentoria hesabı kendisi siler.
-  [Bu kural kod aşamasında eklenecek.]
 - **Uygulama dışından:** [KVKK E-POSTA ADRESİ] adresine kayıtlı e-postanızdan
   yazabilirsiniz. Google Play bu yolu ayrıca zorunlu tutar; web'de bir
   "hesap silme talebi" sayfası gerekir.
 
+## Değişiklikler
+
+Bu politikayı güncellediğimizde "Son güncelleme" tarihini değiştirir,
+önemli değişiklikleri uygulama içinde duyururuz.
+
 ## İletişim
 
 [VERİ SORUMLUSU UNVANI] · [ADRES] · [KVKK E-POSTA ADRESİ]
+
+© 2026 Mentoria. Tüm hakları saklıdır.
 
 ---
 

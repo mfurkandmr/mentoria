@@ -23,6 +23,8 @@ DOCS = {
     "aydinlatma.md": "02_aydinlatma_metni.md",
     "acik_riza.md": "03_acik_riza_metni.md",
     "veli_onay.md": "04_veli_onay_metni.md",
+    "gizlilik.md": "05_gizlilik_politikasi.md",
+    "kullanim_kosullari.md": "08_kullanim_kosullari.md",
 }
 
 # Bu başlıkla başlayan bölümler (bir sonraki aynı/üst düzey başlığa kadar)
@@ -30,6 +32,7 @@ DOCS = {
 DROP_SECTIONS = (
     "## Uygulamadaki görünüm",
     "### ☐ 3. Yurt dışına aktarım",
+    "## Mağaza formları için özet",
 )
 
 
@@ -55,7 +58,8 @@ def clean(text: str) -> str:
     # Art arda boş satırları ve baştaki/sondaki boşlukları sadeleştir.
     result = re.sub(r"\n{3,}", "\n\n", "\n".join(out)).strip() + "\n"
     # Ayırıcıyla başlayan/biten kalıntılar.
-    return re.sub(r"^---\n+", "", result)
+    result = re.sub(r"^---\n+", "", result)
+    return re.sub(r"\n+---\n$", "\n", result)
 
 
 def main() -> None:

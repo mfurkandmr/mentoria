@@ -627,12 +627,11 @@ class _ConsentSection extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       title: Text(label, style: text.bodySmall),
     );
-    Widget link(LegalDoc d, String label) => Align(
+    Widget link(LegalDoc d, String label) =>
+        TextButton(onPressed: () => openLegal(context, d), child: Text(label));
+    Widget linkRow(LegalDoc d, String label) => Align(
       alignment: AlignmentDirectional.centerStart,
-      child: TextButton(
-        onPressed: () => openLegal(context, d),
-        child: Text(label),
-      ),
+      child: link(d, label),
     );
 
     return Column(
@@ -648,8 +647,19 @@ class _ConsentSection extends StatelessWidget {
               style: text.bodySmall,
             ),
           ),
-        box(notice, onNotice, tr('Aydınlatma Metni\'ni okudum.')),
-        link(LegalDoc.privacyNotice, tr('Aydınlatma Metni\'ni oku')),
+        box(
+          notice,
+          onNotice,
+          tr(
+            'Kullanım Koşulları\'nı kabul ediyorum; Aydınlatma Metni\'ni okudum.',
+          ),
+        ),
+        Wrap(
+          children: [
+            link(LegalDoc.terms, tr('Kullanım Koşulları\'nı oku')),
+            link(LegalDoc.privacyNotice, tr('Aydınlatma Metni\'ni oku')),
+          ],
+        ),
         if (guardianNeeded) ...[
           box(
             guardian,
@@ -658,7 +668,7 @@ class _ConsentSection extends StatelessWidget {
               'Çocuğumun Mentoria\'yı kullanmasına ve bu kapsamda kişisel verilerinin işlenmesine yasal temsilcisi olarak onay veriyorum.',
             ),
           ),
-          link(LegalDoc.guardianConsent, tr('Veli onay metnini oku')),
+          linkRow(LegalDoc.guardianConsent, tr('Veli onay metnini oku')),
         ],
         if (isStudent || guardianNeeded) ...[
           const SizedBox(height: 4),
@@ -682,7 +692,7 @@ class _ConsentSection extends StatelessWidget {
                 'Çocuğumun kurumundaki başarı sıralamasında adının kısaltması, avatarı ve netiyle görünmesine izin veriyorum.',
               ),
             ),
-          link(LegalDoc.explicitConsent, tr('Açık rıza metnini oku')),
+          linkRow(LegalDoc.explicitConsent, tr('Açık rıza metnini oku')),
         ],
       ],
     );

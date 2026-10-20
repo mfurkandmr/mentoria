@@ -116,7 +116,11 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('$year').last);
       await tester.pumpAndSettle();
-      await tester.tap(find.text("Aydınlatma Metni'ni okudum."));
+      await tester.tap(
+        find.text(
+          "Kullanım Koşulları'nı kabul ediyorum; Aydınlatma Metni'ni okudum.",
+        ),
+      );
       await tester.tap(
         find.textContaining('başarı sıralamasında adımın kısaltması'),
       );

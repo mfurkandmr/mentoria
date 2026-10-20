@@ -1603,3 +1603,22 @@ turu, mağaza hesapları açılınca yapılacaklar).
   - iOS'ta Xcode'da dSYM yükleme betiği eklenecek (Mac gerekiyor).
 - Release derlemesi Crashlytics eklentisi ve yeni imza anahtarıyla denendi:
   APK 76,8 MB; imza parmak izi `ED:2D:E8:…`.
+
+## 39. Kullanım koşulları ve gizlilik politikası uygulamada (20 Ekim 2026)
+
+- Yeni taslak: `docs/kvkk/08_kullanim_kosullari.md` (kullanım kuralları,
+  kullanıcı içeriği, fikrî mülkiyet ve "tüm hakları saklıdır", koç/kurum
+  sorumluluğu, sorumluluk sınırı, uygulanacak hukuk). Avukat incelemesi ve
+  `[İL]`, ücretlendirme gibi boşluklar bekliyor.
+- `05_gizlilik_politikasi.md` de uygulamada gösteriliyor; "Mağaza formları
+  için özet" bölümü `build_legal.py` ile çıkarılıyor. Çıktılar:
+  `assets/legal/kullanim_kosullari.md`, `assets/legal/gizlilik.md`.
+- `LegalDoc.terms` ve `LegalDoc.privacyPolicy`: "Gizlilik ve izinler"
+  ekranındaki Metinler kartında listelenir. Ekranın altında
+  `CopyrightNote` ("© 2026 Mentoria. Tüm hakları saklıdır." ve sürüm).
+- Kayıt ekranındaki zorunlu kutu artık "Kullanım Koşulları'nı kabul
+  ediyorum; Aydınlatma Metni'ni okudum." Kayıt `privacy_notice` rızası
+  olarak saklanır; `legalVersion` 1.1 oldu (hangi metnin kabul edildiği
+  sürümden anlaşılır, migration gerekmedi).
+- `learn_daily_test`: uzun günün sorularında sonuç kutusu ekranın altında
+  kaldığı için test kaydırıp bakıyor (20 Ekim sorusu bunu ortaya çıkardı).

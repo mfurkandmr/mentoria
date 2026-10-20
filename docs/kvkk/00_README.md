@@ -13,9 +13,10 @@
 | `02_aydinlatma_metni.md` | KVKK md. 10 bilgilendirmesi | Uygulamada kayıt ekranı ve "Gizlilik ve izinler"; web sitesi |
 | `03_acik_riza_metni.md` | İsteğe bağlı işlemler için ayrı ayrı rıza | Uygulamada kayıt ekranı ve "Gizlilik ve izinler" |
 | `04_veli_onay_metni.md` | 18 yaş altı için veli onayı (A), kurum beyanı (B), kurum formu paragrafı (C) | Veli kaydı, kurum davet ekranı, kurumların kendi formları |
-| `05_gizlilik_politikasi.md` | Kısa, herkese açık politika ve mağaza formu özeti | Web sitesi, Google Play, App Store |
+| `05_gizlilik_politikasi.md` | Kısa, herkese açık politika ve mağaza formu özeti | Uygulamada "Gizlilik ve izinler"; web sitesi, Google Play, App Store |
 | `06_saklama_imha_politikasi.md` | Saklama süreleri ve imha yöntemleri | İç belge (VERBİS'e kayıtlıysa zorunlu) |
 | `07_veri_isleme_sozlesmesi.md` | Kurumlarla veri işleme sözleşmesi iskeleti | Kurumlarla lisans sözleşmesinin eki |
+| `08_kullanim_kosullari.md` | Kullanım kuralları, fikrî mülkiyet ("tüm hakları saklıdır"), sorumluluk | Uygulamada kayıt ekranı ve "Gizlilik ve izinler"; web sitesi, mağazalar |
 
 ## Senin doldurman gerekenler
 
@@ -27,6 +28,8 @@
 - [x] Tanıtım ve kampanya bildirimi gönderilmeyecek (19 Ekim 2026 kararı).
       İleride gönderilirse açık rıza maddesi ve İYS kaydı gerekir.
 - [ ] Sorumlu kişiler (saklama-imha politikası 5. bölüm)
+- [ ] Kullanım koşulları: yetkili mahkeme ili ve ücretlendirme modeli
+      (`08_kullanim_kosullari.md` 8. ve 12. maddeler)
 - [ ] Kendi SMTP/e-posta sağlayıcınız var mı? (Doğrulama e-postaları için)
 
 ## Avukata sorulacaklar

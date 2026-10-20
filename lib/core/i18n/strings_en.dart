@@ -1851,6 +1851,13 @@ const enStrings = <String, String>{
       'If you are under 18, your parent\'s consent is required. If your institution has obtained it, you don\'t need to do anything; otherwise you\'ll invite your parent after signing in.',
   'Aydınlatma Metni\'ni oku': 'Read the Privacy Notice',
   'Aydınlatma Metni\'ni okudum.': 'I have read the Privacy Notice.',
+  'Kullanım Koşulları\'nı kabul ediyorum; Aydınlatma Metni\'ni okudum.':
+      'I accept the Terms of Use and have read the Privacy Notice.',
+  'Kullanım Koşulları\'nı oku': 'Read the Terms of Use',
+  'Kullanım Koşulları': 'Terms of Use',
+  'Gizlilik Politikası': 'Privacy Policy',
+  'Tüm hakları saklıdır.': 'All rights reserved.',
+  'Sürüm {v}': 'Version {v}',
   'Açık rıza metnini oku': 'Read the explicit consent text',
   'Başarı sıralamasında görün': 'Appear in the success ranking',
   'Başarı sıralamasında görünsün': 'Appear in the success ranking',

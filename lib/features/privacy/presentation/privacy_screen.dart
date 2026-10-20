@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../core/config/app_version.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/widgets/common.dart';
@@ -49,6 +50,8 @@ class PrivacyScreen extends ConsumerWidget {
                 const _DocsCard(),
                 const SizedBox(height: 12),
                 const _ExportCard(),
+                const SizedBox(height: 20),
+                const CopyrightNote(),
               ],
             ),
     );
@@ -88,6 +91,34 @@ class _DocsCard extends StatelessWidget {
             ),
         ],
       ),
+    );
+  }
+}
+
+/// Telif notu ve sürüm: "© 2026 Mentoria. Tüm hakları saklıdır."
+/// Kurum kendi markasıyla kullansa da yazılımın sahibi Mentoria'dır.
+class CopyrightNote extends StatelessWidget {
+  const CopyrightNote({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final style = Theme.of(context).textTheme.bodySmall?.copyWith(
+      color: Theme.of(context).colorScheme.onSurfaceVariant,
+    );
+    return Column(
+      children: [
+        Text(
+          '© 2026 Mentoria. ${tr('Tüm hakları saklıdır.')}',
+          style: style,
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 2),
+        Text(
+          tr('Sürüm {v}', {'v': '$appVersion ($appBuild)'}),
+          style: style,
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 }

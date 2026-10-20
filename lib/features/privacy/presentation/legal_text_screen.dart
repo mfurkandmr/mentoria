@@ -5,8 +5,10 @@ import '../../../core/i18n/i18n.dart';
 import '../../../shared/widgets/common.dart';
 import '../../../shared/widgets/effects.dart';
 
-/// Uygulamada gösterilen KVKK metinleri (assets/legal, kaynak docs/kvkk).
+/// Uygulamada gösterilen yasal metinler (assets/legal, kaynak docs/kvkk).
 enum LegalDoc {
+  terms('assets/legal/kullanim_kosullari.md', 'Kullanım Koşulları'),
+  privacyPolicy('assets/legal/gizlilik.md', 'Gizlilik Politikası'),
   privacyNotice('assets/legal/aydinlatma.md', 'Aydınlatma Metni'),
   explicitConsent('assets/legal/acik_riza.md', 'Açık Rıza Metni'),
   guardianConsent('assets/legal/veli_onay.md', 'Veli Onay Metni');

@@ -87,6 +87,13 @@ void main() {
       final consent = File(LegalDoc.explicitConsent.asset).readAsStringSync();
       expect(consent, isNot(contains('Yurt dışına aktarım')));
       expect(consent, isNot(contains('kampanya')));
+      final terms = File(LegalDoc.terms.asset).readAsStringSync();
+      expect(terms, contains('Fikrî mülkiyet'));
+      expect(terms, contains('Tüm hakları saklıdır.'));
+      final policy = File(LegalDoc.privacyPolicy.asset).readAsStringSync();
+      expect(policy, contains('Tüm hakları saklıdır.'));
+      expect(policy, isNot(contains('Mağaza formları')));
+      expect(policy.trimRight(), isNot(endsWith('---')));
     });
 
     test('küçük Markdown çözücü', () {
