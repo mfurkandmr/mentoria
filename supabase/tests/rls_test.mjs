@@ -266,6 +266,10 @@ await asUser(coach2);
 await expectError('başka koç öğrenciyi silemez', () => db.query(`select public.delete_student_account($1)`, [student2]), 'NOT_ALLOWED');
 await asUser(coach);
 await expectError('koç öğrenci olmayanı silemez', () => db.query(`select public.delete_student_account($1)`, [admin]), 'NOT_A_STUDENT');
+// Kredi bitmişti; davet üretebilmek için 1 kredi yükle.
+await asSuper();
+await db.query(`update public.organizations set credit_balance = 1 where id = $1`, [org]);
+await asUser(coach);
 const coachCodeDays = await (async () => { const c = (await rpc(`select public.create_invite('student') c`)).c; await asSuper(); const r = await rpc(`select extract(day from expires_at - created_at)::int d from public.invite_codes where code = $1`, [c]); await asUser(coach); return r.d; })();
 coachCodeDays === 14 ? ok('öğrenci davet kodu 14 gün geçerli') : bad('student invite days', coachCodeDays);
 await db.query(`select public.delete_student_account($1)`, [student2]);
