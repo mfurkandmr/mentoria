@@ -1671,3 +1671,24 @@ Migration `20261020100000_org_credits` (canlıda; geri alma dosyası var).
   `supabase/tests/consent_helpers_test.mjs`.
   **Kural:** başkasının kimliğini (`p_user`) alan yeni bir yardımcı fonksiyon,
   ya çağıranın yetkisine bakmalı ya da izni `authenticated`'dan kaldırılmalı.
+- **İkinci tur kontroller (aynı gün):**
+  - Git geçmişinde sır yok. Firebase API anahtarları zaten gizli değil;
+    Google Cloud Console'da Android/iOS uygulamasıyla sınırlanmalı (kullanıcıda).
+  - `send-push` ve `storage-cleanup` parolasız isteğe 401 dönüyor.
+  - `net` ve `vault` şemaları API'ye açık değil.
+  - `notifications` tablosuna kullanıcı satır ekleyemiyor.
+  - Depolama: `mistake-photos` gizli, `tenant-logos` bilerek açık.
+- **Davet kodu tahmini** (`20261022110000_invite_rate_limit`, canlıda):
+  - `random_code()`: kodlar `random()` yerine `gen_random_uuid()` baytlarından
+    üretiliyor (güvenli kaynak, pgcrypto gerekmez). Biçim aynı.
+  - `check_invite` artık plpgsql ve volatile. Hatalı denemeler
+    `invite_check_failures`'a yazılıyor. IP başına (x-forwarded-for'un ilk
+    değeri) 10 dakikada 20, toplamda 10 dakikada 1000 hatalı denemeden sonra
+    `TOO_MANY_ATTEMPTS` dönüyor. Uygulama bunu "çok fazla deneme" mesajına
+    çeviriyor (`auth_error.dart`).
+  - IP başlığının taklit edilip edilemediği canlıda denenemedi; toplam sınır
+    bu yüzden var. Yoğun bir saldırıda toplam sınır dolarsa gerçek kullanıcılar
+    da 10 dakika bekler.
+  - Mevcut kurumun kodu eski `random()` ile üretilmişti, değiştirilmedi
+    (müdürün dağıttığı kod bozulmasın). Müdür panelden yenileyebilir.
+  - Test: `supabase/tests/invite_rate_limit_test.mjs`.

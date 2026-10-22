@@ -57,5 +57,12 @@ String authErrorMessage(Object error) {
     }
     return error.message;
   }
+  // check_invite: IP başına ya da toplamda çok fazla hatalı kod denendi.
+  if (error is PostgrestException &&
+      error.message.contains('TOO_MANY_ATTEMPTS')) {
+    return tr(
+      'Kısa sürede çok fazla deneme yapıldı. Biraz bekleyip tekrar dene.',
+    );
+  }
   return tr('Bir şeyler ters gitti. Lütfen tekrar dene.');
 }
