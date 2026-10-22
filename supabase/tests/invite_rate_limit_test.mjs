@@ -33,9 +33,15 @@ ok(`${migs.length} migration + seed`);
 
 const asSuper = () => db.exec(`reset role; select set_config('request.jwt.claim.sub', '', false); select set_config('request.headers', '', false);`);
 const asUser = (id) => db.exec(`set role authenticated; select set_config('request.jwt.claim.sub', '${id}', false);`);
-// PostgREST istek başlıklarını request.headers ayarına yazar.
-const asAnonFrom = (ip) => db.exec(`set role anon; select set_config('request.jwt.claim.sub', '', false);
-  select set_config('request.headers', '${JSON.stringify({ 'x-forwarded-for': `${ip}, 10.0.0.1` })}', false);`);
+// PostgREST istek başlıklarını request.headers ayarına yazar. Canlıda ölçüldüğü gibi:
+// cf-connecting-ip ve sb-forwarded-for gerçek IP'dir; x-forwarded-for'a istemcinin
+// yazdığı (sahte) değer başa eklenir, gerçek IP sona.
+const asAnonWith = (headers) => db.exec(`set role anon; select set_config('request.jwt.claim.sub', '', false);
+  select set_config('request.headers', '${JSON.stringify(headers)}', false);`);
+let spoof = 0;
+const asAnonFrom = (ip) => asAnonWith({
+  'cf-connecting-ip': ip, 'sb-forwarded-for': ip, 'x-forwarded-for': `9.9.${spoof++ % 250}.1,${ip}`,
+});
 const one = async (sql, p = []) => (await db.query(sql, p)).rows[0];
 async function expectError(n, fn, pattern) {
   try { await fn(); bad(n, 'hata bekleniyordu'); }
@@ -80,12 +86,19 @@ await signUp(studentCode, 'Elif Yılmaz');
 ok('yeni kodla kayıt çalışır');
 
 // --- IP başına sınır -----------------------------------------------------------------
-console.log('IP başına 10 dakikada 20 hatalı deneme');
-await asAnonFrom('1.1.1.1');
+console.log('IP başına 10 dakikada 30 hatalı deneme');
 let allNull = true;
-for (let i = 0; i < 20; i++) if ((await checkInvite(`YANLIS${i}`)) !== null) allNull = false;
-check(allNull, '20 hatalı deneme boş döner');
-await expectError('21. deneme reddedilir', () => checkInvite('YANLIS99'), 'TOO_MANY_ATTEMPTS');
+// Her denemede x-forwarded-for'un başına başka sahte IP yazılır; sınır yine gerçek IP'ye işler.
+for (let i = 0; i < 30; i++) {
+  await asAnonFrom('1.1.1.1');
+  if ((await checkInvite(`YANLIS${i}`)) !== null) allNull = false;
+}
+check(allNull, '30 hatalı deneme boş döner');
+await expectError('31. deneme reddedilir (sahte x-forwarded-for işe yaramaz)', () => checkInvite('YANLIS99'), 'TOO_MANY_ATTEMPTS');
+await asSuper();
+check((await one(`select count(distinct ip)::int c from public.invite_check_failures`)).c === 1,
+  'sahte değerler ayrı IP sayılmaz', (await db.query(`select distinct ip from public.invite_check_failures`)).rows);
+await asAnonFrom('1.1.1.1');
 await expectError('sınır dolunca doğru kod da beklemek zorunda', () => checkInvite(studentCode), 'TOO_MANY_ATTEMPTS');
 await asAnonFrom('2.2.2.2');
 check((await checkInvite(studentCode))?.role === 'student', 'başka IP etkilenmez');
@@ -102,13 +115,28 @@ await asAnonFrom('1.1.1.1');
 check((await checkInvite(studentCode))?.role === 'student', '10 dakika sonra yeniden denenebilir');
 
 // --- Toplam sınır ----------------------------------------------------------------------
-console.log('Toplamda 10 dakikada 1000 hatalı deneme (IP taklidine karşı)');
+console.log('Hangi başlık IP sayılır');
+await asAnonWith({ 'sb-forwarded-for': '7.7.7.7', 'x-forwarded-for': '1.2.3.4,7.7.7.7' });
+await checkInvite('YOKBOYLE1');
+await asAnonWith({ 'x-forwarded-for': '1.2.3.4, 5.6.7.8,8.8.4.4' });
+await checkInvite('YOKBOYLE2');
 await asSuper();
-await db.query(`insert into public.invite_check_failures (ip) select 'sahte-' || g from generate_series(1, 1000) g`);
+let ips = (await db.query(`select ip from public.invite_check_failures order by id desc limit 2`)).rows.map((r) => r.ip);
+check(ips[1] === '7.7.7.7', 'cf-connecting-ip yoksa sb-forwarded-for', ips);
+check(ips[0] === '8.8.4.4', 'ikisi de yoksa x-forwarded-for\'un son değeri', ips);
+
+console.log('Toplamda 10 dakikada 5000 hatalı deneme (acil fren)');
+await asSuper();
+await db.query(`delete from public.invite_check_failures`);
+await db.query(`insert into public.invite_check_failures (ip) select 'gercek-' || g from generate_series(1, 4999) g`);
+await asAnonFrom('3.3.3.3');
+check((await checkInvite(studentCode))?.role === 'student', '4999 hatalı denemede gerçek kullanıcı etkilenmez');
+await asSuper();
+await db.query(`insert into public.invite_check_failures (ip) values ('gercek-5000')`);
 await asAnonFrom('3.3.3.3');
 await expectError('yeni IP de reddedilir', () => checkInvite(studentCode), 'TOO_MANY_ATTEMPTS');
 await asSuper();
-await db.query(`delete from public.invite_check_failures where ip like 'sahte-%'`);
+await db.query(`delete from public.invite_check_failures where ip like 'gercek-%'`);
 await asAnonFrom('3.3.3.3');
 check((await checkInvite(studentCode))?.role === 'student', 'sayaç boşalınca açılır');
 
@@ -134,8 +162,21 @@ await expectError('koç sayacı silemez', () => db.query(`delete from public.inv
 
 // --- Geri alma ---------------------------------------------------------------------------
 console.log('Geri alma ve yeniden uygulama');
-const name = '20261022110000_invite_rate_limit';
+// Ters sırayla: önce 20261022120000 (güvenilir IP), sonra 20261022110000.
+const ipName = '20261022120000_invite_rate_limit_ip';
 await asSuper();
+await db.query(`delete from public.invite_check_failures`);
+await db.exec(read(rbDir, `${ipName}.down.sql`));
+for (let i = 0; i < 20; i++) {
+  await asAnonFrom('1.1.1.1');
+  await checkInvite(`GERI${i}`);
+}
+await asAnonFrom('1.1.1.1');
+check((await checkInvite(studentCode))?.role === 'student',
+  'IP geri alınınca eski (taklit edilebilir) anahtar döner: her deneme başka IP');
+await asSuper();
+await db.query(`delete from public.invite_check_failures`);
+const name = '20261022110000_invite_rate_limit';
 await db.exec(read(rbDir, `${name}.down.sql`));
 check((await one(`select to_regclass('public.invite_check_failures') t`)).t === null, 'sayaç tablosu kalktı');
 check((await one(`select count(*)::int c from pg_proc where proname = 'random_code'`)).c === 0, 'random_code kalktı');
@@ -146,8 +187,11 @@ await asAnonFrom('1.1.1.1');
 check((await checkInvite(oldCode))?.role === 'student', 'eski check_invite çalışır');
 await asSuper();
 await db.exec(read(migDir, `${name}.sql`));
+await db.exec(read(migDir, `${ipName}.sql`));
 await asAnonFrom('6.6.6.6');
 check((await checkInvite(oldCode))?.role === 'student', 'yeniden uygulandı');
+const def = (await one(`select prosrc from pg_proc where proname = 'check_invite'`)).prosrc;
+check(def.includes('cf-connecting-ip') && def.includes('>= 30'), 'güvenilir IP sürümü geri geldi');
 
 console.log(failures ? `\n${failures} FAILED` : '\nALL PASSED');
 process.exit(failures ? 1 : 0);

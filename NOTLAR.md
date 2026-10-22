@@ -1686,9 +1686,15 @@ Migration `20261020100000_org_credits` (canlıda; geri alma dosyası var).
     değeri) 10 dakikada 20, toplamda 10 dakikada 1000 hatalı denemeden sonra
     `TOO_MANY_ATTEMPTS` dönüyor. Uygulama bunu "çok fazla deneme" mesajına
     çeviriyor (`auth_error.dart`).
-  - IP başlığının taklit edilip edilemediği canlıda denenemedi; toplam sınır
-    bu yüzden var. Yoğun bir saldırıda toplam sınır dolarsa gerçek kullanıcılar
-    da 10 dakika bekler.
+  - **IP düzeltmesi** (`20261022120000_invite_rate_limit_ip`, canlıda).
+    Canlıda ölçüldü: `x-forwarded-for`'un ilk değeri istemcinin yazdığı değer
+    çıktı, yani ilk sürümdeki IP başına sınır aşılabiliyordu.
+    `cf-connecting-ip` ve `sb-forwarded-for` ise taklit edilemiyor (sahte
+    `CF-Connecting-IP` gönderen isteği Cloudflare reddediyor). IP artık bu
+    sırayla alınıyor: `cf-connecting-ip` → `sb-forwarded-for` →
+    `x-forwarded-for`'un son değeri. Sınırlar: IP başına 10 dakikada 30
+    (NAT arkasındaki sınıflar takılmasın), toplamda 5000 (acil fren).
+    Gerçek API'den sahte başlıkla yapılan denemeler gerçek IP'ye yazıldı.
   - Mevcut kurumun kodu eski `random()` ile üretilmişti, değiştirilmedi
     (müdürün dağıttığı kod bozulmasın). Müdür panelden yenileyebilir.
   - Test: `supabase/tests/invite_rate_limit_test.mjs`.
