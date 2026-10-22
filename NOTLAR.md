@@ -1650,3 +1650,24 @@ Migration `20261020100000_org_credits` (canlıda; geri alma dosyası var).
   yalnızca "Yöneticinizle iletişime geçin"), müdür panelinde kredi ve
   `OrgCodeCard`, koç ve müdür davet ekranlarında kredi 0 iken "Kod oluştur"
   kapalı. Kayıtta kredisi biten kurumun kodu form açmadan reddedilir.
+
+## 41. Güvenlik taraması (22 Ekim 2026)
+
+- **SQL/RLS testleri:** 25 dosyanın hepsi geçiyor (`cd supabase/tests && npm test`).
+- **Supabase advisor (güvenlik):**
+  - `SECURITY DEFINER` RPC'lerin giriş yapanlara açık olması bilerek yapıldı:
+    her biri çağıranın yetkisine kendisi bakıyor.
+  - `check_invite` ve `tenant_branding` girişsiz de çağrılabiliyor (kayıt ve
+    marka ekranı girişten önce açıldığı için).
+  - `duels`, `push_queue`, `storage_cleanup` ve `practice_keys` tablolarında
+    politika yok: bu tablolara yalnızca sunucu fonksiyonları erişiyor.
+  - Sızdırılmış parola koruması (HaveIBeenPwned) kapalı; Pro plana geçince
+    panelden açılacak.
+- **Düzeltilen sızıntı** (`20261022100000_revoke_consent_helpers`, canlıda):
+  `is_minor`, `has_consent` ve `ranking_visible` çağıranın kim olduğuna
+  bakmıyordu. Giriş yapan herkes, UUID'sini bildiği birinin 18 yaş altı olup
+  olmadığını ve rızalarını öğrenebiliyordu. Artık doğrudan çağrılamıyorlar;
+  yalnızca DEFINER fonksiyonların içinden çalışıyorlar. Test:
+  `supabase/tests/consent_helpers_test.mjs`.
+  **Kural:** başkasının kimliğini (`p_user`) alan yeni bir yardımcı fonksiyon,
+  ya çağıranın yetkisine bakmalı ya da izni `authenticated`'dan kaldırılmalı.
