@@ -9,6 +9,7 @@ import '../../../core/i18n/i18n.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../learn/data/practice_repository.dart';
 import '../../../core/constants/exam_subjects.dart';
+import '../../../shared/format.dart';
 
 enum NotificationKind {
   assignment(Icons.assignment_rounded),
@@ -41,7 +42,14 @@ enum NotificationKind {
   plan(Icons.event_note_rounded),
 
   /// Herkese: kurum müdürünün ya da koçun duyurusu.
-  announcement(Icons.campaign_rounded);
+  announcement(Icons.campaign_rounded),
+
+  /// Herkese: uzun süredir girmediği için hesabı yakında silinecek (KVKK
+  /// saklama süresi, `process_inactive_accounts`).
+  inactivityWarning(Icons.schedule_rounded, 'inactivity_warning'),
+
+  /// Koça: pazartesi sabahı "bu hafta konuşulacaklar" (risk listesi).
+  riskDigest(Icons.crisis_alert_rounded, 'risk_digest');
 
   const NotificationKind(this.icon, [this._db]);
   final IconData icon;
@@ -111,6 +119,10 @@ class AppNotification {
     },
     NotificationKind.plan => tr('Haftalık planın hazır 📅'),
     NotificationKind.announcement => '📣 ${data['title'] ?? ''}',
+    NotificationKind.inactivityWarning => tr('Hesabın yakında silinecek'),
+    NotificationKind.riskDigest => tr('Bu hafta {n} öğrenciyle konuş', {
+      'n': data['count'] ?? 0,
+    }),
   };
 
   String get body => switch (kind) {
@@ -139,14 +151,7 @@ class AppNotification {
       'Hata defterinde {n} soru seni bekliyor. Unutmadan bir daha çöz!',
       {'n': data['count'] ?? 1},
     ),
-    NotificationKind.weeklyReport => tr(
-      'Bu hafta {q} soru çözdü, {m} dk odaklandı, {d} gün çalıştı.',
-      {
-        'q': data['questions'] ?? 0,
-        'm': data['minutes'] ?? 0,
-        'd': data['days'] ?? 0,
-      },
-    ),
+    NotificationKind.weeklyReport => _weeklyReportBody(),
     NotificationKind.dailyQuestion =>
       tr('Bugün {subject} sorusu seni bekliyor. Çöz, serini büyüt!', {
         'subject': data['subject'] == null
@@ -166,6 +171,14 @@ class AppNotification {
       {'from': data['from'] ?? '', 'week': _weekLabel(data['week'])},
     ),
     NotificationKind.announcement => '${data['body'] ?? ''}',
+    NotificationKind.inactivityWarning => tr(
+      'Uzun süredir giriş yapmadın. {n} gün içinde uygulamayı açmazsan hesabın ve verilerin silinecek.',
+      {'n': data['days'] ?? 30},
+    ),
+    NotificationKind.riskDigest => tr(
+      '{names}: devam, net ya da ödevde geriye düşüş var. Listeye bak.',
+      {'names': (data['names'] as List? ?? const []).join(', ')},
+    ),
   };
 
   /// "13 Ekim" (haftanın pazartesisi).
@@ -176,6 +189,33 @@ class AppNotification {
 
   static String _subjectName(Object? code) =>
       code == null ? '' : practiceSubjectLabel('$code');
+
+  /// "5/7 gün çalıştı · ödev %75 · TYT 71,25 net (+4,75)". Eski
+  /// bildirimlerde yalnızca soru / dakika / gün vardır.
+  String _weeklyReportBody() {
+    if (!data.containsKey('homework_total')) {
+      return tr('Bu hafta {q} soru çözdü, {m} dk odaklandı, {d} gün çalıştı.', {
+        'q': data['questions'] ?? 0,
+        'm': data['minutes'] ?? 0,
+        'd': data['days'] ?? 0,
+      });
+    }
+    final total = data['homework_total'] as int? ?? 0;
+    final missed = data['meetings_missed'] as int? ?? 0;
+    final net = (data['last_net'] as num?)?.toDouble();
+    final prev = (data['prev_net'] as num?)?.toDouble();
+    return [
+      tr('{d}/7 gün çalıştı', {'d': data['days'] ?? 0}),
+      if (missed > 0) tr('{n} görüşme kaçırıldı', {'n': missed}),
+      if (total > 0)
+        tr('ödev %{p}', {
+          'p': ((data['homework_done'] as int? ?? 0) * 100 / total).round(),
+        }),
+      if (net != null)
+        '${data['exam_type'] ?? ''} ${tr('{net} net', {'net': formatNet(net)})}'
+            '${prev == null ? '' : ' (${formatChange(net - prev)})'}',
+    ].join(' · ');
+  }
 
   /// "Yarın 11:00 · Ayşe Koç ile görüşmen var"
   String _meetingBody() {
@@ -214,6 +254,8 @@ class AppNotification {
     NotificationKind.plan => '/student/plan',
     NotificationKind.announcement =>
       '${data['route'] ?? '/student/announcements'}',
+    NotificationKind.inactivityWarning => '/',
+    NotificationKind.riskDigest => '${data['route'] ?? '/coach'}',
   };
 
   AppNotification markRead() => AppNotification(

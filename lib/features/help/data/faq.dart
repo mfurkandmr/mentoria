@@ -230,7 +230,7 @@ List<FaqSection> _admin() => [
     FaqItem(
       tr('Lisans ve koltuk sayısı ne demek?'),
       tr(
-        'Kurumunun kaç öğrenciye kadar ve hangi tarihe kadar kullanabileceğini belirler. Koltuklar dolduysa ya da lisans süresi bittiyse yeni öğrenci kayıt olamaz.',
+        'Kurumunun kaç öğrenciye kadar ve hangi tarihe kadar kullanabileceğini belirler. Koltuklar dolduysa yeni öğrenci kayıt olamaz. Lisans süresi bitince öğrenci, koç ve veliler uygulamaya giremez; lisans uzatılınca erişim kendiliğinden geri gelir.',
       ),
     ),
     FaqItem(

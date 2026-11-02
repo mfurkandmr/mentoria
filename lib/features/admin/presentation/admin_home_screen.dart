@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../privacy/presentation/guardian_statement_tile.dart';
 import '../../announcements/presentation/announcement_widgets.dart';
+import '../../coach/data/risk_repository.dart';
 import '../../coach/presentation/exam_trends_card.dart';
+import '../../coach/presentation/risk_card.dart';
 import '../../../core/branding/branding_providers.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -250,6 +252,7 @@ class _OverviewTab extends ConsumerWidget {
         ),
       const AnnouncementsHomeCard(),
       const _SuccessRankingCard(),
+      const RiskCard(basePath: '/admin'),
       const ExamTrendsCard(basePath: '/admin'),
       CoachMeetingsReport(
         coaches: [
@@ -302,6 +305,7 @@ class _OverviewTab extends ConsumerWidget {
         ref.invalidate(orgCodeProvider);
         ref.invalidate(orgMembersProvider);
         ref.invalidate(studentSummariesProvider);
+        ref.invalidate(riskListProvider);
         ref.invalidate(successStatusProvider);
         ref.invalidate(meetingSchedulesProvider);
         ref.invalidate(weekMeetingsProvider);
@@ -624,9 +628,10 @@ class _OrgCard extends ConsumerWidget {
                               Flexible(
                                 child: Text(
                                   org.licenseExpired
-                                      ? tr('Lisans süresi doldu ({expiry})', {
-                                          'expiry': expiry,
-                                        })
+                                      ? tr(
+                                          'Lisans süresi doldu ({expiry}). Öğrenci, koç ve veliler giriş yapamıyor.',
+                                          {'expiry': expiry},
+                                        )
                                       : tr('Lisans bitişi: {expiry}', {
                                           'expiry': expiry,
                                         }),

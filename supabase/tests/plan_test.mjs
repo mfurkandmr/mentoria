@@ -86,7 +86,7 @@ ok('müdür kurumundaki öğrenciye plan ekler');
 await asUser(B.coach);
 await expectError('başka dershanenin koçu ekleyemez', () => add(ahmet, d0));
 await asUser(ahmet);
-await expectError('öğrenci kendine madde ekleyemez', () => add(ahmet, d0));
+await expectError('öğrenci sınıf arkadaşına madde ekleyemez', () => add(can, d0));
 await asUser(A.coach);
 await expectError('geçmiş haftaya eklenemez', async () => add(ahmet, await day(-8)), 'PLAN_DAY_PAST');
 await expectError('ders kodu denetlenir', () => add(ahmet, d0, { subject: 'MAT' }));

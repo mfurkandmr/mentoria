@@ -1,0 +1,21 @@
+<!--
+  Supabase → Authentication → Emails → Templates → "Magic Link"
+  Konu (Subject):  Mentoria giriş kodun: {{ .Token }}
+  Gövde (Body):    bu dosyanın aşağıdaki kısmı.
+  Web'deki hesap silme sayfası (/#/hesap-sil) bağlantı değil KOD bekler
+  ({{ .Token }}); bağlantı eklenmez.
+-->
+<div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; color: #2a2550;">
+  <h2 style="margin: 0 0 12px; color: #5b3fd6;">Giriş kodun</h2>
+  <p style="margin: 0 0 16px; font-size: 15px; line-height: 1.5;">
+    Hesabının sana ait olduğunu doğrulamak için aşağıdaki kodu açık olan
+    sayfadaki <b>Doğrulama kodu</b> alanına yaz.
+  </p>
+  <p style="margin: 0 0 16px; font-size: 32px; font-weight: bold; letter-spacing: 8px; text-align: center; background: #f3efff; border-radius: 12px; padding: 16px;">
+    {{ .Token }}
+  </p>
+  <p style="margin: 0 0 8px; font-size: 13px; color: #6b6790;">
+    Kod 1 saat geçerlidir. Bu isteği sen yapmadıysan bu e-postayı yok
+    sayabilirsin; kod olmadan hesabına kimse giremez.
+  </p>
+</div>

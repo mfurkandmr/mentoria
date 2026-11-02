@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../data/risk_repository.dart';
 import 'exam_trends_card.dart';
+import 'risk_card.dart';
 import '../../announcements/presentation/announcement_widgets.dart';
 import '../../../core/branding/branding_providers.dart';
 import '../../../core/i18n/i18n.dart';
@@ -44,6 +46,7 @@ class CoachHomeScreen extends ConsumerWidget {
       invalidateMeetings(ref);
       ref.invalidate(deletionRequestsProvider);
       ref.invalidate(orgCreditsProvider);
+      ref.invalidate(riskListProvider);
       return ref.refresh(studentSummariesProvider.future);
     }
 
@@ -256,6 +259,18 @@ class _CoachBodyState extends State<_CoachBody> {
               ),
             ],
           ),
+          const SizedBox(height: 10),
+          StatRow(
+            children: [
+              QuickActionTile(
+                icon: Icons.document_scanner_rounded,
+                label: tr('Optik oku'),
+                tooltip: tr('Optik formları telefonla oku'),
+                color: brand.secondary,
+                onTap: () => context.push('/coach/optic'),
+              ),
+            ],
+          ),
         ],
       ),
       if (missingNumbers > 0)
@@ -268,6 +283,7 @@ class _CoachBodyState extends State<_CoachBody> {
         ),
       const AnnouncementsHomeCard(),
       const WeekMeetingsSection(),
+      const RiskCard(basePath: '/coach'),
       const ExamTrendsCard(basePath: '/coach'),
       PanelSectionTitle(
         title: tr('Öğrencilerin'),

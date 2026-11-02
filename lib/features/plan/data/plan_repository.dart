@@ -6,7 +6,8 @@ import '../../auth/data/auth_repository.dart';
 export '../../meetings/data/meeting_repository.dart' show weekStartOf;
 
 /// Haftalık çalışma planı: koç (ya da müdür) öğrencinin günlerine madde
-/// yazar, öğrenci "yaptım" diye işaretler. Hafta pazartesi başlar.
+/// yazar, öğrenci "yaptım" diye işaretler. Öğrenci kendi programını da
+/// yapabilir (kendi eklediğini siler). Hafta pazartesi başlar.
 class PlanItem {
   const PlanItem({
     required this.id,
@@ -17,6 +18,8 @@ class PlanItem {
     this.questionCount,
     this.minutes,
     this.note,
+    this.startTime,
+    this.createdBy,
     this.doneAt,
   });
 
@@ -29,6 +32,9 @@ class PlanItem {
     questionCount: j['question_count'] as int?,
     minutes: j['minutes'] as int?,
     note: j['note'] as String?,
+    // Sunucu "09:00:00" döner; "09:00" yeter.
+    startTime: (j['start_time'] as String?)?.substring(0, 5),
+    createdBy: j['created_by'] as String?,
     doneAt: j['done_at'] == null
         ? null
         : DateTime.parse(j['done_at'] as String).toLocal(),
@@ -42,9 +48,28 @@ class PlanItem {
   final int? questionCount;
   final int? minutes;
   final String? note;
+
+  /// Başlangıç saati, "HH:mm".
+  final String? startTime;
+  final String? createdBy;
   final DateTime? doneAt;
 
   bool get done => doneAt != null;
+
+  /// Öğrencinin kendi eklediği madde (koç / müdür değil).
+  bool get bySelf => createdBy == studentId;
+
+  /// "09:00–09:45" (süre varsa) ya da "09:00".
+  String? get timeRange {
+    final s = startTime;
+    if (s == null) return null;
+    if (minutes == null) return s;
+    final start = int.parse(s.substring(0, 2)) * 60 + int.parse(s.substring(3));
+    final end = (start + minutes!) % (24 * 60);
+    String hm(int m) =>
+        '${(m ~/ 60).toString().padLeft(2, '0')}:${(m % 60).toString().padLeft(2, '0')}';
+    return '$s–${hm(end)}';
+  }
 
   PlanDraft toDraft(DateTime newDay) => PlanDraft(
     day: newDay,
@@ -53,7 +78,21 @@ class PlanItem {
     questionCount: questionCount,
     minutes: minutes,
     note: note,
+    startTime: startTime,
   );
+}
+
+/// Gün içinde sıralama: saatli maddeler saate göre önce, saatsizler sonra.
+int comparePlanItems(PlanItem a, PlanItem b) {
+  final d = a.day.compareTo(b.day);
+  if (d != 0) return d;
+  final at = a.startTime, bt = b.startTime;
+  return switch ((at, bt)) {
+    (final x?, final y?) => x.compareTo(y),
+    (null, null) => 0,
+    (null, _) => 1,
+    (_, null) => -1,
+  };
 }
 
 class PlanDraft {
@@ -64,6 +103,7 @@ class PlanDraft {
     this.questionCount,
     this.minutes,
     this.note,
+    this.startTime,
   });
 
   final DateTime day;
@@ -72,6 +112,9 @@ class PlanDraft {
   final int? questionCount;
   final int? minutes;
   final String? note;
+
+  /// "HH:mm".
+  final String? startTime;
 }
 
 String _ymd(DateTime d) =>
@@ -103,12 +146,13 @@ class SupabasePlanRepository implements PlanRepository {
     final rows = await _client
         .from('plan_items')
         .select(
-          'id, student_id, day, subject_code, topic, question_count, minutes, note, done_at',
+          'id, student_id, created_by, day, subject_code, topic, question_count, minutes, note, start_time, done_at',
         )
         .eq('student_id', studentId)
         .gte('day', _ymd(weekStart))
         .lte('day', _ymd(weekStart.add(const Duration(days: 6))))
         .order('day')
+        .order('start_time', nullsFirst: false)
         .order('created_at');
     return [for (final r in rows) PlanItem.fromJson(r)];
   }
@@ -124,6 +168,7 @@ class SupabasePlanRepository implements PlanRepository {
         'question_count': d.questionCount,
         'minutes': d.minutes,
         'note': d.note,
+        'start_time': d.startTime,
       });
     } on PostgrestException catch (e) {
       final code = [

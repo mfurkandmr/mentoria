@@ -84,6 +84,19 @@ class AuthRepository {
   Future<void> resendSignupCode(String email) =>
       _client.auth.resend(type: OtpType.signup, email: email.trim());
 
+  /// Kayıtlı hesaba e-postayla tek kullanımlık giriş kodu gönderir (web'deki
+  /// hesap silme sayfası, `/hesap-sil`). Yeni hesap açmaz.
+  Future<void> sendLoginCode(String email) =>
+      _client.auth.signInWithOtp(email: email.trim(), shouldCreateUser: false);
+
+  /// [sendLoginCode] ile gelen kodu doğrular; başarılıysa oturum açılır.
+  Future<void> verifyLoginCode({required String email, required String code}) =>
+      _client.auth.verifyOTP(
+        type: OtpType.email,
+        email: email.trim(),
+        token: code.trim(),
+      );
+
   /// Çıkıştan hemen önce çalışır (ör. bu cihazın bildirim adresini silmek).
   /// Hata verse bile çıkış yapılır.
   static Future<void> Function()? beforeSignOut;

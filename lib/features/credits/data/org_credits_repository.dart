@@ -37,6 +37,10 @@ abstract interface class OrgCreditsRepository {
 
   /// Yeni kurum kodu üretir; eskisi hemen geçersiz olur (yalnızca müdür).
   Future<String> regenerateOrgCode();
+
+  /// Kurumun lisansı geçerli mi? Bitince öğrenci, koç ve veli hiçbir veriye
+  /// erişemez (sunucuda RLS); müdür için her zaman true.
+  Future<bool> licenseActive();
 }
 
 class SupabaseOrgCreditsRepository implements OrgCreditsRepository {
@@ -57,10 +61,18 @@ class SupabaseOrgCreditsRepository implements OrgCreditsRepository {
   @override
   Future<String> regenerateOrgCode() async =>
       await _client.rpc('regenerate_org_invite_code') as String;
+
+  @override
+  Future<bool> licenseActive() async =>
+      await _client.rpc('my_license_active') as bool? ?? true;
 }
 
 final orgCreditsRepositoryProvider = Provider<OrgCreditsRepository>(
   (ref) => SupabaseOrgCreditsRepository(ref.watch(supabaseClientProvider)),
+);
+
+final licenseActiveProvider = FutureProvider<bool>(
+  (ref) => ref.watch(orgCreditsRepositoryProvider).licenseActive(),
 );
 
 final orgCreditsProvider = FutureProvider<OrgCredits?>(

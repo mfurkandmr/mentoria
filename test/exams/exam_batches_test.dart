@@ -115,7 +115,7 @@ void main() {
   testWidgets('koç son yüklenen denemeyi herkesten siler; eskisi kilitli', (
     tester,
   ) async {
-    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.physicalSize = const Size(1080, 3600);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
 
@@ -127,7 +127,8 @@ void main() {
     expect(find.text('Bilgi Sarmal TYT-6'), findsNWidgets(2)); // kart + liste
     expect(find.text('Bilgi Sarmal TYT-5'), findsOneWidget);
     expect(find.text('Kilitli'), findsOneWidget);
-    expect(find.text('2 öğrenci'), findsNWidgets(2));
+    // Kart + liste (TYT-6) ve demo optik denemesi.
+    expect(find.text('2 öğrenci'), findsNWidgets(3));
 
     await tester.tap(find.text('Son denemeyi herkesten sil'));
     await tester.pumpAndSettle();
@@ -143,8 +144,9 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Bilgi Sarmal TYT-6'), findsNothing);
-    // Kalan tek yükleme kilitli: "son denemeyi sil" kartı çıkmaz.
-    expect(find.text('Son yüklenen deneme'), findsNothing);
+    // Sıradaki son yükleme demo optik denemesi (3 gün önce, silinebilir).
+    expect(find.text('Son yüklenen deneme'), findsOneWidget);
+    expect(find.text('Kasım TYT-1 (optik)'), findsNWidgets(2));
     expect(find.text('Bilgi Sarmal TYT-5'), findsOneWidget);
 
     final repo = container(tester).read(examRepositoryProvider);

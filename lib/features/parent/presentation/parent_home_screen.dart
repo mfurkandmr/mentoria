@@ -23,6 +23,8 @@ import '../../exams/data/exam_repository.dart';
 import '../../tracking/data/tracking_models.dart';
 import '../../tracking/data/tracking_repository.dart';
 import '../../tracking/presentation/study_view.dart';
+import '../data/weekly_summary_repository.dart';
+import 'weekly_summary_card.dart';
 
 /// Velinin ana ekranı: koç ve müdür panelleriyle aynı dil. Gökyüzü başlığında
 /// konuşan Bızz, çocuğun haftalık özeti, ayrıntı sayfalarına hızlı geçişler,
@@ -57,6 +59,7 @@ class _ParentHomeScreenState extends ConsumerState<ParentHomeScreen> {
         ref.invalidate(examsForStudentProvider(child.id));
         ref.invalidate(meetingSchedulesProvider(child.id));
         ref.invalidate(weekMeetingsProvider);
+        ref.invalidate(weeklySummaryProvider(child.id));
       }
     }
 
@@ -232,6 +235,8 @@ class _ParentBody extends StatelessWidget {
         ),
       // Son 14 günde kurumdan ya da koçtan duyuru geldiyse.
       const AnnouncementsHomeCard(),
+      // Tek kartta hafta: devam, net trendi, ödev.
+      WeeklySummaryCard(studentId: child.id, name: child.fullName),
       PanelSectionTitle(
         title: tr('{name} bu hafta', {'name': child.fullName}),
         subtitle: tr('Son 7 gün'),

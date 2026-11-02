@@ -121,6 +121,19 @@ const _kindTokens = <String, CountKind>{
   return null;
 }
 
+/// "Matematik", "TYT Fizik", "FİZ" gibi bir ders adını [type] sınavındaki
+/// ders koduna çevirir; tanınmazsa `null`.
+String? matchSubject(String label, ExamType type) {
+  final cleaned = _words(
+    label,
+  ).join().replaceFirst(RegExp(r'^(tyt|ayt|ydt)'), '');
+  if (cleaned.isEmpty) return null;
+  for (final s in examSubjects.where((s) => s.examType == type)) {
+    if (_aliases[s.code]!.contains(cleaned)) return s.code;
+  }
+  return null;
+}
+
 bool _isNumberHeader(String label) {
   final w = _words(label);
   final joined = w.join();

@@ -6,6 +6,7 @@ import '../data/exam.dart';
 import '../../coach/data/coach_repository.dart';
 import '../data/exam_repository.dart';
 import '../../../core/i18n/i18n.dart';
+import '../../optic/presentation/exam_answers_view.dart';
 
 /// Deneme detayı: ders bazlı doğru / yanlış / boş / net ve silme.
 class ExamDetailSheet extends ConsumerWidget {
@@ -74,8 +75,9 @@ class ExamDetailSheet extends ConsumerWidget {
     ).colorScheme.onSurface.withValues(alpha: 0.6);
     final header = text.labelMedium?.copyWith(color: muted);
 
+    // Optik denemelerde yanlış listesi uzun: tüm sayfa birlikte kayar.
     return SafeArea(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -143,6 +145,11 @@ class ExamDetailSheet extends ConsumerWidget {
                   style: text.titleLarge?.copyWith(fontWeight: FontWeight.w900),
                 ),
               ],
+            ),
+            // Optikten okunduysa yanlışlar ve kazanımları.
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: ExamAnswersView(examId: exam.id),
             ),
             if (canDelete && !exam.editable) ...[
               const SizedBox(height: 8),

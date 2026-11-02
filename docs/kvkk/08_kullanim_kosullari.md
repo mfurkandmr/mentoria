@@ -11,7 +11,7 @@
 
 ## 1. Taraflar ve kapsam
 
-Bu koşullar, [İŞLETMECİ UNVANI] ("Mentoria", "biz") tarafından sunulan
+Bu koşullar, [AD SOYAD] ("Mentoria", "biz") tarafından sunulan
 Mentoria mobil uygulaması ve web uygulamasının ("Hizmet") kullanımını
 düzenler. Hesap oluşturan ya da Hizmet'i kullanan herkes ("kullanıcı",
 "sen") bu koşulları kabul etmiş sayılır.
@@ -148,7 +148,7 @@ yetkilidir.
 
 ## 13. İletişim
 
-[İŞLETMECİ UNVANI] · [ADRES] · [E-POSTA ADRESİ]
+[AD SOYAD] · [ADRES] · [E-POSTA ADRESİ]
 
 ---
 

@@ -7,6 +7,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:mentoria/shared/motion.dart';
 import 'package:mentoria/dev/demo_mode.dart';
 import 'package:mentoria/features/account/presentation/profile_screen.dart';
+import 'package:mentoria/features/account/data/account_repository.dart';
 import 'package:mentoria/features/admin/presentation/admin_home_screen.dart';
 import 'package:mentoria/features/coach/presentation/manager_widgets.dart';
 import 'package:mentoria/features/assignments/presentation/assign_homework_screen.dart';
@@ -166,6 +167,27 @@ void main() {
     await tester.tap(button);
     await tester.pumpAndSettle();
     expect(find.text('VELI1000'), findsOneWidget);
+  });
+
+  testWidgets('öğrenci sınav yılını seçince "Kaydet"e basmadan kaydedilir', (
+    tester,
+  ) async {
+    _phone(tester);
+    await tester.pumpWidget(await _app('student', const ProfileScreen()));
+    await tester.pumpAndSettle();
+    final year = DateTime.now().year + 2;
+    await tester.tap(find.text('2027 YKS'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('$year YKS').last);
+    await tester.pumpAndSettle();
+    expect(find.text('Bilgilerin kaydedildi.'), findsOneWidget);
+
+    final c = ProviderScope.containerOf(
+      tester.element(find.byType(ProfileScreen)),
+    );
+    final saved = await c.read(accountRepositoryProvider).fetchDetails();
+    expect(saved.examYear, year);
+    expect(saved.fullName, isNotEmpty);
   });
 
   testWidgets('koç görev verir ve not yazar', (tester) async {

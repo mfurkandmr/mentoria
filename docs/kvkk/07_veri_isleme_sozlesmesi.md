@@ -5,7 +5,7 @@
 > sorumlusu**, Mentoria **veri işleyen** olur (KVKK md. 3 ve 12/2). Bu
 > sözleşme, lisans/abonelik sözleşmesinin eki olarak imzalanır.
 
-**Taraflar:** [KURUM UNVANI] ("Veri Sorumlusu") ile [MENTORIA UNVANI]
+**Taraflar:** [KURUM UNVANI] ("Veri Sorumlusu") ile [AD SOYAD]
 ("Veri İşleyen").
 
 ## 1. Konu

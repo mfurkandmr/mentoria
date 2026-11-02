@@ -162,6 +162,16 @@ class _DetailsCardState extends ConsumerState<_DetailsCard> {
   late int? _year = widget.details.examYear;
   late FieldType? _field = widget.details.field;
   bool _saving = false;
+  bool _autoSaving = false;
+
+  Future<void> _autoSave() async {
+    _autoSaving = true;
+    try {
+      await _save();
+    } finally {
+      _autoSaving = false;
+    }
+  }
 
   @override
   void dispose() {
@@ -169,9 +179,13 @@ class _DetailsCardState extends ConsumerState<_DetailsCard> {
     super.dispose();
   }
 
+  /// Sınav yılı ve alan seçilince hemen kaydedilir ("Kaydet"e basmadan
+  /// çıkılınca seçim kayboluyordu); "Kaydet" ad soyad içindir.
   Future<void> _save() async {
-    final name = _name.text.trim();
-    if (name.length < 3) {
+    final typed = _name.text.trim();
+    // Seçimle kaydederken yarım yazılmış ad, kayıtlı adın yerine geçmez.
+    final name = typed.length >= 3 ? typed : widget.details.fullName;
+    if (typed.length < 3 && !_autoSaving) {
       showMessage(context, tr('Adını ve soyadını gir.'));
       return;
     }
@@ -219,7 +233,12 @@ class _DetailsCardState extends ConsumerState<_DetailsCard> {
                       for (var y = thisYear; y <= thisYear + 3; y++)
                         DropdownMenuItem(value: y, child: Text('$y YKS')),
                     ],
-                    onChanged: (v) => setState(() => _year = v),
+                    onChanged: _saving
+                        ? null
+                        : (v) {
+                            setState(() => _year = v);
+                            _autoSave();
+                          },
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -232,7 +251,12 @@ class _DetailsCardState extends ConsumerState<_DetailsCard> {
                       for (final f in FieldType.values)
                         DropdownMenuItem(value: f, child: Text(f.label)),
                     ],
-                    onChanged: (v) => setState(() => _field = v),
+                    onChanged: _saving
+                        ? null
+                        : (v) {
+                            setState(() => _field = v);
+                            _autoSave();
+                          },
                   ),
                 ),
               ],

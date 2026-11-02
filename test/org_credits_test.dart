@@ -14,6 +14,7 @@ import 'package:mentoria/features/admin/presentation/admin_home_screen.dart';
 import 'package:mentoria/features/auth/data/auth_repository.dart';
 import 'package:mentoria/features/auth/data/profile.dart';
 import 'package:mentoria/features/auth/presentation/invite_signup_screen.dart';
+import 'package:mentoria/features/auth/presentation/role_gate_screen.dart';
 import 'package:mentoria/features/coach/presentation/coach_home_screen.dart';
 import 'package:mentoria/features/coach/presentation/invite_sheet.dart';
 import 'package:mentoria/features/credits/data/org_credits_repository.dart';
@@ -142,6 +143,38 @@ void main() {
       find.widgetWithText(FilledButton, 'Kod oluştur'),
     );
     expect(button.onPressed, isNull);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  for (final role in ['student', 'coach', 'parent']) {
+    testWidgets('lisans bitince $role panele giremez', (tester) async {
+      await _pump(tester, const Scaffold(body: RoleGateScreen()), [
+        ...await buildDemoOverrides(
+          role,
+          true,
+          null,
+          InMemoryOrgCreditsRepository(license: false),
+        ),
+      ]);
+      expect(find.textContaining('lisans süresi doldu'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    });
+  }
+
+  testWidgets('lisans bitse de müdür paneline girer', (tester) async {
+    await _pump(tester, const Scaffold(body: RoleGateScreen()), [
+      ...await buildDemoOverrides(
+        'admin',
+        true,
+        null,
+        InMemoryOrgCreditsRepository(
+          balance: 10,
+          isAdmin: true,
+          license: false,
+        ),
+      ),
+    ]);
+    expect(find.textContaining('lisans süresi doldu'), findsNothing);
     await tester.pumpWidget(const SizedBox());
   });
 

@@ -480,7 +480,6 @@ const enStrings = <String, String>{
       'All seats are used. Increase the license to add new students.',
   '{p0} öğrencilik yer var': '{p0} seats available',
   'Süresiz': 'No expiry',
-  'Lisans süresi doldu ({expiry})': 'License expired ({expiry})',
   'Lisans bitişi: {expiry}': 'License ends: {expiry}',
   'Kurum adı': 'Institution name',
   'Kurum adını değiştir': 'Rename institution',
@@ -1495,6 +1494,98 @@ const enStrings = <String, String>{
       'Add items to the days or copy last week’s plan.',
   'Koçun plan hazırlayınca burada görünecek.':
       'It will appear here once your coach makes a plan.',
+  'Günlere "Madde ekle" ile kendi programını yap. Koçunun eklediği maddeler de burada görünür.':
+      'Build your own schedule with "Add item" on each day. Items your coach adds show up here too.',
+  'Çalışma programını yap': 'Make your study schedule',
+  'Hangi gün, saat kaçta, hangi ders?': 'Which day, what time, which subject?',
+  'Öğrenci ekledi': 'Added by student',
+  'Koçundan': 'From your coach',
+  'Başlangıç saati': 'Start time',
+  'Saati kaldır': 'Remove time',
+  // Haftalık veli özeti
+  'Haftalık özet': 'Weekly summary',
+  'Veliye gönder': 'Send to parent',
+  'Özet yüklenemedi. Tekrar dene.': 'Couldn’t load the summary. Try again.',
+  '{d} / 7 gün çalıştı': 'Studied {d} / 7 days',
+  '{d}/7 gün çalıştı': 'studied {d}/7 days',
+  '{n} koç görüşmesini kaçırdı': 'Missed {n} coach meeting(s)',
+  '{n} koç görüşmesine katıldı': 'Attended {n} coach meeting(s)',
+  '{n} görüşme kaçırıldı': '{n} meeting(s) missed',
+  'Net trendi': 'Net trend',
+  'Son {type}: {net} net': 'Last {type}: {net} net',
+  'öncekinden {d}': '{d} vs. previous',
+  'Ödev': 'Homework',
+  'Bu hafta teslimli ödev yok': 'No homework due this week',
+  '{d} / {n} tamamlandı · %{p}': '{d} / {n} done · {p}%',
+  'ödev %{p}': 'homework {p}%',
+  '{name} · haftalık özet': '{name} · weekly summary',
+  '{name} · haftalık özet (son 7 gün)': '{name} · weekly summary (last 7 days)',
+  '{q} soru · {time} çalışma': '{q} questions · {time} of study',
+  // Risk erken uyarısı
+  'Bu hafta konuşulacaklar': 'Talk to this week',
+  'Devam, net düşüşü ve ödeve göre son 7 gün':
+      'Last 7 days by attendance, net drop and homework',
+  'Bu hafta risk işareti veren öğrenci yok. 🎉':
+      'No students show warning signs this week. 🎉',
+  'Bu hafta {n} öğrenciyle konuş': 'Talk to {n} students this week',
+  '{names}: devam, net ya da ödevde geriye düşüş var. Listeye bak.':
+      '{names}: attendance, nets or homework slipped. Check the list.',
+  'Risk skoru': 'Risk score',
+  'Risk skoru {n}': 'Risk score {n}',
+  'Skor nasıl hesaplanır?': 'How is the score calculated?',
+  'Çalışmadığı her gün 5 puan, kaçırılan her koç görüşmesi 7,5 puan (en çok 2). Son 30 gündeki denemesi bir öncekinden düşükse her net 3 puan (en çok 10 net). Bu haftanın ödevinde yapılmayan oran × 20. Toplam 100 üzerinden; 30 ve üstü listeye girer.':
+      '5 points for each day without study, 7.5 for each missed coach meeting (up to 2). If the latest mock exam (last 30 days) is below the previous one, 3 points per net (up to 10 nets). Share of this week’s homework not done × 20. Out of 100; 30 and above make the list.',
+  '{n} gün çalışmadı': '{n} days without study',
+  '{n} görüşme kaçırdı': 'missed {n} meeting(s)',
+  '{type} {n} net düştü': '{type} down {n} nets',
+  // Konu reçetesi
+  'Konu reçetesi': 'Topic prescription',
+  'Konu reçetesi · {date}': 'Topic prescription · {date}',
+  'Son 3 denemenin eksik konularından haftalık ödev taslağı':
+      'Weekly homework draft from weak topics in the last 3 mock exams',
+  'Son denemelerdeki eksik konulardan hazırlandı.':
+      'Prepared from weak topics in recent mock exams.',
+  'Onayla ve gönder · {n} konu, {q} soru':
+      'Approve and send · {n} topics, {q} questions',
+  'Reçete ödev olarak gönderildi.': 'Prescription sent as homework.',
+  'Teslim: 1 hafta sonra. Öğrenciye ödev bildirimi gider.':
+      'Due in 1 week. The student gets a homework notification.',
+  '{e} denemede {n} yanlış': '{n} wrong in {e} exams',
+  '{n} yanlış': '{n} wrong',
+  'Önerilecek konu yok: son denemelerde konu bazlı yanlış kaydı yok ya da hepsine yakın zamanda ödev verildi.':
+      'Nothing to suggest: no topic-level mistakes in recent exams, or they were all assigned recently.',
+  // Rehberlik görüşme kaydı
+  'Rehberlik': 'Guidance',
+  'Görüşme kaydı': 'Meeting record',
+  'Görüşme tarihi': 'Meeting date',
+  'Yüz yüze': 'In person',
+  'Telefon': 'Phone',
+  'Online': 'Online',
+  'Veli görüşmesi': 'Parent meeting',
+  'Ders başarısı': 'Academic progress',
+  'Motivasyon': 'Motivation',
+  'Tercih / bölüm': 'University / major',
+  'Sınav kaygısı': 'Exam anxiety',
+  'Zaman yönetimi': 'Time management',
+  'Aile': 'Family',
+  'Kurum içi kayıt: öğrenci ve veli görmez. Koç değişse de geçmiş kurumda kalır.':
+      'Internal record: students and parents can’t see it. The history stays with the school even if the coach changes.',
+  'Henüz görüşme kaydı yok': 'No meeting records yet',
+  'Her görüşmeden sonra "Görüşme kaydı"na dokun; 2 dakikada not bırak.':
+      'After each meeting tap "Meeting record" and leave a note in 2 minutes.',
+  'Bu görüşme kaydı kalıcı olarak silinir.':
+      'This meeting record will be deleted permanently.',
+  'Sonraki adım': 'Next step',
+  'Sonraki adım (isteğe bağlı)': 'Next step (optional)',
+  'Takip: {date}': 'Follow-up: {date}',
+  'Takip tarihi (isteğe bağlı)': 'Follow-up date (optional)',
+  'Tarihi kaldır': 'Remove date',
+  'Yazan bilinmiyor': 'Author unknown',
+  'Kısa bir not yaz.': 'Write a short note.',
+  'Konular (en çok 5)': 'Topics (up to 5)',
+  'Ne konuşuldu?': 'What was discussed?',
+  'ör. Son denemede matematik düştü, çalışma düzeni konuşuldu.':
+      'e.g. Maths dropped in the last mock exam; we talked about the study routine.',
   'Geçen haftayı kopyala': 'Copy last week',
   'Madde ekle': 'Add item',
   'Madde yok': 'No items',
@@ -1759,8 +1850,12 @@ const enStrings = <String, String>{
   '"Koç davet et" ile koça, "Öğrenci davet et" ile öğrenciye kod oluştur. Öğrenci davetinde öğrencinin bağlanacağı koçu seçersin.':
       'Create a code with "Invite coach" for coaches and "Invite student" for students. For student invites you choose which coach they’ll be linked to.',
   'Lisans ve koltuk sayısı ne demek?': 'What are the licence and seat count?',
-  'Kurumunun kaç öğrenciye kadar ve hangi tarihe kadar kullanabileceğini belirler. Koltuklar dolduysa ya da lisans süresi bittiyse yeni öğrenci kayıt olamaz.':
-      'They set how many students your school can have and until when. If seats are full or the licence has expired, new students can’t sign up.',
+  'Kurumunun kaç öğrenciye kadar ve hangi tarihe kadar kullanabileceğini belirler. Koltuklar dolduysa yeni öğrenci kayıt olamaz. Lisans süresi bitince öğrenci, koç ve veliler uygulamaya giremez; lisans uzatılınca erişim kendiliğinden geri gelir.':
+      'They set how many students your school can have and until when. If seats are full, new students can’t sign up. When the licence expires, students, coaches and parents can’t use the app; access returns automatically once it is renewed.',
+  'Lisans süresi doldu ({expiry}). Öğrenci, koç ve veliler giriş yapamıyor.':
+      'License expired ({expiry}). Students, coaches and parents can’t sign in.',
+  'Kurumunun lisans süresi doldu. Kurum yöneticinle iletişime geç.':
+      'Your school’s licence has expired. Contact your school administrator.',
   'Öğrencinin koçunu değiştirebilir miyim?': 'Can I change a student’s coach?',
   'Evet. Öğrenciler listesinde öğrencinin seçeneklerinden "Koçunu değiştir"i kullan.':
       'Yes. Use "Change coach" in the student’s options on the Students list.',
@@ -1985,4 +2080,176 @@ const enStrings = <String, String>{
   'Senin sürümün: {v}': 'Your version: {v}',
   // Koç listesi
   'Silme talebi': 'Deletion request',
+  // KVKK: saklama uyarısı ve web'den hesap silme
+  'Hesabın yakında silinecek': 'Your account will be deleted soon',
+  'Uzun süredir giriş yapmadın. {n} gün içinde uygulamayı açmazsan hesabın ve verilerin silinecek.':
+      'You haven\'t signed in for a long time. If you don\'t open the app within {n} days, your account and data will be deleted.',
+  'Talebin alındı. Hesabını ve tüm verilerini koçun siler; 29 gün içinde silinmezse sistem otomatik olarak siler.':
+      'Your request has been received. Your coach will delete your account and all your data; if it is not deleted within 29 days, the system deletes it automatically.',
+  'Hesabın kalıcı olarak silinsin mi?': 'Permanently delete your account?',
+  'Hesabın ve tüm verilerin hemen silinir. Bu işlem geri alınamaz.':
+      'Your account and all your data will be deleted immediately. This cannot be undone.',
+  'Hesabın ve tüm verilerin silindi.':
+      'Your account and all your data have been deleted.',
+  '{email} adresi kayıtlıysa 6 haneli bir kod gönderdik. Kodu aşağıya yaz.':
+      'If {email} is registered, we sent a 6-digit code to it. Enter the code below.',
+  'Doğrula': 'Verify',
+  'E-postayı değiştir': 'Change email',
+  'Hesabının e-posta adresini yaz. Hesabın sana ait olduğunu doğrulamak için bu adrese bir kod göndereceğiz.':
+      'Enter your account\'s email address. We\'ll send a code to it to confirm the account is yours.',
+  'Kod gönder': 'Send code',
+  'Hesap silme': 'Account deletion',
+  'Giriş yapılan hesap: {name} ({role})': 'Signed in as: {name} ({role})',
+  'Öğrenci hesabını koçun siler. Talebin koçuna iletilir; 29 gün içinde silinmezse hesabın ve tüm verilerin sistem tarafından otomatik olarak silinir.':
+      'Student accounts are deleted by the coach. Your request is sent to your coach; if it is not deleted within 29 days, your account and all your data are deleted automatically by the system.',
+  'Hesabın ve tüm verilerin hemen ve kalıcı olarak silinir.':
+      'Your account and all your data will be deleted immediately and permanently.',
+  'Silme talebi gönder': 'Send deletion request',
+  'Vazgeç ve çıkış yap': 'Cancel and sign out',
+  'Neler silinir?': 'What is deleted?',
+  'Profilin, denemelerin, soru ve çalışma kayıtların, görevler, notlar, hata defteri fotoğrafları, bildirimler ve izin kayıtların silinir. Sistem yedeklerindeki kopyalar en geç 7 gün içinde kendiliğinden silinir.':
+      'Your profile, exams, question and study logs, tasks, notes, mistake-book photos, notifications and consent records are deleted. Copies in system backups are removed automatically within 7 days at most.',
+  'Sorun yaşarsan {email} adresine yazabilirsin.':
+      'If you run into a problem, you can write to {email}.',
+  // Optik okuma
+  'Başarı %': 'Success %',
+  'Başlık satırı bulunamadı. Tabloda "Ders", "Soru No" ve "Cevap" sütunları olmalı.':
+      'Header row not found. The table must have "Subject", "Question No" and "Answer" columns.',
+  'Bu denemenin optik formu uygulamada yok. Uygulamayı güncelle.':
+      'This exam\'s answer sheet form isn\'t in the app. Update the app.',
+  'Bu sınav türü için uygulamada optik form şablonu yok. Kullandığınız formun boş ve dolu birer fotoğrafını gönderin; şablon eklenince okuyabilirsiniz.':
+      'There\'s no answer sheet template for this exam type yet. Send one blank and one filled photo of the form you use; you can scan once the template is added.',
+  'Bu öğrencinin denemesi 7 günden eski; optiği yeniden okunamaz.':
+      'This student\'s exam is older than 7 days; the sheet can\'t be scanned again.',
+  'Bu öğrencinin optiği daha önce okunmuştu; kaydedersen sonucu güncellenir.':
+      'This student\'s sheet was already scanned; saving will update the result.',
+  'Cevap anahtarı': 'Answer key',
+  'Cevap anahtarı silinsin mi?': 'Delete the answer key?',
+  'Cevap anahtarını sil': 'Delete answer key',
+  'Cevaplar': 'Answers',
+  'Deneme tarihi': 'Exam date',
+  'Dosya okunamadı. Excel (.xlsx, .xls) ya da CSV kazanım tablosu seç.':
+      'The file couldn\'t be read. Choose an Excel (.xlsx, .xls) or CSV outcome table.',
+  'Doğru Cevap': 'Correct Answer',
+  'Emin olunamayan sorular ({n})': 'Uncertain questions ({n})',
+  'En çok yanlış yapılan kazanımlar': 'Most missed outcomes',
+  'Excel dosyası seç': 'Choose Excel file',
+  'Excel hazırlanamadı.': 'The Excel file couldn\'t be prepared.',
+  'Excel indir': 'Download Excel',
+  'Excel\'de "Ders", "Soru No", "Cevap" ve "Kazanım" sütunları olmalı. Ders yerine test adı (ör. Sosyal Bilimler 1–20) da olur.':
+      'The Excel file needs "Subject", "Question No", "Answer" and "Outcome" columns. A test name (e.g. Social Sciences 1–20) works instead of a subject too.',
+  'Formda öğrenci numarası işaretlenmemiş.':
+      'No student number is marked on the form.',
+  'Formdaki numara net okunamadı: {n}':
+      'The number on the form couldn\'t be read clearly: {n}',
+  'Formdaki numaradan bulundu: {n}': 'Found from the number on the form: {n}',
+  'Formun dört köşesindeki siyah kareler bulunamadı. Kâğıdı düz bir yere koy, dört köşesi de görünecek şekilde tepeden ve iyi ışıkta çek.':
+      'The black squares in the form\'s four corners weren\'t found. Lay the sheet flat and shoot from above in good light with all four corners visible.',
+  'Fotoğraf okunamadı. Tekrar dene.': 'The photo couldn\'t be read. Try again.',
+  'Kaydet ({n} soru boş sayılacak)': 'Save ({n} questions will count as blank)',
+  'Kaydet ve optik okumaya geç': 'Save and start scanning',
+  'Kaydettikten sonra cevap anahtarı değiştirilemez; yanlışsa silip yeniden ekle.':
+      'The answer key can\'t be changed after saving; if it\'s wrong, delete it and add it again.',
+  'Kazanım': 'Outcome',
+  'Kazanım ve cevap anahtarı': 'Outcomes and answer key',
+  'Kazanımlar': 'Outcomes',
+  'Okunamayan {n} satır: {rows}': '{n} unreadable rows: {rows}',
+  'Okunan optikler': 'Scanned sheets',
+  'Okunmuş optikler öğrencilerin denemelerinde kalır; onları "Denemeler" ekranından silebilirsin.':
+      'Scanned sheets stay in the students\' exams; you can delete them from the "Exams" screen.',
+  'Optik form': 'Answer sheet form',
+  'Optik formları telefonla oku': 'Scan answer sheets with your phone',
+  'Optik oku': 'Scan sheet',
+  'Optik okuma': 'Answer sheet scanning',
+  'Optik okunamadı': 'The sheet couldn\'t be read',
+  'Optiği kontrol et': 'Check the sheet',
+  'Satır {n}: {label} {no}': 'Row {n}: {label} {no}',
+  'Seçilen dosya bir fotoğraf değil.': 'The selected file isn\'t a photo.',
+  'Sonuç': 'Result',
+  'Sıra': 'Rank',
+  'Tabloda {type} sorusu bulunamadı. Sınav türünü kontrol et.':
+      'No {type} questions found in the table. Check the exam type.',
+  'Toplam Boş': 'Total Blank',
+  'Toplam Doğru': 'Total Correct',
+  'Toplam Net': 'Total Net',
+  'Toplam Yanlış': 'Total Wrong',
+  'Tüm soruları doğru yaptın!': 'You got every question right!',
+  'En çok kaçırılan konular': 'Most missed topics',
+  'Metinlerimiz güncellendi': 'Our terms have been updated',
+  'Devam etmeden önce Kullanım Koşulları\'nı ve Aydınlatma Metni\'ni okuyup onaylaman gerekiyor.':
+      'Before continuing, please read and accept the Terms of Use and the Privacy Notice.',
+  'Onayla ve devam et': 'Accept and continue',
+  '{n} boş': '{n} blank',
+  'Tüm konuları göster (+{n})': 'Show all topics (+{n})',
+  'Soru soru': 'Question by question',
+  'Daha az göster': 'Show less',
+  'Yalnızca anahtarı ekleyen kişi silebilir.':
+      'Only the person who added the key can delete it.',
+  'Yanlış + boş, tüm okunan optiklerde':
+      'Wrong + blank, across all scanned sheets',
+  'Yanlışların ve boşların ({w} yanlış, {b} boş)':
+      'Your wrong and blank answers ({w} wrong, {b} blank)',
+  'Yayınevi (isteğe bağlı)': 'Publisher (optional)',
+  'Yeni deneme': 'New exam',
+  'Yeni deneme ekleyip kazanım tablosunu yükleyince optik okumaya başlayabilirsin.':
+      'Add a new exam and upload its outcome table to start scanning sheets.',
+  'Yeniden çek': 'Retake',
+  '{c} D · {w} Y · {b} B': '{c} C · {w} W · {b} B',
+  '{c} doğru · {w} yanlış · {b} boş': '{c} correct · {w} wrong · {b} blank',
+  '{name}: optik yeniden okundu, {net} net.':
+      '{name}: sheet scanned again, {net} net.',
+  '{name}: {net} net kaydedildi.': '{name}: {net} net saved.',
+  '{n} numaralı öğrencin yok; listeden seç.':
+      'You have no student numbered {n}; pick from the list.',
+  '{n} optik okundu': '{n} sheets scanned',
+  '{n} soru · {k} kazanım · {c} iptal':
+      '{n} questions · {k} outcomes · {c} cancelled',
+  '{n} öğrenci · nete göre': '{n} students · by net',
+  '{subject} {n}. soru · boş · doğru: {c}':
+      '{subject} Q{n} · blank · correct: {c}',
+  '{subject} {n}. soru · görünen: {c}': '{subject} Q{n} · visible: {c}',
+  '{subject} {n}. soru · sen: {m} · doğru: {c}':
+      '{subject} Q{n} · you: {m} · correct: {c}',
+  '{subject}: {n} soru': '{subject}: {n} questions',
+  '{subject}: {n}/{total} soru (eksik sorular değerlendirilmez)':
+      '{subject}: {n}/{total} questions (missing questions are not scored)',
+  'Önce denemenin kazanım ve cevap anahtarı Excel\'ini yükle. Sonra optikleri telefonla tek tek çek; her öğrencinin yanlışları kazanımlarıyla birlikte kaydedilir.':
+      'First upload the exam\'s outcome and answer key Excel. Then photograph the sheets one by one; each student\'s mistakes are saved with their outcomes.',
+  'Öğrenci No': 'Student No',
+  'ör. Kasım TYT-1': 'e.g. November TYT-1',
+  'İki şık işaretli ya da işaret silik. Kâğıda bakıp doğru şıkkı seç; seçmezsen boş sayılır.':
+      'Two options are marked or the mark is faint. Check the paper and pick the right option; if you don\'t, it counts as blank.',
+  'İpucu: kâğıdı düz bir masaya koy, dört köşedeki siyah kareler kadraja girsin ve gölge düşmesin. Kaydedince kamera sıradaki optik için yeniden açılır.':
+      'Tip: lay the sheet on a flat table, keep the four black corner squares in frame and avoid shadows. After saving, the camera reopens for the next sheet.',
+  // Optik okuma: cevap kâğıdı ve kitapçık
+  'Boş cevap kâğıdını indir (PDF)': 'Download blank answer sheet (PDF)',
+  'Bu denemenin cevap anahtarında B kitapçığı numaraları yok. Kazanım Excel\'ine "B Soru No" sütununu ekleyip denemeyi yeniden oluştur.':
+      'This exam\'s answer key has no booklet B numbers. Add a "B Question No" column to the outcome Excel and create the exam again.',
+  'Cevap anahtarında B kitapçığı numaraları yok.':
+      'The answer key has no booklet B numbers.',
+  'Form hazırlanamadı. Tekrar dene.':
+      'The form couldn\'t be prepared. Try again.',
+  'Formda kitapçık işaretlenmemiş; A sayıldı.':
+      'No booklet is marked on the form; counted as A.',
+  'Formda {form} işaretli ama bu deneme {key}. Doğru denemeyi okuttuğundan emin ol.':
+      'The form is marked {form} but this exam is {key}. Make sure you are scanning for the right exam.',
+  'Formdaki kitapçık işareti net değil; kâğıda bakıp seç.':
+      'The booklet mark on the form isn\'t clear; check the paper and choose.',
+  'Formdan okundu: {b}': 'Read from the form: {b}',
+  'Kitapçık': 'Booklet',
+  'Mentoria YKS cevap kâğıdı': 'Mentoria YKS answer sheet',
+  '{subject} {n}: B numarası tekrar ediyor':
+      '{subject} {n}: booklet B number is repeated',
+  // Optik okuma: form seçimi
+  'Hangi cevap kâğıdı?': 'Which answer sheet?',
+  'Kenarında zamanlama çizgisi olan, yayınevi tarzı form':
+      'Publisher-style sheet with timing marks along the edge',
+  'Köşelerinde siyah kare olan, kamera için en sağlam form':
+      'Sheet with black corner squares, the most reliable for the camera',
+  'Bu denemenin boş kâğıdını indir (PDF)':
+      'Download this exam\'s blank sheet (PDF)',
+  'Öğrencilere cevap kâğıdını dağıt: TYT ve AYT aynı kâğıtta. PDF\'i indirip istediğin kadar çoğaltabilirsin.':
+      'Hand out the answer sheet: TYT and AYT are on the same sheet. Download the PDF and print as many as you need.',
+  'Standart YKS optik formu (kenar çizgili)':
+      'Standard YKS answer sheet (edge timing marks)',
 };

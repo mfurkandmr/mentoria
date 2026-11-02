@@ -187,6 +187,45 @@ void main() {
       expect(repo.items.where((i) => i.done).length, before + 1);
     });
 
+    testWidgets('öğrenci kendi programına saatli madde ekler', (tester) async {
+      final c = await pump(tester, const StudentPlanScreen(), 'student');
+      final repo = c.read(planRepositoryProvider) as InMemoryPlanRepository;
+      // Kendi maddesi silinebilir, koçunki silinemez.
+      final own = repo.items.where((i) => i.bySelf).length;
+      expect(own, greaterThan(0));
+      expect(find.text('20:00–20:45 · 45 dk'), findsOneWidget);
+      expect(find.textContaining('Koçundan'), findsWidgets);
+
+      await tester.tap(find.text('Madde ekle').first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('İsteğe bağlı'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('OK').last);
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byWidgetPredicate(
+          (w) => w is TextField && w.decoration?.labelText == 'Süre (dk)',
+        ),
+        '50',
+      );
+      await tester.tap(find.text('Ekle'));
+      await tester.pumpAndSettle();
+      final added = repo.items.last;
+      expect(
+        (added.startTime, added.minutes, added.bySelf),
+        ('09:00', 50, true),
+      );
+      expect(added.day, weekStartOf(DateTime.now()), reason: 'pazartesi');
+      expect(find.text('09:00–09:50 · 50 dk'), findsOneWidget);
+      // Sil yalnızca kendi maddelerinde: hangisine basılırsa basılsın
+      // giden öğrencinin maddesidir.
+      final coachItems = repo.items.where((i) => !i.bySelf).length;
+      await tester.tap(find.byTooltip('Sil').first);
+      await tester.pumpAndSettle();
+      expect(repo.items.where((i) => i.bySelf).length, own);
+      expect(repo.items.where((i) => !i.bySelf).length, coachItems);
+    });
+
     testWidgets('koç plana madde ekler', (tester) async {
       final c = await pump(
         tester,

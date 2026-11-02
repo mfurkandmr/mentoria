@@ -66,14 +66,19 @@ class SupabaseAccountRepository implements AccountRepository {
   }
 
   @override
-  Future<void> updateDetails(ProfileDetails d) => _client
-      .from('profiles')
-      .update({
-        'full_name': d.fullName,
-        'exam_year': d.examYear,
-        'field': d.field?.db,
-      })
-      .eq('id', _uid);
+  Future<void> updateDetails(ProfileDetails d) async {
+    // RLS satırı eşlemezse hata dönmez; boş sonuç "kaydedildi" sanılmasın.
+    final rows = await _client
+        .from('profiles')
+        .update({
+          'full_name': d.fullName,
+          'exam_year': d.examYear,
+          'field': d.field?.db,
+        })
+        .eq('id', _uid)
+        .select('id');
+    if (rows.isEmpty) throw StateError('PROFILE_NOT_UPDATED');
+  }
 
   @override
   Future<String> createParentInvite() async {
@@ -143,9 +148,12 @@ final accountRepositoryProvider = Provider<AccountRepository>(
   (ref) => SupabaseAccountRepository(ref.watch(supabaseClientProvider)),
 );
 
-final profileDetailsProvider = FutureProvider<ProfileDetails>(
-  (ref) => ref.watch(accountRepositoryProvider).fetchDetails(),
-);
+/// Giriş yapan kişinin bilgileri; çıkış yapıp başka hesapla girilince yeniden
+/// okunur (önceki hesabın bilgisi kalmasın).
+final profileDetailsProvider = FutureProvider<ProfileDetails>((ref) {
+  ref.watch(currentProfileProvider.select((p) => p.value?.id));
+  return ref.watch(accountRepositoryProvider).fetchDetails();
+});
 
 final childrenProvider = FutureProvider<List<ChildRef>>(
   (ref) => ref.watch(accountRepositoryProvider).fetchChildren(),

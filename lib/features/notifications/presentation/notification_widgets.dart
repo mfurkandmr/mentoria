@@ -187,10 +187,14 @@ class NotificationTile extends StatelessWidget {
                   NotificationKind.duelResult => const Color(0xFFFFB020),
                   NotificationKind.plan => context.brand.success,
                   NotificationKind.announcement => context.brand.secondary,
+                  NotificationKind.inactivityWarning => context.brand.danger,
+                  NotificationKind.riskDigest => context.brand.danger,
                 },
                 foregroundColor:
                     n.kind == NotificationKind.exam ||
                         n.kind == NotificationKind.deletionRequest ||
+                        n.kind == NotificationKind.inactivityWarning ||
+                        n.kind == NotificationKind.riskDigest ||
                         n.kind == NotificationKind.meeting ||
                         n.kind == NotificationKind.review
                     ? Colors.white

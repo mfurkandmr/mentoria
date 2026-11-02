@@ -15,7 +15,8 @@ class YksDate {
 
 final yksDates = <int, YksDate>{
   2026: YksDate(DateTime(2026, 6, 20, 10, 15), official: true),
-  2027: YksDate(DateTime(2027, 6, 19, 10, 15)),
+  // ÖSYM 2027 takvimi (28 Ekim 2026): TYT 19 Haziran, AYT/YDT 20 Haziran.
+  2027: YksDate(DateTime(2027, 6, 19, 10, 15), official: true),
   2028: YksDate(DateTime(2028, 6, 17, 10, 15)),
   2029: YksDate(DateTime(2029, 6, 16, 10, 15)),
 };

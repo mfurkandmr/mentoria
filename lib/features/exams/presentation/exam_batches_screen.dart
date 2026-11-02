@@ -84,6 +84,11 @@ class ExamBatchesScreen extends ConsumerWidget {
         ),
         actions: [
           IconButton(
+            tooltip: tr('Optik oku'),
+            icon: const Icon(Icons.document_scanner_outlined),
+            onPressed: () => context.push('$basePath/optic'),
+          ),
+          IconButton(
             tooltip: tr('Deneme sonuçlarını yükle'),
             icon: const Icon(Icons.upload_file),
             onPressed: () => context.push('$basePath/import'),

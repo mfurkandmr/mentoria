@@ -1,7 +1,7 @@
 # KVKK belgeleri (taslak paket)
 
-> **Durum (19 Ekim 2026):** Taslaklar hazır. Avukat incelemesi bekleniyor.
-> Kod değişiklikleri henüz yapılmadı (aşağıdaki "Kod aşaması" listesi).
+> **Durum (29 Ekim 2026):** Taslaklar hazır, kod aşaması büyük ölçüde bitti.
+> Avukat incelemesi ve kişisel bilgiler (ad, adres, e-posta) bekleniyor.
 > Bu metinler hukuki görüş değildir; yayımlanmadan önce bir KVKK avukatı
 > tarafından incelenmelidir.
 
@@ -20,14 +20,19 @@
 
 ## Senin doldurman gerekenler
 
-- [ ] Veri sorumlusunun unvanı (şirket / şahıs şirketi), adresi, MERSİS
-      veya vergi numarası
-- [ ] KVKK başvuruları için e-posta adresi (ör. kvkk@...), varsa KEP adresi
-- [ ] Saklama süreleri: silinen hesap ([30] gün), lisansı biten kurum
-      ([1 yıl]), uzun süre kullanılmayan hesap ([2 yıl]), duyurular ([1 yıl])
+- [x] Veri sorumlusu: şirket yok, bireysel geliştirici (gerçek kişi; MERSİS
+      ve KEP yok). Metinler buna göre düzenlendi (29 Ekim 2026).
+- [ ] Ad soyad (`[AD SOYAD]`) ve yazışma adresi (`[ADRES]`)
+- [ ] KVKK başvuruları için e-posta adresi (`[KVKK E-POSTA ADRESİ]`)
+- [ ] Web sürümünün adresi (`[WEB ADRESİ]`; hesap silme sayfası
+      `[WEB ADRESİ]/#/hesap-sil`, Google Play formuna da bu yazılır)
+- [x] Saklama süreleri: silinen hesap 30 gün, lisansı biten kurum 1 yıl,
+      uzun süre kullanılmayan hesap 2 yıl (30 gün önceden uyarı), duyurular
+      1 yıl (29 Ekim 2026, taslaktaki öneriler kabul edildi)
 - [x] Tanıtım ve kampanya bildirimi gönderilmeyecek (19 Ekim 2026 kararı).
       İleride gönderilirse açık rıza maddesi ve İYS kaydı gerekir.
-- [ ] Sorumlu kişiler (saklama-imha politikası 5. bölüm)
+- [x] Sorumlu kişiler: hepsi veri sorumlusunun kendisi (saklama-imha
+      politikası 5. bölüm)
 - [ ] Kullanım koşulları: yetkili mahkeme ili ve ücretlendirme modeli
       (`08_kullanim_kosullari.md` 8. ve 12. maddeler)
 - [ ] Kendi SMTP/e-posta sağlayıcınız var mı? (Doğrulama e-postaları için)
@@ -74,9 +79,23 @@
 
 - [x] Google Fonts: yazı tipleri uygulamaya gömüldü (`assets/google_fonts`,
       `tool/fonts/fetch_fonts.py`); Google'a IP aktarımı kalktı.
-- [ ] Saklama görevleri: lisansı biten kurum, uzun süre kullanılmayan hesap,
-      eski duyurular (süreler senden bekleniyor)
-- [ ] Web'den hesap silme talebi sayfası (Google Play zorunluluğu)
+- [x] Saklama görevleri (29 Ekim 2026, NOTLAR.md §42): lisansı biten kurum,
+      uzun süre kullanılmayan hesap (uyarı + silme), eski duyurular. Gece
+      `retention-jobs` (pg_cron). Canlıda (31 Ekim 2026; risk_alerts'ten
+      sonra uygulandığı için bildirim türü kısıtı yeniden yazılmadı).
+- [x] Web'den hesap silme sayfası: `/#/hesap-sil` (e-posta kodu ile giriş).
+      Canlıda çalışması için `supabase/templates/magic_link.html` şablonu
+      Supabase'e yapıştırılmalı.
+- [ ] Hareketsiz hesap uyarısı şimdilik uygulama içi + telefon bildirimi;
+      kendi e-posta sağlayıcınız olursa e-posta uyarısı da eklenebilir.
+- [ ] Rıza ve veli onay kayıtları hesapla birlikte siliniyor; avukat "10 yıl
+      ispat için sakla" derse ayrı bir arşiv tablosu gerekir.
 - [ ] `kvkkContactEmail` ve metinlerdeki `[...]` yerleri doldurulsun; sonra
       `python tool/legal/build_legal.py` çalıştırılıp `legalVersion` artırılsın
+      (şu an 1.2)
 - [ ] Avukat onayından sonra metin değişirse aynı adım
+- [ ] Rehberlik görüşme kayıtları (`guidance_logs`, 31 Ekim 2026): öğrenci ve
+      veli görmez, "verilerimi indir"e de girmiyor. KVKK md. 11 başvurusunda
+      öğrenciye verilmesi gerekip gerekmediği avukata sorulsun; gerekirse
+      dışa aktarmaya eklenir. Veri envanteri ve aydınlatma metnine "koç ve
+      kurum müdürünün tuttuğu rehberlik notları" satırı eklenmeli.

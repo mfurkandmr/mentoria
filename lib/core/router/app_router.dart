@@ -16,9 +16,12 @@ import '../../features/assignments/presentation/assign_homework_screen.dart';
 import '../../features/assignments/presentation/student_homework_screen.dart';
 import '../../features/announcements/presentation/announcement_widgets.dart';
 import '../../features/notifications/presentation/notification_widgets.dart';
+import '../../features/account/presentation/account_deletion_screen.dart';
 import '../../features/account/presentation/profile_screen.dart';
 import '../../features/admin/presentation/admin_home_screen.dart';
 import '../../features/import/presentation/import_screen.dart';
+import '../../features/optic/presentation/answer_key_screens.dart';
+import '../../features/optic/presentation/optic_scan_screens.dart';
 import '../../features/intro/intro_screen.dart';
 import '../../features/garden/presentation/garden_screen.dart';
 import '../../features/learn/presentation/learn_screen.dart';
@@ -50,6 +53,10 @@ import '../config/env.dart';
 import '../constants/exam_subjects.dart';
 
 const _authRoutes = {'/login', '/signup'};
+
+/// Uygulamayı kurmadan hesap silme sayfası (Google Play zorunluluğu). Oturum
+/// açık da kapalı da olsa burada kalınır; oturumu sayfa kendisi açar.
+const accountDeletionRoute = '/hesap-sil';
 
 /// Oturum açmadan girilebilen yerler: giriş, kayıt, davet linki
 /// (`/join/KOD`) ve dershane linki (`/t/slug`).
@@ -86,6 +93,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       }
 
       if (!Env.isConfigured) return loc == '/setup' ? null : '/setup';
+      if (loc == accountDeletionRoute) return null;
 
       final loggedIn = Supabase.instance.client.auth.currentSession != null;
       // Şifre sıfırlama bağlantısından gelindi: önce yeni şifre.
@@ -115,6 +123,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: '/setup', builder: (_, _) => const SetupScreen()),
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
+      // Web: https://.../#/hesap-sil (mağaza kaydındaki "hesap silme" adresi).
+      GoRoute(
+        path: accountDeletionRoute,
+        builder: (_, _) => const AccountDeletionScreen(),
+      ),
       GoRoute(
         path: '/signup',
         builder: (_, state) =>
@@ -258,6 +271,24 @@ GoRoute _managerRoutes(String base, Widget home) => GoRoute(
   routes: [
     GoRoute(path: 'profile', builder: (_, _) => const ProfileScreen()),
     GoRoute(path: 'import', builder: (_, _) => const ImportScreen()),
+    // Optik okuma: cevap anahtarı + kazanımlar, sonra optik fotoğrafları.
+    GoRoute(
+      path: 'optic',
+      builder: (_, _) => OpticKeysScreen(basePath: base),
+      routes: [
+        GoRoute(
+          path: 'new',
+          builder: (_, _) => NewAnswerKeyScreen(basePath: base),
+        ),
+        GoRoute(
+          path: ':id',
+          builder: (_, state) => OpticKeyScreen(
+            keyId: state.pathParameters['id']!,
+            basePath: base,
+          ),
+        ),
+      ],
+    ),
     // Toplu duyuru: gönderilenler ve gelenler.
     GoRoute(
       path: 'announcements',

@@ -5,13 +5,12 @@
 ## 1. Veri sorumlusu
 
 Kişisel verileriniz, 6698 sayılı Kişisel Verilerin Korunması Kanunu
-("KVKK") kapsamında veri sorumlusu sıfatıyla **[VERİ SORUMLUSU UNVANI]**
-("Mentoria") tarafından işlenir.
+("KVKK") kapsamında veri sorumlusu sıfatıyla Mentoria'nın geliştiricisi
+**[AD SOYAD]** ("Mentoria") tarafından işlenir. Mentoria bir şirket değil,
+bireysel geliştirici tarafından sunulan bir uygulamadır.
 
 - Adres: [ADRES]
 - E-posta: [KVKK E-POSTA ADRESİ]
-- KEP: [KEP ADRESİ, varsa]
-- MERSİS / Vergi no: [NUMARA]
 
 Mentoria'yı bir dershane, okul ya da kurs aracılığıyla kullanıyorsanız, o
 kurum da kendi eğitim hizmeti için verilerinizden sorumludur. Kurumun kendi
@@ -90,12 +89,13 @@ güvence] ile yapılır.
 ## 6. Ne kadar süre saklıyoruz?
 
 - Hesabınız açık olduğu sürece saklarız.
-- Hesabınızı sildiğinizde verileriniz [30] gün içinde silinir. Sistem
-  yedeklerinde en fazla [7] gün daha kalabilir.
+- Hesabınızı sildiğinizde verileriniz 30 gün içinde silinir. Sistem
+  yedeklerinde en fazla 7 gün daha kalabilir.
 - Kurumunuzun lisansı sona erdiğinde, kurum hesabınızı devam ettirmezse
-  verileriniz [1 yıl] sonra silinir.
-- [Uzun süre (ör. 2 yıl) giriş yapılmayan hesaplar uyarı e-postasından sonra
-  silinir.]
+  verileriniz 1 yıl sonra silinir.
+- 2 yıl boyunca hiç kullanılmayan hesaplar, silinmeden 30 gün önce uygulama
+  içi ve telefon bildirimiyle uyarıldıktan sonra silinir.
+- Kurum ve koç duyuruları 1 yıl sonra silinir.
 - Uygulama içi bildirimler 90 gün sonra otomatik silinir.
 - Güvenlik kayıtları [yasal süre boyunca] saklanır.
 
@@ -131,10 +131,11 @@ Mentoria'ya başvurarak şunları isteyebilirsiniz:
 
 **Uygulama içinden:** "Gizlilik ve izinler" sayfasından verilerinizi
 indirebilir, rızalarınızı geri çekebilir ve hesabınızı silebilirsiniz.
-[Kod aşamasında eklenecek.]
+Uygulamayı kurmadan da [WEB ADRESİ]/#/hesap-sil sayfasından, e-postanıza
+gelen kodla hesabınızın silinmesini isteyebilirsiniz.
 
-**Başvuru:** [KVKK E-POSTA ADRESİ] adresine kayıtlı e-postanızdan,
-[KEP ADRESİ] üzerinden ya da [ADRES] adresine yazılı olarak başvurabilirsiniz.
+**Başvuru:** [KVKK E-POSTA ADRESİ] adresine kayıtlı e-postanızdan ya da
+[ADRES] adresine yazılı olarak başvurabilirsiniz.
 Başvurunuzda adınız soyadınız ve talebiniz yer almalıdır. Başvurunuzu en geç
 **30 gün** içinde ücretsiz sonuçlandırırız. Başvurunuz reddedilir, cevabı
 yetersiz bulursanız ya da süresinde cevap verilmezse Kişisel Verileri Koruma

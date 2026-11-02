@@ -18,17 +18,17 @@ dosya deposunu, yedekleri ve kullanıcının cihazındaki önbelleği kapsar.
 | Veri | Saklama süresi | Sonra ne olur | Uygulamada durum |
 |---|---|---|---|
 | Hesap, profil, çalışma ve deneme kayıtları | Hesap açık olduğu sürece | Hesap silinince silinir | Var (silme akışı) |
-| Hata defteri fotoğrafları | Kart veya hesap silinene kadar | Depodan silinir | **Eksik:** hesap silinince depodaki fotoğraflar kalıyor |
-| Silinen hesabın verileri | En geç [30] gün | Kalıcı silme | [Kontrol edilecek] |
-| Sistem yedekleri | [7] gün (Supabase'in yedek döngüsü) | Yedekle birlikte kendiliğinden silinir | Supabase tarafında |
-| Lisansı biten kurumun öğrenci verileri | Lisans bitiminden [1 yıl] sonra (kurum veya öğrenci devam etmezse) | Silinir ya da anonimleştirilir | **Eksik:** otomatik görev yok |
-| Uzun süre kullanılmayan hesaplar | Son girişten [2 yıl] sonra, [30] gün önceden e-posta uyarısıyla | Silinir | **Eksik** |
+| Hata defteri fotoğrafları | Kart veya hesap silinene kadar | Depodan silinir | **Var** (`storage-cleanup`, 10 dakikada bir) |
+| Silinen hesabın verileri | Hemen; öğrenci silme talebinde en geç 29 gün | Kalıcı silme | **Var** (`overdue-deletion-requests`) |
+| Sistem yedekleri | 7 gün (Supabase'in yedek döngüsü) | Yedekle birlikte kendiliğinden silinir | Supabase tarafında |
+| Lisansı biten kurumun verileri | Lisans bitiminden 1 yıl sonra (lisans yenilenmezse) | Kurumdaki tüm hesaplar silinir | **Var** (`retention-jobs`) |
+| Uzun süre kullanılmayan hesaplar | Son etkinlikten 2 yıl sonra, 30 gün önceden uygulama içi ve telefon bildirimiyle uyarılarak | Silinir | **Var** (`retention-jobs`); öğrencisi olan koç ve öğrencisi olan kurumun tek müdürü silinmez |
 | Uygulama içi bildirimler | 90 gün (duyurular hariç) | Gece otomatik silinir | **Var** (`cleanup-notifications`) |
-| Duyurular | [1 yıl] | Silinir | **Eksik** |
+| Duyurular | 1 yıl | Duyuru ve bildirimleri silinir | **Var** (`retention-jobs`) |
 | Telefon bildirim adresi (FCM token) | Çıkış yapılınca veya geçersizleşince | Silinir | Var |
 | Giriş ve güvenlik kayıtları (Supabase Auth) | [Yasal süre; 5651 için 1–2 yıl] | Supabase döngüsüyle | Supabase tarafında; avukata sorulacak |
 | Rıza ve veli onay kayıtları | Rıza geri çekildikten veya hesap silindikten sonra [10 yıl] (zamanaşımı ve ispat için) | Silinir | Kod aşamasında eklenecek |
-| Hesap silme talebi kaydı | Talep tamamlandıktan sonra [1 yıl] | Silinir | [Kontrol edilecek] |
+| Hesap silme talebi kaydı | Hesapla birlikte | Silinir | Var (hesap silinince cascade) |
 | Cihazdaki önbellek | Çıkışta veya en çok 7 gün | Cihazdan silinir | Var |
 
 **Anonim istatistik:** Silme yerine anonimleştirme seçilirse (ör. "bu
@@ -54,9 +54,12 @@ periyodik imha süresini en çok 6 ay olarak belirler).
 
 ## 5. Sorumlular
 
+Mentoria bireysel geliştirici tarafından sunulduğu için tüm görevlerin
+sorumlusu veri sorumlusunun kendisidir.
+
 | Görev | Sorumlu |
 |---|---|
-| Politikanın güncellenmesi | [Ad Soyad / unvan] |
-| Silme taleplerinin yanıtlanması (30 gün içinde) | [Ad Soyad] |
-| Teknik imha ve otomatik görevler | [Ad Soyad] |
-| Veri ihlali bildirimi (Kurul'a 72 saat içinde) | [Ad Soyad] |
+| Politikanın güncellenmesi | [AD SOYAD] |
+| Silme taleplerinin yanıtlanması (30 gün içinde) | [AD SOYAD] |
+| Teknik imha ve otomatik görevler | [AD SOYAD] |
+| Veri ihlali bildirimi (Kurul'a 72 saat içinde) | [AD SOYAD] |

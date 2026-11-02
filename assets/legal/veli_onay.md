@@ -7,7 +7,7 @@
 ## Metin A: Velinin uygulamada verdiği onay
 
 Velisi / yasal temsilcisi olduğum **[Öğrenci Ad Soyad]** adlı öğrencinin
-Mentoria'yı kullanmasına ilişkin olarak, [VERİ SORUMLUSU UNVANI] tarafından
+Mentoria'yı kullanmasına ilişkin olarak, [AD SOYAD] tarafından
 hazırlanan **Aydınlatma Metni**'ni okudum.
 
 **☐ (Zorunlu)** Çocuğumun Mentoria hesabının açılmasına ve Aydınlatma

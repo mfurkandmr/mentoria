@@ -42,9 +42,14 @@ alır; bireysel katılan öğrenciler için uygulama veliden onay ister.
   Profil'den silebilir. Öğrenciler Profil → Güvenlik → "Hesabımın
   silinmesini iste" ile talep açar; silme işlemini koçu ya da kurumu yapar.
   Talep **30 gün** içinde tamamlanmazsa Mentoria hesabı kendisi siler.
-- **Uygulama dışından:** [KVKK E-POSTA ADRESİ] adresine kayıtlı e-postanızdan
-  yazabilirsiniz. Google Play bu yolu ayrıca zorunlu tutar; web'de bir
-  "hesap silme talebi" sayfası gerekir.
+- **Uygulama dışından:** [WEB ADRESİ]/#/hesap-sil sayfasında e-postanıza
+  gelen kodla giriş yapıp hesabınızı silebilir (öğrenciler silme talebi
+  açar) ya da [KVKK E-POSTA ADRESİ] adresine kayıtlı e-postanızdan
+  yazabilirsiniz.
+- **Ne kadar sürede:** Silinen hesabın verileri hemen silinir; sistem
+  yedeklerindeki kopyalar en geç 7 gün içinde kendiliğinden silinir. 2 yıl
+  hiç kullanılmayan hesaplar, 30 gün önceden bildirimle uyarıldıktan sonra
+  silinir.
 
 ## Değişiklikler
 
@@ -53,6 +58,6 @@ Bu politikayı güncellediğimizde "Son güncelleme" tarihini değiştirir,
 
 ## İletişim
 
-[VERİ SORUMLUSU UNVANI] · [ADRES] · [KVKK E-POSTA ADRESİ]
+[AD SOYAD] · [ADRES] · [KVKK E-POSTA ADRESİ]
 
 © 2026 Mentoria. Tüm hakları saklıdır.

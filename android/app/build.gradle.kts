@@ -8,6 +8,17 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Mağaza imzası: android/key.properties (depoya girmez, bkz. NOTLAR.md §20).
+// Dosya yoksa release derlemesi durur; mağazaya yanlışlıkla hata ayıklama
+// anahtarıyla imzalı paket gitmesin. Yerel deneme için bilerek:
+// flutter build apk --release -PdebugSigning
+val keyProps = Properties().apply {
+    val f = rootProject.file("key.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}
+val hasReleaseKey = keyProps.getProperty("storeFile") != null
+val debugSigning = project.hasProperty("debugSigning")
+
 android {
     namespace = "com.mentoria.mentoria"
     compileSdk = flutter.compileSdkVersion
@@ -31,14 +42,8 @@ android {
         versionName = flutter.versionName
     }
 
-    // Mağaza imzası: android/key.properties (depoya girmez, bkz. NOTLAR.md
-    // §20). Dosya yoksa yerel denemeler için hata ayıklama anahtarı kullanılır.
-    val keyProps = Properties().apply {
-        val f = rootProject.file("key.properties")
-        if (f.exists()) f.inputStream().use { load(it) }
-    }
     signingConfigs {
-        if (keyProps.getProperty("storeFile") != null) {
+        if (hasReleaseKey) {
             create("release") {
                 storeFile = file(keyProps.getProperty("storeFile"))
                 storePassword = keyProps.getProperty("storePassword")
@@ -51,13 +56,25 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.findByName("release")
-                ?: signingConfigs.getByName("debug")
+                ?: if (debugSigning) signingConfigs.getByName("debug") else null
             // Zamanlanmış bildirimler (pomodoro alarmı) için R8 kuralları.
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
         }
+    }
+}
+
+gradle.taskGraph.whenReady {
+    val release = allTasks.any {
+        it.project == project && it.name in setOf("assembleRelease", "bundleRelease")
+    }
+    if (release && !hasReleaseKey && !debugSigning) {
+        throw GradleException(
+            "android/key.properties yok: release paketi mağaza anahtarıyla " +
+                "imzalanamaz. Yerel deneme için -PdebugSigning ekle.",
+        )
     }
 }
 

@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/branding/branding_providers.dart';
+import '../../credits/data/org_credits_repository.dart';
+import '../../privacy/data/consent_repository.dart';
+import '../../privacy/presentation/legal_update_screen.dart';
 import '../../../shared/widgets/common.dart';
 import '../../../shared/widgets/bizz.dart';
 import '../data/auth_repository.dart';
@@ -62,6 +65,29 @@ class RoleGateScreen extends ConsumerWidget {
                 ),
                 onRetry: () => ref.invalidate(tenantBrandingProvider),
               );
+            }
+            // Kurumun lisansı bittiyse öğrenci, koç ve veli giremez (veriler
+            // RLS ile zaten kapalı); müdür girer ve panelinde görür.
+            final license = ref.watch(licenseActiveProvider);
+            if (license.isLoading && !license.hasValue) {
+              return const CircularProgressIndicator();
+            }
+            if (license.value == false) {
+              return _Problem(
+                message: tr(
+                  'Kurumunun lisans süresi doldu. Kurum yöneticinle iletişime geç.',
+                ),
+                onRetry: () => ref.invalidate(licenseActiveProvider),
+              );
+            }
+            // KVKK: yayımlanan metin sürümü onaylanmadıysa önce onay. Durum
+            // okunamazsa (bağlantı) kişi içeride kilitli kalmasın, geçer.
+            final consent = ref.watch(myConsentStatusProvider);
+            if (consent.isLoading && !consent.hasValue) {
+              return const CircularProgressIndicator();
+            }
+            if (consent.value?.needsLegalAccept ?? false) {
+              return const LegalUpdatePrompt();
             }
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (context.mounted) context.go(homeFor(p.role));

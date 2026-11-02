@@ -1698,3 +1698,227 @@ Migration `20261020100000_org_credits` (canlıda; geri alma dosyası var).
   - Mevcut kurumun kodu eski `random()` ile üretilmişti, değiştirilmedi
     (müdürün dağıttığı kod bozulmasın). Müdür panelden yenileyebilir.
   - Test: `supabase/tests/invite_rate_limit_test.mjs`.
+
+## 42. KVKK saklama görevleri ve web'den hesap silme (29 Ekim 2026)
+
+Migration `20261029100000_retention_jobs` (rollback'i var). **Canlıya
+uygulandı 30 Ekim 2026** (2 Kasım'da `list_migrations` ile doğrulandı); test
+projesine uygulanmadı.
+
+- **Veri sorumlusu:** şirket yok, bireysel geliştirici. Metinlerdeki unvan
+  yerleri `[AD SOYAD]` oldu; MERSİS ve KEP satırları kalktı. Ad, adres,
+  e-posta ve web adresi hâlâ boş (`docs/kvkk/00_README.md`).
+- **Saklama görevleri** (gece 03.30, pg_cron `retention-jobs` →
+  `run_retention_jobs()`):
+  - `purge_old_announcements()`: 1 yıldan eski duyurular ve onların
+    bildirimleri.
+  - `purge_expired_organizations()`: lisansı 1 yıldan önce bitmiş kurumdaki
+    tüm hesaplar. Lisans yenilenirse tarih ilerlediği için bir şey silinmez.
+  - `process_inactive_accounts()`: son etkinlikten 2 yıl − 30 gün sonra
+    `inactivity_warning` bildirimi (telefon bildirimi de gider), uyarıdan en
+    az 30 gün sonra hâlâ etkinlik yoksa silme. Son etkinlik = kayıt, son
+    giriş ve `auth.refresh_tokens.updated_at`'in en yenisi (uygulama açık
+    kaldıkça oturum yenilenir; "hiç çıkış yapmayan" kişi silinmez).
+    Silinmeyenler: platform yöneticileri, öğrencisi olan koç, öğrencisi olan
+    kurumun tek müdürü.
+  - Süreler `retention_settings` tablosunda (tek satır, yalnızca SQL).
+    Elle çalıştırma: `select public.run_retention_jobs();`
+- **Web'den hesap silme** (`/#/hesap-sil`, `AccountDeletionScreen`; Google
+  Play'in "uygulamayı kurmadan silme" şartı):
+  - E-posta → 6 haneli kod (`signInWithOtp(shouldCreateUser: false)` +
+    `verifyOTP(type: email)`). Kayıtlı olmayan adreste de "kod gönderdik"
+    denir (hesap tahmini olmasın).
+  - Sonra uygulamadaki kural: öğrenci silme talebi açar (koç siler, 29 günde
+    sistem siler), diğer roller hemen siler (`delete_my_account`).
+  - Router bu adreste oturum açık da kapalı da yönlendirme yapmaz.
+  - **Canlıda gerekli:** Supabase → Authentication → Emails → "Magic Link"
+    şablonuna `supabase/templates/magic_link.html` yapıştırılmalı (kod
+    gitmesi için `{{ .Token }}`). Edge Function gerekmedi.
+- Metinler: süreler dolduruldu, web silme sayfası eklendi;
+  `build_legal.py` çalıştırıldı, `legalVersion` 1.2.
+- Test: `supabase/tests/retention_test.mjs`.
+
+## 43. Optik okuma (30 Ekim 2026)
+
+Migration `20261030100000_optic_reading` (rollback'i var; **canlıya
+uygulandı 30 Ekim 2026**, RLS ve yetkiler SQL ile doğrulandı). Koç kazanım /
+cevap anahtarı Excel'ini yükler, sonra optik formların fotoğrafını çeker;
+okuma telefonda yapılır (internet ve ücret yok).
+
+- **Veritabanı:**
+  - `answer_keys` (deneme: ad, tür, yayınevi, tarih, `template_id`) ve
+    `answer_key_items` (ders + soru no → doğru cevap, kazanım, isteğe bağlı
+    konu). Kurumdaki koç ve müdürler okur; öğrenci anahtarı göremez.
+    Yazma yalnızca `create_answer_key` / `delete_answer_key` ile.
+  - `exam_answers`: öğrencinin her soruda işaretlediği şık + doğru cevap +
+    kazanım. Denemeyi görebilen (öğrenci, veli, koç, müdür) görür.
+  - `submit_optic(key, student, answers)`: sunucuda değerlendirir, deneme
+    `source = 'optic'`, `batch_id = anahtar` (Denemeler ekranında tek paket,
+    7 günlük silme kuralı aynen). Aynı öğrencinin optiği yeniden okunursa
+    deneme yerinde güncellenir, bildirim tekrar gitmez; 7 günü geçmişse
+    `EXAM_LOCKED`. Yanlış/boş sorular kazanımın bağlı olduğu konu varsa
+    `exam_wrong_topics`'e yazılır. İptal soru (cevabı boş) sayılmaz; AYT'de
+    hiç işaret konmayan test (alan dışı) sayılmaz, alan profilden ya da
+    işaretli testlerden çıkar.
+- **Okuma motoru** (`lib/features/optic/data/omr/`, saf Dart + `image`):
+  EXIF yönü düzeltilir → en uzun kenar 1600 px → yerel ortalamaya göre
+  eşikleme → dört köşedeki dolu kareler bulunur → perspektif dönüşümü
+  (`Homography`) → her baloncuğun ortalama koyuluğu. Bir sıradaki boş
+  baloncuklara (ortanca) göre belirgin koyu olan işaretli sayılır; eşik o
+  kâğıttaki tipik işaret koyuluğuna göre kayar (açık basan kalem de okunur).
+  İki işaret ya da silik iz → `UncertainMark`, koç kontrol ekranında seçer.
+  Öğrenci numarası formdaki numara alanından okunur, `student_number` ile
+  eşleşir.
+- **Cevap kâğıdı: Mentoria YKS formu** (`mentoria_yks`; 30 Ekim 2026'da
+  kullanıcıyla kararlaştırıldı: yayınevi formları optik makine için
+  tasarlandığından kamerayla okumaya kendi formumuz kullanılır). A4; dört
+  köşede siyah kare + sol üstte küçük yön işareti (kâğıt ters ya da yan
+  çekilse de okunur), öğrenci no (8 hane), oturum (TYT / AYT), kitapçık
+  (A / B), 4 sütun × 40 satır ortak ızgara (ÖSYM kâğıdındaki gibi TYT ve
+  AYT aynı kutucukları farklı derslerle kullanır; `layouts`).
+  - Uygulamadan PDF olarak indirilir (Optik okuma ekranı → yazıcı simgesi;
+    `optic_form_print.dart`: Flutter ile çizilir, JPEG gömülü tek sayfa PDF).
+  - Önizleme: `flutter test test/tool/optic_form_preview_test.dart` →
+    her şablon için `build/optik_<id>.pdf` / `.png` / `_dolu.png`.
+  - `test/optic/optic_print_test.dart`: yazdırılan form doldurulup telefon
+    fotoğrafına çevrilir ve okunur (TYT ve AYT).
+  - Başka bir form gerekirse `opticTemplates`'e yeni şablon eklenir.
+- **Standart YKS optik formu** (`standart_yks`, varsayılan; 30 Ekim 2026
+  kullanıcı kararı: "standardı kullan"): yayınevi tarzı, köşe karesi yok,
+  sol kenarda 55 zamanlama çubuğu (soru satırları çubuklarla hizalı), 10
+  haneli öğrenci no, oturum, kitapçık, 4 × 40 ızgara. Gerçek bir yayınevinin
+  kâğıdı değil, o tarzda bir örnek. Kullanıcının gönderdiği iki "yayınevi
+  formu" görüntüsü kullanılmadı: biri 320 px, öbürü yapay zekâyla
+  üretilmiş görünüyordu (yazım hataları, bozuk baloncuk harfleri) ve
+  hizalama işareti yoktu.
+  - `opticTemplates` = [standart, Mentoria]; yeni denemede ilki seçili.
+  - İndirme: Optik okuma ekranındaki yazıcı simgesi formu sordurur;
+    deneme ekranında "Bu denemenin boş kâğıdını indir (PDF)".
+  - Yazdırma çizimi (`paintOpticForm`) artık şablondan bağımsız: kutular
+    alanların konumundan hesaplanır, zamanlama çubukları da çizilir.
+  - `test/optic/optic_print_test.dart` her şablon için basılı formu
+    doldurup fotoğraflayıp okur (TYT ve AYT).
+- **Yayınevi / dershane formları (zamanlama çizgili)** (30 Ekim 2026):
+  makine için basılan formlarda köşe karesi yok, kenarda siyah zamanlama
+  çubukları var (`OpticTemplate.track`, `TimingTrack`). Okuma:
+  1. Aynı doğru üzerinde, eşit aralıklı, benzer boyda en çok çubuk bulunur;
+     sıra numarası ardışık aralıklardan sayılır (perspektifte aralık değişir).
+     İçeriğin hangi yanda olduğuna göre (önce parlaklık: masa / kâğıt, sonra
+     baskı yoğunluğu) kâğıdın ters çekildiği anlaşılır.
+  2. Kaba eşleme: çubuklara oturtulan eğri + satırlar çubuk sırasına dik.
+  3. Kesin eşleme: çizgiden dışa doğru 100'er birimlik şeritlerde her
+     baloncuk kendi çerçevesine oturtulur (`snap`), o ana kadarki
+     eşleşmelere tek perspektif dönüşümü oturtulur (`Homography.fit`,
+     aykırılar atılır; çubuklar kesin nokta, hiç atılmaz) ve sonraki şerit
+     bu dönüşümle aranır.
+  - Testler (`test/optic/omr_track_test.dart`, pembe baskılı sahte form):
+    düz, ~%7 ve ~%13 perspektif, 180°; hizalama hatası gerçek yerlere göre
+    1,5 birimin altında.
+  - Denenmiş ama bırakılmış yollar: blok / parça bazında kaydırma araması
+    ve ölçek-eğiklik kalibrasyonu (tekrarlayan baloncuk deseninde bir şık
+    ya da bir satır kayık yere oturabiliyordu).
+- **Şablon çıkarma aracı:** `python tool/optic/extract_template.py
+  bos_form.png` (numpy + opencv-python). Boş formun düz taramasından köşe
+  karelerini ya da zamanlama çubuklarını ve baloncuk ızgaralarını bulur;
+  `build/<ad>_sablon.json`, `.dart` (OpticTemplate iskeleti, dersler
+  `TODO`) ve `.png` (numaralı kontrol resmi) yazar. İki baloncuklu seçim
+  alanları (kitapçık, oturum) "tek tük baloncuk" diye listelenir, elle
+  yazılır. Mentoria formu ve çizgili test formunda değerler birebir doğru
+  (`flutter test test/tool/optic_form_preview_test.dart` iki formun da
+  PNG'sini üretir). **Gerçek yayınevi formu henüz denenmedi.**
+- **Kitapçık (A/B)** (`20261030110000_optic_booklets`, rollback'i var; canlıda):
+  kazanım Excel'inde isteğe bağlı "B Soru No" sütunu
+  (`answer_key_items.question_no_b`). `submit_optic(..., p_booklet)`; kayıtlar
+  A numarasıyla, `exam_answers.booklet_no` öğrencinin kendi numarası,
+  `exams.booklet`. Anahtarda B yoksa B okunamaz (`NO_B_KEY`; kontrol ekranı
+  kaydetmeyi kapatır). Formdaki oturum denemeyle uyuşmazsa uyarı.
+- **Kazanım Excel'i** (`answer_key.dart` `parseAnswerKey`): sütunlar Ders /
+  Test, Soru No, Cevap, Kazanım / Konu (yazım serbest). Test içi numaralar
+  (Sosyal 1–20, Fen 1–20, AYT Sosyal-1/-2) derslere bölünür. Kazanım,
+  adını içerdiği müfredat konusuna bağlanır (`matchTopic`).
+- **Ekranlar:** `/coach/optic`, `/admin/optic` (liste), `…/optic/new`
+  (yeni deneme + Excel), `…/optic/:id` (Optik oku → kontrol → kaydet; kamera
+  sıradaki optik için kendiliğinden açılır; okunanlar nete göre; en çok
+  yanlış yapılan kazanımlar; Excel indir). Girişler: koç ana sayfasında
+  "Optik oku", Denemeler ekranının üstünde tarayıcı simgesi.
+  Öğrencinin deneme detayında "Yanlışların ve boşların" + kazanımlar
+  (`ExamAnswersView`).
+- **Excel** (`optic_excel.dart`): Sonuçlar (nete göre sıralı), Cevaplar
+  (öğrenci × soru, "B ✗ A"), Kazanımlar (başarı yüzdesi, en düşük üstte).
+- **Testler:** `test/optic/` (okuma motoru: düz tarama, eğik/gölgeli/
+  gürültülü JPEG fotoğraf, açık kalem, çift/silik işaret, kadraj dışı köşe;
+  Excel okuma; puanlama; Excel yazma; ekran akışı; yazdırılan form),
+  `supabase/tests/optic_test.mjs`, `optic_booklet_test.mjs`.
+
+## 44. Rehberlik paketi ve lisans erişimi (31 Ekim 2026)
+
+Altı migration, hepsinin rollback'i var; **hepsi canlıya uygulandı 30 Ekim
+2026 akşamı** (2 Kasım'da doğrulandı). `send-push` v11 (yeni haftalık rapor
+metni, `inactivity_warning`, `risk_digest`) da canlıda. Test projesine
+uygulanmadı.
+
+- **Öğrencinin kendi programı** (`20261031100000_student_self_plan`):
+  `plan_items.start_time` (isteğe bağlı, "09:00–09:45"). Öğrenci kendi
+  haftasına madde ekler, yalnızca kendi eklediğini siler; koçun maddelerini
+  yalnızca işaretler. Günde en çok 12 madde. Kendi maddeleri bildirim
+  üretmez.
+- **Lisans bitince erişim biter** (`20261031110000_license_access`):
+  `my_license_active()`; `my_tenant_active()` artık lisansı da kontrol eder,
+  yani lisansı biten kurumun öğrenci, koç ve velisi yalnızca kendi profilini
+  okur. Müdür her zaman girer. Uygulamada `licenseActiveProvider`
+  (`RoleGateScreen`) "lisans doldu" ekranını gösterir. Lisans uzatılınca
+  erişim kendiliğinden döner.
+- **Veli haftalık özeti** (`20261031120000_weekly_summary`):
+  `weekly_summary_data()` (iç) / `weekly_summary(öğrenci)`: son 7 gün
+  çalışılan gün, kaçırılan / yapılan görüşme, ödev tamamlama, son net ve
+  değişim, soru ve odak dakikası. Veli ana sayfasında `WeeklySummaryCard`
+  (WhatsApp metni de buradan). Pazar akşamı veli bildirimi aynı veriyi
+  taşır. Sınıf yoklaması yok; "devamsızlık" = çalışılmayan gün + kaçırılan
+  görüşme.
+- **Rehberlik görüşme kaydı** (`20261031130000_guidance_logs`,
+  `lib/features/guidance/`): tarih, tür (yüz yüze / telefon / online / veli),
+  sabit konu etiketleri, not, sonraki adım, takip tarihi. Yazan koç ya da
+  müdür; görenler şimdiki koç ve müdür (öğrenci ve veli görmez, eski koç
+  görmez). Değiştirme yok; yazan 24 saat içinde, müdür her zaman siler.
+  Sağlık vb. özel nitelikli veri etiketi bilinçli olarak yok.
+- **Risk erken uyarısı** (`20261031140000_risk_alerts`, `risk_card.dart`):
+  0–100 skor = devam (en çok 50) + net düşüşü (en çok 30) + yapılmayan ödev
+  (en çok 20). 30 ve üstü, en riskli 7 öğrenci; 7 günden yeni kayıt girmez.
+  `my_risk_list()`; pg_cron `risk-digests` pazartesi 08:00 (TR) her koça tek
+  `risk_digest` bildirimi.
+- **Otomatik konu reçetesi** (`20261031150000_topic_prescription`,
+  `prescription_card.dart`): `topic_prescription(öğrenci, 3)` son
+  denemelerin yanlış konularından ödev taslağı önerir (1 yanlış → 15 soru,
+  2–3 → 25, 4+ → 40; en çok 8 konu; son 14 günde ödev verilmiş konular
+  çıkar). Hiçbir şey yazmaz; koç seçip mevcut ödev akışıyla gönderir.
+- **Testler:** `test/weekly_guidance_test.dart`,
+  `test/risk_prescription_test.dart`; SQL: `self_plan_test.mjs`,
+  `license_access_test.mjs`, `weekly_guidance_test.mjs`,
+  `risk_prescription_test.mjs`.
+
+## 45. KVKK onayı: sunucuda zorunlu, metin güncellenince yeniden (2 Kasım 2026)
+
+Migration `20261102100000_signup_consent_required` (rollback'i var; **canlıya
+uygulandı 2 Kasım 2026**, yetkiler SQL ile doğrulandı). Test projesine
+uygulanmadı.
+
+- **Kayıt:** `apply_signup_invite`, `kvkk_consent = true` gelmeyen kaydı
+  `KVKK_REQUIRED` ile reddeder (e-posta doğrulamasını bekleyen kayıt da).
+  Önceden yalnızca uygulamadaki zorunlu kutu vardı; API doğrudan
+  çağrılırsa onaysız hesap açılabiliyordu. Uygulama her zaman `true`
+  gönderdiği için kullanıcıya ayrı bir hata metni yok.
+- **Yeniden onay:** `consent_status` artık `privacy_version` döndürür
+  (onaylanan son Kullanım Koşulları / Aydınlatma Metni sürümü; geri
+  çekildiyse null). Kişi kendi durumunu her rolde okur. `RoleGateScreen`
+  bunu `legalVersion` ile karşılaştırır, farklıysa panele girmeden
+  `LegalUpdatePrompt` (`privacy/presentation/legal_update_screen.dart`)
+  açılır: iki metnin linki, onay kutusu, "Onayla ve devam et", çıkış.
+  Durum okunamazsa kişi kilitlenmez, geçer.
+- **set_consent:** aynı rıza yalnızca aynı sürümle tekrar yazılmaz (önceden
+  Aydınlatma Metni bir kez onaylandıysa yeni sürümün onayı hiç
+  kaydedilmiyordu).
+- **Metin değişince:** `build_legal.py` + `legalVersion` artırılır; bütün
+  kullanıcılar sonraki açılışta yeniden onaylar. 2 Kasım'da canlıdaki 6
+  hesabın hepsi sürüm "0"daydı, yeni APK ile hepsine bir kez sorulacak.
+- **Testler:** `supabase/tests/signup_consent_test.mjs`,
+  `test/legal_update_test.dart`.

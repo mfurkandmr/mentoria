@@ -33,11 +33,8 @@
       oluşturmaya gerek yok; ilk gerçek hata yeterli.
 
 ### GitHub
-- [ ] **Depo şu an herkese açık (public).** Kod, NOTLAR.md ve KVKK taslakları
-      herkes tarafından görülebiliyor. Önerilen: Settings → General → Danger
-      Zone → "Change repository visibility" → Private. (CI özel depoda da
-      çalışır; ayda 2.000 dakika ücretsiz.) `promo-assets` dalındaki videolar
-      bir yerden bağlantıyla kullanılıyorsa önce onları başka yere taşı.
+- [x] Depo 22 Ekim 2026'dan beri **private**. (`promo-assets` dalı yalnızca
+      video dosyaları için herkese açık.)
 
 ### Alan adı
 - [ ] Bir alan adı al (ör. `mentoria.app`). Gerekenler:

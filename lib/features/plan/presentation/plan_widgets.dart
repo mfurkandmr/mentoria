@@ -37,11 +37,25 @@ class PlanTodayCard extends ConsumerWidget {
     final items =
         ref.watch(planWeekProvider((studentId, weekStartOf(now)))).value ??
         const <PlanItem>[];
-    if (items.isEmpty) return const SizedBox.shrink();
+    final brand = context.brand;
+    if (items.isEmpty) {
+      return Card(
+        clipBehavior: Clip.antiAlias,
+        child: ListTile(
+          onTap: () => context.push('/student/plan'),
+          leading: Icon(Icons.event_note_rounded, color: brand.primaryDeep),
+          title: Text(
+            tr('Çalışma programını yap'),
+            style: const TextStyle(fontWeight: FontWeight.w900),
+          ),
+          subtitle: Text(tr('Hangi gün, saat kaçta, hangi ders?')),
+          trailing: const Icon(Icons.chevron_right_rounded),
+        ),
+      );
+    }
     final today = DateTime(now.year, now.month, now.day);
     final todays = items.where((i) => i.day == today).toList();
     final weekDone = items.where((i) => i.done).length;
-    final brand = context.brand;
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -96,8 +110,9 @@ class PlanTodayCard extends ConsumerWidget {
                         Expanded(
                           child: Text(
                             [
+                              ?i.startTime,
                               _subjectLabel(i.subject),
-                              if (i.topic != null) i.topic!,
+                              ?i.topic,
                             ].join(' · '),
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -138,25 +153,28 @@ class StudentPlanScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(tr('Haftalık plan'))),
       body: me == null
           ? const Center(child: BizzLoader())
-          : WeeklyPlanView(studentId: me.id, canTick: true),
+          : WeeklyPlanView(studentId: me.id, canTick: true, selfPlanning: true),
     );
   }
 }
 
 /// Haftalık plan: hafta seçici, tamamlanma oranı ve gün gün maddeler.
 /// [canEdit]: koç / müdür (ekler, siler, kopyalar). [canTick]: işaretleyebilir.
+/// [selfPlanning]: öğrencinin kendisi (ekler, yalnızca kendi eklediğini siler).
 class WeeklyPlanView extends ConsumerStatefulWidget {
   const WeeklyPlanView({
     super.key,
     required this.studentId,
     this.canEdit = false,
     this.canTick = false,
+    this.selfPlanning = false,
     this.bottomPadding = 32,
   });
 
   final String studentId;
   final bool canEdit;
   final bool canTick;
+  final bool selfPlanning;
   final double bottomPadding;
 
   @override
@@ -318,6 +336,10 @@ class _WeeklyPlanViewState extends ConsumerState<WeeklyPlanView> {
                         ? tr(
                             'Günlere madde ekle ya da geçen haftanın planını kopyala.',
                           )
+                        : widget.selfPlanning
+                        ? tr(
+                            'Günlere "Madde ekle" ile kendi programını yap. Koçunun eklediği maddeler de burada görünür.',
+                          )
                         : tr('Koçun plan hazırlayınca burada görünecek.'),
                     bizzSize: 90,
                     action: widget.canEdit
@@ -339,7 +361,8 @@ class _WeeklyPlanViewState extends ConsumerState<WeeklyPlanView> {
                   ],
                   canEdit: widget.canEdit,
                   canTick: widget.canTick,
-                  hideEmpty: !widget.canEdit,
+                  selfPlanning: widget.selfPlanning,
+                  hideEmpty: !widget.canEdit && !widget.selfPlanning,
                   onToggle: _toggle,
                   onDelete: _delete,
                   onAdd: () async {
@@ -366,6 +389,7 @@ class _DaySection extends StatelessWidget {
     required this.items,
     required this.canEdit,
     required this.canTick,
+    required this.selfPlanning,
     required this.hideEmpty,
     required this.onToggle,
     required this.onDelete,
@@ -377,6 +401,7 @@ class _DaySection extends StatelessWidget {
   final List<PlanItem> items;
   final bool canEdit;
   final bool canTick;
+  final bool selfPlanning;
   final bool hideEmpty;
   final ValueChanged<PlanItem> onToggle;
   final ValueChanged<PlanItem> onDelete;
@@ -425,7 +450,7 @@ class _DaySection extends StatelessWidget {
                 ),
               ],
               const Spacer(),
-              if (canEdit)
+              if (canEdit || selfPlanning)
                 TextButton.icon(
                   onPressed: onAdd,
                   icon: const Icon(Icons.add_rounded, size: 18),
@@ -452,7 +477,14 @@ class _DaySection extends StatelessWidget {
                     _ItemTile(
                       item: i,
                       canTick: canTick,
-                      canEdit: canEdit,
+                      canDelete: canEdit || (selfPlanning && i.bySelf),
+                      // Koç öğrencinin kendi maddesini, öğrenci koçunkini
+                      // ayırt edebilsin.
+                      origin: canEdit && i.bySelf
+                          ? tr('Öğrenci ekledi')
+                          : selfPlanning && !i.bySelf
+                          ? tr('Koçundan')
+                          : null,
                       onToggle: () => onToggle(i),
                       onDelete: () => onDelete(i),
                     ),
@@ -470,20 +502,25 @@ class _ItemTile extends StatelessWidget {
   const _ItemTile({
     required this.item,
     required this.canTick,
-    required this.canEdit,
+    required this.canDelete,
+    required this.origin,
     required this.onToggle,
     required this.onDelete,
   });
   final PlanItem item;
   final bool canTick;
-  final bool canEdit;
+  final bool canDelete;
+  final String? origin;
   final VoidCallback onToggle;
   final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
     final look = subjectLook(item.subject);
-    final target = planTargetText(item);
+    final target = [
+      ?item.timeRange,
+      planTargetText(item),
+    ].where((s) => s.isNotEmpty).join(' · ');
     final brand = context.brand;
     return ListTile(
       onTap: canTick ? onToggle : null,
@@ -505,15 +542,12 @@ class _ItemTile extends StatelessWidget {
           decoration: item.done ? TextDecoration.lineThrough : null,
         ),
       ),
-      subtitle: target.isEmpty && item.note == null
+      subtitle: target.isEmpty && item.note == null && origin == null
           ? null
           : Text(
-              [
-                if (target.isNotEmpty) target,
-                if (item.note != null) item.note!,
-              ].join('\n'),
+              [if (target.isNotEmpty) target, ?item.note, ?origin].join('\n'),
             ),
-      trailing: canEdit
+      trailing: canDelete
           ? IconButton(
               tooltip: tr('Sil'),
               icon: const Icon(Icons.delete_outline_rounded),
@@ -552,6 +586,7 @@ class _AddPlanSheetState extends ConsumerState<_AddPlanSheet> {
   final _questions = TextEditingController();
   final _minutes = TextEditingController();
   final _note = TextEditingController();
+  TimeOfDay? _start;
   bool _saving = false;
 
   @override
@@ -588,6 +623,11 @@ class _AddPlanSheetState extends ConsumerState<_AddPlanSheet> {
               questionCount: q,
               minutes: m,
               note: _clean(_note),
+              startTime: switch (_start) {
+                null => null,
+                final t =>
+                  '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}',
+              },
             ),
           );
       nav.pop(true);
@@ -651,6 +691,32 @@ class _AddPlanSheetState extends ConsumerState<_AddPlanSheet> {
                 hintText: tr('ör. Problemler'),
               ),
             ),
+            InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () async {
+                final t = await showTimePicker(
+                  context: context,
+                  initialTime: _start ?? const TimeOfDay(hour: 9, minute: 0),
+                );
+                if (t != null && mounted) setState(() => _start = t);
+              },
+              child: InputDecorator(
+                decoration: InputDecoration(
+                  labelText: tr('Başlangıç saati'),
+                  suffixIcon: _start == null
+                      ? const Icon(Icons.schedule_rounded)
+                      : IconButton(
+                          tooltip: tr('Saati kaldır'),
+                          icon: const Icon(Icons.close_rounded),
+                          onPressed: () => setState(() => _start = null),
+                        ),
+                ),
+                child: Text(
+                  _start == null ? tr('İsteğe bağlı') : _start!.format(context),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
             Row(
               children: [
                 Expanded(

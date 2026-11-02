@@ -28,6 +28,12 @@ import '../features/learn/data/daily_question_repository.dart';
 import '../features/learn/data/practice_repository.dart';
 import '../features/tracking/data/tracking_models.dart';
 import '../features/tracking/data/tracking_repository.dart';
+import '../features/optic/data/optic_repository.dart';
+import '../features/assignments/data/prescription_repository.dart';
+import '../features/coach/data/risk_repository.dart';
+import '../features/guidance/data/guidance_repository.dart';
+import '../features/parent/data/weekly_summary_repository.dart';
+import 'demo_optic.dart';
 import 'demo_repositories.dart';
 
 /// Demo modunda Supabase yerine kullanılan sahte veriler.
@@ -57,6 +63,8 @@ Future<List<Override>> buildDemoOverrides([
   final practice = InMemoryPracticeRepository();
   final plan = InMemoryPlanRepository();
   await seedDemoPlan(plan, 'demo-student');
+  // Sunucudaki auth.uid(): öğrenci rolünde eklenenler öğrencinin kendisinin.
+  if (role == 'student') plan.currentUser = () => 'demo-student';
   seedDemoPractice(practice, 'demo-student');
   await seedDemoTracking(tracking, 'demo-student');
   await seedDemoTracking(tracking, 'demo-can', scale: 0.5);
@@ -155,6 +163,11 @@ Future<List<Override>> buildDemoOverrides([
       role: UserRole.student,
     ),
   };
+  final guidance = InMemoryGuidanceRepository(
+    userId: profile.id,
+    userName: profile.fullName,
+  );
+  seedDemoGuidance(guidance, 'demo-student');
   final announcements = InMemoryAnnouncementRepository(
     role: profile.role,
     myName: profile.fullName,
@@ -245,6 +258,9 @@ Future<List<Override>> buildDemoOverrides([
     avatarRepositoryProvider.overrideWithValue(avatars),
     successRankingRepositoryProvider.overrideWithValue(ranking),
     examRepositoryProvider.overrideWithValue(exams),
+    opticRepositoryProvider.overrideWithValue(
+      InMemoryOpticRepository.demo(exams),
+    ),
     coachRepositoryProvider.overrideWithValue(coach),
     trackingRepositoryProvider.overrideWithValue(tracking),
     coachingRepositoryProvider.overrideWithValue(coaching),
@@ -264,6 +280,19 @@ Future<List<Override>> buildDemoOverrides([
     practiceRepositoryProvider.overrideWithValue(practice),
     duelRepositoryProvider.overrideWithValue(demoDuels(avatars)),
     planRepositoryProvider.overrideWithValue(plan),
+    weeklySummaryRepositoryProvider.overrideWithValue(
+      InMemoryWeeklySummaryRepository(demoWeeklySummaries()),
+    ),
+    guidanceRepositoryProvider.overrideWithValue(guidance),
+    riskRepositoryProvider.overrideWithValue(
+      InMemoryRiskRepository(demoRiskEntries()),
+    ),
+    prescriptionRepositoryProvider.overrideWithValue(
+      InMemoryPrescriptionRepository(
+        demoPrescriptions(topics),
+        assignments: assignments,
+      ),
+    ),
     announcementRepositoryProvider.overrideWithValue(announcements),
     consentRepositoryProvider.overrideWithValue(
       consents ??
@@ -279,6 +308,7 @@ Future<List<Override>> buildDemoOverrides([
                 birthYear: DateTime.now().year - 17,
                 minor: true,
                 privacyNotice: true,
+                privacyVersion: legalVersion,
                 ranking: true,
                 guardianApproval: true,
                 guardianSource: 'institution',
@@ -289,6 +319,7 @@ Future<List<Override>> buildDemoOverrides([
                 profile.id: const ConsentStatus(
                   minor: false,
                   privacyNotice: true,
+                  privacyVersion: legalVersion,
                 ),
             },
           ),
@@ -407,8 +438,9 @@ class InMemoryExamRepository implements ExamRepository {
     createdAt: DateTime.now(),
   );
 
-  /// Kendi girdiğim bir deneme ekler (demo için geçmiş tarihli de olabilir).
-  void seedMine(
+  /// Kendi girdiğim bir deneme ekler (demo için geçmiş tarihli de olabilir);
+  /// denemenin kimliğini döner.
+  String seedMine(
     String studentId,
     ExamDraft draft, {
     required String batchId,
@@ -430,6 +462,7 @@ class InMemoryExamRepository implements ExamRepository {
             createdAt: createdAt,
           ),
         );
+    return id;
   }
 
   Iterable<Exam> get _all => _byStudent.values.expand((l) => l);

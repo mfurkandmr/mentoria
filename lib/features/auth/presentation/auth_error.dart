@@ -49,6 +49,11 @@ String authErrorMessage(Object error) {
         'Kurumun hesabı şu an kapalı. Kurum yöneticinle iletişime geç.',
       );
     }
+    if (msg.contains('license_expired')) {
+      return tr(
+        'Kurumunun lisans süresi doldu. Kurum yöneticinle iletişime geç.',
+      );
+    }
     if (msg.contains('database error')) {
       // handle_new_user tetikleyicisi daveti reddetti.
       return tr(

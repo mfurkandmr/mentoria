@@ -5,7 +5,7 @@ import '../../auth/data/auth_repository.dart';
 
 /// Yayımlanan KVKK metinlerinin sürümü. Metin değişince artırılır; rıza
 /// kayıtları hangi sürüme verildiğini tutar (bkz. docs/kvkk).
-const legalVersion = '1.1';
+const legalVersion = '1.2';
 
 /// Rıza türleri (veritabanındaki `consents.kind`).
 enum ConsentKind {
@@ -31,6 +31,7 @@ class ConsentStatus {
     this.birthYear,
     this.minor = true,
     this.privacyNotice = false,
+    this.privacyVersion,
     this.ranking = false,
     this.parentView = false,
     this.guardianApproval = false,
@@ -44,6 +45,7 @@ class ConsentStatus {
     birthYear: j['birth_year'] as int?,
     minor: j['minor'] as bool? ?? true,
     privacyNotice: j['privacy_notice'] as bool? ?? false,
+    privacyVersion: j['privacy_version'] as String?,
     ranking: j['ranking'] as bool? ?? false,
     parentView: j['parent_view'] as bool? ?? false,
     guardianApproval: j['guardian_approval'] as bool? ?? false,
@@ -60,6 +62,9 @@ class ConsentStatus {
   final int? birthYear;
   final bool minor;
   final bool privacyNotice;
+
+  /// Onaylanan son Kullanım Koşulları / Aydınlatma Metni sürümü (yoksa null).
+  final String? privacyVersion;
   final bool ranking;
   final bool parentView;
   final bool guardianApproval;
@@ -75,9 +80,13 @@ class ConsentStatus {
   /// 18 yaşından küçük ve veli onayı yok.
   bool get awaitingGuardian => minor && !guardianApproval;
 
+  /// Yayımlanan metin ([legalVersion]) henüz onaylanmadı: girişte sorulur.
+  bool get needsLegalAccept => privacyVersion != legalVersion;
+
   ConsentStatus copyWith({
     int? birthYear,
     bool? minor,
+    String? privacyVersion,
     bool? ranking,
     bool? parentView,
     bool? guardianApproval,
@@ -91,7 +100,8 @@ class ConsentStatus {
     return ConsentStatus(
       birthYear: birthYear ?? this.birthYear,
       minor: m,
-      privacyNotice: privacyNotice,
+      privacyNotice: privacyVersion != null || privacyNotice,
+      privacyVersion: privacyVersion ?? this.privacyVersion,
       ranking: r,
       parentView: parentView ?? this.parentView,
       guardianApproval: g,

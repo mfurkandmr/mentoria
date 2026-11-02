@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../assignments/presentation/assignment_widgets.dart';
+import '../../assignments/presentation/prescription_card.dart';
 import '../../../core/constants/exam_subjects.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/format.dart';
@@ -13,6 +14,8 @@ import '../../auth/data/auth_repository.dart';
 import '../../auth/data/profile.dart';
 import '../../coaching/presentation/coaching_widgets.dart';
 import '../../exams/presentation/exams_screen.dart';
+import '../../guidance/presentation/guidance_widgets.dart';
+import '../../parent/presentation/weekly_summary_card.dart';
 import '../../learn/presentation/learn_report_view.dart';
 import '../../plan/presentation/plan_widgets.dart';
 import '../../meetings/presentation/meeting_widgets.dart';
@@ -51,6 +54,7 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
     tr('Görevler'),
     tr('Ödevler'),
     tr('Notlar'),
+    tr('Rehberlik'),
     tr('Hata Defteri'),
     tr('Eğitim'),
     tr('Plan'),
@@ -125,6 +129,11 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
         icon: const Icon(Icons.assignment_add),
         label: Text(tr('Ödev ver')),
       ),
+      8 when canManage => FloatingActionButton.extended(
+        onPressed: () => showAddGuidanceSheet(context, id),
+        icon: const Icon(Icons.record_voice_over_rounded),
+        label: Text(tr('Görüşme kaydı')),
+      ),
       _ => null,
     };
 
@@ -181,6 +190,7 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
                   studentId: id,
                   student: student,
                   canEditGoals: isCoach,
+                  canShareSummary: canManage,
                 ),
                 ExamsView(studentId: id, onAdd: _openAddExam),
                 QuestionsView(studentId: id, bottomPadding: 32),
@@ -204,6 +214,11 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
                 ListView(
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
                   children: [
+                    // Son denemelerin eksik konularından ödev taslağı.
+                    if (canManage) ...[
+                      PrescriptionCard(studentId: id),
+                      const SizedBox(height: 12),
+                    ],
                     AssignmentList(
                       studentId: id,
                       viewer: canManage
@@ -219,6 +234,7 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
                   children: [NotesList(studentId: id, canWrite: isCoach)],
                 ),
+                GuidanceTimeline(studentId: id),
                 MistakesView(studentId: id, readOnly: true, bottomPadding: 32),
                 LearnReportView(studentId: id),
                 WeeklyPlanView(
@@ -297,11 +313,13 @@ class _OverviewTab extends StatelessWidget {
     required this.studentId,
     required this.student,
     required this.canEditGoals,
+    required this.canShareSummary,
   });
 
   final String studentId;
   final StudentSummary? student;
   final bool canEditGoals;
+  final bool canShareSummary;
 
   @override
   Widget build(BuildContext context) {
@@ -345,6 +363,13 @@ class _OverviewTab extends StatelessWidget {
               ),
             ),
         ],
+        // Veliye gönderilecek haftalık özet (veli de aynı kartı görür).
+        WeeklySummaryCard(
+          studentId: studentId,
+          name: s?.fullName ?? tr('Öğrenci'),
+          canShare: canShareSummary,
+        ),
+        const SizedBox(height: 12),
         GoalsCard(studentId: studentId, canEdit: canEditGoals),
         const SizedBox(height: 12),
         // Görüşmeyi yalnızca koç planlar; müdür görür.

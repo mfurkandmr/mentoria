@@ -12,6 +12,8 @@ import '../core/theme/app_fonts.dart';
 import '../core/i18n/i18n.dart';
 import '../features/announcements/data/announcement_repository.dart';
 import '../features/assignments/data/assignment_repository.dart';
+import '../features/assignments/data/prescription_repository.dart';
+import '../features/coach/data/risk_repository.dart';
 import '../features/avatar/data/avatar_models.dart';
 import '../features/avatar/data/avatar_repository.dart';
 import '../features/ranking/data/ranking_repository.dart';
@@ -27,6 +29,8 @@ import '../features/mistakes/data/mistake_repository.dart';
 import '../features/plan/data/plan_repository.dart';
 import '../features/privacy/data/consent_repository.dart';
 import '../features/duel/data/duel_repository.dart';
+import '../features/guidance/data/guidance_repository.dart';
+import '../features/parent/data/weekly_summary_repository.dart';
 import '../features/learn/data/daily_question_repository.dart';
 import '../features/learn/data/practice_repository.dart';
 import '../features/tracking/data/tracking_models.dart';
@@ -336,10 +340,14 @@ class InMemoryOrgCreditsRepository implements OrgCreditsRepository {
     this.isActive = true,
     this.isAdmin = false,
     this.code = 'MENTORIA-BAL2K7',
+    this.license = true,
   });
 
   int? balance;
   bool isActive;
+
+  /// Kurumun lisansı geçerli mi (müdür için sunucu hep true döner).
+  bool license;
   final bool isAdmin;
   String code;
   var _n = 0;
@@ -358,6 +366,9 @@ class InMemoryOrgCreditsRepository implements OrgCreditsRepository {
     _n++;
     return code = 'MENTORIA-YEN${_n.toString().padLeft(3, '0')}';
   }
+
+  @override
+  Future<bool> licenseActive() async => isAdmin || license;
 }
 
 /// Demo için kısa konu listesi (her derse birkaç başlık).
@@ -1741,8 +1752,11 @@ class InMemoryPlanRepository implements PlanRepository {
               i.day.isBefore(end),
         )
         .toList()
-      ..sort((a, b) => a.day.compareTo(b.day));
+      ..sort(comparePlanItems);
   }
+
+  /// Ekleyen kullanıcı (sunucuda auth.uid()); verilmezse koç sayılır.
+  String? Function()? currentUser;
 
   @override
   Future<void> add(String studentId, PlanDraft d) async {
@@ -1761,6 +1775,8 @@ class InMemoryPlanRepository implements PlanRepository {
         questionCount: d.questionCount,
         minutes: d.minutes,
         note: d.note,
+        startTime: d.startTime,
+        createdBy: currentUser?.call() ?? 'demo-coach',
       ),
     );
   }
@@ -1782,6 +1798,8 @@ class InMemoryPlanRepository implements PlanRepository {
       questionCount: x.questionCount,
       minutes: x.minutes,
       note: x.note,
+      startTime: x.startTime,
+      createdBy: x.createdBy,
       doneAt: done ? DateTime.now() : null,
     );
   }
@@ -1822,6 +1840,26 @@ Future<void> seedDemoPlan(InMemoryPlanRepository repo, String studentId) async {
       await repo.setDone(item.id, true);
     }
   }
+  // Öğrencinin kendi eklediği saatli maddeler.
+  final coach = repo.currentUser;
+  repo.currentUser = () => studentId;
+  for (final (d, at, subject, topic, m) in [
+    (0, '20:00', 'TYT_MAT', 'Üçgenler', 45),
+    (2, '19:30', 'TYT_TAR', 'Osmanlı kuruluş', 40),
+    (4, '21:00', 'TYT_TUR', 'Paragraf', 30),
+  ]) {
+    await repo.add(
+      studentId,
+      PlanDraft(
+        day: start.add(Duration(days: d)),
+        subject: subject,
+        topic: topic,
+        minutes: m,
+        startTime: at,
+      ),
+    );
+  }
+  repo.currentUser = coach;
 }
 
 /// Bellekte duyurular (demo ve testler için). Kim neyi görür sunucudaki
@@ -2011,7 +2049,8 @@ class InMemoryConsentRepository implements ConsentRepository {
         guardianApproval: granted,
         guardianSource: 'parent',
       ),
-      ConsentKind.privacyNotice => s,
+      ConsentKind.privacyNotice =>
+        granted ? s.copyWith(privacyVersion: legalVersion) : s,
     }.copyWith(history: [event, ...s.history]);
   }
 
@@ -2040,6 +2079,227 @@ class InMemoryConsentRepository implements ConsentRepository {
           'source': e.source,
           'created_at': e.at.toIso8601String(),
         },
+    ],
+  };
+}
+
+/// Haftalık veli özeti (demo): öğrenci başına sabit örnek; verilmeyen
+/// öğrenci için boş hafta.
+class InMemoryWeeklySummaryRepository implements WeeklySummaryRepository {
+  InMemoryWeeklySummaryRepository([Map<String, WeeklySummary>? summaries])
+    : summaries = summaries ?? {};
+
+  final Map<String, WeeklySummary> summaries;
+
+  @override
+  Future<WeeklySummary> fetch(String studentId) async =>
+      summaries[studentId] ??
+      const WeeklySummary(
+        days: 0,
+        questions: 0,
+        minutes: 0,
+        meetingsHeld: 0,
+        meetingsMissed: 0,
+        homeworkTotal: 0,
+        homeworkDone: 0,
+      );
+}
+
+/// Demo öğrencisinin haftası: 5 gün çalışmış, bir görüşmeyi kaçırmış.
+Map<String, WeeklySummary> demoWeeklySummaries() => {
+  'demo-student': const WeeklySummary(
+    days: 5,
+    questions: 340,
+    minutes: 610,
+    meetingsHeld: 1,
+    meetingsMissed: 1,
+    homeworkTotal: 8,
+    homeworkDone: 6,
+    examType: 'TYT',
+    examName: 'Bal Deneme 4',
+    lastNet: 71.25,
+    prevNet: 66.5,
+  ),
+  'demo-can': const WeeklySummary(
+    days: 2,
+    questions: 60,
+    minutes: 95,
+    meetingsHeld: 0,
+    meetingsMissed: 2,
+    homeworkTotal: 4,
+    homeworkDone: 1,
+    examType: 'TYT',
+    lastNet: 48,
+    prevNet: 52.5,
+  ),
+};
+
+/// Rehberlik görüşme kayıtları (demo). Sunucudaki kuralların uygulamada
+/// görünen kısmı: yazan ve adı eklerken yazılır, en yeni önce.
+class InMemoryGuidanceRepository implements GuidanceRepository {
+  InMemoryGuidanceRepository({required this.userId, required this.userName});
+
+  /// Sunucudaki auth.uid() ve profil adı.
+  final String userId;
+  final String userName;
+  final logs = <GuidanceLog>[];
+  int _next = 0;
+
+  @override
+  Future<List<GuidanceLog>> fetch(String studentId) async =>
+      logs.where((l) => l.studentId == studentId).toList()..sort(
+        (a, b) => b.metOn != a.metOn
+            ? b.metOn.compareTo(a.metOn)
+            : b.createdAt.compareTo(a.createdAt),
+      );
+
+  @override
+  Future<void> add(String studentId, GuidanceDraft d) async => logs.add(
+    GuidanceLog(
+      id: 'guidance-${_next++}',
+      studentId: studentId,
+      authorId: userId,
+      authorName: userName,
+      metOn: DateTime(d.metOn.year, d.metOn.month, d.metOn.day),
+      kind: d.kind,
+      topics: d.topics,
+      note: d.note.trim(),
+      nextStep: d.nextStep,
+      followUpOn: d.followUpOn,
+      createdAt: DateTime.now(),
+    ),
+  );
+
+  @override
+  Future<void> delete(String id) async => logs.removeWhere((l) => l.id == id);
+}
+
+/// Demo öğrencisinin rehberlik geçmişi: biri ayrılmış eski koçtan.
+void seedDemoGuidance(InMemoryGuidanceRepository repo, String studentId) {
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  repo.logs.addAll([
+    GuidanceLog(
+      id: 'guidance-old-1',
+      studentId: studentId,
+      authorName: 'Zehra Aksoy',
+      metOn: today.subtract(const Duration(days: 40)),
+      kind: GuidanceKind.inPerson,
+      topics: const [GuidanceTopic.goals, GuidanceTopic.university],
+      note:
+          'Hedef bölüm tıp. TYT netleri hedefin altında; önce TYT matematiği güçlendirmeye karar verdik.',
+      nextStep: 'Haftalık 300 TYT matematik sorusu',
+      createdAt: today.subtract(const Duration(days: 40)),
+    ),
+    GuidanceLog(
+      id: 'guidance-old-2',
+      studentId: studentId,
+      authorId: 'demo-coach',
+      authorName: 'Ayşe Koç',
+      metOn: today.subtract(const Duration(days: 12)),
+      kind: GuidanceKind.parent,
+      topics: const [GuidanceTopic.family, GuidanceTopic.motivation],
+      note:
+          'Annesiyle telefonda konuştuk. Evde akşam çalışma saati 20:00-22:00 olarak sabitlendi.',
+      followUpOn: today.add(const Duration(days: 2)),
+      createdAt: today.subtract(const Duration(days: 12)),
+    ),
+  ]);
+}
+
+/// Risk listesi (demo): sabit örnek, skora göre sıralı.
+class InMemoryRiskRepository implements RiskRepository {
+  InMemoryRiskRepository([List<RiskEntry>? entries]) : entries = entries ?? [];
+
+  final List<RiskEntry> entries;
+
+  @override
+  Future<List<RiskEntry>> fetch({int limit = 7}) async =>
+      (entries.where((e) => e.score >= 30).toList()
+            ..sort((a, b) => b.score.compareTo(a.score)))
+          .take(limit)
+          .toList();
+}
+
+/// Demo koçunun bu haftaki riskli öğrencileri.
+List<RiskEntry> demoRiskEntries() => const [
+  RiskEntry(
+    studentId: 'demo-can',
+    name: 'Can Kaya',
+    score: 68,
+    days: 2,
+    meetingsMissed: 2,
+    netDrop: 4.5,
+    examType: 'TYT',
+    homeworkTotal: 4,
+    homeworkDone: 1,
+  ),
+  RiskEntry(
+    studentId: 'demo-student',
+    name: 'Elif Yılmaz',
+    score: 33,
+    days: 5,
+    meetingsMissed: 1,
+    netDrop: 0,
+    homeworkTotal: 8,
+    homeworkDone: 6,
+  ),
+];
+
+/// Konu reçetesi (demo). Sunucudaki gibi son 14 günde ödevi verilmiş konu
+/// listeden çıkar ([assignments] verilirse).
+class InMemoryPrescriptionRepository implements PrescriptionRepository {
+  InMemoryPrescriptionRepository(this.items, {this.assignments});
+
+  final Map<String, List<PrescriptionItem>> items;
+  final AssignmentRepository? assignments;
+
+  @override
+  Future<List<PrescriptionItem>> fetch(String studentId) async {
+    final since = DateTime.now().subtract(const Duration(days: 14));
+    final assigned = {
+      for (final a
+          in await assignments?.fetchAssignments(studentId) ??
+              const <Assignment>[])
+        if (a.createdAt.isAfter(since))
+          for (final i in a.items) ?i.topicId,
+    };
+    return [
+      for (final i in items[studentId] ?? const <PrescriptionItem>[])
+        if (!assigned.contains(i.topicId)) i,
+    ];
+  }
+}
+
+/// Demo öğrencisinin son denemelerindeki eksik konular.
+Map<String, List<PrescriptionItem>> demoPrescriptions(List<Topic> topics) {
+  Topic t(String subject, String name) =>
+      topics.firstWhere((x) => x.subjectCode == subject && x.name == name);
+  PrescriptionItem item(
+    Topic topic,
+    int wrong,
+    int exams, [
+    List<String> outcomes = const [],
+  ]) => PrescriptionItem(
+    subjectCode: topic.subjectCode,
+    topicId: topic.id,
+    topicName: topic.name,
+    wrong: wrong,
+    examCount: exams,
+    outcomes: outcomes,
+    suggested: wrong >= 4 ? 40 : (wrong >= 2 ? 25 : 15),
+  );
+  return {
+    'demo-student': [
+      item(t('TYT_MAT', 'Sayı Basamakları'), 5, 3, [
+        'Basamak değeri ve çözümleme',
+      ]),
+      item(t('TYT_TUR', 'Cümlede Anlam'), 4, 2, [
+        'Cümleler arası anlam ilişkileri',
+        'Cümlede kesinlik ve olasılık',
+      ]),
+      item(t('TYT_MAT', 'Temel Kavramlar'), 2, 1),
+      item(t('TYT_TUR', 'Yazım Kuralları'), 1, 1),
     ],
   };
 }

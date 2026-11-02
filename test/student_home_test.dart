@@ -10,7 +10,9 @@ void main() {
     expect(nextYks(now: now)!.year, 2027);
     expect(nextYks(examYear: 2028, now: now)!.year, 2028);
     expect(nextYks(examYear: 2026, now: now)!.year, 2027);
-    expect(nextYks(now: now)!.date.official, isFalse);
+    // 2027 ÖSYM'ce açıklandı; 2028 hâlâ tahmini.
+    expect(nextYks(now: now)!.date.official, isTrue);
+    expect(nextYks(examYear: 2028, now: now)!.date.official, isFalse);
   });
 
   test('günün sözü her gün değişir, aynı gün aynı kalır', () {

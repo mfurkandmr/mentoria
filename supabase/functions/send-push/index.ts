@@ -40,7 +40,7 @@ type NotificationRow = {
   user_id: string;
   kind: 'assignment' | 'exam' | 'task' | 'note' | 'deletion_request' | 'meeting'
     | 'review' | 'weekly_report' | 'daily_question' | 'duel' | 'duel_result' | 'plan'
-    | 'announcement';
+    | 'announcement' | 'inactivity_warning' | 'risk_digest';
   data: Record<string, unknown>;
 };
 
@@ -110,12 +110,34 @@ function texts(n: NotificationRow): { title: string; body: string; route: string
         body: `Hata defterinde ${s(d.count)} soru seni bekliyor. Unutmadan bir daha çöz!`,
         route: '/student/mistakes',
       };
-    case 'weekly_report':
+    case 'weekly_report': {
+      // Tek kart: devam, ödev, net trendi (weekly_summary_data). Eski
+      // bildirimlerde yalnızca soru / dakika / gün vardır.
+      const net = (v: number) => v.toLocaleString('tr-TR', { maximumFractionDigits: 2 });
+      const parts = d.homework_total === undefined
+        ? [`Bu hafta ${s(d.questions)} soru çözdü, ${s(d.minutes)} dk odaklandı, ${s(d.days)} gün çalıştı.`]
+        : [
+          `${s(d.days)}/7 gün çalıştı`,
+          Number(d.meetings_missed) > 0 ? `${s(d.meetings_missed)} görüşme kaçırıldı` : '',
+          Number(d.homework_total) > 0
+            ? `ödev %${Math.round(Number(d.homework_done) * 100 / Number(d.homework_total))}`
+            : '',
+          d.last_net == null
+            ? ''
+            : `${s(d.exam_type)} ${net(Number(d.last_net))} net` +
+              (d.prev_net == null
+                ? ''
+                : (() => {
+                  const c = Number(d.last_net) - Number(d.prev_net);
+                  return ` (${c >= 0 ? '+' : '−'}${net(Math.abs(c))})`;
+                })()),
+        ];
       return {
         title: `${s(d.child)} için haftalık Bal Raporu 🐝`,
-        body: `Bu hafta ${s(d.questions)} soru çözdü, ${s(d.minutes)} dk odaklandı, ${s(d.days)} gün çalıştı.`,
+        body: parts.filter(Boolean).join(' · '),
         route: s(d.route) || '/parent',
       };
+    }
     case 'daily_question':
       return {
         title: 'Günün Sorusu hazır ☀️',
@@ -154,6 +176,19 @@ function texts(n: NotificationRow): { title: string; body: string; route: string
         title: `📣 ${s(d.title)}`,
         body: s(d.body).length > 180 ? `${s(d.body).slice(0, 177)}…` : s(d.body),
         route: s(d.route) || '/',
+      };
+    case 'inactivity_warning':
+      return {
+        title: 'Hesabın yakında silinecek',
+        body: `Uzun süredir giriş yapmadın. ${s(d.days) || '30'} gün içinde uygulamayı açmazsan hesabın ve verilerin silinecek.`,
+        route: '/',
+      };
+    case 'risk_digest':
+      // Koça, pazartesi sabahı: risk skoru yüksek öğrenciler.
+      return {
+        title: `Bu hafta ${s(d.count)} öğrenciyle konuş`,
+        body: `${(Array.isArray(d.names) ? d.names : []).join(', ')}: devam, net ya da ödevde geriye düşüş var. Listeye bak.`,
+        route: s(d.route) || '/coach',
       };
   }
 }
