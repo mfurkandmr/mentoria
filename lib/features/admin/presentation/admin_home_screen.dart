@@ -1,46 +1,28 @@
-import '../../exam_import/presentation/org_exams_screen.dart';
 import 'package:flutter/material.dart';
-import '../../privacy/presentation/guardian_statement_tile.dart';
-import '../../announcements/presentation/announcement_widgets.dart';
-import '../../attendance/data/attendance_repository.dart';
-import '../../attendance/presentation/attendance_screen.dart';
-import '../../sms/presentation/bulk_sms_screen.dart';
-import '../../student_books/presentation/book_pool_screen.dart';
-import '../../student_management/data/student_management_repository.dart';
-import '../../student_management/presentation/students_screen.dart';
-import '../../schedule_generator/data/timetable_repository.dart';
-import '../../schedule_generator/presentation/my_timetable.dart';
-import '../../coach/data/risk_repository.dart';
-import '../../coach/presentation/exam_trends_card.dart';
-import '../../coach/presentation/risk_card.dart';
-import '../../../core/branding/branding_providers.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../../core/constants/exam_subjects.dart';
-import '../../../core/theme/brand_theme.dart';
-import '../../../shared/format.dart';
-import '../../../shared/widgets/bizz.dart';
+import '../../../core/i18n/i18n.dart';
 import '../../../shared/widgets/common.dart';
-import '../../auth/data/profile.dart';
 import '../../auth/data/auth_repository.dart';
+import '../../auth/data/profile.dart';
 import '../../coach/data/coach_repository.dart';
+import '../../coach/presentation/manager_widgets.dart';
 import '../../credits/data/org_credits_repository.dart';
 import '../../credits/presentation/credit_widgets.dart';
-import '../../finance/presentation/finance_screen.dart';
-import '../../meetings/data/meeting_repository.dart';
-import '../../meetings/presentation/meeting_widgets.dart';
-import '../../../shared/widgets/honey_nav_bar.dart';
-import '../../coach/presentation/manager_widgets.dart';
-import '../../tracking/presentation/study_view.dart';
+import '../../privacy/presentation/guardian_statement_tile.dart';
 import '../data/admin_repository.dart';
-import '../../../core/i18n/i18n.dart';
-import '../../../shared/widgets/effects.dart';
-import '../../ranking/data/ranking_repository.dart';
+import '../data/cockpit_repository.dart';
+import 'cockpit/coach_performance_section.dart' show editCoachPhone;
+import 'cockpit/cockpit_header.dart' show CockpitProfileButton;
+import 'cockpit/cockpit_tab.dart';
+import 'cockpit/cockpit_theme.dart';
+import 'cockpit/section_states.dart';
 
-/// Kurum müdürü paneli (mobil ve web).
+/// Kurum müdürü paneli (mobil ve web). "Genel" sekmesi işletme kokpitidir
+/// (NOTLAR §59); tek, açık tema: [cockpitTheme].
 class AdminHomeScreen extends ConsumerStatefulWidget {
   const AdminHomeScreen({super.key});
 
@@ -59,10 +41,27 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      CockpitThemed(child: Builder(builder: _build));
+
+  Widget _build(BuildContext context) {
     final wide = MediaQuery.sizeOf(context).width >= 900;
+    void goTo(int i) => setState(() => _tab = i);
     final pages = [
-      _OverviewTab(onGoTo: (i) => setState(() => _tab = i)),
+      CockpitTab(
+        onGoTo: goTo,
+        hasBottomNav: !wide,
+        onInviteStudent: () =>
+            showInviteCodeDialog(context, ref, role: UserRole.student),
+        onInviteCoach: () =>
+            showInviteCodeDialog(context, ref, role: UserRole.coach),
+        onInviteStudentForCoach: (id) => showInviteCodeDialog(
+          context,
+          ref,
+          role: UserRole.student,
+          coachId: id,
+        ),
+      ),
       const _StudentsTab(),
       const _CoachesTab(),
       const _InvitesTab(),
@@ -88,14 +87,11 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
 
     return Scaffold(
       floatingActionButton: fab,
-      // Genel sekmesi gökyüzü başlığını kendisi çizer.
+      // Genel sekmesi üst çubuğunu kendisi çizer (kurum logosu ve adı).
       appBar: _tab == 0
           ? null
           : AppBar(
-              title: Text(
-                _destinations[_tab].$3,
-                style: const TextStyle(fontWeight: FontWeight.w900),
-              ),
+              title: Text(_destinations[_tab].$3),
               actions: [
                 IconButton(
                   tooltip: tr('Deneme sonuçlarını yükle'),
@@ -111,7 +107,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
                 NavigationRail(
                   selectedIndex: _tab,
                   labelType: NavigationRailLabelType.all,
-                  onDestinationSelected: (i) => setState(() => _tab = i),
+                  onDestinationSelected: goTo,
                   destinations: [
                     for (final d in _destinations)
                       NavigationRailDestination(
@@ -125,7 +121,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
                 Expanded(
                   child: Center(
                     child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 1000),
+                      constraints: const BoxConstraints(maxWidth: 1100),
                       child: body,
                     ),
                   ),
@@ -135,230 +131,23 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
           : body,
       bottomNavigationBar: wide
           ? null
-          : HoneyNavBar(
-              selectedIndex: _tab,
-              onSelected: (i) => setState(() => _tab = i),
-              items: [
-                for (final d in _destinations)
-                  HoneyNavItem(icon: d.$1, selectedIcon: d.$2, label: d.$3),
-              ],
-            ),
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Genel
-// ---------------------------------------------------------------------------
-
-class _OverviewTab extends ConsumerWidget {
-  const _OverviewTab({required this.onGoTo});
-
-  final ValueChanged<int> onGoTo;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final org = ref.watch(orgProvider);
-    final members = ref.watch(orgMembersProvider).value ?? const [];
-    final students = ref.watch(studentSummariesProvider).value ?? const [];
-    final profile = ref.watch(currentProfileProvider).value;
-    final brand = context.brand;
-
-    final coaches = members.where((m) => m.role == UserRole.coach).length;
-    final parents = members.where((m) => m.role == UserRole.parent).length;
-    final weekQuestions = students.fold<int>(0, (a, s) => a + s.weekQuestions);
-    final weekMinutes = students.fold<int>(0, (a, s) => a + s.weekMinutes);
-    final tytNets = [
-      for (final s in students)
-        if (s.lastExamType == ExamType.tyt && s.lastTotalNet != null)
-          s.lastTotalNet!,
-    ];
-    final avgTyt = tytNets.isEmpty
-        ? null
-        : tytNets.reduce((a, b) => a + b) / tytNets.length;
-    final noNumber = students.where((s) => s.studentNumber == null).length;
-    final inactive = students.where((s) => !s.activeThisWeek).toList();
-    final credits = ref.watch(orgCreditsProvider).value;
-
-    final lines = [
-      ...managerBizzLines(students),
-      if (coaches > 0)
-        tr('{c} koç ve {s} öğrenciyle çalışıyorsun.', {
-          'c': coaches,
-          's': students.length,
-        }),
-    ];
-
-    final cards = <Widget>[
-      if (credits != null && (credits.low || !credits.isActive))
-        const LowCreditBanner(),
-      AsyncView(
-        value: org,
-        onRetry: () => ref.invalidate(orgProvider),
-        builder: (o) => _OrgCard(
-          org: o,
-          students: students.length,
-          credits: credits?.balance,
-        ),
-      ),
-      const OrgCodeCard(),
-      const AttendanceHomeCard(basePath: '/admin'),
-      const TimetableAdminCard(),
-      const StudentsHomeCard(basePath: '/admin'),
-      const BookPoolHomeCard(basePath: '/admin'),
-      const OrgExamsHomeCard(basePath: '/admin'),
-      const BulkSmsHomeCard(),
-      const FinanceHomeCard(),
-      StatRow(
-        children: [
-          GlowStat(
-            icon: Icons.school_rounded,
-            label: tr('Öğrenci'),
-            value: students.length.toDouble(),
-            caption: tr('{n} aktif', {'n': students.length - inactive.length}),
-            color: brand.secondary,
-          ),
-          GlowStat(
-            icon: Icons.groups_rounded,
-            label: tr('Koç'),
-            value: coaches.toDouble(),
-            color: brand.info,
-          ),
-          GlowStat(
-            icon: Icons.family_restroom_rounded,
-            label: tr('Veli'),
-            value: parents.toDouble(),
-            color: brand.success,
-          ),
-        ],
-      ),
-      StatRow(
-        children: [
-          GlowStat(
-            icon: Icons.edit_note_rounded,
-            label: tr('Bu hafta'),
-            value: weekQuestions.toDouble(),
-            caption: tr('soru'),
-            color: brand.primary,
-          ),
-          GlowStat(
-            icon: Icons.timer_rounded,
-            label: tr('Bu hafta'),
-            value: weekMinutes.toDouble(),
-            format: (v) => formatMinutes(v.round()),
-            caption: tr('çalışma'),
-            color: brand.secondary,
-          ),
-          GlowStat(
-            icon: Icons.trending_up_rounded,
-            label: tr('Ort. son TYT'),
-            value: avgTyt ?? 0,
-            format: (v) => avgTyt == null ? '–' : formatNet(v),
-            caption: tr('{p0} öğrenci', {'p0': tytNets.length}),
-            color: brand.info,
-          ),
-        ],
-      ),
-      if (noNumber > 0)
-        PanelNotice(
-          icon: Icons.badge_outlined,
-          message:
-              '${tr('{noNumber} öğrencinin okul numarası eksik', {'noNumber': noNumber})} · '
-              '${tr('Deneme dosyaları numarayla eşleştirildiği için numaraları gir.')}',
-          onTap: () => onGoTo(1),
-        ),
-      const AnnouncementsHomeCard(),
-      const _SuccessRankingCard(),
-      const RiskCard(basePath: '/admin'),
-      const ExamTrendsCard(basePath: '/admin'),
-      CoachMeetingsReport(
-        coaches: [
-          for (final m in members)
-            if (m.role == UserRole.coach) (m.id, m.fullName),
-        ],
-      ),
-      PanelSectionTitle(
-        title: tr('Bu hafta hareketsiz öğrenciler'),
-        subtitle: tr('Soru ya da çalışma kaydı olmayanlar'),
-      ),
-      if (inactive.isEmpty)
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(18),
-            child: Row(
-              children: [
-                const Bizz(size: 56),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    tr('Herkes bu hafta çalışmış. 🎉'),
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
+          : DecoratedBox(
+              decoration: BoxDecoration(
+                border: Border(top: BorderSide(color: context.cockpit.border)),
+              ),
+              child: NavigationBar(
+                selectedIndex: _tab,
+                onDestinationSelected: goTo,
+                destinations: [
+                  for (final d in _destinations)
+                    NavigationDestination(
+                      icon: Icon(d.$1),
+                      selectedIcon: Icon(d.$2),
+                      label: d.$3,
                     ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        )
-      else
-        for (final s in inactive)
-          StudentCard(
-            key: ValueKey('inactive-${s.id}'),
-            student: s,
-            showCoach: true,
-            deletionRequested:
-                (ref.watch(deletionRequestsProvider).value ?? const {})
-                    .containsKey(s.id),
-            onTap: () => context.push('/admin/students/${s.id}'),
-          ),
-    ];
-
-    return RefreshIndicator(
-      edgeOffset: 100,
-      onRefresh: () async {
-        ref.invalidate(orgProvider);
-        ref.invalidate(orgCreditsProvider);
-        ref.invalidate(orgCodeProvider);
-        ref.invalidate(orgMembersProvider);
-        ref.invalidate(studentSummariesProvider);
-        ref.invalidate(riskListProvider);
-        ref.invalidate(attendanceDayProvider);
-        ref.invalidate(schedulesProvider);
-        ref.invalidate(managedStudentsProvider);
-        ref.invalidate(successStatusProvider);
-        ref.invalidate(meetingSchedulesProvider);
-        ref.invalidate(weekMeetingsProvider);
-      },
-      child: CustomScrollView(
-        slivers: [
-          ManagerSkyAppBar(
-            firstName: profile?.firstName ?? '',
-            lines: lines,
-            actions: [
-              IconButton(
-                tooltip: tr('Yüklediğin denemeler'),
-                icon: const Icon(Icons.fact_check_outlined),
-                onPressed: () => context.push('/admin/exams'),
+                ],
               ),
-              IconButton(
-                tooltip: tr('Deneme sonuçlarını yükle'),
-                icon: const Icon(Icons.upload_file),
-                onPressed: () => context.push('/admin/import'),
-              ),
-              const _AdminProfileButton(),
-            ],
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
-            sliver: SliverList.separated(
-              itemCount: cards.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 12),
-              itemBuilder: (_, i) => staggered(i, cards[i]),
             ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -368,325 +157,9 @@ class _AdminProfileButton extends ConsumerWidget {
   const _AdminProfileButton();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => ProfileInitialsButton(
+  Widget build(BuildContext context, WidgetRef ref) => CockpitProfileButton(
     name: ref.watch(currentProfileProvider).value?.fullName ?? '',
-    onPressed: () => context.push('/admin/profile'),
   );
-}
-
-/// Başarı sıralaması anahtarı: açılınca öğrenciler kurum içi sıralamayı ve
-/// TYT ilk 5'in avatar ödüllerini görür.
-class _SuccessRankingCard extends ConsumerStatefulWidget {
-  const _SuccessRankingCard();
-
-  @override
-  ConsumerState<_SuccessRankingCard> createState() =>
-      _SuccessRankingCardState();
-}
-
-class _SuccessRankingCardState extends ConsumerState<_SuccessRankingCard> {
-  bool _busy = false;
-
-  Future<void> _toggle(bool value) async {
-    final messenger = ScaffoldMessenger.of(context);
-    setState(() => _busy = true);
-    try {
-      await ref.read(successRankingRepositoryProvider).setEnabled(value);
-      ref.invalidate(successStatusProvider);
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(
-            value
-                ? tr('Başarı sıralaması açıldı. Öğrenciler artık görebilir.')
-                : tr('Başarı sıralaması kapatıldı.'),
-          ),
-        ),
-      );
-    } catch (_) {
-      messenger.showSnackBar(
-        SnackBar(content: Text(tr('Kaydedilemedi. Tekrar dene.'))),
-      );
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final status = ref.watch(successStatusProvider);
-    final enabled = status.value?.enabled ?? false;
-    return Card(
-      child: Column(
-        children: [
-          SwitchListTile(
-            secondary: Container(
-              width: 42,
-              height: 42,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  // Madalya rengi (markadan bağımsız).
-                  colors: [Color(0xFFFFE68A), Color(0xFFFFC531)],
-                ),
-              ),
-              child: const Icon(
-                Icons.emoji_events_rounded,
-                color: Color(0xFF2B2350),
-              ),
-            ),
-            title: Text(tr('Başarı sıralaması')),
-            subtitle: Text(
-              tr(
-                'Öğrenciler son 5 denemelerinin ortalamasına göre sıralanır. TYT\'de 1. kral tacı, ilk 3 altın kanat, 4. ve 5. gümüş kanat kazanır.',
-              ),
-            ),
-            value: enabled,
-            onChanged: _busy || !status.hasValue ? null : _toggle,
-          ),
-          Align(
-            alignment: AlignmentDirectional.centerEnd,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-              child: TextButton.icon(
-                onPressed: () => context.push('/admin/success'),
-                icon: const Icon(Icons.leaderboard_rounded),
-                label: Text(enabled ? tr('Sıralamayı gör') : tr('Önizle')),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _OrgCard extends ConsumerWidget {
-  const _OrgCard({required this.org, required this.students, this.credits});
-
-  final OrgInfo org;
-  final int students;
-
-  /// Kalan öğrenci kredisi (yüklenmediyse null).
-  final int? credits;
-
-  Future<void> _rename(BuildContext context, WidgetRef ref) async {
-    final controller = TextEditingController(text: org.name);
-    final name = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(tr('Kurum adı')),
-        content: TextField(controller: controller, autofocus: true),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(tr('Vazgeç')),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, controller.text.trim()),
-            child: Text(tr('Kaydet')),
-          ),
-        ],
-      ),
-    );
-    controller.dispose();
-    if (name == null || name.length < 2) return;
-    await ref.read(adminRepositoryProvider).renameOrg(name);
-    ref.invalidate(orgProvider);
-    // Kurum adı markaya da yansır (koç ve öğrenciler de yeni adı görür).
-    ref.invalidate(tenantBrandingProvider);
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final text = Theme.of(context).textTheme;
-    // Halka: kayıtlı öğrenciler / (kayıtlı + kalan kredi).
-    final left = credits ?? 0;
-    final total = students + left;
-    final ratio = total == 0 ? 1.0 : (students / total).clamp(0.0, 1.0);
-    final full = credits != null && left <= 0;
-    final expiry = org.licenseExpiresAt == null
-        ? tr('Süresiz')
-        : DateFormat('d MMMM yyyy', localeTag).format(org.licenseExpiresAt!);
-
-    final brand = context.brand;
-    final onCard =
-        ThemeData.estimateBrightnessForColor(brand.secondary) == Brightness.dark
-        ? Colors.white
-        : brand.ink;
-    final barColor = full ? brand.danger : brand.primary;
-
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color.lerp(brand.secondary, Colors.white, 0.12)!,
-            Color.lerp(brand.secondary, Colors.black, 0.25)!,
-          ],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: brand.secondary.withValues(alpha: 0.35),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: CustomPaint(
-        painter: HoneycombPainter(color: onCard, opacity: 0.08),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(18, 16, 10, 18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      org.name,
-                      style: text.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w900,
-                        color: onCard,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    tooltip: tr('Kurum adını değiştir'),
-                    color: onCard,
-                    icon: const Icon(Icons.edit_outlined),
-                    onPressed: () => _rename(context, ref),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  SizedBox.square(
-                    dimension: 78,
-                    child: TweenAnimationBuilder<double>(
-                      tween: Tween(begin: 0, end: ratio),
-                      duration: const Duration(milliseconds: 900),
-                      curve: Curves.easeOutCubic,
-                      builder: (_, v, _) => Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          CircularProgressIndicator(
-                            value: v,
-                            strokeWidth: 8,
-                            strokeCap: StrokeCap.round,
-                            color: barColor,
-                            backgroundColor: onCard.withValues(alpha: 0.18),
-                          ),
-                          Center(
-                            child: Text(
-                              '${(v * 100).round()}%',
-                              style: text.titleMedium?.copyWith(
-                                color: onCard,
-                                fontWeight: FontWeight.w900,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          credits == null
-                              ? tr('{n} öğrenci', {'n': students})
-                              : tr('Öğrenci kredisi: {n}', {'n': left}),
-                          style: text.titleSmall?.copyWith(
-                            color: onCard,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          full
-                              ? tr(
-                                  'Kredi bitti. Yeni öğrenci eklenemez; yöneticinizle iletişime geçin.',
-                                )
-                              : tr('{n} öğrenci kayıtlı', {'n': students}),
-                          style: text.bodySmall?.copyWith(
-                            color: onCard.withValues(alpha: 0.85),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 5,
-                          ),
-                          decoration: BoxDecoration(
-                            color: org.licenseExpired
-                                ? brand.danger
-                                : onCard.withValues(alpha: 0.16),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                org.licenseExpired
-                                    ? Icons.error_outline
-                                    : Icons.event_available,
-                                size: 15,
-                                color: org.licenseExpired
-                                    ? Colors.white
-                                    : onCard,
-                              ),
-                              const SizedBox(width: 5),
-                              Flexible(
-                                child: Text(
-                                  org.licenseExpired
-                                      ? tr(
-                                          'Lisans süresi doldu ({expiry}). Öğrenci, koç ve veliler giriş yapamıyor.',
-                                          {'expiry': expiry},
-                                        )
-                                      : tr('Lisans bitişi: {expiry}', {
-                                          'expiry': expiry,
-                                        }),
-                                  style: text.labelSmall?.copyWith(
-                                    fontWeight: FontWeight.w800,
-                                    color: org.licenseExpired
-                                        ? Colors.white
-                                        : onCard,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 14),
-              FilledButton.tonalIcon(
-                onPressed: () => context.push('/admin/branding'),
-                style: FilledButton.styleFrom(
-                  backgroundColor: onCard.withValues(alpha: 0.16),
-                  foregroundColor: onCard,
-                ),
-                icon: const Icon(Icons.palette_outlined),
-                label: Text(tr('Kurum görünümü: logo, renk ve yazı tipi')),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -767,7 +240,12 @@ class _StudentsTabState extends ConsumerState<_StudentsTab> {
         return RefreshIndicator(
           onRefresh: () => ref.refresh(studentSummariesProvider.future),
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
+            padding: const EdgeInsets.fromLTRB(
+              16,
+              12,
+              16,
+              cockpitNavHeight + 16,
+            ),
             children: [
               TextField(
                 decoration: InputDecoration(
@@ -794,10 +272,22 @@ class _StudentsTabState extends ConsumerState<_StudentsTab> {
               ),
               const SizedBox(height: 8),
               if (all.isEmpty)
-                EmptyState(
-                  title: tr('Henüz öğrenci yok'),
-                  message: tr(
-                    '"Davetler" sekmesinden bir koç için öğrenci davet kodu oluştur.',
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: SectionEmpty(
+                      icon: Icons.school_outlined,
+                      message: tr(
+                        'Henüz öğrenci yok. Bir koç için öğrenci davet kodu oluştur.',
+                      ),
+                      actionLabel: tr('Öğrenci davet et'),
+                      actionIcon: Icons.person_add_alt_1,
+                      onAction: () => showInviteCodeDialog(
+                        context,
+                        ref,
+                        role: UserRole.student,
+                      ),
+                    ),
                   ),
                 ),
               for (final (i, s) in list.indexed)
@@ -859,6 +349,11 @@ class _CoachesTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final members = ref.watch(orgMembersProvider);
     final students = ref.watch(studentSummariesProvider).value ?? const [];
+    // Koç telefonu kokpit verisinden (müdürün girdiği numara).
+    final phones = {
+      for (final c in ref.watch(cockpitProvider).value?.coaches ?? const [])
+        c.coachId: c.phone,
+    };
 
     return AsyncView(
       value: members,
@@ -866,15 +361,30 @@ class _CoachesTab extends ConsumerWidget {
       builder: (all) {
         final coaches = all.where((m) => m.role == UserRole.coach).toList();
         if (coaches.isEmpty) {
-          return Center(
-            child: EmptyState(
-              title: tr('Henüz koç yok'),
-              message: tr('"Koç davet et" ile kod oluştur ve koçuna gönder.'),
-            ),
+          return ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: SectionEmpty(
+                    icon: Icons.groups_outlined,
+                    message: tr('Henüz koç yok. Kod oluştur ve koçuna gönder.'),
+                    actionLabel: tr('Koç davet et'),
+                    actionIcon: Icons.person_add_alt_1,
+                    onAction: () => showInviteCodeDialog(
+                      context,
+                      ref,
+                      role: UserRole.coach,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           );
         }
         return ListView(
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 96),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 96 + cockpitNavHeight),
           children: [
             for (final c in coaches)
               () {
@@ -887,7 +397,21 @@ class _CoachesTab extends ConsumerWidget {
                     padding: const EdgeInsets.fromLTRB(14, 14, 6, 14),
                     child: Row(
                       children: [
-                        InitialsAvatar(name: c.fullName, size: 50),
+                        CircleAvatar(
+                          radius: 25,
+                          backgroundColor: context.cockpit.faint,
+                          foregroundColor: context.cockpit.ink,
+                          child: Text(
+                            c.fullName
+                                .trim()
+                                .split(RegExp(r'\s+'))
+                                .take(2)
+                                .map((p) => p.isEmpty ? '' : p.characters.first)
+                                .join()
+                                .toUpperCase(),
+                            style: const TextStyle(fontWeight: FontWeight.w700),
+                          ),
+                        ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(
@@ -906,7 +430,7 @@ class _CoachesTab extends ConsumerWidget {
                                   InfoPill(
                                     icon: Icons.school_outlined,
                                     text: tr('{n} öğrenci', {'n': mine.length}),
-                                    color: context.brand.secondary,
+                                    color: context.cockpit.muted,
                                   ),
                                   InfoPill(
                                     icon: Icons.edit_note_rounded,
@@ -918,11 +442,29 @@ class _CoachesTab extends ConsumerWidget {
                                       text: tr('{n} görev bekliyor', {
                                         'n': pending,
                                       }),
-                                      color: context.brand.primaryDeep,
+                                      color: context.cockpit.warn,
                                     ),
                                 ],
                               ),
                             ],
+                          ),
+                        ),
+                        IconButton(
+                          key: ValueKey('coach-phone-${c.id}'),
+                          tooltip: phones[c.id] == null
+                              ? tr('Telefon ekle')
+                              : tr('Telefonu düzenle'),
+                          icon: Icon(
+                            phones[c.id] == null
+                                ? Icons.add_call
+                                : Icons.phone_outlined,
+                          ),
+                          onPressed: () => editCoachPhone(
+                            context,
+                            ref,
+                            c.id,
+                            c.fullName,
+                            phones[c.id],
                           ),
                         ),
                         IconButton(
@@ -967,7 +509,7 @@ class _InvitesTab extends ConsumerWidget {
       builder: (list) => RefreshIndicator(
         onRefresh: () => ref.refresh(orgInvitesProvider.future),
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 96),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 96 + cockpitNavHeight),
           children: [
             Text(
               tr(
@@ -977,10 +519,22 @@ class _InvitesTab extends ConsumerWidget {
             ),
             const SizedBox(height: 10),
             if (list.isEmpty)
-              EmptyState(
-                title: tr('Aktif davet yok'),
-                message: tr(
-                  'Koç ya da öğrenci daveti oluşturduğunda burada görünür.',
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: SectionEmpty(
+                    icon: Icons.vpn_key_outlined,
+                    message: tr(
+                      'Aktif davet yok. Koç ya da öğrenci daveti oluşturduğunda burada görünür.',
+                    ),
+                    actionLabel: tr('Öğrenci daveti oluştur'),
+                    actionIcon: Icons.add,
+                    onAction: () => showInviteCodeDialog(
+                      context,
+                      ref,
+                      role: UserRole.student,
+                    ),
+                  ),
                 ),
               ),
             for (final i in list)
@@ -993,19 +547,13 @@ class _InvitesTab extends ConsumerWidget {
                     height: 42,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color:
-                          (i.role == UserRole.coach
-                                  ? context.brand.info
-                                  : context.brand.secondary)
-                              .withValues(alpha: 0.18),
+                      color: context.cockpit.faint,
                     ),
                     child: Icon(
                       i.role == UserRole.coach
-                          ? Icons.groups_rounded
-                          : Icons.school_rounded,
-                      color: i.role == UserRole.coach
-                          ? context.brand.info
-                          : context.brand.secondary,
+                          ? Icons.groups_outlined
+                          : Icons.school_outlined,
+                      color: context.cockpit.ink,
                     ),
                   ),
                   title: Text(
@@ -1148,7 +696,11 @@ class _InviteDialogState extends ConsumerState<_InviteDialog> {
             ? Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Bizz(size: 80),
+                  Icon(
+                    Icons.check_circle_outline,
+                    size: 48,
+                    color: context.cockpit.good,
+                  ),
                   const SizedBox(height: 8),
                   SelectableText(
                     _code!,

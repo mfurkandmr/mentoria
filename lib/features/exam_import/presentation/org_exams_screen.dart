@@ -1,3 +1,4 @@
+import '../../../shared/widgets/tool_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -1257,29 +1258,29 @@ class _ResultsTab extends ConsumerWidget {
 }
 
 /// Müdür / koç ana sayfasındaki giriş kartı.
+/// Kurum sınavları kısayolu (yayın bekleyen sonuçlar).
+ToolInfo orgExamsTool(WidgetRef ref, String basePath) {
+  final drafts = (ref.watch(orgExamsProvider).value ?? const [])
+      .where((e) => e.isDraft && e.sheetCount > 0)
+      .length;
+  return ToolInfo(
+    id: 'org-exams-card',
+    icon: Icons.fact_check_outlined,
+    title: tr('Kurum sınavları'),
+    status: drafts > 0
+        ? tr('{n} sınavın sonuçları yayın bekliyor', {'n': drafts})
+        : tr('Optik sonuçları, kazanım analizi ve karneler'),
+    needsAction: drafts > 0,
+    open: (context) => context.push('$basePath/org-exams'),
+  );
+}
+
 class OrgExamsHomeCard extends ConsumerWidget {
   const OrgExamsHomeCard({super.key, required this.basePath});
 
   final String basePath;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final drafts = (ref.watch(orgExamsProvider).value ?? const [])
-        .where((e) => e.isDraft && e.sheetCount > 0)
-        .length;
-    return Card(
-      child: ListTile(
-        key: const ValueKey('org-exams-card'),
-        leading: const Icon(Icons.fact_check_outlined),
-        title: Text(tr('Kurum sınavları')),
-        subtitle: Text(
-          drafts > 0
-              ? tr('{n} sınavın sonuçları yayın bekliyor', {'n': drafts})
-              : tr('Optik sonuçları, kazanım analizi ve karneler'),
-        ),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () => context.push('$basePath/org-exams'),
-      ),
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) =>
+      ToolListCard(tool: orgExamsTool(ref, basePath));
 }

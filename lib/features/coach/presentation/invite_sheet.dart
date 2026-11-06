@@ -257,3 +257,12 @@ class _NewCodeCard extends StatelessWidget {
     );
   }
 }
+
+/// Koç: öğrenci davet sayfasını alttan açar.
+Future<void> openInviteSheet(BuildContext context) =>
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (_) => const InviteSheet(),
+    );

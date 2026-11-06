@@ -195,6 +195,7 @@ class NotificationTile extends StatelessWidget {
                   NotificationKind.installmentDue => context.brand.primary,
                   NotificationKind.timetable => context.brand.info,
                   NotificationKind.bookRequest => context.brand.secondary,
+                  NotificationKind.coachAlert => context.brand.danger,
                 },
                 foregroundColor:
                     n.kind == NotificationKind.exam ||

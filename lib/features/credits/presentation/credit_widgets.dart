@@ -5,11 +5,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/widgets/common.dart';
+import '../../auth/data/auth_repository.dart';
+import '../../auth/data/profile.dart';
 import '../data/org_credits_repository.dart';
 
-/// Kredi azaldığında (50'nin altı) ya da kurum kapalıyken uyarı. Yalnızca
-/// "yöneticinizle iletişime geçin" der: fiyat, satın alma ya da ödeme
-/// bağlantısı yoktur (mağaza kuralları gereği de olmamalı).
+/// Kredi azaldığında (50'nin altı) ya da kurum kapalıyken uyarı. Koça
+/// "yöneticinizle iletişime geçin", müdüre "destek ekibiyle görüşün" der:
+/// fiyat, satın alma ya da ödeme bağlantısı yoktur (mağaza kuralları gereği
+/// de olmamalı).
 class LowCreditBanner extends ConsumerWidget {
   const LowCreditBanner({super.key, this.padding = EdgeInsets.zero});
 
@@ -19,6 +22,9 @@ class LowCreditBanner extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final c = ref.watch(orgCreditsProvider).value;
     if (c == null || (c.isActive && !c.low)) return const SizedBox.shrink();
+    // Müdür zaten kurumun yöneticisi: krediyi platform destek ekibi yükler.
+    final isAdmin =
+        ref.watch(currentProfileProvider).value?.role == UserRole.admin;
     final empty = !c.canAddStudent;
     final color = empty ? context.brand.danger : const Color(0xFFE08A00);
     final text = Theme.of(context).textTheme;
@@ -60,7 +66,15 @@ class LowCreditBanner extends ConsumerWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      empty
+                      isAdmin
+                          ? (empty
+                                ? tr(
+                                    'Yeni öğrenci eklenemez. Kredi yüklemek için destek ekibiyle görüşün.',
+                                  )
+                                : tr(
+                                    'Kredi yüklemek için destek ekibiyle görüşün.',
+                                  ))
+                          : empty
                           ? tr(
                               'Yeni öğrenci eklenemez. Yöneticinizle iletişime geçin.',
                             )

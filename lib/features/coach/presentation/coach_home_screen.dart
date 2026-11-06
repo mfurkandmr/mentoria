@@ -1,52 +1,59 @@
-import '../../exam_import/presentation/org_exams_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
+import '../../../core/branding/branding_providers.dart';
+import '../../../core/i18n/i18n.dart';
+import '../../../shared/widgets/tool_tile.dart';
+import '../../admin/data/admin_repository.dart';
+import '../../admin/data/cockpit_repository.dart';
+import '../../admin/presentation/cockpit/activity_trend_card.dart';
+import '../../admin/presentation/cockpit/cockpit_header.dart';
+import '../../admin/presentation/cockpit/cockpit_motion.dart';
+import '../../admin/presentation/cockpit/cockpit_theme.dart';
+import '../../admin/presentation/cockpit/week_hero_card.dart';
+import '../../admin/presentation/cockpit/metric_card.dart';
+import '../../admin/presentation/cockpit/metric_strip.dart';
+import '../../admin/presentation/cockpit/org_tools_section.dart';
+import '../../admin/presentation/cockpit/section_states.dart';
+import '../../announcements/data/announcement_repository.dart';
+import '../../announcements/presentation/announcement_widgets.dart';
 import '../../attendance/data/attendance_repository.dart';
 import '../../attendance/presentation/attendance_screen.dart';
+import '../../credits/data/org_credits_repository.dart';
+import '../../credits/presentation/credit_widgets.dart';
+import '../../exam_import/data/exam_admin_repository.dart';
+import '../../exam_import/presentation/org_exams_screen.dart';
+import '../../meetings/data/meeting_repository.dart';
+import '../../meetings/presentation/meeting_widgets.dart';
+import '../../schedule_generator/data/timetable_repository.dart';
+import '../../schedule_generator/presentation/my_timetable.dart';
+import '../../student_books/data/books_repository.dart';
 import '../../student_books/presentation/book_pool_screen.dart';
 import '../../student_management/data/student_management_repository.dart';
 import '../../student_management/presentation/students_screen.dart';
-import '../../schedule_generator/data/timetable_repository.dart';
-import '../../schedule_generator/presentation/my_timetable.dart';
-import '../data/risk_repository.dart';
-import 'exam_trends_card.dart';
-import 'risk_card.dart';
-import '../../announcements/presentation/announcement_widgets.dart';
-import '../../../core/branding/branding_providers.dart';
-import '../../../core/i18n/i18n.dart';
-import '../../../core/theme/brand_theme.dart';
-import '../../../shared/widgets/bizz.dart';
-import '../../../shared/widgets/common.dart';
-import '../../../shared/widgets/effects.dart';
-import '../../../shared/widgets/honey_nav_bar.dart';
-import '../../auth/data/auth_repository.dart';
-import '../../credits/data/org_credits_repository.dart';
-import '../../credits/presentation/credit_widgets.dart';
-import '../../meetings/data/meeting_repository.dart';
-import '../../meetings/presentation/meeting_widgets.dart';
+import '../../tracking/presentation/study_view.dart' show formatMinutes;
 import '../data/coach_repository.dart';
+import '../data/exam_trends.dart';
+import '../data/risk_repository.dart';
 import 'invite_sheet.dart';
 import 'manager_widgets.dart';
+import 'risk_card.dart';
 
-/// Koçun ana ekranı: gökyüzü başlığı ve Bızz, haftalık özet, hızlı işlemler
-/// ve öğrenci kartları.
+/// Koçun ana ekranı: müdür kokpitiyle aynı sade dil (NOTLAR §60). Üst çubuk
+/// (kurum logosu, adı, tarih), özet şeridi, bu hafta konuşulacaklar,
+/// görüşmeler, 8 haftalık eğilim, kısayollar, duyurular ve öğrenciler.
+/// Alt çubuktaki düğmeler sayfa değil eylemdir (davet, ödev, yükle, denemeler).
 class CoachHomeScreen extends ConsumerWidget {
   const CoachHomeScreen({super.key});
 
-  void _openInvite(BuildContext context) => showModalBottomSheet<void>(
-    context: context,
-    isScrollControlled: true,
-    showDragHandle: true,
-    builder: (_) => const InviteSheet(),
-  );
-
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context, WidgetRef ref) =>
+      CockpitThemed(child: Builder(builder: (context) => _build(context, ref)));
+
+  Widget _build(BuildContext context, WidgetRef ref) {
     final students = ref.watch(studentSummariesProvider);
-    final profile = ref.watch(currentProfileProvider).value;
-    final list = students.value ?? const <StudentSummary>[];
 
     Future<void> refresh() {
       // Kurum adı/logosu değiştiyse yenilensin.
@@ -58,40 +65,68 @@ class CoachHomeScreen extends ConsumerWidget {
       ref.invalidate(attendanceDayProvider);
       ref.invalidate(myTimetableProvider);
       ref.invalidate(managedStudentsProvider);
+      ref.invalidate(activityWeeksProvider);
+      ref.invalidate(examTrendsProvider);
+      ref.invalidate(bookPoolProvider);
+      ref.invalidate(orgExamsProvider);
+      ref.invalidate(announcementsProvider);
+      ref.invalidate(orgProvider);
       return ref.refresh(studentSummariesProvider.future);
     }
 
+    final bottom = cockpitNavHeight + 16 + MediaQuery.paddingOf(context).bottom;
+
     final List<Widget> body = students.when(
-      loading: () => const [
-        SliverFillRemaining(hasScrollBody: false, child: BizzLoader()),
-      ],
-      error: (_, _) => [
-        SliverFillRemaining(
-          hasScrollBody: false,
-          child: Center(
+      skipLoadingOnRefresh: true,
+      loading: () => [
+        const SliverPadding(
+          padding: EdgeInsets.all(16),
+          sliver: SliverToBoxAdapter(
             child: Column(
-              mainAxisSize: MainAxisSize.min,
               children: [
-                Text(tr('Öğrenciler yüklenemedi.')),
-                const SizedBox(height: 12),
-                FilledButton(
-                  onPressed: () => ref.invalidate(studentSummariesProvider),
-                  child: Text(tr('Tekrar dene')),
+                MetricGrid([
+                  MetricSkeleton(),
+                  MetricSkeleton(),
+                  MetricSkeleton(),
+                  MetricSkeleton(),
+                ]),
+                SizedBox(height: 14),
+                Card(
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: SectionSkeleton(),
+                  ),
                 ),
               ],
             ),
           ),
         ),
       ],
+      error: (_, _) => [
+        SliverPadding(
+          padding: const EdgeInsets.all(16),
+          sliver: SliverToBoxAdapter(
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: SectionError(
+                  message: tr('Öğrenciler yüklenemedi.'),
+                  onRetry: () => ref.invalidate(studentSummariesProvider),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
       data: (list) => [
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+          padding: EdgeInsets.fromLTRB(16, 16, 16, bottom),
           sliver: SliverToBoxAdapter(
             child: _CoachBody(
               students: list,
               deletionRequests:
                   ref.watch(deletionRequestsProvider).value ?? const {},
-              onInvite: () => _openInvite(context),
+              onInvite: () => openInviteSheet(context),
             ),
           ),
         ),
@@ -99,69 +134,74 @@ class CoachHomeScreen extends ConsumerWidget {
     );
 
     return Scaffold(
-      // Öğrenci menüsü gibi alt menü; hızlı işlem kutuları da yerinde durur.
-      bottomNavigationBar: HoneyNavBar(
-        selectedIndex: 0,
-        onSelected: (i) {
-          switch (i) {
-            case 1:
-              _openInvite(context);
-            case 2:
-              context.push('/coach/homework');
-            case 3:
-              context.push('/coach/import');
-            case 4:
-              context.push('/coach/exams');
-          }
-        },
-        items: [
-          HoneyNavItem(
-            icon: Icons.home_outlined,
-            selectedIcon: Icons.home_rounded,
-            label: tr('Ana Sayfa'),
-          ),
-          HoneyNavItem(
-            icon: Icons.person_add_alt_1_outlined,
-            label: tr('Davet et'),
-            tooltip: tr('Öğrenci davet et'),
-          ),
-          HoneyNavItem(icon: Icons.assignment_add, label: tr('Ödev ver')),
-          HoneyNavItem(
-            icon: Icons.upload_file_rounded,
-            label: tr('Yükle'),
-            tooltip: tr('Deneme sonuçlarını yükle'),
-          ),
-          HoneyNavItem(
-            icon: Icons.fact_check_outlined,
-            label: tr('Denemeler'),
-            tooltip: tr('Yüklediğin denemeler'),
-          ),
-        ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: refresh,
-        edgeOffset: 100,
-        child: CustomScrollView(
-          slivers: [
-            ManagerSkyAppBar(
-              firstName: profile?.firstName ?? '',
-              lines: managerBizzLines(list),
-              actions: [
-                ProfileInitialsButton(
-                  name: profile?.fullName ?? '',
-                  onPressed: () => context.push('/coach/profile'),
-                ),
-              ],
+      // Alt çubuk: eylem kısayolları (sekme değil); "Ana sayfa" hep seçili.
+      bottomNavigationBar: DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: context.cockpit.border)),
+        ),
+        child: NavigationBar(
+          selectedIndex: 0,
+          onDestinationSelected: (i) {
+            switch (i) {
+              case 1:
+                openInviteSheet(context);
+              case 2:
+                context.push('/coach/homework');
+              case 3:
+                context.push('/coach/import');
+              case 4:
+                context.push('/coach/exams');
+            }
+          },
+          destinations: [
+            NavigationDestination(
+              icon: const Icon(Icons.home_outlined),
+              selectedIcon: const Icon(Icons.home_rounded),
+              label: tr('Ana Sayfa'),
             ),
-            ...body,
+            NavigationDestination(
+              icon: const Icon(Icons.person_add_alt_1_outlined),
+              label: tr('Davet et'),
+              tooltip: tr('Öğrenci davet et'),
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.assignment_add),
+              label: tr('Ödev ver'),
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.upload_file_outlined),
+              label: tr('Yükle'),
+              tooltip: tr('Deneme sonuçlarını yükle'),
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.fact_check_outlined),
+              label: tr('Denemeler'),
+              tooltip: tr('Yüklediğin denemeler'),
+            ),
           ],
+        ),
+      ),
+      body: CockpitBackground(
+        child: RefreshIndicator(
+          onRefresh: refresh,
+          edgeOffset: 64,
+          child: CustomScrollView(
+            key: const ValueKey('coach-scroll'),
+            physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
+            ),
+            slivers: [
+              const CockpitHeader(basePath: '/coach', examActions: false),
+              ...body,
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _CoachBody extends StatefulWidget {
+class _CoachBody extends ConsumerStatefulWidget {
   const _CoachBody({
     required this.students,
     required this.onInvite,
@@ -175,26 +215,19 @@ class _CoachBody extends StatefulWidget {
   final VoidCallback onInvite;
 
   @override
-  State<_CoachBody> createState() => _CoachBodyState();
+  ConsumerState<_CoachBody> createState() => _CoachBodyState();
 }
 
-class _CoachBodyState extends State<_CoachBody> {
+class _CoachBodyState extends ConsumerState<_CoachBody> {
   String _query = '';
 
   @override
   Widget build(BuildContext context) {
-    final brand = context.brand;
     final students = widget.students;
-    final weekQuestions = students.fold<int>(0, (a, s) => a + s.weekQuestions);
-    final pending = students.fold<int>(0, (a, s) => a + s.pendingTasks);
-    final active = students.where((s) => s.activeThisWeek).length;
     final maxWeek = students.fold<int>(
       0,
       (a, s) => s.weekQuestions > a ? s.weekQuestions : a,
     );
-    final missingNumbers = students
-        .where((s) => s.studentNumber == null)
-        .length;
     final q = _query.trim().toLowerCase();
     final visible = q.isEmpty
         ? students
@@ -205,131 +238,87 @@ class _CoachBodyState extends State<_CoachBody> {
                     (s.studentNumber?.toLowerCase().contains(q) ?? false),
               )
               .toList();
+    final timetable = myTimetableTool(ref);
 
-    final children = <Widget>[
-      StatRow(
-        children: [
-          GlowStat(
-            icon: Icons.groups_rounded,
-            label: tr('Öğrenciler'),
-            value: students.length.toDouble(),
-            caption: tr('{n} aktif', {'n': active}),
-            color: brand.secondary,
-          ),
-          GlowStat(
-            icon: Icons.edit_note_rounded,
-            label: tr('Bu hafta'),
-            value: weekQuestions.toDouble(),
-            caption: tr('soru çözüldü'),
-            color: brand.primary,
-          ),
-          GlowStat(
-            icon: Icons.assignment_late_rounded,
-            label: tr('Bekleyen'),
-            value: pending.toDouble(),
-            caption: tr('görev'),
-            color: brand.info,
-          ),
-        ],
-      ),
-      Column(
-        children: [
-          StatRow(
-            children: [
-              QuickActionTile(
-                icon: Icons.person_add_alt_1_rounded,
-                label: tr('Davet et'),
-                tooltip: tr('Öğrenci davet et'),
-                color: brand.secondary,
-                onTap: widget.onInvite,
-              ),
-              QuickActionTile(
-                icon: Icons.assignment_add,
-                label: tr('Ödev ver'),
-                color: brand.primary,
-                onTap: () => context.push('/coach/homework'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          StatRow(
-            children: [
-              QuickActionTile(
-                icon: Icons.upload_file_rounded,
-                label: tr('Deneme yükle'),
-                tooltip: tr('Deneme sonuçlarını yükle'),
-                color: brand.info,
-                onTap: () => context.push('/coach/import'),
-              ),
-              QuickActionTile(
-                icon: Icons.fact_check_rounded,
-                label: tr('Denemeler'),
-                tooltip: tr('Yüklediğin denemeler'),
-                color: brand.success,
-                onTap: () => context.push('/coach/exams'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          StatRow(
-            children: [
-              QuickActionTile(
-                icon: Icons.document_scanner_rounded,
-                label: tr('Optik oku'),
-                tooltip: tr('Optik formları telefonla oku'),
-                color: brand.secondary,
-                onTap: () => context.push('/coach/optic'),
-              ),
-            ],
-          ),
-        ],
-      ),
-      if (missingNumbers > 0)
-        PanelNotice(
-          icon: Icons.badge_outlined,
-          message: tr(
-            '{count} öğrencinin okul numarası eksik. Deneme sonuç dosyaları öğrencilere okul numarasıyla eşleştirilir; öğrenciye dokunup numarasını gir.',
-            {'count': missingNumbers},
-          ),
-        ),
-      const AttendanceHomeCard(basePath: '/coach'),
-      const MyTimetableCard(),
-      const StudentsHomeCard(basePath: '/coach'),
-      const BookPoolHomeCard(basePath: '/coach'),
-      const OrgExamsHomeCard(basePath: '/coach'),
-      const AnnouncementsHomeCard(),
-      const WeekMeetingsSection(),
+    final sections = <Widget>[
+      _CoachMetrics(students: students),
+      MissingNumbersNotice(onTap: () => context.push('/coach/roster')),
       const RiskCard(basePath: '/coach'),
-      const ExamTrendsCard(basePath: '/coach'),
-      PanelSectionTitle(
+      const WeekMeetingsSection(),
+      ActivityTrendCard(onInviteStudent: widget.onInvite),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          CockpitHeading(tr('Kısayollar')),
+          ToolGrid(
+            warnColor: Tone.warn.of(context),
+            tools: [
+              ToolInfo(
+                id: 'tool-optic',
+                icon: Icons.document_scanner_outlined,
+                title: tr('Optik oku'),
+                status: tr('Optik formları telefonla oku'),
+                open: (c) => c.push('/coach/optic'),
+              ),
+              attendanceTool(ref, '/coach'),
+              ?timetable,
+              studentsTool(ref, '/coach'),
+              orgExamsTool(ref, '/coach'),
+              trendsTool('/coach'),
+              bookPoolTool(ref, '/coach'),
+            ],
+          ),
+        ],
+      ),
+      const AnnouncementsHomeCard(),
+      CockpitSection(
+        key: const ValueKey('section-my-students'),
         title: tr('Öğrencilerin'),
         subtitle: tr('{p0} öğrencin var', {'p0': students.length}),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (students.isEmpty)
+              SectionEmpty(
+                icon: Icons.school_outlined,
+                message: tr(
+                  'Henüz öğrencin yok. Bir davet kodu oluştur ve öğrencine gönder; kodla kayıt olan öğrenci otomatik olarak sana bağlanır.',
+                ),
+                actionLabel: tr('Öğrenci davet et'),
+                actionIcon: Icons.person_add_alt_1,
+                onAction: widget.onInvite,
+              ),
+            if (students.length > 5) ...[
+              TextField(
+                decoration: InputDecoration(
+                  hintText: tr('Öğrenci adı veya numarası ara'),
+                  prefixIcon: const Icon(Icons.search),
+                ),
+                onChanged: (v) => setState(() => _query = v),
+              ),
+              const SizedBox(height: 12),
+            ],
+            for (final (i, s) in visible.indexed) ...[
+              if (i > 0) const SizedBox(height: 10),
+              StudentCard(
+                key: ValueKey(s.id),
+                student: s,
+                maxWeekQuestions: maxWeek,
+                deletionRequested: widget.deletionRequests.containsKey(s.id),
+                onTap: () => context.push('/coach/students/${s.id}'),
+              ),
+            ],
+            if (students.isNotEmpty && visible.isEmpty)
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  tr('"{_query}" ile eşleşen öğrenci yok.', {'_query': _query}),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+          ],
+        ),
       ),
-      if (students.isEmpty) _EmptyStudents(onInvite: widget.onInvite),
-      if (students.length > 5)
-        TextField(
-          decoration: InputDecoration(
-            hintText: tr('Öğrenci adı veya numarası ara'),
-            prefixIcon: const Icon(Icons.search),
-          ),
-          onChanged: (v) => setState(() => _query = v),
-        ),
-      for (final s in visible)
-        StudentCard(
-          key: ValueKey(s.id),
-          student: s,
-          maxWeekQuestions: maxWeek,
-          deletionRequested: widget.deletionRequests.containsKey(s.id),
-          onTap: () => context.push('/coach/students/${s.id}'),
-        ),
-      if (students.isNotEmpty && visible.isEmpty)
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text(
-            tr('"{_query}" ile eşleşen öğrenci yok.', {'_query': _query}),
-            textAlign: TextAlign.center,
-          ),
-        ),
     ];
 
     return Column(
@@ -337,52 +326,88 @@ class _CoachBodyState extends State<_CoachBody> {
       children: [
         // Kredi 50'nin altındaysa; değilse yer kaplamaz.
         const LowCreditBanner(padding: EdgeInsets.only(bottom: 12)),
-        for (final (i, c) in children.indexed) ...[
-          if (i > 0) const SizedBox(height: 12),
-          staggered(i, c),
+        for (final (i, c) in sections.indexed) ...[
+          if (i > 0) const SizedBox(height: 14),
+          Reveal(index: i, child: c),
         ],
       ],
     );
   }
 }
 
-class _EmptyStudents extends StatelessWidget {
-  const _EmptyStudents({required this.onInvite});
+/// Koçun özet şeridi: öğrencilerim, bu hafta aktif, bu hafta soru,
+/// bekleyen görev. Geçen haftaya göre değişim eğilim verisinden.
+class _CoachMetrics extends ConsumerWidget {
+  const _CoachMetrics({required this.students});
 
-  final VoidCallback onInvite;
+  final List<StudentSummary> students;
 
   @override
-  Widget build(BuildContext context) {
-    final text = Theme.of(context).textTheme;
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            const Bizz(size: 110),
-            const SizedBox(height: 12),
-            Text(
-              tr('Henüz öğrencin yok'),
-              textAlign: TextAlign.center,
-              style: text.titleLarge?.copyWith(fontWeight: FontWeight.w800),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              tr(
-                'Bir davet kodu oluştur ve öğrencine gönder. Kodla kayıt olan öğrenci otomatik olarak sana bağlanır.',
-              ),
-              textAlign: TextAlign.center,
-              style: text.bodyMedium,
-            ),
-            const SizedBox(height: 16),
-            FilledButton.icon(
-              onPressed: onInvite,
-              icon: const Icon(Icons.person_add_alt_1),
-              label: Text(tr('Öğrenci davet et')),
-            ),
-          ],
-        ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final n = NumberFormat.decimalPattern(localeTag);
+    final weeks = ref.watch(activityWeeksProvider).value;
+    final last = weeks != null && weeks.length >= 2
+        ? (weeks[weeks.length - 1], weeks[weeks.length - 2])
+        : null;
+    final total = students.length;
+    final active = students.where((s) => s.activeThisWeek).length;
+    final questions = students.fold<int>(0, (a, s) => a + s.weekQuestions);
+    final minutes = students.fold<int>(0, (a, s) => a + s.weekMinutes);
+    final pending = students.fold<int>(0, (a, s) => a + s.pendingTasks);
+
+    return HeroStrip(
+      hero: WeekHeroCard(
+        key: const ValueKey('coach-metric-active'),
+        active: active,
+        total: total,
+        delta: last == null
+            ? null
+            : MetricDelta.between(last.$1.active, last.$2.active),
+        onTap: () => context.push('/coach/activity'),
       ),
+      cards: [
+        MetricCard(
+          key: const ValueKey('coach-metric-students'),
+          label: tr('Öğrencilerim'),
+          value: n.format(total),
+          count: total,
+          format: n.format,
+          delta: last == null
+              ? null
+              : MetricDelta.between(last.$1.students, last.$2.students),
+          semanticsHint: tr('Öğrencileri soru sayısına göre sıralar'),
+          onTap: () => context.push('/coach/activity?sort=questions'),
+        ),
+        MetricCard(
+          key: const ValueKey('coach-metric-questions'),
+          label: tr('Bu hafta çözülen soru'),
+          value: n.format(questions),
+          count: questions,
+          format: n.format,
+          detail: minutes > 0
+              ? tr('{t} çalışma', {'t': formatMinutes(minutes)})
+              : null,
+          delta: last == null
+              ? null
+              : MetricDelta.between(
+                  last.$1.questions,
+                  last.$2.questions,
+                  percent: true,
+                ),
+          semanticsHint: tr('Öğrencileri soru sayısına göre sıralar'),
+          onTap: () => context.push('/coach/activity?sort=questions'),
+        ),
+        MetricCard(
+          key: const ValueKey('coach-metric-pending'),
+          label: tr('Bekleyen görev'),
+          value: n.format(pending),
+          count: pending,
+          format: n.format,
+          detail: tr('öğrencilerinde yapılmamış'),
+          semanticsHint: tr('Ödev verme ekranını açar'),
+          onTap: () => context.push('/coach/homework'),
+        ),
+      ],
     );
   }
 }

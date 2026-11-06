@@ -262,9 +262,7 @@ class _ComposeAnnouncementSheetState
       ref.invalidate(announcementsProvider);
       navigator.pop();
       messenger.showSnackBar(
-        SnackBar(
-          content: Text(tr('Duyuru {n} kişiye gönderildi 📣', {'n': n})),
-        ),
+        SnackBar(content: Text(tr('Duyuru {n} kişiye gönderildi.', {'n': n}))),
       );
     } on AnnouncementException catch (e) {
       if (!mounted) return;

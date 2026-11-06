@@ -85,6 +85,7 @@ class TimetableHomeScreen extends ConsumerWidget {
               ),
             for (final s in list)
               Card(
+                margin: const EdgeInsets.only(bottom: 8),
                 child: ListTile(
                   title: Text(s.name),
                   subtitle: Text(

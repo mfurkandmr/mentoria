@@ -82,7 +82,7 @@ class _ExamTrendsCardState extends ConsumerState<ExamTrendsCard> {
                 icon: Icons.trending_down_rounded,
                 color: brand.danger,
                 items: m.falling,
-                empty: tr('Düşen öğrenci yok. 🎉'),
+                empty: tr('Düşen öğrenci yok.'),
                 basePath: widget.basePath,
               ),
             ],

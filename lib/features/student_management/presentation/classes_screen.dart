@@ -72,6 +72,7 @@ class ClassesScreen extends ConsumerWidget {
                           .length;
                       final full = c.capacity != null && n > c.capacity!;
                       return Card(
+                        margin: const EdgeInsets.only(bottom: 8),
                         child: ListTile(
                           key: ValueKey('class-${c.classroom.id}'),
                           leading: Icon(

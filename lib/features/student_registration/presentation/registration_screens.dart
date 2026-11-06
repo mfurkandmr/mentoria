@@ -496,6 +496,7 @@ class _RosterImportScreenState extends ConsumerState<RosterImportScreen> {
               ),
               for (final r in report.invalid)
                 Card(
+                  margin: const EdgeInsets.only(bottom: 8),
                   color: scheme.errorContainer,
                   child: ListTile(
                     key: ValueKey('bad-row-${r.line}'),

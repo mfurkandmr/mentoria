@@ -5,6 +5,7 @@ import '../../../core/i18n/i18n.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/format.dart';
 import '../../../shared/widgets/common.dart';
+import '../../admin/presentation/cockpit/cockpit_motion.dart';
 import '../../admin/data/admin_repository.dart';
 import '../../student_management/data/student_management_repository.dart';
 import '../data/finance_repository.dart';
@@ -190,6 +191,7 @@ Future<void> showPaymentDialog(
           installmentId: installment?.id,
         );
     _invalidate(ref);
+    CockpitHaptics.commit();
     if (!context.mounted) return;
     final fresh = await ref.read(financeFeesProvider.future);
     final f = fresh.where((x) => x.id == fee.id).firstOrNull;
@@ -1192,6 +1194,7 @@ class IncomesTab extends ConsumerWidget {
             ),
           for (final i in list)
             Card(
+              margin: const EdgeInsets.only(bottom: 8),
               child: ListTile(
                 title: Text(
                   '${i.category.label} · ${formatMoney(i.amount)}',
@@ -1528,6 +1531,7 @@ class AccountsTab extends ConsumerWidget {
               ),
             for (final a in list)
               Card(
+                margin: const EdgeInsets.only(bottom: 8),
                 child: ListTile(
                   key: ValueKey('account-${a.id}'),
                   leading: Icon(switch (a.kind) {

@@ -1,3 +1,4 @@
+import '../../admin/presentation/cockpit/cockpit_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -55,7 +56,7 @@ class RiskCard extends ConsumerWidget {
         data: (list) => list.isEmpty
             ? Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Text(tr('Bu hafta risk işareti veren öğrenci yok. 🎉')),
+                child: Text(tr('Bu hafta risk işareti veren öğrenci yok.')),
               )
             : Column(
                 children: [
@@ -82,7 +83,11 @@ class _RiskTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final brand = context.brand;
     final high = entry.score >= 60;
-    final color = high ? brand.danger : brand.secondary;
+    // Kokpitte renk anlam taşır: yüksek risk kırmızı, orta risk sarı.
+    final quiet = inCockpit(context);
+    final color = high
+        ? (quiet ? context.cockpit.risk : brand.danger)
+        : (quiet ? context.cockpit.warn : brand.secondary);
     return ListTile(
       contentPadding: EdgeInsets.zero,
       onTap: onTap,

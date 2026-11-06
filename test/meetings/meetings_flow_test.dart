@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:mentoria/dev/demo_mode.dart';
-import 'package:mentoria/features/admin/presentation/admin_home_screen.dart';
+import 'package:mentoria/features/admin/presentation/cockpit/cockpit_pages.dart';
 import 'package:mentoria/features/coach/presentation/coach_home_screen.dart';
 import 'package:mentoria/features/coach/presentation/student_detail_screen.dart';
 import 'package:mentoria/features/meetings/presentation/meeting_widgets.dart';
@@ -143,10 +143,11 @@ void main() {
 
   testWidgets('müdür koçların haftalık görüşmelerini görür', (tester) async {
     _phone(tester);
-    await tester.pumpWidget(await _app('admin', const AdminHomeScreen()));
+    // Kokpitte "Koç performansı → Haftalık ayrıntı" bu sayfayı açar.
+    await tester.pumpWidget(await _app('admin', const MeetingsPage()));
     await tester.pumpAndSettle();
 
-    await _scrollTo(tester, find.text('Koç görüşmeleri'));
+    await _scrollTo(tester, find.text('Koç görüşmeleri').last);
     final report = find.byType(CoachMeetingsReport);
     await _scrollTo(
       tester,

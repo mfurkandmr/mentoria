@@ -36,11 +36,15 @@ class InitialsAvatar extends StatelessWidget {
     required this.name,
     this.size = 46,
     this.active,
+    this.plain = false,
   });
 
   final String name;
   final double size;
   final bool? active;
+
+  /// Nötr görünüm (müdür / koç kokpiti): degrade ve gölge yok.
+  final bool plain;
 
   static String initialsOf(String name) {
     final parts = name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty);
@@ -69,26 +73,31 @@ class InitialsAvatar extends StatelessWidget {
           Container(
             width: size,
             height: size,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [light, base],
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: base.withValues(alpha: 0.35),
-                  blurRadius: size * 0.2,
-                  offset: Offset(0, size * 0.06),
-                ),
-              ],
-            ),
+            decoration: plain
+                ? const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0xFFEEF1F5),
+                  )
+                : BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [light, base],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: base.withValues(alpha: 0.35),
+                        blurRadius: size * 0.2,
+                        offset: Offset(0, size * 0.06),
+                      ),
+                    ],
+                  ),
             alignment: Alignment.center,
             child: Text(
               initialsOf(name),
               style: TextStyle(
-                color: onBase,
+                color: plain ? const Color(0xFF14213D) : onBase,
                 fontWeight: FontWeight.w900,
                 fontSize: size * 0.36,
               ),

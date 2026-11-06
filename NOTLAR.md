@@ -2367,3 +2367,144 @@ E-fatura / e-arşiv kullanıcı kararıyla yapılmadı.
   `guardianProvider`). Yeni migration yok.
 - Öğrenci detay ekranının üst çubuğuna "Sınıf, numara ve veli" düğmesi
   (müdür ve koç) eklendi; aynı pencereyi açar.
+
+## 59. Kurum müdürü kokpiti (6 Kasım 2026)
+
+Müdür paneli "Genel" sekmesi öğrenci-odaklı/oyunsu görünümden işletme
+kokpitine çevrildi. Hiçbir özellik kaldırılmadı; eski → yeni yer listesi ve
+kontrol: `docs/admin_panel_envanter.md` (testi: `test/admin_cockpit_test.dart`).
+
+- **Tema:** müdür panelinin tamamı tek, açık tema (`cockpit/cockpit_theme.dart`):
+  nötr gri zemin, beyaz kartlar. Renk yalnızca anlam: `Tone.risk/warn/good`.
+  Vurgu kurum markasının koyu tonu (`BrandTheme.ink`); kurum logosu, adı ve
+  yazı tipi korunur (white label ayarları aynen çalışır). Uygulamanın koyu
+  mod ayarı müdür panelini etkilemez. Bal peteği alt çubuğu yerine standart
+  `NavigationBar`; liste sonunda `cockpitNavHeight + 16` boşluk.
+- **Bölümler** (`lib/features/admin/presentation/cockpit/`): üst çubuk (logo,
+  kurum adı, tarih; maskot/selamlama yok) · eşik bantları · özet şeridi
+  (kayıtlı öğrenci, bu hafta aktif "312 / 410", bu hafta soru, yaklaşan
+  deneme; geçen haftaya göre ok) · dikkat gerektirenler (7+ gün girmeyen,
+  son iki denemede 3+ net düşen, taksiti geciken; satırdan koça bildirim /
+  koçu ara) · koç performansı · kurum araçları (eski modül kartlarının
+  hepsi) · kurum ayarları. Her bölümün yükleniyor (iskelet), boş (eylem
+  düğmeli) ve hata (Tekrar dene) hali ayrı (`section_states.dart`).
+- **Eşik bantları:** kurum kapalı; lisans bitti / 14 gün kaldı; kredi bitti /
+  kayıtlı öğrencinin %10'unun altında (`orgAlerts`). Müdüre "yöneticinizle"
+  denmez, "destek ekibiyle görüşün" denir (`LowCreditBanner` da müdürde bu
+  metni gösterir; koçta eskisi gibi).
+- **Alt sayfalar** (`/admin/...`): `exam-plans` (deneme takvimi), `activity`
+  (bu hafta çalışmayanlar / soru sırası; eski "hareketsiz öğrenciler"),
+  `risk` (eski risk kartı), `trends` (son 5 deneme), `meetings` (koç
+  görüşmeleri haftalık raporu).
+- **Sunucu:** migration `20261106160000_admin_cockpit` (canlıya uygulandı):
+  `profiles.last_seen_at` + `touch_last_seen()` (uygulama açılış/öne
+  gelişte, saatte en çok bir yazım; `presenceBootstrapProvider`),
+  `org_exam_plans` + `add_exam_plan`/`delete_exam_plan`, `coach_phones` +
+  `set_coach_phone` (müdür girer, Koçlar sekmesinden de), bildirim türü
+  `coach_alert` + `notify_coach_about_student` (aynı öğrenci için 6 saatte
+  bir), `admin_cockpit()` (tek çağrı; yalnızca müdür). "Bu hafta" son 7 gün,
+  görüşmeler pazartesiden beri. Son görülme birikene kadar son çalışma kaydı
+  kullanılır. Rollback ve `supabase/tests/admin_cockpit_test.mjs` var.
+  `send-push` v15 (koça bildirim metni) deploy edildi.
+- Android: "Koçu ara" için manifest `<queries>`'e `DIAL tel:` eklendi.
+
+## 60. Kokpit ikinci tur ve koç paneli (6 Kasım 2026)
+
+Kullanıcı kendi puanlamamdan (7/10) sonra açılış animasyonu hariç önerilerin
+hepsini istedi. Envanter: `docs/admin_panel_envanter.md` (ikinci tur ve koç
+paneli tabloları).
+
+- **Kompakt araçlar:** modül kısayolları `lib/shared/widgets/tool_tile.dart`
+  (`ToolInfo`, `ToolListCard`, `ToolGrid`). Her modülün durum satırı tek
+  fonksiyonda (`attendanceTool`, `financeTool`, `studentsTool`,
+  `bookPoolTool`, `orgExamsTool`, `timetableAdminTool`, `myTimetableTool`,
+  `bulkSmsTool`, `trendsTool`); eski `*HomeCard`'lar bunu liste kartı olarak
+  çizer (öğrenci/veli ekranları değişmedi). İş bekleyen kutu (yoklama
+  alınmadı, onay bekleyen kitap, yayın bekleyen sınav, geciken taksit,
+  sınıfsız öğrenci) dikkat renginde nokta + metin.
+- **Başarı sıralaması anahtarı** kurum ayarları kartında (`SuccessRankingRow`).
+- **Emojisiz:** risk/trend boş metinleri, görüşme planlandı, duyuru
+  gönderildi, şüpheli numara yok. **Nötr kart:** `inCockpit(context)`
+  (`CockpitThemed` içinde) → `StudentCard` ve `InitialsAvatar(plain: true)`
+  dekoratif renksiz; risk/dikkat renkleri anlamlı kalır.
+- **Eğilim:** migration `20261106170000_activity_weeks` (canlıda):
+  `activity_weeks(p_weeks)` son N haftanın aktif öğrenci / soru / kayıtlı
+  öğrenci sayısı; müdür kurumunu, koç kendi öğrencilerini görür
+  (`my_managed_students`). Arayüz `cockpit/activity_trend_card.dart`
+  (çubuklar, bu hafta vurgulu, değerler yazılı, ekran okuyucuya özet).
+  Rollback ve SQL testi (`admin_cockpit_test.mjs`) var.
+- **Koç paneli** (`coach_home_screen.dart`) kokpit diline geçti: aynı tema,
+  üst çubuk (kurum logosu/adı/tarih), özet şeridi (değişim oku eğilim
+  verisinden), risk kartı, görüşmeler, eğilim, kısayollar, duyurular,
+  öğrenciler. Alt çubuk standart `NavigationBar` (eylemler aynı). Yeni
+  rotalar koçta da: `/coach/activity`, `/coach/trends`. Davet sayfası
+  `openInviteSheet`.
+- Açılış animasyonu (Bızz intro) kullanıcı isteğiyle değişmedi.
+
+## 61. Kokpit: hareket ve derinlik (6 Kasım 2026)
+
+Kullanıcı ikinci turu "fazla düz" buldu; iPhone tasarımlarındaki gibi sade
+ama akıcı ve şık istedi (motion-and-haptics becerisine göre).
+
+- **Hareket dili** `cockpit/cockpit_motion.dart`: süre rolleri
+  (`CockpitMotion.short/medium/long`, iOS'a yakın eğri), `Reveal` (bölümler
+  sırayla aşağıdan süzülerek belirir), `Pressable` (basınca %97), 
+  `AnimatedCount` (sayılar sayarak gelir), `SlidingSegments` (iOS kayan
+  seçim kontrolü, ad + sayı iki satır), `SmoothSwitch` (grup değişince
+  çapraz geçiş + boy). Titreşim haritası `CockpitHaptics`: seçim →
+  selectionClick, kaydedildi (koça bildirim, telefon, deneme planı) →
+  lightImpact; tek anahtar `CockpitHaptics.enabled`. Hepsi `Motion.of`
+  ile "hareketi azalt"ta anında son hale geçer (sıfır süreli AnimatedSize
+  kullanılmaz: düzen sırasında hata veriyordu).
+- **Derinlik:** kartlar çizgisiz, yumuşak gölgeli, 18 px köşe; zemin üstte
+  kurum renginin çok hafif tonundan griye iner (`CockpitBackground`);
+  esnek (bouncing) kaydırma; Navigator geçişleri Cupertino.
+- **Üst çubuk:** iOS büyük başlığı; açıkken logo + büyük kurum adı + tarih,
+  kaydırınca küçük başlığa dönüşür ve buzlu cam (blur) çubuk belirir.
+- **Bu hafta kartı** (`week_hero_card.dart`): koyu kurum renginde, dolan
+  katılım halkası (iOS Fitness gibi), aktif sayısı sayarak gelir; yarıdan
+  azı çalıştıysa halka sıcak sarı. Müdür ve koçta aynı. Altında üç kompakt
+  kart (`HeroStrip`).
+- Eğilim çubukları sırayla yükselir, seri değişince yeni yüksekliğe kayar;
+  koç aktiflik çubukları dolarak gelir; araç kutuları basınca küçülür.
+- Test: `admin_cockpit_test` "hareket açıkken" (animasyonlu yollar hatasız).
+
+## 62. Kurum iç ekranları ve koyu kokpit (6 Kasım 2026)
+
+Kullanıcı 10/10 için iç ekranların (Finans, Yoklama, SMS...) eski düz
+görünümden çıkmasını ve hissin gelişmesini istedi.
+
+- **Rota seviyesi:** `_managerRoutes` altındaki bütün sayfalar (koç ve
+  müdür: finans, yoklama, SMS, kitap havuzu, kurum sınavları, ders
+  programı, sınıflar, öğrenci detayı, profil, markalama...) `_cockpitPage`
+  ile açılır: `CupertinoPage` (sağdan kayar, kenardan kaydırınca geri) +
+  `CockpitThemed`. Ekran kodu değişmeden kokpit temasını alır.
+- **Tema (`cockpitTheme`)** artık iç ekran bileşenlerini de kapsar: üst
+  çubuk zeminle bir, içerik altına kayınca beyaza döner (scrolledUnder) ve
+  başlık büyük/kalın; sekmeler kayan yumuşak hap; dalga (ripple) yok,
+  dokununca hafif vurgu; iOS anahtarı; yuvarlak onay kutusu; pencere ve
+  alt sayfalar 22–24 px köşe; yüzen SnackBar; tarih seçici, menü, çip,
+  ilerleme çubuğu. Kurumun başarı/hata renkleri kokpitte anlam renklerine
+  eşitlenir (`brand.copyWith(success, danger)`). Kaydırma her yerde esnek.
+- **Koyu tema:** `CockpitColors` artık `ThemeExtension` (açık + koyu takım,
+  `context.cockpit.x`); `Tone.of(context)` / `tintOf(context)`. Uygulama
+  koyu temadaysa kokpit de koyu; vurgu kurum renginin açık tonu
+  (`cockpitAccent`).
+- **Kurumsal işaret** `shared/widgets/corporate_look.dart`
+  (`CorporateLook` tema uzantısı, `isCorporate`): pencerelere de geçer.
+  Kurum panelinde `BizzLoader` sade dönen gösterge, `EmptyState` maskot
+  yerine simge gösterir. `inCockpit` bunu kullanır.
+- **Titreşim:** yoklamada işaretleme (seçim), "hepsi geldi" ve kaydetme
+  (kaydedildi); SMS sıraya alındı; tahsilat kaydedildi. Haftalık çalışma
+  sayfasında kayan seçim kontrolü.
+- **Yoklama kartı:** baş harf avatarı, dört eşit seçenek kutusu (simge +
+  ad; seçilince durum renginde dolar). **SMS:** bölüm başlıkları, kayan
+  "Kime" seçimi. Liste ekranlarında (kitap, sınıf, öğrenci, finans
+  listeleri, ders programı) kartlar arası 8 px.
+- **Hata düzeltmesi:** temadaki metin stillerinde boyut yoktu (`Theme.of`
+  çalışırken eklenir); üst çubuk başlığı, pencere başlığı gibi tema içi
+  stiller 14 px'e düşüyordu. `cockpitTheme` boyutları
+  `Typography.material2021().englishLike` ile birleştirir. `SlidingSegments`
+  yazısı tek satır (bölünen yazı taşıyordu).
+- Test: 501 test geçti; `admin_cockpit_test` koyu tema, maskotsuz
+  yükleniyor, alt sayfa rotaları.

@@ -209,26 +209,25 @@ void main() {
       await _app(const AdminHomeScreen(), role: 'admin', enabled: false),
     );
     await tester.pumpAndSettle();
-    final toggle = find.widgetWithText(SwitchListTile, 'Başarı sıralaması');
-    // Genel sekmesinin listesi (diğer sekmelerin listeleri de ağaçta). Öğesi
-    // bir kez bulunur; kaydırınca ilk kart ağaçtan çıkabilir.
-    final overview = find
-        .ancestor(
-          of: find.text('Öğrenci kredisi: 120'),
-          matching: find.byType(Scrollable),
-        )
-        .evaluate()
-        .first;
+    // Kokpitte "Kurum araçları" altında; anahtar kendi satırında.
+    final toggle = find.byKey(const ValueKey('success-ranking-switch'));
     await tester.scrollUntilVisible(
       toggle,
-      200,
-      scrollable: find.byElementPredicate((e) => e == overview),
+      300,
+      scrollable: find
+          .descendant(
+            of: find.byKey(const ValueKey('cockpit-scroll')),
+            matching: find.byType(Scrollable),
+          )
+          .first,
     );
     await tester.pumpAndSettle();
-    expect(tester.widget<SwitchListTile>(toggle).value, isFalse);
+    await Scrollable.ensureVisible(tester.element(toggle), alignment: 0.5);
+    await tester.pumpAndSettle();
+    expect(tester.widget<Switch>(toggle).value, isFalse);
     await tester.tap(toggle);
     await tester.pumpAndSettle();
-    expect(tester.widget<SwitchListTile>(toggle).value, isTrue);
+    expect(tester.widget<Switch>(toggle).value, isTrue);
     expect(
       find.text('Başarı sıralaması açıldı. Öğrenciler artık görebilir.'),
       findsOneWidget,

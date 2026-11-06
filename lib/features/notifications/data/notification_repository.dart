@@ -61,7 +61,10 @@ enum NotificationKind {
   timetable(Icons.calendar_view_week_rounded),
 
   /// Öğrenciye: kitap talebi onaylandı (ya da reddedildi).
-  bookRequest(Icons.menu_book_rounded, 'book_request');
+  bookRequest(Icons.menu_book_rounded, 'book_request'),
+
+  /// Koça: kurum müdürü kokpitten bir öğrenci için "ilgilen" dedi.
+  coachAlert(Icons.support_agent_rounded, 'coach_alert');
 
   const NotificationKind(this.icon, [this._db]);
   final IconData icon;
@@ -146,6 +149,9 @@ class AppNotification {
       data['result'] == 'rejected'
           ? tr('Kitap talebin onaylanmadı')
           : tr('Talep ettiğin kitap eklendi'),
+    NotificationKind.coachAlert => tr('{name} ile ilgilenir misin?', {
+      'name': data['student'] ?? '',
+    }),
   };
 
   String get body => switch (kind) {
@@ -219,6 +225,10 @@ class AppNotification {
               'book': data['book'] ?? '',
               'publisher': data['publisher'] ?? '',
             }),
+    NotificationKind.coachAlert => [
+      if (data['from'] != null) tr('{name} yazdı', {'name': data['from']}),
+      if ('${data['reason'] ?? ''}'.isNotEmpty) '${data['reason']}',
+    ].join(': '),
   };
 
   /// "13 Ekim" (haftanın pazartesisi).
@@ -299,6 +309,7 @@ class AppNotification {
     NotificationKind.installmentDue => '${data['route'] ?? '/admin/finance'}',
     NotificationKind.timetable => '${data['route'] ?? '/student/timetable'}',
     NotificationKind.bookRequest => '${data['route'] ?? '/student/books'}',
+    NotificationKind.coachAlert => '${data['route'] ?? '/coach'}',
   };
 
   AppNotification markRead() => AppNotification(

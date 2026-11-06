@@ -1,3 +1,4 @@
+import '../../../shared/widgets/tool_tile.dart';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
@@ -225,6 +226,7 @@ class BookPoolScreen extends ConsumerWidget {
                       ),
                     for (final b in active)
                       Card(
+                        margin: const EdgeInsets.only(bottom: 8),
                         child: ListTile(
                           title: Text(b.name),
                           subtitle: Text(
@@ -298,6 +300,7 @@ class BookPoolScreen extends ConsumerWidget {
                       ),
                     for (final r in pending)
                       Card(
+                        margin: const EdgeInsets.only(bottom: 8),
                         child: ListTile(
                           key: ValueKey('pending-${r.id}'),
                           leading: const Icon(Icons.hourglass_top_rounded),
@@ -496,29 +499,29 @@ class _BookImportScreenState extends ConsumerState<BookImportScreen> {
 }
 
 /// Müdür / koç ana sayfası: kitap havuzu (bekleyen talep sayısıyla).
+/// Kitap havuzu kısayolu (onay bekleyen talepler).
+ToolInfo bookPoolTool(WidgetRef ref, String basePath) {
+  final pending = (ref.watch(bookPoolProvider).value ?? const <Book>[])
+      .where((b) => b.status == PoolStatus.pending)
+      .length;
+  return ToolInfo(
+    id: 'book-pool-card',
+    icon: Icons.local_library_outlined,
+    title: tr('Kitap havuzu'),
+    status: pending > 0
+        ? tr('{n} kitap talebi onay bekliyor', {'n': pending})
+        : tr('Öğrencilerin seçtiği kaynak kitaplar'),
+    needsAction: pending > 0,
+    open: (context) => context.push('$basePath/books'),
+  );
+}
+
 class BookPoolHomeCard extends ConsumerWidget {
   const BookPoolHomeCard({super.key, required this.basePath});
 
   final String basePath;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final pending = (ref.watch(bookPoolProvider).value ?? const <Book>[])
-        .where((b) => b.status == PoolStatus.pending)
-        .length;
-    return Card(
-      child: ListTile(
-        key: const ValueKey('book-pool-card'),
-        leading: const Icon(Icons.local_library_outlined),
-        title: Text(tr('Kitap havuzu')),
-        subtitle: Text(
-          pending > 0
-              ? tr('{n} kitap talebi onay bekliyor', {'n': pending})
-              : tr('Öğrencilerin seçtiği kaynak kitaplar'),
-        ),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () => context.push('$basePath/books'),
-      ),
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) =>
+      ToolListCard(tool: bookPoolTool(ref, basePath));
 }

@@ -1,3 +1,4 @@
+import '../../../shared/widgets/tool_tile.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -7,6 +8,8 @@ import 'package:intl/intl.dart';
 
 import '../../../core/i18n/i18n.dart';
 import '../../../shared/widgets/common.dart';
+import '../../admin/presentation/cockpit/cockpit_motion.dart';
+import '../../admin/presentation/cockpit/cockpit_theme.dart';
 import '../../admin/data/admin_repository.dart';
 import '../../schedule_generator/data/timetable_repository.dart';
 import '../../student_management/data/student_management_repository.dart';
@@ -155,6 +158,7 @@ class _BulkSmsScreenState extends ConsumerState<BulkSmsScreen> {
       if (!mounted) return;
       _body.clear();
       setState(() => _busy = false);
+      CockpitHaptics.commit();
       _toast(tr('{n} veliye SMS sırasına alındı.', {'n': r.recipients}));
     } catch (e) {
       if (!mounted) return;
@@ -228,25 +232,27 @@ class _BulkSmsScreenState extends ConsumerState<BulkSmsScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          Text(tr('Kime'), style: text.titleSmall),
-          const SizedBox(height: 6),
-          SegmentedButton<SmsAudience>(
-            segments: [
-              ButtonSegment(
-                value: SmsAudience.all,
-                label: Text(tr('Tüm veliler')),
+          CockpitHeading(tr('Kime')),
+          SlidingSegments<SmsAudience>(
+            value: _audience,
+            onChanged: _setAudience,
+            segments: {
+              SmsAudience.all: (
+                key: const ValueKey('sms-audience-all'),
+                label: tr('Tüm veliler'),
+                count: null,
               ),
-              ButtonSegment(
-                value: SmsAudience.classes,
-                label: Text(tr('Sınıflar')),
+              SmsAudience.classes: (
+                key: const ValueKey('sms-audience-classes'),
+                label: tr('Sınıflar'),
+                count: null,
               ),
-              ButtonSegment(
-                value: SmsAudience.students,
-                label: Text(tr('Öğrenciler')),
+              SmsAudience.students: (
+                key: const ValueKey('sms-audience-students'),
+                label: tr('Öğrenciler'),
+                count: null,
               ),
-            ],
-            selected: {_audience},
-            onSelectionChanged: (v) => _setAudience(v.first),
+            },
           ),
           const SizedBox(height: 8),
           if (_audience == SmsAudience.classes)
@@ -281,6 +287,7 @@ class _BulkSmsScreenState extends ConsumerState<BulkSmsScreen> {
             ),
           const SizedBox(height: 10),
           Card(
+            margin: const EdgeInsets.only(bottom: 8),
             child: ListTile(
               leading: const Icon(Icons.people_alt_outlined),
               title: Text(
@@ -326,8 +333,8 @@ class _BulkSmsScreenState extends ConsumerState<BulkSmsScreen> {
                   : tr('Gönder ({n})', {'n': reach.recipients}),
             ),
           ),
-          const SizedBox(height: 24),
-          Text(tr('Gönderilenler'), style: text.titleSmall),
+          const SizedBox(height: 20),
+          CockpitHeading(tr('Gönderilenler')),
           AsyncView(
             value: history,
             onRetry: () => ref.invalidate(smsHistoryProvider),
@@ -340,6 +347,7 @@ class _BulkSmsScreenState extends ConsumerState<BulkSmsScreen> {
                     children: [
                       for (final b in list)
                         Card(
+                          margin: const EdgeInsets.only(bottom: 8),
                           child: ListTile(
                             title: Text(
                               b.body,
@@ -448,20 +456,18 @@ class _StudentPickerState extends State<_StudentPicker> {
 }
 
 /// Müdür ana sayfası: velilere SMS.
+/// Müdür: velilere toplu SMS kısayolu.
+ToolInfo bulkSmsTool() => ToolInfo(
+  id: 'bulk-sms-card',
+  icon: Icons.sms_outlined,
+  title: tr('Velilere SMS'),
+  status: tr('Resmi tatil, toplantı, duyuru: istediğin metni gönder'),
+  open: (context) => context.push('/admin/sms'),
+);
+
 class BulkSmsHomeCard extends StatelessWidget {
   const BulkSmsHomeCard({super.key});
 
   @override
-  Widget build(BuildContext context) => Card(
-    child: ListTile(
-      key: const ValueKey('bulk-sms-card'),
-      leading: const Icon(Icons.sms_outlined),
-      title: Text(tr('Velilere SMS')),
-      subtitle: Text(
-        tr('Resmi tatil, toplantı, duyuru: istediğin metni gönder'),
-      ),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () => context.push('/admin/sms'),
-    ),
-  );
+  Widget build(BuildContext context) => ToolListCard(tool: bulkSmsTool());
 }

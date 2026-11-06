@@ -9,6 +9,7 @@ import '../../../shared/widgets/effects.dart';
 import '../../../shared/widgets/panel.dart';
 import '../../student/presentation/home_sky.dart';
 import '../../tracking/presentation/study_view.dart';
+import '../../admin/presentation/cockpit/cockpit_theme.dart';
 import '../data/coach_repository.dart';
 
 export '../../../shared/widgets/panel.dart';
@@ -154,6 +155,10 @@ class StudentCard extends StatelessWidget {
     final ratio = maxWeekQuestions <= 0
         ? 0.0
         : (s.weekQuestions / maxWeekQuestions).clamp(0.0, 1.0);
+    // Kokpitte renk yalnızca anlam taşır (risk / dikkat).
+    final quiet = inCockpit(context);
+    final risk = quiet ? context.cockpit.risk : brand.danger;
+    final warn = quiet ? context.cockpit.warn : brand.primaryDeep;
 
     return Card(
       margin: EdgeInsets.zero,
@@ -167,7 +172,11 @@ class StudentCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  InitialsAvatar(name: s.fullName, active: s.activeThisWeek),
+                  InitialsAvatar(
+                    name: s.fullName,
+                    active: s.activeThisWeek,
+                    plain: quiet,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -208,12 +217,14 @@ class StudentCard extends StatelessWidget {
                     InfoPill(
                       icon: Icons.person_remove_outlined,
                       text: tr('Silme talebi'),
-                      color: brand.danger,
+                      color: risk,
                     ),
                   InfoPill(
                     icon: Icons.edit_note_rounded,
                     text: tr('{n} soru', {'n': s.weekQuestions}),
-                    color: s.weekQuestions > 0 ? brand.secondary : null,
+                    color: s.weekQuestions > 0 && !quiet
+                        ? brand.secondary
+                        : null,
                   ),
                   InfoPill(
                     icon: Icons.timer_outlined,
@@ -223,7 +234,7 @@ class StudentCard extends StatelessWidget {
                     InfoPill(
                       icon: Icons.assignment_late_outlined,
                       text: tr('{n} görev bekliyor', {'n': s.pendingTasks}),
-                      color: brand.primaryDeep,
+                      color: warn,
                     ),
                   if (showCoach)
                     InfoPill(
@@ -234,7 +245,7 @@ class StudentCard extends StatelessWidget {
                     InfoPill(
                       icon: Icons.bedtime_outlined,
                       text: tr('Bu hafta hareketsiz'),
-                      color: brand.danger,
+                      color: risk,
                     ),
                 ],
               ),
@@ -250,7 +261,9 @@ class StudentCard extends StatelessWidget {
                       backgroundColor: Theme.of(
                         context,
                       ).colorScheme.onSurface.withValues(alpha: 0.07),
-                      color: brand.primary,
+                      color: quiet
+                          ? context.cockpit.ink.withValues(alpha: 0.55)
+                          : brand.primary,
                     ),
                   ),
                 ),
@@ -275,7 +288,13 @@ class _NumberChip extends StatelessWidget {
       return Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.error_outline, size: 14, color: context.brand.primaryDeep),
+          Icon(
+            Icons.error_outline,
+            size: 14,
+            color: inCockpit(context)
+                ? context.cockpit.warn
+                : context.brand.primaryDeep,
+          ),
           const SizedBox(width: 2),
           Text(tr('No yok'), style: text),
         ],

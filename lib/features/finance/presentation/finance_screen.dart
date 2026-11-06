@@ -1,3 +1,4 @@
+import '../../../shared/widgets/tool_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -639,6 +640,7 @@ class _FeesTabState extends ConsumerState<_FeesTab> {
               ),
             for (final f in list)
               Card(
+                margin: const EdgeInsets.only(bottom: 8),
                 child: ListTile(
                   title: Text(f.studentName),
                   subtitle: Text(
@@ -1221,6 +1223,7 @@ class _ExpensesTab extends ConsumerWidget {
               ),
               for (final e in list)
                 Card(
+                  margin: const EdgeInsets.only(bottom: 8),
                   child: ListTile(
                     leading: Icon(_categoryIcon(e.category)),
                     title: Text(
@@ -1526,6 +1529,7 @@ class _CoachesTab extends ConsumerWidget {
                   final amount = rate.suggested(n);
                   final paid = coachPaidIn(expenses, c.id, month);
                   return Card(
+                    margin: const EdgeInsets.only(bottom: 8),
                     child: Padding(
                       padding: const EdgeInsets.all(14),
                       child: Column(
@@ -1682,42 +1686,43 @@ class _RateDialogState extends State<_RateDialog> {
 }
 
 /// Müdür ana sayfasındaki kısa özet: bu ayın tahsilatı ve gecikenler.
+/// Müdür: finans kısayolu (bu ayın tahsilatı, geciken taksit).
+ToolInfo financeTool(WidgetRef ref) {
+  final fees = ref.watch(financeFeesProvider).value;
+  final expenses = ref.watch(financeExpensesProvider).value ?? const [];
+  final today = _today();
+  final s = fees == null
+      ? null
+      : monthSummary(
+          fees,
+          expenses,
+          DateTime(today.year, today.month),
+          today: today,
+          incomes: ref.watch(financeIncomesProvider).value ?? const [],
+        );
+  return ToolInfo(
+    id: 'finance-home-card',
+    icon: Icons.account_balance_wallet_outlined,
+    title: tr('Finans'),
+    status: s == null
+        ? tr('Ücret, taksit, gider ve koç maaşları')
+        : s.overdueCount > 0
+        ? tr('Bu ay tahsilat {v} · {n} geciken taksit', {
+            'v': formatMoney(s.collected),
+            'n': s.overdueCount,
+          })
+        : tr('Bu ay tahsilat {v}', {'v': formatMoney(s.collected)}),
+    needsAction: (s?.overdueCount ?? 0) > 0,
+    open: (context) => context.push('/admin/finance'),
+  );
+}
+
 class FinanceHomeCard extends ConsumerWidget {
   const FinanceHomeCard({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final fees = ref.watch(financeFeesProvider).value;
-    final expenses = ref.watch(financeExpensesProvider).value ?? const [];
-    final today = _today();
-    final s = fees == null
-        ? null
-        : monthSummary(
-            fees,
-            expenses,
-            DateTime(today.year, today.month),
-            today: today,
-            incomes: ref.watch(financeIncomesProvider).value ?? const [],
-          );
-    return Card(
-      child: ListTile(
-        leading: const Icon(Icons.account_balance_wallet_outlined),
-        title: Text(tr('Finans')),
-        subtitle: Text(
-          s == null
-              ? tr('Ücret, taksit, gider ve koç maaşları')
-              : s.overdueCount > 0
-              ? tr('Bu ay tahsilat {v} · {n} geciken taksit', {
-                  'v': formatMoney(s.collected),
-                  'n': s.overdueCount,
-                })
-              : tr('Bu ay tahsilat {v}', {'v': formatMoney(s.collected)}),
-        ),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () => context.push('/admin/finance'),
-      ),
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) =>
+      ToolListCard(tool: financeTool(ref));
 }
 
 /// Aylık ya da yıllık Excel: dönem seçilir, dosya paylaşılır.

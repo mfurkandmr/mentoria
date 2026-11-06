@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import '../../core/theme/brand_theme.dart';
 import '../motion.dart';
 import 'bizz.dart';
+import 'corporate_look.dart';
 import '../../core/i18n/i18n.dart';
 
 /// Altıgen yolu (sivri tepe yukarıda).
@@ -322,7 +323,10 @@ class BizzLoader extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       child: Semantics(
         label: tr('Yükleniyor'),
-        child: Bizz(size: size, headOnly: true, interactive: false),
+        // Kurum panelinde maskot yerine sade gösterge.
+        child: isCorporate(context)
+            ? const CircularProgressIndicator.adaptive()
+            : Bizz(size: size, headOnly: true, interactive: false),
       ),
     ),
   );

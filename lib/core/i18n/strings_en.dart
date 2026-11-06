@@ -1013,9 +1013,9 @@ const enStrings = <String, String>{
   '{held} / {n} yapıldı': '{held} / {n} held',
   'Bu hafta planlı görüşme yok.': 'No meetings scheduled this week.',
   'Görüşme zamanı geçmiş olamaz.': "The meeting time can't be in the past.",
-  'Rutin görüşme planlandı: her {day} {time} 🐝':
-      'Recurring meeting scheduled: every {day} {time} 🐝',
-  'Görüşme planlandı 🐝': 'Meeting scheduled 🐝',
+  'Rutin görüşme planlandı: her {day} {time}':
+      'Recurring meeting scheduled: every {day} {time}',
+  'Görüşme planlandı.': 'Meeting scheduled.',
   'Her hafta': 'Every week',
   'Tek sefer': 'One-off',
   'Gün': 'Day',
@@ -1440,7 +1440,7 @@ const enStrings = <String, String>{
   'En çok yükselen': 'Biggest rises',
   'Yükselen öğrenci yok.': 'No students are rising.',
   'En çok düşen': 'Biggest drops',
-  'Düşen öğrenci yok. 🎉': 'No students are dropping. 🎉',
+  'Düşen öğrenci yok.': 'No students are dropping.',
   '{a} → {b} net · {n} deneme': '{a} → {b} net · {n} exams',
 
   // YKS puan hesaplayıcı
@@ -1525,8 +1525,8 @@ const enStrings = <String, String>{
   'Bu hafta konuşulacaklar': 'Talk to this week',
   'Devam, net düşüşü ve ödeve göre son 7 gün':
       'Last 7 days by attendance, net drop and homework',
-  'Bu hafta risk işareti veren öğrenci yok. 🎉':
-      'No students show warning signs this week. 🎉',
+  'Bu hafta risk işareti veren öğrenci yok.':
+      'No students show warning signs this week.',
   'Bu hafta {n} öğrenciyle konuş': 'Talk to {n} students this week',
   '{names}: devam, net ya da ödevde geriye düşüş var. Listeye bak.':
       '{names}: attendance, nets or homework slipped. Check the list.',
@@ -1742,7 +1742,7 @@ const enStrings = <String, String>{
   'Duyuru gönderilsin mi?': 'Send the announcement?',
   '"{title}" duyurusu {audience} kitlesine bildirim olarak gidecek. Gönderdikten sonra geri alınamaz.':
       'The announcement "{title}" will be sent as a notification to: {audience}. It cannot be undone once sent.',
-  'Duyuru {n} kişiye gönderildi 📣': 'Announcement sent to {n} people 📣',
+  'Duyuru {n} kişiye gönderildi.': 'Announcement sent to {n} people.',
   'Kime?': 'To whom?',
   'Başlık': 'Title',
   'Örn. Cumartesi TYT denemesi': 'E.g. TYT mock exam on Saturday',
@@ -2693,7 +2693,7 @@ const enStrings = <String, String>{
   'Seçilenleri sınıfa ata ({n})': 'Assign selected to a class ({n})',
   'Öğrenci yok.': 'No students.',
   'Hepsini seç': 'Select all',
-  'Şüpheli numara yok. 🎉': 'No suspicious numbers. 🎉',
+  'Şüpheli numara yok.': 'No suspicious numbers.',
   'Kurum listesinde olup uygulamaya henüz kayıt olmayan öğrenciler.':
       'Students in the institution\'s list who haven\'t signed up yet.',
   'Ad soyad veya öğrenci no ara': 'Search by name or student number',
@@ -3391,4 +3391,168 @@ const enStrings = <String, String>{
   'Sınıf ataması, öğrenci numarası, veli telefonu ve kayıtlar':
       'Class assignment, student number, parent phone and records',
   'Sınıf, numara ve veli': 'Class, number and parent',
+  // Müdür kokpiti (NOTLAR §59)
+  '7 gün ya da daha uzun süredir girmeyenler':
+      'Not signed in for 7 days or more',
+  'Aktif davet yok. Koç ya da öğrenci daveti oluşturduğunda burada görünür.':
+      'No active invites. Coach or student invites you create appear here.',
+  'Arama başlatılamadı: {p}': 'Could not start the call: {p}',
+  'Bildirim gönderilemedi. Tekrar dene.':
+      'Could not send the notification. Try again.',
+  'Bu bölüm yüklenemedi. Bağlantını kontrol et.':
+      'This section could not be loaded. Check your connection.',
+  'Bu grupta öğrenci yok.': 'No students in this group.',
+  'Bu hafta aktif': 'Active this week',
+  'Bu hafta çalışmayanları açar': 'Opens students who did not study this week',
+  'Bu hafta çözülen soru': 'Questions solved this week',
+  'Bu haftanın çalışması': 'This week of study',
+  'Bu öğrenci için koça son 6 saat içinde zaten bildirim gönderildi.':
+      'The coach was already notified about this student in the last 6 hours.',
+  'Bugünden itibaren, en yakını önce': 'From today, nearest first',
+  'Cep telefonu': 'Mobile phone',
+  'Deneme adını yaz.': 'Enter the exam name.',
+  'Deneme planla': 'Plan an exam',
+  'Deneme takvime eklendi.': 'Exam added to the calendar.',
+  'Deneme takvimi': 'Exam calendar',
+  'Deneme takvimini açar': 'Opens the exam calendar',
+  'Deneme trendleri': 'Exam trends',
+  'Dikkat gerektirenler': 'Needs attention',
+  'Geçen haftaya göre': 'Compared with last week',
+  'Geçen haftaya göre {v} arttı': 'Up {v} from last week',
+  'Geçen haftaya göre {v} azaldı': 'Down {v} from last week',
+  'Geçen haftayla aynı': 'Same as last week',
+  'Geçerli bir cep telefonu yaz.': 'Enter a valid mobile number.',
+  'Giriş yok · {n}': 'Not signed in · {n}',
+  'Görünüm': 'Appearance',
+  'Görüşmeler pazartesiden bu yana; aktiflik son 7 gün':
+      'Meetings since Monday; activity over the last 7 days',
+  'Haftalık ayrıntı': 'Weekly detail',
+  'Henüz koç yok. Kod oluştur ve koçuna gönder.':
+      'No coaches yet. Create a code and send it to your coach.',
+  'Henüz öğrenci yok. Bir koç için öğrenci davet kodu oluştur.':
+      'No students yet. Create a student invite code for a coach.',
+  'Her yeni öğrenci 1 kredi kullanır.': 'Each new student uses 1 credit.',
+  'Herkes bu hafta çalışmış.': 'Everyone studied this week.',
+  'Hesabı yeniden açmak için destek ekibiyle görüşün.':
+      'Contact the support team to reopen the account.',
+  'Hiç giriş yapmadı': 'Never signed in',
+  'Kayıtlı öğrenci': 'Registered students',
+  'Kokpitteki "Koçu ara" düğmesi bu numarayı arar.':
+      'The "Call coach" button on the dashboard calls this number.',
+  'Koç performansı': 'Coach performance',
+  'Koça uygulama içinde ve telefonuna bildirim gider: "{name} ile ilgilenir misin?"':
+      'The coach gets an in-app and phone notification: "Can you look into {name}?"',
+  'Koçu ara': 'Call coach',
+  'Koçu atanmamış': 'No coach assigned',
+  'Koçu: {name}': 'Coach: {name}',
+  'Koçuna bildir': 'Notify the coach',
+  'Kredi yüklemek için destek ekibiyle görüşün.':
+      'Contact the support team to top up credits.',
+  'Kurum araçları': 'Institution tools',
+  'Kurum ayarları': 'Institution settings',
+  'Kurumda henüz koç yok.': 'The institution has no coaches yet.',
+  'Kurumda henüz öğrenci yok.': 'The institution has no students yet.',
+  'Kurumdaki hesaplar': 'Accounts in the institution',
+  'Kurumun son TYT ortalaması: {v} net ({n} öğrenci)':
+      'Institution latest TYT average: {v} net ({n} students)',
+  'Lisans': 'Licence',
+  'Lisans bugün bitiyor': 'The licence ends today',
+  'Lisans süresi doldu ({date})': 'Licence expired ({date})',
+  'Lisans {n} gün sonra bitiyor': 'The licence ends in {n} days',
+  'Logo, renk ve yazı tipi': 'Logo, colour and font',
+  'Net düşüşü · {n}': 'Net drop · {n}',
+  'Plan silinsin mi?': 'Delete this plan?',
+  'Planlı deneme yok.': 'No exams planned.',
+  'Planlı deneme yok. Planla': 'No exams planned. Plan one',
+  'Planlı denemeler': 'Planned exams',
+  'Planı sil': 'Delete plan',
+  'Risk listesi': 'Risk list',
+  'Son 5 denemede en çok yükselen ve düşenler':
+      'Biggest risers and fallers over the last 5 exams',
+  'Son 7 gün · toplam {t} çalışma': 'Last 7 days · {t} of study in total',
+  'Son 7 günde soru ya da çalışma kaydı olmayanlar':
+      'No questions or study logged in the last 7 days',
+  'Son iki denemesi arasında 3 ya da daha çok net düşenler':
+      'Dropped 3 or more nets between their last two exams',
+  'Soru sırası': 'By questions',
+  'Telefon kaydedildi.': 'Phone saved.',
+  'Telefon kaydedilemedi. Tekrar dene.': 'Could not save the phone. Try again.',
+  'Telefon silindi.': 'Phone removed.',
+  'Telefonu düzenle': 'Edit phone',
+  'Tümünü gör ({n})': 'See all ({n})',
+  'Vadesi geçmiş, ödenmemiş taksiti olanlar':
+      'Have an unpaid, overdue instalment',
+  'Yaklaşan deneme': 'Upcoming exam',
+  'Yeni öğrenci eklenemez.': 'New students cannot be added.',
+  'Yeni öğrenci eklenemez. Kredi yüklemek için destek ekibiyle görüşün.':
+      'New students cannot be added. Contact the support team to top up credits.',
+  'Yüklenemedi': 'Could not load',
+  'Yüzde {p}': '{p} percent',
+  'aktif öğrenci': 'active students',
+  'aynı': 'same',
+  'bugün': 'today',
+  'görüşme yapıldı': 'meetings held',
+  'gün sonra': 'days to go',
+  'katılım %{p}': '{p}% participation',
+  'planlı görüşme yok': 'no meetings planned',
+  'yarın': 'tomorrow',
+  '{coach} bilgilendirildi.': '{coach} was notified.',
+  '{coach} bilgilendirilsin': 'Notify {coach}',
+  '{date} tarihinden sonra öğrenci, koç ve veliler giriş yapamaz. Lisansı uzatmak için destek ekibiyle görüşün.':
+      'After {date}, students, coaches and parents cannot sign in. Contact the support team to extend the licence.',
+  '{date} tarihine kadar': 'Until {date}',
+  '{d} gündür': 'for {d} days',
+  '{name} ile ilgilenir misin?': 'Can you look into {name}?',
+  '{name} yazdı': '{name} wrote',
+  '{name} · telefon': '{name} · phone',
+  '{n} gün sonra': 'in {n} days',
+  '{n} gündür giriş yapmadı': 'Not signed in for {n} days',
+  '{n} kaldı': '{n} left',
+  '{n} taksit gecikti': '{n} instalments overdue',
+  '{s} öğrenci · {c} koç · {p} veli':
+      '{s} students · {c} coaches · {p} parents',
+  '{type} neti {a} → {b} ({c})': '{type} net {a} → {b} ({c})',
+  '{t} çalışma': '{t} of study',
+  'Çalışmayanlar · {n}': 'Not studying · {n}',
+  'Ödeme · {n}': 'Payment · {n}',
+  'Önce öğrenciye koç ata': 'Assign a coach to the student first',
+  'Öğrenci daveti oluştur': 'Create a student invite',
+  'Öğrenci krediniz azaldı: {n} kaldı':
+      'Your student credits are low: {n} left',
+  'Öğrenci kredisi': 'Student credits',
+  'Öğrenci listesini açar': 'Opens the student list',
+  'Öğrenci, koç ve veliler giriş yapamıyor. Lisansı uzatmak için destek ekibiyle görüşün.':
+      'Students, coaches and parents cannot sign in. Contact the support team to extend the licence.',
+  'Öğrenciler kayıt olurken bu kodu yazar.':
+      'Students enter this code when signing up.',
+  'Öğrencileri soru sayısına göre sıralar': 'Sorts students by questions',
+  'ör. TYT Genel Deneme 5': 'e.g. TYT General Exam 5',
+  'öğrenci': 'students',
+  'Şu an dikkat gerektiren öğrenci yok.':
+      'No students need attention right now.',
+  // Kokpit eğilimi ve koç paneli (NOTLAR §60)
+  'Aktif öğrenci': 'Active students',
+  'Açık: öğrenciler görüyor': 'On: students can see it',
+  'Bekleyen görev': 'Pending tasks',
+  'Haftalık aktif öğrenci': 'Active students per week',
+  'Haftalık çözülen soru': 'Questions solved per week',
+  'Henüz öğrencin yok. Bir davet kodu oluştur ve öğrencine gönder; kodla kayıt olan öğrenci otomatik olarak sana bağlanır.':
+      'You have no students yet. Create an invite code and send it to your student; whoever signs up with it is linked to you automatically.',
+  'Kapalı: yalnızca sen önizlersin': 'Off: only you can preview it',
+  'Kısayollar': 'Shortcuts',
+  'Son 8 hafta': 'Last 8 weeks',
+  '{d}: {a} / {s} aktif': '{d}: {a} / {s} active',
+  '{d}: {q} soru': '{d}: {q} questions',
+  'Ödev verme ekranını açar': 'Opens the homework screen',
+  'Öğrenci kaydı olunca haftalık eğilim burada görünür.':
+      'The weekly trend appears here once students sign up.',
+  'öğrencilerinde yapılmamış': 'not yet done by your students',
+  // Kokpit hareket turu (NOTLAR §61)
+  'Bu hafta {a} / {t} öğrenci aktif, katılım yüzde {p}':
+      '{a} of {t} students active this week, {p} percent participation',
+  'Giriş yok': 'Not signed in',
+  'Net düşüşü': 'Net drop',
+  'katılım': 'participation',
+  'Ödeme': 'Payment',
+  'öğrenci bu hafta çalıştı': 'students studied this week',
 };

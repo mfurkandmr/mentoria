@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'bizz.dart';
+import 'corporate_look.dart';
 import 'effects.dart';
 import '../../core/i18n/i18n.dart';
 
@@ -168,7 +169,23 @@ class EmptyState extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Bizz(size: bizzSize),
+          // Kurum panelinde maskot yerine sade simge.
+          if (isCorporate(context))
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.inbox_outlined,
+                size: 32,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            )
+          else
+            Bizz(size: bizzSize),
           const SizedBox(height: 14),
           Text(
             title,

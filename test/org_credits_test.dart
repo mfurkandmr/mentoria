@@ -206,8 +206,20 @@ void main() {
     await _pump(tester, const AdminHomeScreen(), [
       ...await buildDemoOverrides('admin', true, null, credits),
     ]);
+    // Kurum ayarları kartı kokpitin en altında.
+    await tester.scrollUntilVisible(
+      find.text('MENTORIA-BAL2K7'),
+      300,
+      scrollable: find
+          .descendant(
+            of: find.byKey(const ValueKey('cockpit-scroll')),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    await tester.pumpAndSettle();
     expect(find.text('MENTORIA-BAL2K7'), findsOneWidget);
-    expect(find.text('Öğrenci kredisi: 120'), findsOneWidget);
+    expect(find.text('120 kaldı'), findsOneWidget);
     expect(find.textContaining('Öğrenci krediniz'), findsNothing);
 
     await tester.tap(find.byTooltip('Kodu yenile'));

@@ -1,8 +1,12 @@
+import '../../features/coach/presentation/invite_sheet.dart';
+import '../../features/admin/presentation/cockpit/cockpit_pages.dart';
+import '../../features/admin/presentation/cockpit/exam_plans_screen.dart';
+import '../../features/admin/presentation/cockpit/cockpit_theme.dart';
 import 'dart:async';
 
 import '../../features/avatar/presentation/leaderboard_screen.dart';
 import '../../features/avatar/presentation/avatar_editor_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -292,68 +296,130 @@ GoRoute _managerRoutes(String base, Widget home) => GoRoute(
   path: base,
   builder: (_, _) => ExitGuard(child: home),
   routes: [
-    GoRoute(path: 'profile', builder: (_, _) => const ProfileScreen()),
-    GoRoute(path: 'import', builder: (_, _) => const ImportScreen()),
+    GoRoute(
+      path: 'profile',
+      pageBuilder: (_, state) => _cockpitPage(state, const ProfileScreen()),
+    ),
+    GoRoute(
+      path: 'import',
+      pageBuilder: (_, state) => _cockpitPage(state, const ImportScreen()),
+    ),
     // Optik okuma: cevap anahtarı + kazanımlar, sonra optik fotoğrafları.
     GoRoute(
       path: 'optic',
-      builder: (_, _) => OpticKeysScreen(basePath: base),
+      pageBuilder: (_, state) =>
+          _cockpitPage(state, OpticKeysScreen(basePath: base)),
       routes: [
         GoRoute(
           path: 'new',
-          builder: (_, _) => NewAnswerKeyScreen(basePath: base),
+          pageBuilder: (_, state) =>
+              _cockpitPage(state, NewAnswerKeyScreen(basePath: base)),
         ),
         GoRoute(
           path: ':id',
-          builder: (_, state) => OpticKeyScreen(
-            keyId: state.pathParameters['id']!,
-            basePath: base,
+          pageBuilder: (_, state) => _cockpitPage(
+            state,
+            OpticKeyScreen(keyId: state.pathParameters['id']!, basePath: base),
           ),
         ),
       ],
     ),
     // Günlük yoklama: koç kendi öğrencileri, müdür bütün kurum.
-    GoRoute(path: 'attendance', builder: (_, _) => const AttendanceScreen()),
+    GoRoute(
+      path: 'attendance',
+      pageBuilder: (_, state) => _cockpitPage(state, const AttendanceScreen()),
+    ),
     // Kurum kitap havuzu ve öğrencilerin kitap talepleri.
-    GoRoute(path: 'books', builder: (_, _) => const BookPoolScreen()),
+    GoRoute(
+      path: 'books',
+      pageBuilder: (_, state) => _cockpitPage(state, const BookPoolScreen()),
+    ),
     // Kurum sınavları: optik Excel içe aktarma, kazanım analizi, karneler.
     GoRoute(
       path: 'org-exams',
-      builder: (_, _) => OrgExamsScreen(basePath: base),
+      pageBuilder: (_, state) =>
+          _cockpitPage(state, OrgExamsScreen(basePath: base)),
       routes: [
         GoRoute(
           path: 'new',
-          builder: (_, _) => OrgExamScreen(basePath: base),
+          pageBuilder: (_, state) =>
+              _cockpitPage(state, OrgExamScreen(basePath: base)),
         ),
         GoRoute(
           path: ':id',
-          builder: (_, state) =>
-              OrgExamScreen(basePath: base, examId: state.pathParameters['id']),
+          pageBuilder: (_, state) => _cockpitPage(
+            state,
+            OrgExamScreen(basePath: base, examId: state.pathParameters['id']),
+          ),
         ),
       ],
     ),
-    GoRoute(path: 'outcomes', builder: (_, _) => const OutcomePoolScreen()),
+    GoRoute(
+      path: 'outcomes',
+      pageBuilder: (_, state) => _cockpitPage(state, const OutcomePoolScreen()),
+    ),
     // Sınıflar ve öğrenci yönetimi (koç: kendi öğrencileri).
     GoRoute(
       path: 'classes',
-      builder: (_, _) => ClassesScreen(basePath: base),
+      pageBuilder: (_, state) =>
+          _cockpitPage(state, ClassesScreen(basePath: base)),
     ),
     GoRoute(
       path: 'roster',
-      builder: (_, _) => StudentsScreen(basePath: base),
+      pageBuilder: (_, state) =>
+          _cockpitPage(state, StudentsScreen(basePath: base)),
     ),
     // Velilere serbest metinli SMS: yalnızca müdür.
     if (base == '/admin')
-      GoRoute(path: 'sms', builder: (_, _) => const BulkSmsScreen()),
+      GoRoute(
+        path: 'sms',
+        pageBuilder: (_, state) => _cockpitPage(state, const BulkSmsScreen()),
+      ),
+    // Müdür kokpitinin alt sayfaları (NOTLAR §59).
+    if (base == '/admin') ...[
+      GoRoute(
+        path: 'exam-plans',
+        pageBuilder: (_, state) => _cockpitPage(state, const ExamPlansScreen()),
+      ),
+      GoRoute(
+        path: 'risk',
+        pageBuilder: (_, state) => _cockpitPage(state, const RiskPage()),
+      ),
+      GoRoute(
+        path: 'meetings',
+        pageBuilder: (_, state) => _cockpitPage(state, const MeetingsPage()),
+      ),
+    ],
+    // Kokpit alt sayfaları: müdür ve koç (koçta kendi öğrencileri).
+    GoRoute(
+      path: 'activity',
+      pageBuilder: (_, state) => _cockpitPage(
+        state,
+        WeekActivityPage(
+          basePath: base,
+          initial: state.uri.queryParameters['sort'] == 'questions'
+              ? ActivityView.questions
+              : ActivityView.inactive,
+          onInvite: base == '/coach' ? openInviteSheet : null,
+        ),
+      ),
+    ),
+    GoRoute(
+      path: 'trends',
+      pageBuilder: (_, state) =>
+          _cockpitPage(state, TrendsPage(basePath: base)),
+    ),
     // Öğrenci kayıt modu ve kurum listesi: yalnızca müdür.
     if (base == '/admin')
       GoRoute(
         path: 'registration',
-        builder: (_, _) => const RegistrationSettingsScreen(),
+        pageBuilder: (_, state) =>
+            _cockpitPage(state, const RegistrationSettingsScreen()),
         routes: [
           GoRoute(
             path: 'import',
-            builder: (_, _) => const RosterImportScreen(),
+            pageBuilder: (_, state) =>
+                _cockpitPage(state, const RosterImportScreen()),
           ),
         ],
       ),
@@ -361,17 +427,22 @@ GoRoute _managerRoutes(String base, Widget home) => GoRoute(
     if (base == '/admin')
       GoRoute(
         path: 'schedule',
-        builder: (_, _) => const TimetableHomeScreen(),
+        pageBuilder: (_, state) =>
+            _cockpitPage(state, const TimetableHomeScreen()),
         routes: [
           GoRoute(
             path: 'setup',
-            builder: (_, _) => const TimetableSetupScreen(),
+            pageBuilder: (_, state) =>
+                _cockpitPage(state, const TimetableSetupScreen()),
           ),
           GoRoute(
             path: ':id',
-            builder: (_, state) => ScheduleScreen(
-              scheduleId: state.pathParameters['id']!,
-              autoGenerate: state.uri.queryParameters['generate'] == '1',
+            pageBuilder: (_, state) => _cockpitPage(
+              state,
+              ScheduleScreen(
+                scheduleId: state.pathParameters['id']!,
+                autoGenerate: state.uri.queryParameters['generate'] == '1',
+              ),
             ),
           ),
         ],
@@ -381,55 +452,81 @@ GoRoute _managerRoutes(String base, Widget home) => GoRoute(
       GoRoute(
         path: 'finance',
         // ?remind=2026-11-10: "taksit günü geldi" bildiriminden.
-        builder: (_, state) => FinanceScreen(
-          remindDay: DateTime.tryParse(
-            state.uri.queryParameters['remind'] ?? '',
+        pageBuilder: (_, state) => _cockpitPage(
+          state,
+          FinanceScreen(
+            remindDay: DateTime.tryParse(
+              state.uri.queryParameters['remind'] ?? '',
+            ),
           ),
         ),
       ),
     // Toplu duyuru: gönderilenler ve gelenler.
     GoRoute(
       path: 'announcements',
-      builder: (_, _) => const AnnouncementsScreen(),
+      pageBuilder: (_, state) =>
+          _cockpitPage(state, const AnnouncementsScreen()),
     ),
     // Yüklenen denemeler: son 7 gündekiler silinebilir.
     GoRoute(
       path: 'exams',
-      builder: (_, _) => ExamBatchesScreen(basePath: base),
+      pageBuilder: (_, state) =>
+          _cockpitPage(state, ExamBatchesScreen(basePath: base)),
     ),
     // Başarı sıralaması (müdür kapalıyken de önizler).
-    GoRoute(path: 'success', builder: (_, _) => const SuccessRankingScreen()),
+    GoRoute(
+      path: 'success',
+      pageBuilder: (_, state) =>
+          _cockpitPage(state, const SuccessRankingScreen()),
+    ),
     // Kurum müdürü: logo, renk ve kurum adı (white label).
     GoRoute(
       path: 'branding',
-      builder: (_, _) => const TenantEditorScreen(selfService: true),
+      pageBuilder: (_, state) =>
+          _cockpitPage(state, const TenantEditorScreen(selfService: true)),
     ),
     GoRoute(
       path: 'homework',
-      builder: (_, state) => AssignHomeworkScreen(
-        initialStudentId: state.uri.queryParameters['student'],
+      pageBuilder: (_, state) => _cockpitPage(
+        state,
+        AssignHomeworkScreen(
+          initialStudentId: state.uri.queryParameters['student'],
+        ),
       ),
     ),
     GoRoute(
       path: 'students/:id',
-      builder: (_, state) => StudentDetailScreen(
-        studentId: state.pathParameters['id']!,
-        basePath: base,
+      pageBuilder: (_, state) => _cockpitPage(
+        state,
+        StudentDetailScreen(
+          studentId: state.pathParameters['id']!,
+          basePath: base,
+        ),
       ),
       routes: [
         GoRoute(
           path: 'exams/new',
-          builder: (_, state) => AddExamScreen(
-            studentId: state.pathParameters['id']!,
-            initialType: ExamType.values.firstWhere(
-              (t) => t.db == state.uri.queryParameters['type'],
-              orElse: () => ExamType.tyt,
+          pageBuilder: (_, state) => _cockpitPage(
+            state,
+            AddExamScreen(
+              studentId: state.pathParameters['id']!,
+              initialType: ExamType.values.firstWhere(
+                (t) => t.db == state.uri.queryParameters['type'],
+                orElse: () => ExamType.tyt,
+              ),
             ),
           ),
         ),
       ],
     ),
   ],
+);
+
+/// Koç / müdür alt sayfası: kokpit temasıyla (açık / koyu) ve iOS gibi
+/// sağdan kayarak açılır; kenardan kaydırınca geri döner.
+Page<void> _cockpitPage(GoRouterState state, Widget child) => CupertinoPage(
+  key: state.pageKey,
+  child: CockpitThemed(child: child),
 );
 
 StatefulShellBranch _branch(String path, Widget screen) => StatefulShellBranch(

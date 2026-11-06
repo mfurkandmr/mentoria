@@ -1,3 +1,4 @@
+import '../../../shared/widgets/tool_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +7,9 @@ import 'package:intl/intl.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/widgets/common.dart';
+import '../../../shared/widgets/panel.dart';
+import '../../admin/presentation/cockpit/cockpit_motion.dart';
+import '../../admin/presentation/cockpit/cockpit_theme.dart';
 import '../../finance/data/finance_repository.dart'
     show formatPhone, normalizePhone;
 import '../data/attendance_repository.dart';
@@ -23,7 +27,7 @@ Color _statusColor(BuildContext context, AttendanceStatus s) {
   return switch (s) {
     AttendanceStatus.present => brand.success,
     AttendanceStatus.absent => Theme.of(context).colorScheme.error,
-    AttendanceStatus.late => brand.primary,
+    AttendanceStatus.late => Tone.warn.of(context),
     AttendanceStatus.excused => brand.info,
   };
 }
@@ -107,6 +111,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
         for (final r in fresh)
           if (r.status == AttendanceStatus.absent && r.smsAt == null) r,
       ];
+      CockpitHaptics.commit();
       if (absent.isEmpty) {
         showMessage(context, tr('Yoklama kaydedildi.'));
       } else {
@@ -120,12 +125,14 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
   }
 
   void _markAllPresent(List<AttendanceRow> rows) => setState(() {
+    CockpitHaptics.commit();
     for (final r in rows) {
       if (_statusOf(r) == null) _edits[r.studentId] = AttendanceStatus.present;
     }
   });
 
   void _mark(AttendanceRow r, AttendanceStatus s) => setState(() {
+    CockpitHaptics.select();
     final next = _statusOf(r) == s ? null : s;
     if (next == r.status) {
       _edits.remove(r.studentId);
@@ -364,81 +371,150 @@ class _StudentTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 8, 6, 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        row.fullName,
-                        style: text.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w800,
+    final note = [
+      if (row.studentNumber != null) tr('No {n}', {'n': row.studentNumber!}),
+      if (row.smsAt != null)
+        tr('Veliye SMS gönderildi')
+      else if (edited)
+        tr('Kaydedilmedi'),
+    ].join(' · ');
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 10, 6, 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  InitialsAvatar(name: row.fullName, size: 38, plain: true),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          row.fullName,
+                          style: text.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w800,
+                          ),
                         ),
-                      ),
-                      Text(
-                        [
-                          if (row.studentNumber != null)
-                            tr('No {n}', {'n': row.studentNumber!}),
-                          if (row.smsAt != null)
-                            tr('Veliye SMS gönderildi')
-                          else if (edited)
-                            tr('Kaydedilmedi'),
-                        ].join(' · '),
-                        style: text.bodySmall,
-                      ),
-                    ],
+                        if (note.isNotEmpty)
+                          Text(
+                            note,
+                            style: text.bodySmall?.copyWith(
+                              color: scheme.onSurfaceVariant,
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
-                ),
-                IconButton(
-                  tooltip: row.hasPhone
-                      ? tr('Veli telefonu')
-                      : tr('Veli telefonu ekle'),
-                  icon: Icon(
-                    row.hasPhone
-                        ? Icons.phone_rounded
-                        : Icons.phone_disabled_rounded,
-                    color: row.hasPhone
-                        ? context.brand.success
-                        : scheme.outline,
-                  ),
-                  onPressed: onPhone,
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Wrap(
-              spacing: 6,
-              runSpacing: 6,
-              children: [
-                for (final s in AttendanceStatus.values)
-                  ChoiceChip(
-                    key: ValueKey('att-${row.studentId}-${s.db}'),
-                    avatar: Icon(
-                      s.icon,
-                      size: 18,
-                      color: status == s
-                          ? _statusColor(context, s)
+                  IconButton(
+                    tooltip: row.hasPhone
+                        ? tr('Veli telefonu')
+                        : tr('Veli telefonu ekle'),
+                    icon: Icon(
+                      row.hasPhone
+                          ? Icons.phone_rounded
+                          : Icons.phone_disabled_rounded,
+                      color: row.hasPhone
+                          ? context.brand.success
                           : scheme.outline,
                     ),
-                    showCheckmark: false,
-                    label: Text(s.label),
-                    selected: status == s,
-                    selectedColor: _statusColor(
-                      context,
-                      s,
-                    ).withValues(alpha: 0.18),
-                    onSelected: (_) => onMark(s),
+                    onPressed: onPhone,
                   ),
-              ],
+                ],
+              ),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Row(
+                  children: [
+                    for (final s in AttendanceStatus.values) ...[
+                      if (s.index > 0) const SizedBox(width: 6),
+                      Expanded(
+                        child: _StatusOption(
+                          key: ValueKey('att-${row.studentId}-${s.db}'),
+                          status: s,
+                          selected: status == s,
+                          onTap: () => onMark(s),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Yoklama seçeneği: eşit genişlikte kutu; seçilince durum renginde dolar
+/// (renk tek başına anlam taşımasın: simge + ad hep görünür).
+class _StatusOption extends StatelessWidget {
+  const _StatusOption({
+    super.key,
+    required this.status,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final AttendanceStatus status;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final color = _statusColor(context, status);
+    final fg = selected ? color : scheme.onSurfaceVariant;
+    return Semantics(
+      button: true,
+      selected: selected,
+      child: Pressable(
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(12),
+            child: AnimatedContainer(
+              duration: CockpitMotion.of(context, CockpitMotion.short),
+              curve: CockpitMotion.curve,
+              constraints: const BoxConstraints(minHeight: 52),
+              padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 2),
+              decoration: BoxDecoration(
+                color: selected
+                    ? color.withValues(alpha: 0.14)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: selected ? color : scheme.outline,
+                  width: selected ? 1.5 : 1,
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(status.icon, size: 20, color: fg),
+                  const SizedBox(height: 3),
+                  Text(
+                    status.label,
+                    maxLines: 1,
+                    softWrap: false,
+                    overflow: TextOverflow.fade,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: fg,
+                      fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -628,39 +704,43 @@ Future<void> showAbsenceSmsDialog(
 }
 
 /// Koç ve müdür ana sayfası: bugünkü yoklamanın özeti.
+/// Yoklama kısayolu (bugünkü durum). Ana sayfa kartı ve kokpit ızgarası.
+ToolInfo attendanceTool(WidgetRef ref, String basePath) {
+  final rows = ref.watch(attendanceDayProvider(_today())).value;
+  final c = rows == null ? null : AttendanceCounts(rows);
+  final String status;
+  var needsAction = false;
+  if (c == null || c.total == 0) {
+    status = tr('Günlük yoklama ve gelmeyenin velisine SMS');
+  } else if (c.marked == 0) {
+    status = tr('Bugünkü yoklama alınmadı');
+    needsAction = true;
+  } else {
+    status = [
+      tr('Bugün {p} geldi · {a} gelmedi', {
+        'p': c.count(AttendanceStatus.present) + c.count(AttendanceStatus.late),
+        'a': c.count(AttendanceStatus.absent),
+      }),
+      if (c.marked < c.total) tr('{n} işaretsiz', {'n': c.total - c.marked}),
+    ].join(' · ');
+    needsAction = c.marked < c.total;
+  }
+  return ToolInfo(
+    id: 'attendance-home-card',
+    icon: Icons.how_to_reg_outlined,
+    title: tr('Yoklama'),
+    status: status,
+    needsAction: needsAction,
+    open: (context) => context.push('$basePath/attendance'),
+  );
+}
+
 class AttendanceHomeCard extends ConsumerWidget {
   const AttendanceHomeCard({super.key, required this.basePath});
 
   final String basePath;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final rows = ref.watch(attendanceDayProvider(_today())).value;
-    final c = rows == null ? null : AttendanceCounts(rows);
-    final String subtitle;
-    if (c == null || c.total == 0) {
-      subtitle = tr('Günlük yoklama ve gelmeyenin velisine SMS');
-    } else if (c.marked == 0) {
-      subtitle = tr('Bugünkü yoklama alınmadı');
-    } else {
-      subtitle = [
-        tr('Bugün {p} geldi · {a} gelmedi', {
-          'p':
-              c.count(AttendanceStatus.present) +
-              c.count(AttendanceStatus.late),
-          'a': c.count(AttendanceStatus.absent),
-        }),
-        if (c.marked < c.total) tr('{n} işaretsiz', {'n': c.total - c.marked}),
-      ].join(' · ');
-    }
-    return Card(
-      child: ListTile(
-        leading: const Icon(Icons.how_to_reg_outlined),
-        title: Text(tr('Yoklama')),
-        subtitle: Text(subtitle),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () => context.push('$basePath/attendance'),
-      ),
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) =>
+      ToolListCard(tool: attendanceTool(ref, basePath));
 }

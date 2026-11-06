@@ -223,8 +223,10 @@ void main() {
     _phone(tester);
     await tester.pumpWidget(await _app('admin', const AdminHomeScreen()));
     await tester.pumpAndSettle();
-    expect(find.text('Bal Akademi'), findsOneWidget);
-    expect(find.text('Öğrenci kredisi: 120'), findsOneWidget);
+    // Kokpit: kurum adı üst çubukta, özet şeridi ilk ekranda (kredi kurum
+    // ayarlarında; bkz. admin_cockpit_test).
+    expect(find.text('Bal Akademi'), findsWidgets);
+    expect(find.text('Kayıtlı öğrenci'), findsOneWidget);
 
     // Öğrenciler → Zeynep'in koçunu değiştir
     await tester.tap(find.text('Öğrenciler').last);

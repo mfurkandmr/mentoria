@@ -158,6 +158,7 @@ class OpticKeysScreen extends ConsumerWidget {
                 ),
               for (final k in list)
                 Card(
+                  margin: const EdgeInsets.only(bottom: 8),
                   key: ValueKey(k.id),
                   child: ListTile(
                     leading: CircleAvatar(

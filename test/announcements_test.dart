@@ -153,7 +153,7 @@ void main() {
     await tester.tap(find.widgetWithText(TextButton, 'Gönder'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Duyuru 14 kişiye gönderildi 📣'), findsOneWidget);
+    expect(find.text('Duyuru 14 kişiye gönderildi.'), findsOneWidget);
     expect(find.text('Veli toplantısı'), findsOneWidget);
     expect(find.text('Sen · Veliler · 14 kişi · az önce'), findsOneWidget);
   });

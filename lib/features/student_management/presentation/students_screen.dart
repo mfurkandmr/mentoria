@@ -1,3 +1,4 @@
+import '../../../shared/widgets/tool_tile.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -254,7 +255,7 @@ class _StudentsScreenState extends ConsumerState<StudentsScreen> {
             Padding(
               padding: const EdgeInsets.all(32),
               child: Text(
-                tr('Şüpheli numara yok. 🎉'),
+                tr('Şüpheli numara yok.'),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -287,6 +288,7 @@ class _StudentsScreenState extends ConsumerState<StudentsScreen> {
       ),
       for (final e in list)
         Card(
+          margin: const EdgeInsets.only(bottom: 8),
           child: ListTile(
             leading: const Icon(Icons.hourglass_empty_rounded),
             title: Text(e.fullName),
@@ -417,6 +419,7 @@ class StudentRow extends StatelessWidget {
       child: Text(label, style: text.labelSmall?.copyWith(color: fg)),
     );
     return Card(
+      margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         key: ValueKey('student-${student.id}'),
         onTap: onTap,
@@ -811,33 +814,33 @@ class _StudentEditorState extends ConsumerState<_StudentEditor> {
 }
 
 /// Müdür / koç ana sayfası: sınıflar ve öğrenciler.
+/// Sınıflar ve öğrenciler kısayolu.
+ToolInfo studentsTool(WidgetRef ref, String basePath) {
+  final list = ref.watch(managedStudentsProvider).value;
+  final unassigned = list?.where((s) => !s.hasClass).length ?? 0;
+  final flagged = list?.where((s) => s.flag != null).length ?? 0;
+  return ToolInfo(
+    id: 'students-home-card',
+    icon: Icons.groups_rounded,
+    title: tr('Sınıflar ve öğrenciler'),
+    status: list == null
+        ? tr('Sınıf ataması, öğrenci numarası, veli telefonu ve kayıtlar')
+        : [
+            tr('{n} öğrenci', {'n': list.length}),
+            if (unassigned > 0) tr('{n} sınıfsız', {'n': unassigned}),
+            if (flagged > 0) tr('{n} şüpheli', {'n': flagged}),
+          ].join(' · '),
+    needsAction: unassigned > 0 || flagged > 0,
+    open: (context) => context.push('$basePath/roster'),
+  );
+}
+
 class StudentsHomeCard extends ConsumerWidget {
   const StudentsHomeCard({super.key, required this.basePath});
 
   final String basePath;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final list = ref.watch(managedStudentsProvider).value;
-    final unassigned = list?.where((s) => !s.hasClass).length ?? 0;
-    final flagged = list?.where((s) => s.flag != null).length ?? 0;
-    return Card(
-      child: ListTile(
-        key: const ValueKey('students-home-card'),
-        leading: const Icon(Icons.groups_rounded),
-        title: Text(tr('Sınıflar ve öğrenciler')),
-        subtitle: Text(
-          list == null
-              ? tr('Sınıf ataması, öğrenci numarası, veli telefonu ve kayıtlar')
-              : [
-                  tr('{n} öğrenci', {'n': list.length}),
-                  if (unassigned > 0) tr('{n} sınıfsız', {'n': unassigned}),
-                  if (flagged > 0) tr('{n} şüpheli', {'n': flagged}),
-                ].join(' · '),
-        ),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () => context.push('$basePath/roster'),
-      ),
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) =>
+      ToolListCard(tool: studentsTool(ref, basePath));
 }

@@ -10,6 +10,7 @@ import 'core/router/app_router.dart';
 import 'core/settings/app_settings.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/brand_theme.dart';
+import 'features/auth/data/presence_repository.dart';
 import 'features/notifications/push/push_service.dart';
 import 'shared/widgets/update_required_screen.dart';
 
@@ -22,7 +23,11 @@ class MentoriaApp extends ConsumerWidget {
     final settings = ref.watch(settingsProvider);
     currentLanguage = settings.language;
     // Telefon bildirimleri: izin, cihaz kaydı ve bildirime dokunma.
-    if (!Env.isDemo && Env.isConfigured) ref.watch(pushBootstrapProvider);
+    if (!Env.isDemo && Env.isConfigured) {
+      ref.watch(pushBootstrapProvider);
+      // Son görülme (müdür kokpitindeki "7+ gündür girmeyen" listesi).
+      ref.watch(presenceBootstrapProvider);
+    }
     // Dershane markası: renkler, logo ve uygulama adı çalışma anında değişir.
     final brand = BrandTheme.fromBranding(ref.watch(activeBrandingProvider));
     // Sunucu daha yeni bir sürüm istiyorsa başka hiçbir ekran açılmaz.

@@ -41,7 +41,7 @@ type NotificationRow = {
   kind: 'assignment' | 'exam' | 'task' | 'note' | 'deletion_request' | 'meeting'
     | 'review' | 'weekly_report' | 'daily_question' | 'duel' | 'duel_result' | 'plan'
     | 'announcement' | 'inactivity_warning' | 'risk_digest' | 'installment_due'
-    | 'timetable' | 'book_request';
+    | 'timetable' | 'book_request' | 'coach_alert';
   data: Record<string, unknown>;
 };
 
@@ -220,6 +220,13 @@ function texts(n: NotificationRow): { title: string; body: string; route: string
           body: `${s(d.book)} (${s(d.publisher)}) havuzda; şimdi seçebilirsin.`,
           route: s(d.route) || '/student/books',
         };
+    case 'coach_alert':
+      // Koça: kurum müdürü bir öğrenci için "ilgilen" dedi.
+      return {
+        title: `${s(d.student)} ile ilgilenir misin?`,
+        body: [s(d.from) ? `${s(d.from)} yazdı` : '', s(d.reason)].filter(Boolean).join(': '),
+        route: s(d.route) || '/coach',
+      };
   }
 }
 

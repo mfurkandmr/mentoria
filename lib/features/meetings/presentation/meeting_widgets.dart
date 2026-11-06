@@ -1,3 +1,4 @@
+import '../../admin/presentation/cockpit/cockpit_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -179,7 +180,9 @@ class MeetingTile extends ConsumerWidget {
                 width: 46,
                 padding: const EdgeInsets.symmetric(vertical: 6),
                 decoration: BoxDecoration(
-                  color: brand.secondary.withValues(alpha: 0.16),
+                  color: inCockpit(context)
+                      ? context.cockpit.faint
+                      : brand.secondary.withValues(alpha: 0.16),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -829,11 +832,11 @@ class _AddMeetingSheetState extends ConsumerState<_AddMeetingSheet> {
       showMessage(
         context,
         _weekly
-            ? tr('Rutin görüşme planlandı: her {day} {time} 🐝', {
+            ? tr('Rutin görüşme planlandı: her {day} {time}', {
                 'day': weekdayName(first),
                 'time': formatClock(_time.hour, _time.minute),
               })
-            : tr('Görüşme planlandı 🐝'),
+            : tr('Görüşme planlandı.'),
       );
     } catch (_) {
       setState(() => _error = tr('Kaydedilemedi. Tekrar dene.'));

@@ -17,6 +17,9 @@ import '../features/exams/data/exam.dart';
 import '../features/exams/data/exam_repository.dart';
 import '../features/account/data/account_repository.dart';
 import '../features/admin/data/admin_repository.dart';
+import '../features/admin/data/cockpit_repository.dart';
+import '../features/auth/data/presence_repository.dart';
+import 'demo_cockpit.dart';
 import '../features/coach/data/exam_trends.dart';
 import '../features/coaching/data/coaching_repository.dart';
 import '../features/meetings/data/meeting_repository.dart';
@@ -87,6 +90,9 @@ Future<List<Override>> buildDemoOverrides([
 
   /// Testler kendi kurum sınavı deposunu verebilir (yoksa demo verisi).
   InMemoryExamCenter? examCenter,
+
+  /// Testler kendi müdür kokpiti deposunu verebilir (yoksa demo verisi).
+  CockpitRepository? cockpit,
 ]) async {
   role ??= Env.demoRole;
   final exams = InMemoryExamRepository.demo();
@@ -328,6 +334,12 @@ Future<List<Override>> buildDemoOverrides([
     coachingRepositoryProvider.overrideWithValue(coaching),
     accountRepositoryProvider.overrideWithValue(account),
     adminRepositoryProvider.overrideWithValue(admin),
+    cockpitRepositoryProvider.overrideWithValue(
+      cockpit ?? InMemoryCockpitRepository(),
+    ),
+    presenceRepositoryProvider.overrideWithValue(
+      const NoopPresenceRepository(),
+    ),
     financeRepositoryProvider.overrideWithValue(
       finance ??
           InMemoryFinanceRepository.demo(
