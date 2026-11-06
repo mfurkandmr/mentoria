@@ -35,6 +35,7 @@ import '../../features/student_management/presentation/students_screen.dart';
 import '../../features/student_registration/presentation/registration_screens.dart';
 import '../../features/student_schedule/presentation/student_schedule_screen.dart';
 import '../../features/import/presentation/import_screen.dart';
+import '../../features/pending_work/presentation/pending_work_screen.dart';
 import '../../features/exam_import/presentation/org_exams_screen.dart';
 import '../../features/exam_import/presentation/outcome_pool_screen.dart';
 import '../../features/optic/presentation/answer_key_screens.dart';
@@ -378,6 +379,10 @@ GoRoute _managerRoutes(String base, Widget home) => GoRoute(
     // Müdür kokpitinin alt sayfaları (NOTLAR §59).
     if (base == '/admin') ...[
       GoRoute(
+        path: 'invites',
+        pageBuilder: (_, state) => _cockpitPage(state, const InvitesPage()),
+      ),
+      GoRoute(
         path: 'exam-plans',
         pageBuilder: (_, state) => _cockpitPage(state, const ExamPlansScreen()),
       ),
@@ -461,6 +466,12 @@ GoRoute _managerRoutes(String base, Widget home) => GoRoute(
           ),
         ),
       ),
+    // Bekleyen işler: üst çubuktaki rozetli simgeden (koç ve müdür).
+    GoRoute(
+      path: 'pending',
+      pageBuilder: (_, state) =>
+          _cockpitPage(state, PendingWorkScreen(basePath: base)),
+    ),
     // Toplu duyuru: gönderilenler ve gelenler.
     GoRoute(
       path: 'announcements',

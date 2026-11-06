@@ -9,11 +9,13 @@ import '../../../../core/i18n/i18n.dart';
 import '../../../../core/theme/brand_theme.dart';
 import '../../../../shared/widgets/brand_logo.dart';
 import '../../../auth/data/auth_repository.dart';
+import '../../../pending_work/presentation/pending_work_screen.dart';
 import '../../data/admin_repository.dart';
 import 'cockpit_theme.dart';
 
 /// Kokpitin üst çubuğu: kurumun logosu (tam opak), kurum adı ve bugünün
-/// tarihi; sağda denemeler, deneme yükleme ve profil. Selamlama yok.
+/// tarihi; sağda denemeler, deneme yükleme, bekleyen işler (rozetli) ve
+/// profil. Selamlama yok.
 /// Koç panelinde [examActions] kapalı (o kısayollar alt çubukta).
 class CockpitHeader extends ConsumerWidget {
   const CockpitHeader({
@@ -57,6 +59,7 @@ class CockpitHeader extends ConsumerWidget {
             onPressed: () => context.push('$basePath/import'),
           ),
         ],
+        PendingWorkButton(basePath: basePath),
         CockpitProfileButton(
           name: ref.watch(currentProfileProvider).value?.fullName ?? '',
           route: '$basePath/profile',

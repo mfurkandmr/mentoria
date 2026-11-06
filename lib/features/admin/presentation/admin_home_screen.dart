@@ -6,6 +6,14 @@ import 'package:intl/intl.dart';
 
 import '../../../core/i18n/i18n.dart';
 import '../../../shared/widgets/common.dart';
+import '../../../shared/widgets/tool_strip.dart';
+import '../../../shared/widgets/tool_tile.dart';
+import '../../attendance/presentation/attendance_screen.dart';
+import '../../finance/presentation/finance_screen.dart';
+import '../../pending_work/presentation/pending_work_screen.dart';
+import '../../schedule_generator/presentation/my_timetable.dart';
+import '../../student_books/presentation/book_pool_screen.dart';
+import '../../student_management/presentation/students_screen.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../auth/data/profile.dart';
 import '../../coach/data/coach_repository.dart';
@@ -19,6 +27,7 @@ import 'cockpit/coach_performance_section.dart' show editCoachPhone;
 import 'cockpit/cockpit_header.dart' show CockpitProfileButton;
 import 'cockpit/cockpit_tab.dart';
 import 'cockpit/cockpit_theme.dart';
+import 'cockpit/nav_groups.dart';
 import 'cockpit/section_states.dart';
 
 /// Kurum müdürü paneli (mobil ve web). "Genel" sekmesi işletme kokpitidir
@@ -33,11 +42,18 @@ class AdminHomeScreen extends ConsumerStatefulWidget {
 class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
   int _tab = 0;
 
+  /// Alt çubuk (en fazla 6): araçlar konuya göre gruplanır (NOTLAR §64).
   static final _destinations = [
     (Icons.dashboard_outlined, Icons.dashboard, tr('Genel')),
     (Icons.school_outlined, Icons.school, tr('Öğrenciler')),
     (Icons.groups_outlined, Icons.groups, tr('Koçlar')),
-    (Icons.vpn_key_outlined, Icons.vpn_key, tr('Davetler')),
+    (Icons.fact_check_outlined, Icons.fact_check, tr('Sınavlar')),
+    (
+      Icons.account_balance_wallet_outlined,
+      Icons.account_balance_wallet,
+      tr('Finans'),
+    ),
+    (Icons.forum_outlined, Icons.forum, tr('İletişim')),
   ];
 
   @override
@@ -64,41 +80,49 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
       ),
       const _StudentsTab(),
       const _CoachesTab(),
-      const _InvitesTab(),
+      ToolGroupTab(
+        description: tr(
+          'Deneme sonuçları, kurum sınavları, optik okuma ve deneme planı',
+        ),
+        tools: examTools(ref, '/admin'),
+      ),
+      // Finans tek başına: ekranın kendisi (kendi üst çubuğu ve sekmeleri).
+      const FinanceScreen(),
+      ToolGroupTab(
+        description: tr('Velilere SMS ve toplu duyurular'),
+        tools: messageTools('/admin'),
+      ),
     ];
 
     final body = IndexedStack(index: _tab, children: pages);
 
     final fab = switch (_tab) {
+      1 => FloatingActionButton.extended(
+        onPressed: () =>
+            showInviteCodeDialog(context, ref, role: UserRole.student),
+        icon: const Icon(Icons.add),
+        label: Text(tr('Öğrenci daveti')),
+      ),
       2 => FloatingActionButton.extended(
         onPressed: () =>
             showInviteCodeDialog(context, ref, role: UserRole.coach),
         icon: const Icon(Icons.person_add_alt_1),
         label: Text(tr('Koç davet et')),
       ),
-      3 => FloatingActionButton.extended(
-        onPressed: () =>
-            showInviteCodeDialog(context, ref, role: UserRole.student),
-        icon: const Icon(Icons.add),
-        label: Text(tr('Öğrenci daveti')),
-      ),
       _ => null,
     };
 
     return Scaffold(
       floatingActionButton: fab,
-      // Genel sekmesi üst çubuğunu kendisi çizer (kurum logosu ve adı).
-      appBar: _tab == 0
+      // Genel sekmesi üst çubuğunu kendisi çizer (kurum logosu ve adı);
+      // Finans ekranının kendi üst çubuğu ve sekmeleri var.
+      appBar: _tab == 0 || _tab == 4
           ? null
           : AppBar(
               title: Text(_destinations[_tab].$3),
-              actions: [
-                IconButton(
-                  tooltip: tr('Deneme sonuçlarını yükle'),
-                  icon: const Icon(Icons.upload_file),
-                  onPressed: () => context.push('/admin/import'),
-                ),
-                const _AdminProfileButton(),
+              actions: const [
+                PendingWorkButton(basePath: '/admin'),
+                _AdminProfileButton(),
               ],
             ),
       body: wide
@@ -247,6 +271,16 @@ class _StudentsTabState extends ConsumerState<_StudentsTab> {
               cockpitNavHeight + 16,
             ),
             children: [
+              ToolStrip(
+                warnColor: Tone.warn.of(context),
+                tools: [
+                  studentsTool(ref, '/admin'),
+                  attendanceTool(ref, '/admin'),
+                  timetableAdminTool(ref),
+                  bookPoolTool(ref, '/admin'),
+                ],
+              ),
+              const SizedBox(height: 14),
               TextField(
                 decoration: InputDecoration(
                   hintText: tr('Ad veya okul numarası ara'),
@@ -360,10 +394,31 @@ class _CoachesTab extends ConsumerWidget {
       onRetry: () => ref.invalidate(orgMembersProvider),
       builder: (all) {
         final coaches = all.where((m) => m.role == UserRole.coach).toList();
+        final strip = ToolStrip(
+          warnColor: Tone.warn.of(context),
+          tools: [
+            ToolInfo(
+              id: 'tool-invites',
+              icon: Icons.vpn_key_outlined,
+              title: tr('Davetler'),
+              status: tr('Aktif davet kodları; kod oluştur ve paylaş'),
+              open: (c) => c.push('/admin/invites'),
+            ),
+            ToolInfo(
+              id: 'tool-meetings',
+              icon: Icons.event_available_outlined,
+              title: tr('Koç görüşmeleri'),
+              status: tr('Koçların öğrencileriyle görüşme düzeni'),
+              open: (c) => c.push('/admin/meetings'),
+            ),
+          ],
+        );
         if (coaches.isEmpty) {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              strip,
+              const SizedBox(height: 14),
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -386,6 +441,8 @@ class _CoachesTab extends ConsumerWidget {
         return ListView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 96 + cockpitNavHeight),
           children: [
+            strip,
+            const SizedBox(height: 14),
             for (final c in coaches)
               () {
                 final mine = students.where((s) => s.coachId == c.id).toList();
@@ -492,6 +549,24 @@ class _CoachesTab extends ConsumerWidget {
 // ---------------------------------------------------------------------------
 // Davetler
 // ---------------------------------------------------------------------------
+
+/// Davetler sayfası (Koçlar sekmesindeki şeritten): aktif kodlar ve yeni
+/// öğrenci daveti.
+class InvitesPage extends ConsumerWidget {
+  const InvitesPage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => Scaffold(
+    appBar: AppBar(title: Text(tr('Davetler'))),
+    floatingActionButton: FloatingActionButton.extended(
+      onPressed: () =>
+          showInviteCodeDialog(context, ref, role: UserRole.student),
+      icon: const Icon(Icons.add),
+      label: Text(tr('Öğrenci daveti')),
+    ),
+    body: const _InvitesTab(),
+  );
+}
 
 class _InvitesTab extends ConsumerWidget {
   const _InvitesTab();

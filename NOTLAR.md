@@ -2508,3 +2508,55 @@ görünümden çıkmasını ve hissin gelişmesini istedi.
   yazısı tek satır (bölünen yazı taşıyordu).
 - Test: 501 test geçti; `admin_cockpit_test` koyu tema, maskotsuz
   yükleniyor, alt sayfa rotaları.
+
+## 63. Bekleyen işler ekranı (6 Kasım 2026)
+
+Tek soru: "Benden ne bekleniyor?" Koç kendi öğrencilerini, müdür bütün
+kurumu görür. Giriş: kokpit üst çubuğunda rozetli simge
+(`PendingWorkButton`; acil iş varsa rozet risk renginde, yoksa vurgu
+renginde, iş yoksa rozet yok). Rota `/coach/pending`, `/admin/pending`.
+
+- **Veri:** yeni tablo / repository yok; mevcut sağlayıcılar birleştirilir
+  (`pendingWorkProvider`, `pending_work/presentation`). Saf fonksiyon
+  `pendingItems()` (`pending_work/domain`): yoklama alınmadı/işaretsiz,
+  kitap talebi onayı, yayın bekleyen kurum sınavı, hesap silme talebi
+  (öğrenci başına satır, geçen gün + KVKK 30 gün), sınıfsız / şüpheli
+  numaralı / numarası eksik öğrenci; müdürde ayrıca geciken taksit ve
+  kurum hesabı uyarıları (`orgAlerts`). Sayısı sıfır olan iş girmez.
+- **Seviye:** en fazla iki (risk: para, hesap, silme talebi; dikkat:
+  diğerleri). Önce riskler. Satır: sol kenarda 3 px şerit, rakam (+ birim),
+  ne olduğu ve sebep cümlesi; ilk 5 satır, sonra "Tümünü gör (N)".
+- **Görünüm:** mevcut kokpit kartı (kullanıcı yeni gölge token'ı yerine
+  bunu seçti), içinde sık satırlar, kart içinde kart yok; özet kutuları
+  (Acil / Bekleyen) gölgesiz ince çerçeve. Filtre: kayan seçim Tümü / Acil.
+- **Haller:** yükleniyor (iskelet), boş ("Bekleyen işin yok, her şey
+  güncel."), filtre boş ("Acil iş yok." + Tümü sekmesine dönüş), hata
+  ("Bekleyen işler yüklenemedi…" + Tekrar dene), kısmi hata (gelmeyen
+  kaynak ayrı satır, gerisi görünür), kısmi yükleme (ince ilerleme çubuğu).
+- **Kırılım:** 720 px altında özet kutuları üstte, filtre altında; 720 ve
+  üstünde özet + filtre tek satır; içerik en fazla 840 px, ortalanır.
+- Test: `test/pending_work_test.dart` (14 test); toplam 515 test geçti.
+
+## 64. Alt çubuk yeniden düzenlendi; APK'da ikonlar (6 Kasım 2026)
+
+- **İkon hatası (kod değil, derleme):** APK sürücü kökünden (`subst M:` →
+  `M:\`) derlenince "başarılı" görünüyor ama `flutter_assets` pakete
+  girmiyor; telefonda bütün ikonlar kutucuk çıktı. Doğrusu:
+  `subst N: "…\Masaüstü"` ve `N:\Mentoria` içinden derlemek (gerekirse önce
+  `flutter clean`). Kontrol: `unzip -l app-release.apk | grep -c flutter_assets`.
+- **Müdür alt çubuğu (6):** Genel · Öğrenciler · Koçlar · Sınavlar · Finans ·
+  İletişim. Öğrenciler: üstte yatay araç şeridi (`ToolStrip`: sınıflar ve
+  öğrenciler, yoklama, ders programı, kitap havuzu) + liste + "Öğrenci
+  daveti". Koçlar: şerit (Davetler → yeni `/admin/invites` sayfası, koç
+  görüşmeleri) + liste. Sınavlar (`ToolGroupTab`): deneme yükle, yüklenen
+  denemeler, kurum sınavları, optik oku, deneme trendleri, deneme planı.
+  Finans: finans ekranının kendisi. İletişim: velilere SMS, duyurular.
+  Ana sayfadaki "Kurum araçları" aynen duruyor. Gruplar
+  `cockpit/nav_groups.dart` (`examTools`, `messageTools`).
+- **Koç alt çubuğu (4):** Genel · Öğrenciler (şerit: sınıflar, yoklama, ders
+  programım, kitap havuzu, ödev ver; liste; "Davet et") · Sınavlar · İletişim
+  (duyurular, öğrenci daveti). Eski eylem düğmeleri (davet, ödev, yükle,
+  denemeler) bu sekmelerin içinde. Geniş ekranda yan menü.
+- Gruplanmış sekmelerin üst çubuğunda bekleyen işler rozeti ve profil.
+- Test: `admin_cockpit_test` "6 sekme", `coach_cockpit_test` "sekmeleri";
+  516 test geçti.

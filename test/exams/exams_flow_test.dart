@@ -340,7 +340,15 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip('Öğrenci davet et').first);
+    // Davet: Öğrenciler sekmesindeki yüzen düğme.
+    await tester.tap(
+      find.descendant(
+        of: find.byType(NavigationBar),
+        matching: find.text('Öğrenciler'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Davet et'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('5 kişi'));
     await tester.tap(find.text('Kod oluştur'));

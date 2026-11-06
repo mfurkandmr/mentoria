@@ -3555,4 +3555,87 @@ const enStrings = <String, String>{
   'katılım': 'participation',
   'Ödeme': 'Payment',
   'öğrenci bu hafta çalıştı': 'students studied this week',
+  'Hesap silme talepleri': 'Account deletion requests',
+  'Öğrenci listesi': 'Student list',
+  'Kurum hesabı': 'Institution account',
+  'Bir öğrenci': 'A student',
+  'KVKK gereği talep 30 gün içinde sonuçlanmalı; {n} gün kaldı.':
+      'Under KVKK the request must be settled within 30 days; {n} days left.',
+  'KVKK gereği 30 günlük cevap süresi doldu.':
+      'The 30-day KVKK response period has passed.',
+  'taksidin vadesi geçti': 'instalments are overdue',
+  'Toplam {v} henüz tahsil edilmedi.':
+      '{v} in total has not been collected yet.',
+  'öğrencinin bugünkü yoklaması alınmadı':
+      'students have no attendance taken today',
+  'öğrenci bugünkü yoklamada işaretsiz':
+      'students are unmarked in today’s attendance',
+  'Gelmeyenlerin velisine SMS ancak yoklama kaydedilince gider.':
+      'Parents of absent students get an SMS only after attendance is saved.',
+  'kurum sınavının sonucu yayın bekliyor':
+      'institution exams are waiting to be published',
+  'Optikler yüklendi; yayınlanana kadar öğrenci ve veliler sonucu göremez.':
+      'Answer sheets are uploaded; students and parents cannot see results until you publish.',
+  'kitap talebi onay bekliyor': 'book requests await approval',
+  'Onaylanınca kitap havuza girer ve öğrenciler seçebilir.':
+      'Once approved, the book joins the pool and students can pick it.',
+  'öğrencinin okul numarası şüpheli':
+      'students have a suspicious school number',
+  'Deneme sonuçları numarayla eşleştiği için yanlış öğrenciye gidebilir.':
+      'Exam results are matched by number, so they may go to the wrong student.',
+  'öğrencinin okul numarası eksik': 'students are missing a school number',
+  'Deneme dosyaları numarayla eşleştirilir; numarasız öğrencinin sonucu eşleşmez.':
+      'Exam files are matched by number; results of students without one will not match.',
+  'öğrenci bir sınıfa atanmamış': 'students are not assigned to a class',
+  'Sınıfsız öğrenci sınıf listelerinde ve ders programında yer almaz.':
+      'Students without a class do not appear in class lists or the timetable.',
+  'Bekleyen işler': 'Pending work',
+  'Bekleyen işler: {n}': 'Pending work: {n}',
+  'Bekleyen işler yüklenemedi. Bağlantını kontrol edip tekrar dene.':
+      'Pending work could not be loaded. Check your connection and try again.',
+  'Acil': 'Urgent',
+  'Süre ya da para söz konusu; önce bunlar':
+      'Deadlines or money involved; do these first',
+  'Süre ya da para bekleyen iş yok':
+      'Nothing with a deadline or money involved',
+  'Yapılacak iş kalmadı': 'Nothing left to do',
+  'Hepsi aşağıda, önce acil olanlar': 'All listed below, urgent ones first',
+  'Bekleyen işin yok, her şey güncel.':
+      'No pending work, everything is up to date.',
+  'Yeni bir iş çıkınca burada ve üst çubuktaki rozette görünür.':
+      'New work will show up here and on the badge in the top bar.',
+  'Acil iş yok.': 'No urgent work.',
+  'Diğer {n} bekleyen iş Tümü sekmesinde.':
+      'The other {n} pending items are under All.',
+  'Tümünü göster': 'Show all',
+  'Gelen kaynaklarda bekleyen iş yok.':
+      'No pending work in the sources that loaded.',
+  '{source} bilgisi alınamadı': 'Could not load {source}',
+  'Buradaki bekleyen işler listede eksik olabilir.':
+      'Pending work from here may be missing from the list.',
+  'Sınavlar': 'Exams',
+  'İletişim': 'Messages',
+  'Deneme sonuçları, kurum sınavları, optik okuma ve deneme planı':
+      'Exam results, institution exams, answer sheet scanning and exam plan',
+  'Deneme sonuçları, kurum sınavları, optik okuma ve trendler':
+      'Exam results, institution exams, answer sheet scanning and trends',
+  'Velilere SMS ve toplu duyurular': 'SMS to parents and bulk announcements',
+  'Duyurular ve öğrenci daveti': 'Announcements and student invites',
+  'Deneme sonuç dosyasını yükle, öğrencilere dağıt':
+      'Upload an exam results file and share it with students',
+  'Yüklenen denemeler': 'Uploaded exams',
+  'Son 7 gündeki yüklemeler silinebilir':
+      'Uploads from the last 7 days can be deleted',
+  'Deneme planı': 'Exam plan',
+  'Yaklaşan kurum denemelerini planla': 'Plan upcoming institution exams',
+  'Toplu duyuru gönder, gelen duyuruları gör':
+      'Send bulk announcements, see incoming ones',
+  'Davet kodu oluştur ve öğrencine gönder':
+      'Create an invite code and send it to your student',
+  'Aktif davet kodları; kod oluştur ve paylaş':
+      'Active invite codes; create and share a code',
+  'Koçların öğrencileriyle görüşme düzeni':
+      'How often coaches meet their students',
+  'Öğrencilerine görev ve ödev ata':
+      'Assign tasks and homework to your students',
 };

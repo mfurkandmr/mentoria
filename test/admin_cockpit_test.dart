@@ -33,6 +33,7 @@ import 'package:mentoria/shared/widgets/bizz.dart';
 import 'package:mentoria/shared/widgets/common.dart';
 import 'package:mentoria/shared/widgets/corporate_look.dart';
 import 'package:mentoria/shared/widgets/effects.dart';
+import 'package:mentoria/shared/widgets/tool_strip.dart';
 
 /// Testin gezindiği adresler (alt sayfalar boş Scaffold).
 final _visited = <String>[];
@@ -732,9 +733,62 @@ void main() {
             .phone,
         isNull,
       );
-      await tester.tap(find.text('Davetler').last);
+      // Davetler: Koçlar sekmesindeki şeritten ayrı sayfa.
+      await tester.tap(find.byKey(const ValueKey('strip-tool-invites')));
       await tester.pumpAndSettle();
+      expect(_visited.last, '/admin/invites');
+    });
+
+    testWidgets('alt çubuk: 6 sekme, gruplanmış araçlar', (tester) async {
+      await _pump(tester, const AdminHomeScreen(), await _overrides());
+      final nav = find.byType(NavigationBar);
+      expect(
+        find.descendant(of: nav, matching: find.byType(NavigationDestination)),
+        findsNWidgets(6),
+      );
+      Future<void> tab(String label) async {
+        await tester.tap(find.descendant(of: nav, matching: find.text(label)));
+        await tester.pumpAndSettle();
+      }
+
+      // Öğrenciler: şerit (sınıflar, yoklama, ders programı, kitap havuzu)
+      // ve öğrenci daveti.
+      await tab('Öğrenciler');
+      expect(
+        tester.widget<ToolStrip>(find.byType(ToolStrip)).tools.map((t) => t.id),
+        [
+          'students-home-card',
+          'attendance-home-card',
+          'timetable-admin-card',
+          'book-pool-card',
+        ],
+      );
       expect(find.text('Öğrenci daveti'), findsOneWidget);
+
+      await tab('Sınavlar');
+      for (final id in [
+        'tool-import',
+        'tool-exam-batches',
+        'org-exams-card',
+        'tool-optic',
+        'tool-trends',
+        'tool-exam-plans',
+      ]) {
+        expect(find.byKey(ValueKey(id)), findsOneWidget, reason: id);
+      }
+      await tester.tap(find.byKey(const ValueKey('tool-exam-batches')));
+      await tester.pumpAndSettle();
+      expect(_visited.last, '/admin/exams');
+      GoRouter.of(tester.element(find.textContaining('sayfa /'))).pop();
+      await tester.pumpAndSettle();
+
+      // Finans tek başına: ekranın kendisi.
+      await tab('Finans');
+      expect(find.text('Özet'), findsOneWidget);
+
+      await tab('İletişim');
+      expect(find.byKey(const ValueKey('bulk-sms-card')), findsOneWidget);
+      expect(find.byKey(const ValueKey('tool-announcements')), findsOneWidget);
     });
   });
 

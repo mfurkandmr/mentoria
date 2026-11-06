@@ -19,6 +19,7 @@ import 'package:mentoria/features/coach/presentation/coach_home_screen.dart';
 import 'package:mentoria/features/coach/presentation/invite_sheet.dart';
 import 'package:mentoria/shared/motion.dart';
 import 'package:mentoria/shared/widgets/bizz.dart';
+import 'package:mentoria/shared/widgets/tool_strip.dart';
 import 'package:mentoria/shared/widgets/panel.dart';
 import 'package:mentoria/shared/widgets/tool_tile.dart';
 
@@ -159,30 +160,52 @@ void main() {
     expect(_visited.last, '/coach/homework');
   });
 
-  testWidgets('alt çubuk eylemleri: davet, ödev, yükle, denemeler', (
+  testWidgets('alt çubuk sekmeleri: öğrenciler, sınavlar, iletişim', (
     tester,
   ) async {
     await _pump(tester, const CoachHomeScreen(), await _coach());
+    final nav = find.byType(NavigationBar);
+    Future<void> tab(String label) async {
+      await tester.tap(find.descendant(of: nav, matching: find.text(label)));
+      await tester.pumpAndSettle();
+    }
+
+    // Öğrenciler: davet (yüzen düğme), ödev (şerit), öğrenci listesi.
+    await tab('Öğrenciler');
     await tester.tap(find.text('Davet et'));
     await tester.pumpAndSettle();
     expect(find.byType(InviteSheet), findsOneWidget);
     Navigator.of(tester.element(find.byType(InviteSheet))).pop();
     await tester.pumpAndSettle();
-    for (final (label, route) in [
-      ('Ödev ver', '/coach/homework'),
-      ('Yükle', '/coach/import'),
-      ('Denemeler', '/coach/exams'),
+    // Şerit yana kayar; ödev en sonda.
+    await tester.dragUntilVisible(
+      find.byKey(const ValueKey('strip-tool-homework')),
+      find.byType(ToolStrip),
+      const Offset(-200, 0),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('strip-tool-homework')));
+    await tester.pumpAndSettle();
+    expect(_visited.last, '/coach/homework');
+    await _back(tester);
+
+    // Sınavlar: yükle, yüklenen denemeler.
+    await tab('Sınavlar');
+    for (final (id, route) in [
+      ('tool-import', '/coach/import'),
+      ('tool-exam-batches', '/coach/exams'),
     ]) {
-      await tester.tap(
-        find.descendant(
-          of: find.byType(NavigationBar),
-          matching: find.text(label),
-        ),
-      );
+      await tester.tap(find.byKey(ValueKey(id)));
       await tester.pumpAndSettle();
-      expect(_visited.last, route, reason: label);
+      expect(_visited.last, route, reason: id);
       await _back(tester);
     }
+
+    // İletişim: duyurular ve öğrenci daveti.
+    await tab('İletişim');
+    await tester.tap(find.byKey(const ValueKey('tool-announcements')));
+    await tester.pumpAndSettle();
+    expect(_visited.last, '/coach/announcements');
   });
 
   testWidgets('eski kartların hepsi yerinde: risk, görüşme, kısayollar', (
