@@ -121,6 +121,9 @@ abstract interface class AttendanceRepository {
     String? phone,
   });
 
+  /// Öğrencinin kayıtlı velisi (ad, telefon); yoksa null.
+  Future<(String?, String)?> fetchGuardian(String studentId);
+
   /// "Gelmedi" işaretli öğrencilerin velisine SMS (aynı gün bir kez).
   Future<AbsenceSmsResult> sendAbsenceSms(
     DateTime day,
@@ -172,6 +175,18 @@ class SupabaseAttendanceRepository implements AttendanceRepository {
   }
 
   @override
+  Future<(String?, String)?> fetchGuardian(String studentId) async {
+    final r = await _client
+        .from('student_guardian_phones')
+        .select('guardian_name, phone')
+        .eq('student_id', studentId)
+        .maybeSingle();
+    return r == null
+        ? null
+        : (r['guardian_name'] as String?, r['phone'] as String);
+  }
+
+  @override
   Future<AbsenceSmsResult> sendAbsenceSms(
     DateTime day,
     List<String> studentIds,
@@ -194,6 +209,12 @@ class SupabaseAttendanceRepository implements AttendanceRepository {
 final attendanceRepositoryProvider = Provider<AttendanceRepository>(
   (ref) => SupabaseAttendanceRepository(ref.watch(supabaseClientProvider)),
 );
+
+/// Öğrenci düzenleme penceresinde veli adı / telefonu.
+final guardianProvider = FutureProvider.autoDispose
+    .family<(String?, String)?, String>(
+      (ref, id) => ref.watch(attendanceRepositoryProvider).fetchGuardian(id),
+    );
 
 /// Gün → yoklama listesi. Anahtar gece yarısına yuvarlanmış tarih olmalı.
 final attendanceDayProvider =

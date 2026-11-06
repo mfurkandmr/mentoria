@@ -11,6 +11,9 @@ import '../../../core/constants/exam_subjects.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/format.dart';
 import '../../../shared/widgets/common.dart';
+import '../../student_management/data/student_management_repository.dart';
+import '../../student_management/presentation/students_screen.dart'
+    show openStudentEditor;
 import '../../auth/data/auth_repository.dart';
 import '../../auth/data/profile.dart';
 import '../../coaching/presentation/coaching_widgets.dart';
@@ -74,6 +77,22 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
 
   /// Öğrencinin hesabını ve tüm verilerini kalıcı olarak siler. Yanlışlıkla
   /// silinmesin diye "SİL" yazılması istenir.
+  /// Sınıf ataması, öğrenci numarası ve veli telefonu penceresi.
+  Future<void> _editInfo() async {
+    try {
+      final list = await ref.read(managedStudentsProvider.future);
+      final s = list.where((x) => x.id == widget.studentId).firstOrNull;
+      if (!mounted) return;
+      if (s == null) {
+        showMessage(context, tr('Kaydedilemedi. Tekrar dene.'));
+        return;
+      }
+      await openStudentEditor(context, ref, s, widget.basePath);
+    } catch (_) {
+      if (mounted) showMessage(context, tr('Kaydedilemedi. Tekrar dene.'));
+    }
+  }
+
   Future<void> _deleteStudent(String? name) async {
     final ok = await showDialog<bool>(
       context: context,
@@ -144,6 +163,13 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
       appBar: SkyAppBar(
         title: Text(student?.fullName ?? tr('Öğrenci')),
         actions: [
+          if (canManage)
+            IconButton(
+              key: const ValueKey('student-edit-info'),
+              tooltip: tr('Sınıf, numara ve veli'),
+              icon: const Icon(Icons.badge_outlined),
+              onPressed: _editInfo,
+            ),
           if (canManage)
             PopupMenuButton<String>(
               tooltip: tr('Diğer'),

@@ -2357,3 +2357,13 @@ E-fatura / e-arşiv kullanıcı kararıyla yapılmadı.
   geri almada bunu da önce geri alıyor. Canlıya uygulandı.
 - **E-fatura** yapılmadı: GİB'e bağlı bir özel entegratör (sözleşme + API
   anahtarı) olmadan kurulamaz; makbuz "fatura yerine geçmez" yazmaya devam eder.
+
+## 58. Öğrenci düzenleme: veli telefonu ve kısayol (6 Kasım 2026)
+
+- Veli adı / cep telefonu yalnızca Yoklama ekranında satır altında
+  bulunuyordu. Artık "Sınıflar ve öğrenciler" → öğrenci penceresinde de var
+  (sınıf, numara, koç ile birlikte). Kayıt `set_guardian_phone` ile; okuma
+  `student_guardian_phones` tablosundan (`AttendanceRepository.fetchGuardian`,
+  `guardianProvider`). Yeni migration yok.
+- Öğrenci detay ekranının üst çubuğuna "Sınıf, numara ve veli" düğmesi
+  (müdür ve koç) eklendi; aynı pencereyi açar.

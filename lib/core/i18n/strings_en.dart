@@ -3386,4 +3386,9 @@ const enStrings = <String, String>{
       'A second fee is created for these students.',
   'Kapalıyken bu öğrenciler atlanır.': 'When off, these students are skipped.',
   '{n} öğrenciye ücret açıldı.': 'Fee created for {n} students.',
+  'Yoklama ve ödeme hatırlatma mesajları bu numaraya gider.':
+      'Attendance and payment reminder texts go to this number.',
+  'Sınıf ataması, öğrenci numarası, veli telefonu ve kayıtlar':
+      'Class assignment, student number, parent phone and records',
+  'Sınıf, numara ve veli': 'Class, number and parent',
 };

@@ -8,7 +8,10 @@ import 'package:go_router/go_router.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../shared/widgets/common.dart';
 import '../../admin/data/admin_repository.dart';
+import '../../attendance/data/attendance_repository.dart';
 import '../../auth/data/profile.dart';
+import '../../finance/data/finance_repository.dart'
+    show formatPhone, normalizePhone;
 import '../../schedule_generator/data/timetable_repository.dart';
 import '../../student_registration/data/registration_repository.dart';
 import '../data/student_management_repository.dart';
@@ -535,11 +538,38 @@ class _StudentEditorState extends ConsumerState<_StudentEditor> {
   bool? _available;
   bool _saving = false;
   Timer? _debounce;
+  final _guardianName = TextEditingController();
+  final _guardianPhone = TextEditingController();
+
+  /// Kayıtlı veli (yüklenince); değişmediyse kaydedilmez.
+  (String?, String)? _guardian;
+  bool _guardianLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    ref
+        .read(guardianProvider(widget.student.id).future)
+        .then((g) {
+          if (!mounted) return;
+          setState(() {
+            _guardian = g;
+            _guardianLoaded = true;
+            _guardianName.text = g?.$1 ?? '';
+            _guardianPhone.text = g == null ? '' : formatPhone(g.$2);
+          });
+        })
+        .catchError((Object _) {
+          // Okunamazsa veli alanı gösterilmez; diğer alanlar kaydedilir.
+        });
+  }
 
   @override
   void dispose() {
     _debounce?.cancel();
     _number.dispose();
+    _guardianName.dispose();
+    _guardianPhone.dispose();
     super.dispose();
   }
 
@@ -575,8 +605,26 @@ class _StudentEditorState extends ConsumerState<_StudentEditor> {
       );
       return;
     }
+    final pt = _guardianPhone.text.trim();
+    final phone = pt.isEmpty ? null : normalizePhone(pt);
+    if (_guardianLoaded && pt.isNotEmpty && phone == null) {
+      showMessage(context, tr('Cep telefonunu 05XX XXX XX XX biçiminde yaz.'));
+      return;
+    }
+    final gName = _guardianName.text.trim().isEmpty
+        ? null
+        : _guardianName.text.trim();
+    final guardianChanged =
+        _guardianLoaded &&
+        (phone != _guardian?.$2 || (phone != null && gName != _guardian?.$1));
     setState(() => _saving = true);
     try {
+      if (guardianChanged) {
+        await ref
+            .read(attendanceRepositoryProvider)
+            .setGuardianPhone(s.id, name: gName, phone: phone);
+        ref.invalidate(guardianProvider(s.id));
+      }
       if (n != (s.studentNumber ?? '')) {
         await repo.setStudentNumber(s.id, n.isEmpty ? null : n);
       }
@@ -711,6 +759,31 @@ class _StudentEditorState extends ConsumerState<_StudentEditor> {
                 onChanged: (v) => setState(() => _coach = v),
               ),
             ],
+            if (_guardianLoaded) ...[
+              const SizedBox(height: 10),
+              TextField(
+                key: const ValueKey('edit-guardian-name'),
+                controller: _guardianName,
+                textCapitalization: TextCapitalization.words,
+                decoration: InputDecoration(
+                  labelText: tr('Veli adı (isteğe bağlı)'),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                key: const ValueKey('edit-guardian-phone'),
+                controller: _guardianPhone,
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(
+                  labelText: tr('Veli cep telefonu'),
+                  hintText: '05XX XXX XX XX',
+                  helperText: tr(
+                    'Yoklama ve ödeme hatırlatma mesajları bu numaraya gider.',
+                  ),
+                  helperMaxLines: 2,
+                ),
+              ),
+            ],
             const SizedBox(height: 10),
             Row(
               children: [
@@ -755,7 +828,7 @@ class StudentsHomeCard extends ConsumerWidget {
         title: Text(tr('Sınıflar ve öğrenciler')),
         subtitle: Text(
           list == null
-              ? tr('Sınıf ataması, öğrenci numarası ve kayıtlar')
+              ? tr('Sınıf ataması, öğrenci numarası, veli telefonu ve kayıtlar')
               : [
                   tr('{n} öğrenci', {'n': list.length}),
                   if (unassigned > 0) tr('{n} sınıfsız', {'n': unassigned}),

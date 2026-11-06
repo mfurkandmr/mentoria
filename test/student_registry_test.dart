@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:mentoria/dev/demo_attendance.dart';
 import 'package:mentoria/dev/demo_mode.dart';
 import 'package:mentoria/dev/demo_students.dart';
 import 'package:mentoria/dev/demo_timetable.dart';
@@ -111,6 +112,7 @@ void main() {
     InMemoryTimetableRepository? timetable,
     StudentManagementRepository? students,
     RegistrationRepository? registration,
+    InMemoryAttendanceRepository? attendance,
   }) async {
     t.view.physicalSize = const Size(1080, 3200);
     t.view.devicePixelRatio = 2.5;
@@ -123,7 +125,7 @@ void main() {
           null,
           null,
           null,
-          null,
+          attendance,
           timetable,
           students,
           registration,
@@ -229,6 +231,55 @@ void main() {
     final s2 = (await repo.fetchStudents()).firstWhere((s) => s.id == 's2');
     expect(s2.studentNumber, '2001');
     expect(s2.flag, isNull);
+  });
+
+  testWidgets('öğrenci detayı: veli telefonu eklenir ve değiştirilir', (
+    t,
+  ) async {
+    final timetable = InMemoryTimetableRepository.demo();
+    final repo = InMemoryStudentManagementRepository(
+      timetable: timetable,
+      students: const {'s1': ('Elif Yılmaz', '1042'), 's2': ('Can Kaya', null)},
+    );
+    final attendance = InMemoryAttendanceRepository(
+      students: const {'s1': 'Elif Yılmaz', 's2': 'Can Kaya'},
+      phones: const {'s1': ('Ayşe Yılmaz', '+905321112233')},
+    );
+    await pump(
+      t,
+      const StudentsScreen(basePath: '/admin'),
+      timetable: timetable,
+      students: repo,
+      attendance: attendance,
+    );
+    await t.tap(find.text('Elif Yılmaz').first);
+    await t.pumpAndSettle();
+    expect(find.text('Ayşe Yılmaz'), findsOneWidget);
+    expect(find.text('0532 111 22 33'), findsOneWidget);
+    await t.enterText(
+      find.byKey(const ValueKey('edit-guardian-phone')),
+      '0533 444 55 66',
+    );
+    await t.tap(find.byKey(const ValueKey('student-save')));
+    await t.pumpAndSettle();
+    expect(await attendance.fetchGuardian('s1'), (
+      'Ayşe Yılmaz',
+      '+905334445566',
+    ));
+
+    await t.tap(find.text('Can Kaya').first);
+    await t.pumpAndSettle();
+    await t.enterText(
+      find.byKey(const ValueKey('edit-guardian-phone')),
+      '12345',
+    );
+    await t.tap(find.byKey(const ValueKey('student-save')));
+    await t.pumpAndSettle();
+    expect(
+      find.text('Cep telefonunu 05XX XXX XX XX biçiminde yaz.'),
+      findsOneWidget,
+    );
+    expect(await attendance.fetchGuardian('s2'), isNull);
   });
 
   testWidgets('liste modu: henüz kayıt olmayanlar sekmesi', (t) async {

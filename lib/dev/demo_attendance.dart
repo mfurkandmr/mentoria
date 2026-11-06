@@ -93,6 +93,10 @@ class InMemoryAttendanceRepository implements AttendanceRepository {
   }
 
   @override
+  Future<(String?, String)?> fetchGuardian(String studentId) async =>
+      _phones[studentId];
+
+  @override
   Future<void> setGuardianPhone(
     String studentId, {
     String? name,
