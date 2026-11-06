@@ -36,6 +36,7 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
   final _formKey = GlobalKey<FormState>();
   final _code = TextEditingController();
   final _name = TextEditingController();
+  final _number = TextEditingController();
   final _email = TextEditingController();
   final _password = TextEditingController();
   final _password2 = TextEditingController();
@@ -83,6 +84,7 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
     Future.microtask(() => branding.set(null));
     _code.dispose();
     _name.dispose();
+    _number.dispose();
     _email.dispose();
     _password.dispose();
     _password2.dispose();
@@ -92,9 +94,10 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    // Yeni hata eskisinin arkasında sıra beklemesin.
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _verifyCode() async {
@@ -178,6 +181,12 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
       );
       return;
     }
+    if (invite?.role == UserRole.student) {
+      setState(() => _loading = true);
+      final ok = await _checkNumber(invite!);
+      if (mounted) setState(() => _loading = false);
+      if (!ok || !mounted) return;
+    }
     setState(() => _loading = true);
     try {
       final codeSent = await ref
@@ -188,6 +197,9 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
             fullName: _name.text,
             inviteCode: _code.text,
             birthYear: invite?.role == UserRole.student ? _birthYear : null,
+            studentNumber: invite?.role == UserRole.student
+                ? _number.text.trim()
+                : null,
             rankingConsent: invite?.role == UserRole.student && _ranking,
             guardianApproval: guardianNeeded && _guardian,
             childRanking: guardianNeeded && _childRanking,
@@ -203,6 +215,39 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
       if (mounted) _showError(authErrorMessage(e));
     } finally {
       if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  /// Öğrenci numarası kayıttan önce sunucuda denetlenir (liste modunda
+  /// kurum listesinde olmalı; her iki modda da kullanımda olmamalı).
+  Future<bool> _checkNumber(InviteInfo invite) async {
+    try {
+      final r = await ref
+          .read(authRepositoryProvider)
+          .matchStudentNumber(_code.text, _number.text);
+      if (!mounted) return false;
+      switch (r) {
+        case 'ok':
+          return true;
+        case 'taken':
+          _showError(
+            tr(
+              'Bu numara zaten kullanımda. Numaranı kontrol et ya da koçunla iletişime geç.',
+            ),
+          );
+        case 'invalid':
+          _showError(tr('Öğrenci numarası yalnızca rakamlardan oluşmalı.'));
+        default:
+          _showError(
+            tr(
+              'Bu numara kurum listesinde bulunamadı, numaranı kontrol et veya koçunla iletişime geç.',
+            ),
+          );
+      }
+      return false;
+    } catch (e) {
+      if (mounted) _showError(authErrorMessage(e));
+      return false;
     }
   }
 
@@ -403,6 +448,34 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
                               ? tr('Adını ve soyadını gir')
                               : null,
                         ),
+                        if (invite.role == UserRole.student) ...[
+                          const SizedBox(height: 12),
+                          TextFormField(
+                            key: const ValueKey('signup-student-number'),
+                            controller: _number,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(20),
+                            ],
+                            decoration: InputDecoration(
+                              labelText: tr('Öğrenci numaran'),
+                              prefixIcon: const Icon(Icons.badge_outlined),
+                              helperMaxLines: 3,
+                              helperText: invite.numberFromList
+                                  ? tr(
+                                      'Kurumunun listesindeki numaran. Adın listeden alınır; kayıttan sonra numarayı yalnızca koçun değiştirebilir.',
+                                    )
+                                  : tr(
+                                      'Kurumdaki öğrenci numaran. Kayıttan sonra yalnızca koçun değiştirebilir.',
+                                    ),
+                            ),
+                            validator: (v) =>
+                                RegExp(r'^\d{1,20}$').hasMatch(v?.trim() ?? '')
+                                ? null
+                                : tr('Öğrenci numaranı gir'),
+                          ),
+                        ],
                         const SizedBox(height: 12),
                         TextFormField(
                           controller: _email,

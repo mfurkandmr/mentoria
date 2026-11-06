@@ -1,6 +1,15 @@
+import '../../exam_import/presentation/org_exams_screen.dart';
 import 'package:flutter/material.dart';
 import '../../privacy/presentation/guardian_statement_tile.dart';
 import '../../announcements/presentation/announcement_widgets.dart';
+import '../../attendance/data/attendance_repository.dart';
+import '../../attendance/presentation/attendance_screen.dart';
+import '../../sms/presentation/bulk_sms_screen.dart';
+import '../../student_books/presentation/book_pool_screen.dart';
+import '../../student_management/data/student_management_repository.dart';
+import '../../student_management/presentation/students_screen.dart';
+import '../../schedule_generator/data/timetable_repository.dart';
+import '../../schedule_generator/presentation/my_timetable.dart';
 import '../../coach/data/risk_repository.dart';
 import '../../coach/presentation/exam_trends_card.dart';
 import '../../coach/presentation/risk_card.dart';
@@ -20,6 +29,7 @@ import '../../auth/data/auth_repository.dart';
 import '../../coach/data/coach_repository.dart';
 import '../../credits/data/org_credits_repository.dart';
 import '../../credits/presentation/credit_widgets.dart';
+import '../../finance/presentation/finance_screen.dart';
 import '../../meetings/data/meeting_repository.dart';
 import '../../meetings/presentation/meeting_widgets.dart';
 import '../../../shared/widgets/honey_nav_bar.dart';
@@ -192,6 +202,13 @@ class _OverviewTab extends ConsumerWidget {
         ),
       ),
       const OrgCodeCard(),
+      const AttendanceHomeCard(basePath: '/admin'),
+      const TimetableAdminCard(),
+      const StudentsHomeCard(basePath: '/admin'),
+      const BookPoolHomeCard(basePath: '/admin'),
+      const OrgExamsHomeCard(basePath: '/admin'),
+      const BulkSmsHomeCard(),
+      const FinanceHomeCard(),
       StatRow(
         children: [
           GlowStat(
@@ -306,6 +323,9 @@ class _OverviewTab extends ConsumerWidget {
         ref.invalidate(orgMembersProvider);
         ref.invalidate(studentSummariesProvider);
         ref.invalidate(riskListProvider);
+        ref.invalidate(attendanceDayProvider);
+        ref.invalidate(schedulesProvider);
+        ref.invalidate(managedStudentsProvider);
         ref.invalidate(successStatusProvider);
         ref.invalidate(meetingSchedulesProvider);
         ref.invalidate(weekMeetingsProvider);

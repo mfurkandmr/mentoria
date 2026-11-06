@@ -23,13 +23,16 @@ void openNotification(BuildContext context, AppNotification n) {
   final router = GoRouter.of(context);
   // Alt menüsüz sayfalar üste açılır (geri tuşu çalışsın).
   if (const {
-    '/student/homework',
-    '/student/mistakes',
-    '/student/daily',
-    '/student/duels',
-    '/student/plan',
-    '/student/announcements',
-  }.contains(n.route)) {
+        '/student/homework',
+        '/student/mistakes',
+        '/student/daily',
+        '/student/duels',
+        '/student/plan',
+        '/student/announcements',
+        '/student/timetable',
+        '/student/books',
+      }.contains(n.route) ||
+      n.route.startsWith('/admin/finance')) {
     router.push(n.route);
   } else {
     router.go(n.route);
@@ -189,6 +192,9 @@ class NotificationTile extends StatelessWidget {
                   NotificationKind.announcement => context.brand.secondary,
                   NotificationKind.inactivityWarning => context.brand.danger,
                   NotificationKind.riskDigest => context.brand.danger,
+                  NotificationKind.installmentDue => context.brand.primary,
+                  NotificationKind.timetable => context.brand.info,
+                  NotificationKind.bookRequest => context.brand.secondary,
                 },
                 foregroundColor:
                     n.kind == NotificationKind.exam ||

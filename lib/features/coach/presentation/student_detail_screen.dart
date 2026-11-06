@@ -1,3 +1,4 @@
+import '../../student_books/presentation/books_screens.dart';
 import '../../student/presentation/home_sky.dart';
 import '../../mistakes/presentation/mistake_widgets.dart';
 import 'package:flutter/material.dart';
@@ -57,6 +58,7 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
     tr('Rehberlik'),
     tr('Hata Defteri'),
     tr('Eğitim'),
+    tr('Kitaplar'),
     tr('Plan'),
   ];
   late final TabController _controller =
@@ -237,6 +239,10 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
                 GuidanceTimeline(studentId: id),
                 MistakesView(studentId: id, readOnly: true, bottomPadding: 32),
                 LearnReportView(studentId: id),
+                StudentBooksView(
+                  studentId: id,
+                  viewer: canManage ? BooksViewer.manager : BooksViewer.parent,
+                ),
                 WeeklyPlanView(
                   studentId: id,
                   canEdit: canManage,

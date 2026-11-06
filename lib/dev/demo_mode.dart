@@ -33,6 +33,23 @@ import '../features/assignments/data/prescription_repository.dart';
 import '../features/coach/data/risk_repository.dart';
 import '../features/guidance/data/guidance_repository.dart';
 import '../features/parent/data/weekly_summary_repository.dart';
+import '../features/attendance/data/attendance_repository.dart';
+import '../features/schedule_generator/data/timetable_repository.dart';
+import '../features/sms/data/bulk_sms_repository.dart';
+import '../features/student_books/data/books_repository.dart';
+import '../features/student_management/data/student_management_repository.dart';
+import '../features/student_registration/data/registration_repository.dart';
+import '../features/finance/data/finance_repository.dart';
+import 'demo_attendance.dart';
+import 'demo_books.dart';
+import 'demo_sms.dart';
+import '../features/exam_analysis/data/exam_report_repository.dart';
+import '../features/exam_import/data/exam_admin_repository.dart';
+import '../features/exam_import/domain/import_plan.dart';
+import 'demo_exam_center.dart';
+import 'demo_students.dart';
+import 'demo_timetable.dart';
+import 'demo_finance.dart';
 import 'demo_optic.dart';
 import 'demo_repositories.dart';
 
@@ -48,6 +65,28 @@ Future<List<Override>> buildDemoOverrides([
 
   /// Testler kendi kredi deposunu verebilir (yoksa demo: 120 kredi).
   OrgCreditsRepository? credits,
+
+  /// Testler kendi finans deposunu verebilir (yoksa demo verisi).
+  FinanceRepository? finance,
+
+  /// Testler kendi yoklama deposunu verebilir (yoksa demo verisi).
+  AttendanceRepository? attendance,
+
+  /// Testler kendi ders programı deposunu verebilir (yoksa demo verisi).
+  TimetableRepository? timetable,
+
+  /// Testler kendi öğrenci yönetimi / kayıt deposunu verebilir.
+  StudentManagementRepository? students,
+  RegistrationRepository? registration,
+
+  /// Testler kendi toplu SMS deposunu verebilir.
+  BulkSmsRepository? bulkSms,
+
+  /// Testler kendi kitap deposunu verebilir.
+  BooksRepository? books,
+
+  /// Testler kendi kurum sınavı deposunu verebilir (yoksa demo verisi).
+  InMemoryExamCenter? examCenter,
 ]) async {
   role ??= Env.demoRole;
   final exams = InMemoryExamRepository.demo();
@@ -163,6 +202,29 @@ Future<List<Override>> buildDemoOverrides([
       role: UserRole.student,
     ),
   };
+  // Ders programı ve öğrenci yönetimi aynı sınıf verisini paylaşır.
+  final InMemoryTimetableRepository demoTimetable =
+      timetable is InMemoryTimetableRepository
+      ? timetable
+      : InMemoryTimetableRepository.demo(
+          viewerId: profile.id,
+          viewerRole: role,
+        );
+  final center =
+      examCenter ??
+      InMemoryExamCenter.demo(
+        roster: [
+          for (final e in demoStudents().entries)
+            RosterStudent(
+              id: e.key,
+              name: e.value.$1,
+              number: e.value.$2,
+              className: demoTimetable.classOf(e.key)?.$2,
+            ),
+        ],
+        classOf: (s) => demoTimetable.classOf(s)?.$1,
+        viewerId: profile.id,
+      );
   final guidance = InMemoryGuidanceRepository(
     userId: profile.id,
     userName: profile.fullName,
@@ -266,6 +328,64 @@ Future<List<Override>> buildDemoOverrides([
     coachingRepositoryProvider.overrideWithValue(coaching),
     accountRepositoryProvider.overrideWithValue(account),
     adminRepositoryProvider.overrideWithValue(admin),
+    financeRepositoryProvider.overrideWithValue(
+      finance ??
+          InMemoryFinanceRepository.demo(
+            students: {
+              for (final e in demoStudents().entries) e.key: e.value.$1,
+            },
+            coaches: const {
+              'demo-coach': 'Ayşe Koç',
+              'demo-coach-2': 'Burak Yıldız',
+            },
+          ),
+    ),
+    attendanceRepositoryProvider.overrideWithValue(
+      attendance ??
+          InMemoryAttendanceRepository.demo(
+            students: {
+              for (final e in demoStudents().entries) e.key: e.value.$1,
+            },
+          ),
+    ),
+    timetableRepositoryProvider.overrideWithValue(timetable ?? demoTimetable),
+    studentManagementRepositoryProvider.overrideWithValue(
+      students ??
+          InMemoryStudentManagementRepository(
+            timetable: demoTimetable,
+            students: demoStudents(),
+            coachOf: {for (final s in demoStudents().keys) s: 'demo-coach'},
+            coaches: const {
+              'demo-coach': 'Ayşe Koç',
+              'demo-coach-2': 'Burak Yıldız',
+            },
+            isAdmin: role == 'admin',
+          ),
+    ),
+    registrationRepositoryProvider.overrideWithValue(
+      registration ?? InMemoryRegistrationRepository(),
+    ),
+    examAdminRepositoryProvider.overrideWithValue(center),
+    examReportRepositoryProvider.overrideWithValue(center),
+    booksRepositoryProvider.overrideWithValue(
+      books ??
+          InMemoryBooksRepository.demo(
+            viewerId: profile.id,
+            viewerRole: role,
+            managed: {...demoStudents().keys},
+            children: const {'demo-student'},
+          ),
+    ),
+    bulkSmsRepositoryProvider.overrideWithValue(
+      bulkSms ??
+          InMemoryBulkSmsRepository(
+            phoneOf: {
+              for (final (i, id) in demoStudents().keys.indexed)
+                id: i.isEven ? '+90532111223$i' : null,
+            },
+            classOf: (s) => demoTimetable.classOf(s)?.$1,
+          ),
+    ),
     orgCreditsRepositoryProvider.overrideWithValue(
       credits ??
           InMemoryOrgCreditsRepository(

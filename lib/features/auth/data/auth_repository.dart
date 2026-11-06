@@ -29,6 +29,19 @@ class AuthRepository {
     return InviteInfo.fromJson(Map<String, dynamic>.from(result as Map));
   }
 
+  /// Kayıtta öğrenci numarası: 'ok' | 'not_found' | 'taken' | 'invalid'
+  /// (`match_student_number`; liste modunda numara kurum listesinde
+  /// aranır, listenin kendisi dönmez).
+  Future<String> matchStudentNumber(String code, String number) async =>
+      await _client.rpc(
+            'match_student_number',
+            params: {
+              'p_code': code.trim().toUpperCase(),
+              'p_number': number.trim(),
+            },
+          )
+          as String;
+
   /// Kayıt yalnızca davet koduyla yapılır. Kodun asıl doğrulaması ve
   /// profil/ilişki kayıtları veritabanındaki `handle_new_user` tetikleyicisinde
   /// (e-posta doğrulanınca; davet ondan önce harcanmaz).
@@ -40,6 +53,7 @@ class AuthRepository {
     required String fullName,
     required String inviteCode,
     int? birthYear,
+    String? studentNumber,
     bool rankingConsent = false,
     bool guardianApproval = false,
     bool childRanking = false,
@@ -56,6 +70,7 @@ class AuthRepository {
         'kvkk_consent': true,
         'privacy_version': legalVersion,
         'birth_year': ?birthYear,
+        'student_number': ?studentNumber,
         'consents': {'ranking': rankingConsent},
         if (guardianApproval) 'guardian_approval': true,
         if (childRanking) 'child_ranking': true,

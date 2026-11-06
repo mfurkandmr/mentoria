@@ -1,3 +1,5 @@
+import '../../student_schedule/data/student_schedule.dart';
+import '../../student_schedule/presentation/student_schedule_screen.dart';
 import '../../privacy/presentation/privacy_screen.dart';
 import 'package:flutter/material.dart';
 import '../../announcements/presentation/announcement_widgets.dart';
@@ -112,6 +114,7 @@ class StudentHomeScreen extends ConsumerWidget {
     Future<void> refresh() async {
       // Kurum adı/logosu değiştiyse yenilensin.
       ref.invalidate(tenantBrandingProvider);
+      ref.invalidate(studentScheduleProvider);
       // Paket, aşağıdakiler yeniden çekilmeden önce başlasın; aşağı çekince
       // cihazdaki eski paket değil, doğrudan sunucudaki gelsin.
       HomeSeed.skipDiskOnce();
@@ -142,6 +145,7 @@ class StudentHomeScreen extends ConsumerWidget {
       NextMeetingCard(studentId: id),
       _TodayCard(studentId: id),
       // Son 14 günde duyuru geldiyse.
+      const StudentScheduleCard(),
       const AnnouncementsHomeCard(),
       Row(
         children: [

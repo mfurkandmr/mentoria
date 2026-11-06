@@ -19,7 +19,20 @@ import '../../features/notifications/presentation/notification_widgets.dart';
 import '../../features/account/presentation/account_deletion_screen.dart';
 import '../../features/account/presentation/profile_screen.dart';
 import '../../features/admin/presentation/admin_home_screen.dart';
+import '../../features/attendance/presentation/attendance_screen.dart';
+import '../../features/finance/presentation/finance_screen.dart';
+import '../../features/schedule_generator/presentation/schedule_screen.dart';
+import '../../features/schedule_generator/presentation/setup_wizard_screen.dart';
+import '../../features/sms/presentation/bulk_sms_screen.dart';
+import '../../features/student_books/presentation/book_pool_screen.dart';
+import '../../features/student_books/presentation/books_screens.dart';
+import '../../features/student_management/presentation/classes_screen.dart';
+import '../../features/student_management/presentation/students_screen.dart';
+import '../../features/student_registration/presentation/registration_screens.dart';
+import '../../features/student_schedule/presentation/student_schedule_screen.dart';
 import '../../features/import/presentation/import_screen.dart';
+import '../../features/exam_import/presentation/org_exams_screen.dart';
+import '../../features/exam_import/presentation/outcome_pool_screen.dart';
 import '../../features/optic/presentation/answer_key_screens.dart';
 import '../../features/optic/presentation/optic_scan_screens.dart';
 import '../../features/intro/intro_screen.dart';
@@ -193,6 +206,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, _) => const MistakesScreen(),
       ),
       GoRoute(
+        path: '/student/books',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, _) => const MyBooksScreen(),
+      ),
+      GoRoute(
+        path: '/student/timetable',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, _) => const StudentScheduleScreen(),
+      ),
+      GoRoute(
         path: '/student/plan',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (_, _) => const StudentPlanScreen(),
@@ -289,6 +312,81 @@ GoRoute _managerRoutes(String base, Widget home) => GoRoute(
         ),
       ],
     ),
+    // Günlük yoklama: koç kendi öğrencileri, müdür bütün kurum.
+    GoRoute(path: 'attendance', builder: (_, _) => const AttendanceScreen()),
+    // Kurum kitap havuzu ve öğrencilerin kitap talepleri.
+    GoRoute(path: 'books', builder: (_, _) => const BookPoolScreen()),
+    // Kurum sınavları: optik Excel içe aktarma, kazanım analizi, karneler.
+    GoRoute(
+      path: 'org-exams',
+      builder: (_, _) => OrgExamsScreen(basePath: base),
+      routes: [
+        GoRoute(
+          path: 'new',
+          builder: (_, _) => OrgExamScreen(basePath: base),
+        ),
+        GoRoute(
+          path: ':id',
+          builder: (_, state) =>
+              OrgExamScreen(basePath: base, examId: state.pathParameters['id']),
+        ),
+      ],
+    ),
+    GoRoute(path: 'outcomes', builder: (_, _) => const OutcomePoolScreen()),
+    // Sınıflar ve öğrenci yönetimi (koç: kendi öğrencileri).
+    GoRoute(
+      path: 'classes',
+      builder: (_, _) => ClassesScreen(basePath: base),
+    ),
+    GoRoute(
+      path: 'roster',
+      builder: (_, _) => StudentsScreen(basePath: base),
+    ),
+    // Velilere serbest metinli SMS: yalnızca müdür.
+    if (base == '/admin')
+      GoRoute(path: 'sms', builder: (_, _) => const BulkSmsScreen()),
+    // Öğrenci kayıt modu ve kurum listesi: yalnızca müdür.
+    if (base == '/admin')
+      GoRoute(
+        path: 'registration',
+        builder: (_, _) => const RegistrationSettingsScreen(),
+        routes: [
+          GoRoute(
+            path: 'import',
+            builder: (_, _) => const RosterImportScreen(),
+          ),
+        ],
+      ),
+    // Ders programı: yalnızca müdür kurar ve yayınlar.
+    if (base == '/admin')
+      GoRoute(
+        path: 'schedule',
+        builder: (_, _) => const TimetableHomeScreen(),
+        routes: [
+          GoRoute(
+            path: 'setup',
+            builder: (_, _) => const TimetableSetupScreen(),
+          ),
+          GoRoute(
+            path: ':id',
+            builder: (_, state) => ScheduleScreen(
+              scheduleId: state.pathParameters['id']!,
+              autoGenerate: state.uri.queryParameters['generate'] == '1',
+            ),
+          ),
+        ],
+      ),
+    // Kurum finansı: yalnızca müdür (koç /coach altında bu adresi göremez).
+    if (base == '/admin')
+      GoRoute(
+        path: 'finance',
+        // ?remind=2026-11-10: "taksit günü geldi" bildiriminden.
+        builder: (_, state) => FinanceScreen(
+          remindDay: DateTime.tryParse(
+            state.uri.queryParameters['remind'] ?? '',
+          ),
+        ),
+      ),
     // Toplu duyuru: gönderilenler ve gelenler.
     GoRoute(
       path: 'announcements',

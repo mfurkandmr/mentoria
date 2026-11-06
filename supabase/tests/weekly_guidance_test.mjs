@@ -127,7 +127,7 @@ await db.query(`update public.organizations set license_expires_at = null where 
 console.log('Rehberlik kaydı');
 const log = (student, extra = {}) => db.query(
   `insert into public.guidance_logs (student_id, met_on, kind, topics, note, next_step, author_name)
-   values ($1, current_date - $2::int, $3, $4, $5, $6, 'sahte') returning id, author_id, author_name`,
+   values ($1, (now() at time zone 'Europe/Istanbul')::date - $2::int, $3, $4, $5, $6, 'sahte') returning id, author_id, author_name`,
   [student, extra.ago ?? 0, extra.kind ?? 'in_person', extra.topics ?? ['motivation'], extra.note ?? 'Deneme sonrası moral düşük.', extra.next ?? null]);
 await asUser(A.coach);
 const g1 = (await log(ahmet, { topics: ['motivation', 'time'], next: 'Haftaya plan kontrolü' })).rows[0];

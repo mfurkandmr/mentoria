@@ -35,6 +35,13 @@
       politikası 5. bölüm)
 - [ ] Kullanım koşulları: yetkili mahkeme ili ve ücretlendirme modeli
       (`08_kullanim_kosullari.md` 8. ve 12. maddeler)
+- [ ] Kurum finansı (NOTLAR §46-47): veli adı ve cep telefonu taksit
+      hatırlatma SMS'i için işleniyor; aydınlatma metnine (işlenen veriler,
+      amaç, SMS sağlayıcısı alıcı olarak) eklenmeli, sonra `legalVersion`
+      artırılmalı. SMS sağlayıcısıyla veri işleme sözleşmesi gerekir.
+- [ ] Finans (NOTLAR §56, 6 Kasım 2026): veli artık çocuğunun ücret, taksit ve
+      makbuzlarını uygulamada görüyor; makbuzda ödeyen veli adı var. Aydınlatma
+      metnine "veliye ödeme bilgisinin gösterilmesi" eklenmeli.
 - [ ] Kendi SMTP/e-posta sağlayıcınız var mı? (Doğrulama e-postaları için)
 
 ## Avukata sorulacaklar
@@ -99,3 +106,23 @@
       öğrenciye verilmesi gerekip gerekmediği avukata sorulsun; gerekirse
       dışa aktarmaya eklenir. Veri envanteri ve aydınlatma metnine "koç ve
       kurum müdürünün tuttuğu rehberlik notları" satırı eklenmeli.
+- [ ] Yoklama (5 Kasım 2026, NOTLAR.md §48): devam bilgisi ve yoklama için
+      girilen veli telefonu yeni kişisel veri; veri envanterine ve aydınlatma
+      metnine eklenmeli ("gelmedi" SMS'i velinin numarasına gider). Saklama
+      1 yıl (öneri, avukata sorulsun). "Verilerimi indir"e henüz girmiyor.
+- [ ] Ders programı (5 Kasım 2026, NOTLAR.md §49): `teachers` tablosunda
+      uygulama hesabı olmayan öğretmenlerin adı ve müsaitlik saatleri
+      tutuluyor (kurum girer; öğretmenin kendi rızası/aydınlatması yok).
+      Kurum ile veri işleme sözleşmesine ve aydınlatma metnine "kurumun
+      girdiği öğretmen bilgileri" eklenmeli. Öğrencinin sınıf ataması da
+      "verilerimi indir"e girmiyor.
+- [ ] Öğrenci listesi (5 Kasım 2026, NOTLAR.md §51): `expected_students`
+      kurumun yüklediği, henüz hesabı olmayan öğrencilerin numara, ad soyad,
+      sınıf ve veli telefonunu tutar (ilgili kişi uygulamaya girmeden).
+      Veri işleme sözleşmesine ve aydınlatma metnine eklenmeli; eşleşmeyen
+      satırlar için saklama süresi belirlenmeli (şimdilik süresiz). Sınıf ve
+      numara değişiklik geçmişi de hesapla birlikte siliniyor.
+- [ ] Velilere toplu SMS (5 Kasım 2026, NOTLAR.md §52): veli telefonu artık
+      kurum duyuruları için de kullanılıyor; aydınlatma metnindeki amaçlara
+      "kurum bilgilendirme SMS'leri" eklenmeli. Ticari/kampanya SMS'i için
+      İYS kaydı ve onay gerekir (uygulama yalnızca uyarıyor, içeriği denetlemiyor).

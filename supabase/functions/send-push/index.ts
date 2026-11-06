@@ -40,7 +40,8 @@ type NotificationRow = {
   user_id: string;
   kind: 'assignment' | 'exam' | 'task' | 'note' | 'deletion_request' | 'meeting'
     | 'review' | 'weekly_report' | 'daily_question' | 'duel' | 'duel_result' | 'plan'
-    | 'announcement' | 'inactivity_warning' | 'risk_digest';
+    | 'announcement' | 'inactivity_warning' | 'risk_digest' | 'installment_due'
+    | 'timetable' | 'book_request';
   data: Record<string, unknown>;
 };
 
@@ -190,6 +191,35 @@ function texts(n: NotificationRow): { title: string; body: string; route: string
         body: `${(Array.isArray(d.names) ? d.names : []).join(', ')}: devam, net ya da ödevde geriye düşüş var. Listeye bak.`,
         route: s(d.route) || '/coach',
       };
+    case 'installment_due': {
+      // Kurum müdürüne, sabah 09.00: vadesi bugün olan ödenmemiş taksitler.
+      const total = Number(d.total ?? 0).toLocaleString('tr-TR', { maximumFractionDigits: 2 });
+      return {
+        title: `Bugün ${s(d.count)} taksitin günü geldi`,
+        body: `Toplam ${total} ₺. Velilere hatırlatma gönderilsin mi?`,
+        route: s(d.route) || '/admin/finance',
+      };
+    }
+    case 'timetable':
+      // Öğrenciye ve bağlı öğretmene: program yayınlandı / güncellendi.
+      return {
+        title: d.updated === true ? 'Ders programın güncellendi' : 'Ders programın yayınlandı',
+        body: `${s(d.name)}: haftalık derslerine bak.`,
+        route: s(d.route) || '/student/timetable',
+      };
+    case 'book_request':
+      // Öğrenciye: kitap talebi onaylandı / reddedildi.
+      return d.result === 'rejected'
+        ? {
+          title: 'Kitap talebin onaylanmadı',
+          body: [`${s(d.book)} (${s(d.publisher)})`, s(d.reason)].filter(Boolean).join(': '),
+          route: s(d.route) || '/student/books',
+        }
+        : {
+          title: 'Talep ettiğin kitap eklendi',
+          body: `${s(d.book)} (${s(d.publisher)}) havuzda; şimdi seçebilirsin.`,
+          route: s(d.route) || '/student/books',
+        };
   }
 }
 

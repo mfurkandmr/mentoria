@@ -146,6 +146,9 @@ check((await db.query(`delete from public.exams where id = $1 returning id`, [ot
 
 // --- Geri alma, eski kayıtların paketlenmesi ve yeniden uygulama
 await asSuper();
+// Bu migration'a bağlı sonraki migration'lar önce geri alınır.
+const laterDeps = migs.filter((f) => f >= '20261105170000_exam_import.sql').map((f) => f.replace('.sql', '')).reverse();
+for (const l of laterDeps) await db.exec(read(rbDir, `${l}.down.sql`));
 await db.exec(read(rbDir, batchMig.replace('.sql', '.down.sql')));
 check((await one(`select count(*)::int c from information_schema.columns where table_name = 'exams' and column_name = 'batch_id'`)).c === 0,
   'geri alma: batch_id kolonu kaldırıldı');
@@ -158,6 +161,7 @@ for (const s of [s1, s2]) {
 const legacyManual = (await one(`insert into public.exams (student_id, exam_type, name) values ($1, 'TYT', 'Eski Yükleme') returning id`, [s1])).id;
 await asSuper();
 await db.exec(read(migDir, batchMig));
+for (const l of [...laterDeps].reverse()) await db.exec(read(migDir, `${l}.sql`));
 const b = (await db.query(`select id, batch_id from public.exams where id = any($1::uuid[])`, [[...legacy, legacyManual]])).rows;
 const batchOf = (id) => b.find((r) => r.id === id).batch_id;
 check(batchOf(legacy[0]) === batchOf(legacy[1]), 'eski Excel yüklemesi tek pakete toplandı', b);

@@ -1,3 +1,4 @@
+import '../../student_books/presentation/books_screens.dart';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -108,6 +109,8 @@ class _LearnHomeState extends ConsumerState<_LearnHome> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
             children: [
               const DuelEntryCard(),
+              const SizedBox(height: 8),
+              const MyBooksEntryCard(),
               const SizedBox(height: 12),
               SegmentedButton<bool>(
                 segments: [

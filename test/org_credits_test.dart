@@ -93,11 +93,16 @@ void main() {
           f.path.contains('learn_cards.dart')) {
         continue;
       }
+      // Kurum finansı müdürün kendi kayıt defteri (dershane ücretleri, ₺
+      // gösterir); Mentoria satışı değil. Satın alma sözcükleri orada da yasak.
+      final finance = f.path
+          .replaceAll(r'\', '/')
+          .contains('lib/features/finance/');
       final lines = f.readAsLinesSync();
       for (final (i, l) in lines.indexed) {
         final t = l.trimLeft();
         if (t.startsWith('//')) continue;
-        if (banned.any((r) => r.hasMatch(l))) {
+        if (banned.skip(finance ? 1 : 0).any((r) => r.hasMatch(l))) {
           hits.add('${f.path}:${i + 1}: $t');
         }
       }

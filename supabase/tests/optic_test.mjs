@@ -204,10 +204,14 @@ check(Number((await one(`select count(*) n from public.exams where batch_id = $1
 
 // --- Geri alma / yeniden uygulama ----------------------------------------------------
 const name = '20261030100000_optic_reading';
+// Bu migration'a bağlı sonraki migration'lar önce geri alınır.
+const laterDeps = ['20261105170000_exam_import', '20261030110000_optic_booklets'].filter((n) => migs.includes(`${n}.sql`));
+for (const l of laterDeps) await db.exec(read(rbDir, `${l}.down.sql`));
 await db.exec(read(rbDir, `${name}.down.sql`));
 check((await one(`select to_regclass('public.exam_answers') t`)).t === null, 'geri alındı');
 check(Number((await one(`select count(*) n from public.exams where source = 'optic'`)).n) === 0, 'optik denemeler import sayıldı');
 await db.exec(read(migDir, `${name}.sql`));
+for (const l of [...laterDeps].reverse()) await db.exec(read(migDir, `${l}.sql`));
 check((await one(`select to_regclass('public.answer_keys') t`)).t !== null, 'yeniden uygulandı');
 
 console.log(failures ? `\n${failures} FAILED` : '\nALL PASSED');

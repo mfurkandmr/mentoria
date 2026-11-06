@@ -56,7 +56,7 @@ class SupabaseExamRepository implements ExamRepository {
             .from('exams')
             .select(
               'id, exam_type, field, name, publisher, taken_on, created_at, '
-              'exam_subject_results(correct, wrong, blank, subjects(code))',
+              'exam_subject_results(correct, wrong, blank, wrong_penalty, subjects(code))',
             )
             .eq('student_id', studentId)
             .order('taken_on', ascending: false)
@@ -82,6 +82,7 @@ class SupabaseExamRepository implements ExamRepository {
                 correct: s['correct'] as int,
                 wrong: s['wrong'] as int,
                 blank: s['blank'] as int,
+                penalty: (s['wrong_penalty'] as num?)?.toDouble() ?? 0.25,
               ),
           ],
         ),

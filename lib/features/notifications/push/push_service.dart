@@ -154,13 +154,16 @@ class PushService {
     final router = _ref.read(routerProvider);
     // Ödev listesi üstüne açılır (geri tuşu çalışsın), diğerleri sekmeye gider.
     const {
-          '/student/homework',
-          '/student/mistakes',
-          '/student/daily',
-          '/student/duels',
-          '/student/plan',
-          '/student/announcements',
-        }.contains(route)
+              '/student/homework',
+              '/student/mistakes',
+              '/student/daily',
+              '/student/duels',
+              '/student/plan',
+              '/student/announcements',
+              '/student/timetable',
+              '/student/books',
+            }.contains(route) ||
+            route.startsWith('/admin/finance')
         ? router.push(route)
         : router.go(route);
   }

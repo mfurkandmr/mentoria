@@ -54,6 +54,7 @@ class InviteInfo {
     this.tenant,
     this.studentMinor = false,
     this.noCredits = false,
+    this.numberMode,
   });
 
   factory InviteInfo.fromJson(Map<String, dynamic> json) => InviteInfo(
@@ -61,6 +62,7 @@ class InviteInfo {
     orgName: json['org_name'] as String,
     studentMinor: json['student_minor'] as bool? ?? false,
     noCredits: json['no_credits'] as bool? ?? false,
+    numberMode: json['number_mode'] as String?,
     tenant: json['tenant'] is Map
         ? Branding.fromJson(Map<String, dynamic>.from(json['tenant'] as Map))
         : null,
@@ -77,4 +79,10 @@ class InviteInfo {
 
   /// Öğrenci davetinde: kurumun öğrenci kredisi bitti (kayıt yapılamaz).
   final bool noCredits;
+
+  /// Öğrenci davetinde kurumun kayıt modu: 'list' (numara kurum listesinde
+  /// olmalı) ya da 'free'. Eski sunucuda null.
+  final String? numberMode;
+
+  bool get numberFromList => numberMode == 'list';
 }

@@ -1,3 +1,5 @@
+import '../../exam_analysis/data/exam_report_repository.dart';
+import '../../exam_analysis/presentation/report_card_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -151,6 +153,25 @@ class ExamDetailSheet extends ConsumerWidget {
               padding: const EdgeInsets.only(top: 12),
               child: ExamAnswersView(examId: exam.id),
             ),
+            // Kurum sınavıysa karne (sıralama, konu analizi, PDF).
+            if (ref
+                    .watch(reportCardsProvider(studentId))
+                    .value
+                    ?.any((c) => c.examId == exam.id) ??
+                false)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: OutlinedButton.icon(
+                  key: const ValueKey('open-exam-card'),
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => ReportCardScreen(examId: exam.id),
+                    ),
+                  ),
+                  icon: const Icon(Icons.assignment_outlined),
+                  label: Text(tr('Karneyi aç')),
+                ),
+              ),
             if (canDelete && !exam.editable) ...[
               const SizedBox(height: 8),
               Row(

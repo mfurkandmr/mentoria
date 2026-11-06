@@ -8,6 +8,7 @@ class SubjectResult {
     required this.correct,
     required this.wrong,
     required this.blank,
+    this.penalty = 0.25,
   });
 
   final String code;
@@ -15,7 +16,12 @@ class SubjectResult {
   final int wrong;
   final int blank;
 
-  double get net => calculateNet(correct, wrong);
+  /// Bir yanlışın götürdüğü net (kurum sınavında 0 ya da farklı olabilir).
+  final double penalty;
+
+  double get net => penalty == 0.25
+      ? calculateNet(correct, wrong)
+      : ((correct - wrong * penalty) * 100).round() / 100;
   ExamSubject get subject => subjectByCode(code);
 }
 

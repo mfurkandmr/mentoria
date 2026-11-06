@@ -1,3 +1,4 @@
+import '../../exam_analysis/presentation/report_card_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +13,7 @@ import '../../auth/data/auth_repository.dart';
 import '../../student/presentation/home_sky.dart';
 import '../data/exam.dart';
 import '../data/exam_repository.dart';
+import '../../exam_comparison/presentation/exam_comparison_screen.dart';
 import 'exam_analysis_view.dart';
 import 'exam_detail_sheet.dart';
 import 'net_trend_chart.dart';
@@ -107,6 +109,20 @@ class _ExamsViewState extends ConsumerState<ExamsView> {
               selected: {_analysis},
               onSelectionChanged: (s) => setState(() => _analysis = s.first),
             ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+          child: SizedBox(
+            width: double.infinity,
+            child: CompareExamsButton(studentId: widget.studentId),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+          child: SizedBox(
+            width: double.infinity,
+            child: ReportCardsButton(studentId: widget.studentId),
           ),
         ),
         Expanded(

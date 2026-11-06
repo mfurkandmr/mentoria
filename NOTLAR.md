@@ -1922,3 +1922,438 @@ uygulanmadı.
   hesabın hepsi sürüm "0"daydı, yeni APK ile hepsine bir kez sorulacak.
 - **Testler:** `supabase/tests/signup_consent_test.mjs`,
   `test/legal_update_test.dart`.
+
+## 46. Kurum finansı (5 Kasım 2026)
+
+Migration `20261105100000_finance` (rollback'i var; **canlıya uygulandı 5
+Kasım 2026**). Kullanıcı kararları: dört kısım da var, yalnızca müdür görür,
+uygulama ödeme almaz (kayıt defteri; ödeme elden / havaleyle).
+
+- **Tablolar:** `finance_fees` (öğrenci başına ücret), `finance_installments`
+  (taksit: vade, tutar, `paid_on`, ödeme şekli), `finance_expenses` (kira,
+  maaş, prim, fatura, materyal, reklam, vergi/SGK, diğer; maaş/prim bir koça
+  bağlanabilir), `coach_pay_rates` (aylık maaş + öğrenci başı prim).
+- **Yetki:** tek politika `is_finance_admin(org_id)` (giriş yapan kurum
+  müdürü). Koç, öğrenci, veli, başka kurumun müdürü hiçbir satırı görmez.
+  `org_id`, `tenant_id`, öğrenci/koç adı `guard_finance_row` /
+  `guard_coach_pay_rate` tetikleyicilerinde yazılır (genel `set_tenant_id`
+  student_id beklediği için kullanılmadı). Kurum ve öğrenci sonradan
+  değiştirilemez.
+- **Silinen hesaplar:** öğrenci ya da koç silinince mali kayıt kalır
+  (`on delete set null`, ad kayıtta). Tetikleyici bu boşaltmaya izin verir.
+- **Uygulama:** `lib/features/finance/`, `/admin/finance` (yalnızca müdür
+  rotası). Sekmeler: Özet (ay seçimi, tahsilat / beklenen / gider / net,
+  geciken toplamı, son 6 ay çubukları, geciken taksit listesi), Ücretler
+  (taksit planı: tam lira, kuruş farkı son taksitte; ödendi işaretle / geri
+  al), Giderler (aylara göre), Koçlar (önerilen ödeme = maaş + öğrenci ×
+  prim; "Ödemeyi kaydet" maaş gideri yazar). Müdür ana sayfasında
+  `FinanceHomeCard`. Hesaplar istemcide (`monthSummary`,
+  `splitInstallments`, `parseMoney`).
+- **₺ kuralı:** `org_credits_test` uygulamada ₺/TL'yi yasaklıyordu (Mentoria
+  satışı yok). `lib/features/finance/` yalnızca para birimi kuralından muaf;
+  "satın al / ödeme yap / fiyat" orada da yasak.
+- **Testler:** `test/finance_test.dart`, `supabase/tests/finance_test.mjs`.
+
+## 47. Taksit günü bildirimi ve veliye SMS (5 Kasım 2026)
+
+Migration `20261105110000_finance_reminders` (rollback'i var; **canlıda**),
+Edge Function `send-sms` v1 (yeni), `send-push` v12. Kullanıcı kararı: SMS
+sistemi bağlanacak; ücret kaydında veli telefonu alınır, hatırlatma o numaraya
+SMS olarak gider (uygulama içi veli bildirimi yok).
+
+- **Ücret kaydı:** "Ödeme günü: her ayın N. günü" (1-28) + "İlk taksit" ayı;
+  veli adı ve cep telefonu (`+905XXXXXXXXX`, `normalizePhone`). Sonradan
+  ücret sayfasındaki kalemle değiştirilir.
+- **Günlük bildirim:** pg_cron `due-installments` 06:00 UTC (09:00 TR) →
+  `notify_due_installments()`: vadesi bugün, ödenmemiş taksitler için kurum
+  müdürlerine tek `installment_due` bildirimi (sayı, toplam, telefonsuz
+  sayısı). Dokununca `/admin/finance?remind=YYYY-MM-DD` açılır ve "Taksit
+  hatırlatması gönderilsin mi?" penceresi (telefonu olanlar seçili) çıkar.
+  Aynı taksit için bir kez.
+- **SMS:** `send_payment_reminders(uuid[])` (yalnızca müdür) → `sms_outbox`
+  (aynı taksite 20 saatte bir; ödenmiş / telefonsuz atlanır). Metin: "Sayın
+  {veli}, {kurum}: {öğrenci} için {gg.aa.yyyy} vadeli {tutar} TL taksit
+  ödemesini hatırlatırız." Ücret sayfasında her ödenmemiş taksitte "Veliye
+  hatırlat" düğmesi. `kick_sms()` + pg_cron `sms-outbox` 5 dakikada bir
+  `send-sms`'i dürter. 90 günden eski SMS kayıtları her sabah silinir.
+- **SMS sağlayıcısı henüz yok:** `send-sms` secrets'ta `SMS_PROVIDER=netgsm`
+  ve `NETGSM_USERCODE`, `NETGSM_PASSWORD`, `NETGSM_HEADER` görene kadar
+  mesajlar `queued` bekler; bağlanınca gider. Netgsm çağrısı (GET
+  /sms/send/get) gerçek hesapla **denenmedi**; başka sağlayıcı seçilirse
+  `send-sms`'e eklenir.
+- **KVKK:** veli telefonu yeni kişisel veri; aydınlatma metnine eklenmeli
+  (docs/kvkk/00_README.md).
+- **Testler:** `supabase/tests/finance_reminders_test.mjs`,
+  `test/finance_test.dart` (hatırlatma penceresi, telefon ekleyip SMS).
+
+## 48. Günlük yoklama ve "gelmedi" SMS'i (5 Kasım 2026)
+
+Migration `20261105120000_attendance` (rollback'i var; **canlıda**, yetkiler
+SQL ile doğrulandı). Test projesine uygulanmadı. Kullanıcı kararı: koç ve
+müdür her gün yoklama alır, seçtikleri gelmeyen öğrencilerin velisine SMS
+gider. SMS sağlayıcısı henüz yok (§47): mesajlar `sms_outbox`'ta `queued`
+bekler, sağlayıcı bağlanınca gider.
+
+- **Kim:** koç kendi öğrencilerini, müdür kurumun bütün öğrencilerini
+  (`my_managed_students`, yalnızca `role = 'student'`). Öğrenci ve veli
+  yoklamayı görmez.
+- **Tablolar:** `attendance` (öğrenci + gün tekil; `present` / `absent` /
+  `late` / `excused`; `sms_at`), `student_guardian_phones` (yoklama SMS'i
+  için veli adı + `+905XXXXXXXXX`). İkisine de doğrudan yazılamaz.
+- **RPC'ler:** `attendance_day(gün)` (liste + durum + `has_phone`),
+  `save_attendance(gün, {id: durum|null})` (son 30 gün, ileri tarih yok),
+  `set_guardian_phone`, `send_absence_sms(gün, id[])` (yalnızca "gelmedi"
+  olan, telefonu olan, aynı gün bir kez). `sms_outbox.attendance_id` eklendi.
+- **Veli telefonu:** önce yoklama için girilen; yoksa kurum finansındaki
+  ödeyen veli (`finance_fees.payer_phone`). Finanstaki numara koça
+  gösterilmez, yalnızca "telefon var" bilgisi ve SMS'te kullanılır.
+- **SMS metni:** "Sayın {veli}, {kurum}: öğrenciniz {öğrenci} {gg.aa.yyyy}
+  tarihinde kuruma gelmedi. Bilgilerinize."
+- **Saklama:** pg_cron `attendance-retention` (00:40 UTC) 1 yıldan eski
+  yoklamayı siler (`purge_old_attendance`).
+- **Uygulama:** `lib/features/attendance/`, rota `/coach/attendance` ve
+  `/admin/attendance`. Gün seçimi (son 30 gün), durum çipleri, "İşaretsizlerin
+  hepsi geldi", kaydedince gelmeyenler için SMS penceresi (telefonu olanlar
+  seçili), satırdaki telefon simgesinden veli telefonu, üst çubukta SMS
+  düğmesi. Koç ve müdür ana sayfasında `AttendanceHomeCard`. Demo:
+  `lib/dev/demo_attendance.dart`.
+- **Açık:** yoklama "verilerimi indir"e (`export_my_data`) eklenmedi.
+- **Testler:** `supabase/tests/attendance_test.mjs`, `test/attendance_test.dart`.
+
+## 49. Otomatik haftalık ders programı (5 Kasım 2026)
+
+Migration `20261105130000_timetable` (rollback'i var; **canlıda**, RLS ve
+yetkiler SQL ile doğrulandı). Test projesine uygulanmadı. Kullanıcının
+verdiği şartnameden bilinçli sapmalar: tablo/sütun adları İngilizce (`org_id`
++ `tenant_id`), `class_subject_requirements` + `teacher_class_assignments`
+tek tablo `class_lessons` (öğretmen doluysa kesin, boşsa branşı tutan biri
+seçilir; bu yüzden "tercih edilen öğretmen" yumuşak kısıtı yok), müsaitlik
+satırı olmayan öğretmen her saat müsait, branş serbest metin
+(`commonBranches` listesi), uzun basma kilit yerine **dokun → kilitle /
+taşı** menüsü, **basılı tut + sürükle** taşıma.
+
+- **Tablolar:** `teachers` (`profile_id` doluysa o koç/müdür hesabı
+  programını görür), `teacher_availability`, `classrooms` (+
+  `classroom_students`, `home_room_id`), `rooms`, `time_slots`,
+  `class_lessons`, `schedules` (draft/published, kurumda tek yayın:
+  `schedules_one_published`), `schedule_entries` (`locked`).
+- **Yetki:** hepsine yalnızca kurum müdürü (`is_org_admin`) doğrudan
+  yazar/okur. `guard_timetable_row` kurumu sunucuda yazar, başka kurumun
+  kaydına bağlantıyı `TIMETABLE_BAD_REF` ile reddeder. Sert kısıt 1-3
+  (öğretmen/sınıf/derslik aynı saatte tek) tekil indekslerle DB'de de var.
+- **RPC'ler:** `save_schedule_entries` (programı tek seferde yazar),
+  `publish_schedule` (öteki yayın taslağa döner), `my_timetable()`
+  (öğretmen: kendi dersleri, öğrenci: sınıfı, veli: çocuklarının sınıfları;
+  yalnızca yayındaki program).
+- **Algoritma** (`lib/features/schedule_generator/domain/`, saf Dart,
+  JSON girdi/çıktı): kilitliler yerleşir ve denetlenir → boş derslere
+  öğretmen seçilir → teşhis (talep > müsaitlik / üst sınır / şablon) → MRV +
+  backtracking + forward checking (40 bin düğüm ya da sürenin %40'ı) →
+  olmazsa açgözlü doldurma, yerleşemeyenler `noCommonSlot` ile raporlanır →
+  simulated annealing (taşı / aynı sınıfta yer değiştir), süre sınırı 10 sn.
+  Yumuşak puan cezadır (0 en iyi): pencere 3, günlük sınırı aşan saat 5,
+  öğleden sonra Matematik/Geometri/Fizik 2, öğretmenin günlük ek sınıfı 1.
+  Uygulamada `compute()` ile isolate'te (`scheduleGeneratorProvider`).
+  Sunucuya taşımak için girdi/çıktı JSON hazır; ama Edge Function Deno
+  olduğu için kod TS'e çevrilmeli ya da ayrı Dart sunucusunda çalışmalı.
+  Ölçek testi: 20 öğretmen / 15 sınıf / 420 saat ≈ 1 sn, tam ve geçerli.
+- **Uygulama:** `/admin/schedule` (programlar), `/admin/schedule/setup`
+  (5 adımlı sihirbaz), `/admin/schedule/:id?generate=1` (sınıf / öğretmen /
+  derslik sekmeleri, çakışma paneli, yeniden oluştur, kaydet, yayınla,
+  dışa aktar). Müdür ana sayfasında `TimetableAdminCard`; koç, öğrenci ve
+  veli ana sayfasında `MyTimetableCard` (yayında program yoksa görünmez).
+- **Dışa aktarma:** Excel (`excel` paketi, sınıf/öğretmen başına sayfa) ve
+  PDF (Canvas → JPEG → çok sayfalı A4 yatay, `jpegPagesToPdf`; yeni paket
+  yok, Türkçe karakterler uygulama yazı tipiyle).
+- **Açık:** program yayınlanınca bildirim yok; öğretmenin hiç saat
+  seçmemesi 1 dakikalık "boş aralık" satırıyla tutuluyor; veli/öğrenci
+  görünümü gün listesi (ızgara değil).
+- **Testler:** `test/schedule_generator/` (algoritma 10, ekran 5, dışa
+  aktarma 1), `supabase/tests/timetable_test.mjs`. Demo:
+  `lib/dev/demo_timetable.dart`.
+
+## 50. Finans: aylık / yıllık Excel (5 Kasım 2026)
+
+Finans ekranının üst çubuğunda "Excel olarak indir" (`showFinanceExportDialog`):
+Aylık (yıl + ay) ya da Yıllık (yıl) seçilir, dosya paylaşılır
+(`finans-2026-11.xlsx` / `finans-2026.xlsx`). Oluşturucu
+`lib/features/finance/data/finance_excel.dart` (`buildFinanceWorkbook`,
+`FinancePeriod`), yalnızca istemcide; sunucu değişikliği yok.
+Sayfalar: Özet (tahsilat, vadesi dönemde olan, gider, net, bugün geciken;
+yıllıkta ay ay tablo + toplam; gider türü dağılımı), Tahsilatlar (dönemde
+ödendi işaretlenenler), Taksitler (vadesi dönemde olanlar ve durumu), Giderler,
+Öğrenci bakiyeleri (bugün itibarıyla toplam / ödenen / kalan / geciken).
+Tutarlar sayı hücresi. Testler: `test/finance_excel_test.dart`.
+
+## 51. Sınıf yönetimi, öğrenci kayıt modları, öğrencinin ders programı (5 Kasım 2026)
+
+Migration `20261105140000_student_registry` (rollback'i var; önceki
+fonksiyon sürümlerini geri yükler; **canlıda**, yetkiler SQL ile doğrulandı),
+`send-push` v13 (`timetable` bildirimi). Test projesine uygulanmadı.
+Şartnameden sapmalar: ayrı `students` tablosu yok (`profiles` + yeni
+sütunlar), varsayılan kayıt modu **serbest** (mevcut kurumların kaydı
+kapanmasın), `v_student_schedule` yerine `my_timetable()` + `my_classroom()`,
+"yeni sürüm" tablosu yok (yayındaki program yerinde güncellenir, öğrenciye
+"güncellendi" bildirimi kişi başı 30 dakikada bir), sınıf ekleme/düzenleme
+yalnızca müdürde (koç kendi öğrencilerini atar).
+
+- **Kayıt modu** (`organizations.student_registration_mode`, müdür
+  `set_registration_mode`): `list` → öğrenci kayıtta numarasını girer,
+  `expected_students`'ta yoksa `STUDENT_NUMBER_NOT_FOUND`, eşleşmişse
+  `STUDENT_NUMBER_TAKEN`; eşleşirse ad soyad listeden, sınıf adı tutarsa
+  sınıfa atanır, veli telefonu `student_guardian_phones`'a yazılır. `free`
+  → kayıt engellenmez; rakam dışı numara `bad_format`, kullanımdaki numara
+  numarasız kayıt + `duplicate` (`attempted_number`). Serbestten listeye
+  geçince (ya da liste yüklenince, `reconcile_expected_students`) numarası
+  listede olmayanlar `not_in_list`.
+- **Kayıt ekranı:** öğrenci davetinde "Öğrenci numaran" (yalnızca rakam,
+  zorunlu); göndermeden önce `match_student_number` (anon, yalnızca
+  ok/not_found/taken/invalid döner, `invite_check_failures` hız sınırı).
+  GoTrue tetikleyici hatasını "Database error" olarak döndürdüğü için asıl
+  mesaj bu ön kontrolden gelir. `check_invite` → `number_mode`.
+- **Liste içe aktarma** (`/admin/registration/import`): Excel/CSV
+  (`readSpreadsheet`), sayfa + başlık satırı + sütun eşleştirme (tahmin:
+  `guessColumns`), doğrulama raporu (mükerrer, hatalı/eksik numara, adsız,
+  geçersiz telefon), hatalı satır düzelt ya da atla, "Listeyi yenile"
+  (eşleşmemiş eskileri sil). 2000+ satırda `compute`. `import_expected_students`.
+- **Sınıflar** (`/admin|coach/classes`): `capacity`, `active`; öğrenci tek
+  sınıfta (`classroom_students_one_class`); dolu sınıf silinemez
+  (`CLASSROOM_NOT_EMPTY`, ekranda önce toplu taşıma). Sınıf detayında
+  öğrenci ekle / çıkar.
+- **Öğrenciler** (`/admin|coach/roster`): sekmeler Sınıfı olmayanlar / Tüm
+  öğrenciler / Şüpheli numaralar (serbest modda ya da işaretli varsa:
+  işaret, numarasız, sınıfsız, adı çok benzeyen — `suspiciousStudents`) /
+  Henüz kayıt olmayanlar (müdür, liste modu). Arama, sınıf ve koç süzgeci,
+  toplu atama. Öğrenci detayı: numara (anlık `student_number_available`),
+  sınıf, koç (müdür, `set_student_coach`), işareti kaldır.
+- **Geçmiş:** `student_class_history`, `student_number_history`
+  (tetikleyicilerle; kim, rolü, ne zaman). `set_student_number` artık yalnızca
+  rakam (1-20).
+- **Öğrencinin programı** (`/student/timetable`, `StudentScheduleScreen`):
+  Bugün (süren ders "Şimdi", sıradaki) + Hafta ızgarası; boş durumlar
+  (sınıf yok / yayınlanmadı); son başarılı yükleme cihazda
+  (`studentScheduleProvider`, çevrimdışı gösterilir). Ana sayfada
+  `StudentScheduleCard` (sınıfı da programı da yoksa görünmez).
+- **Yayın:** `schedules.published_at`, rozet "Yayında · tarih"; yayın
+  penceresi etkilenecek sınıf ve öğrenci sayısını gösterir (`schedule_reach`).
+- **Testler:** `supabase/tests/student_registry_test.mjs`,
+  `test/student_registry_test.dart`, `test/auth/invite_signup_test.dart`.
+  `timetable_test.mjs` geri almayı artık sonraki migration'larla ters
+  sırada yapıyor.
+
+## 52. Velilere serbest metinli SMS (5 Kasım 2026)
+
+Migration `20261105150000_bulk_sms` (rollback'i var; **canlıda**). Müdür
+ana sayfasında "Velilere SMS" → `/admin/sms`: metni yazar (hazır şablonlar:
+resmi tatil, deneme sınavı, veli toplantısı), kime: tüm veliler / seçili
+sınıflar / seçili öğrenciler. Alıcı sayısı ve telefonu olmayan öğrenci
+sayısı gönderimden önce görünür (`send_bulk_sms(..., p_dry_run => true)`).
+
+- Velinin numarası `guardian_phone_of` (yoklamada girilen, yoksa finanstaki
+  ödeyen veli). Aynı numara bir kez (kardeşler). Metnin başına "Kurum adı:"
+  eklenir. En çok 600 karakter, 2000 numara; kurum başına 10 dakikada bir
+  gönderim (`SMS_TOO_SOON`).
+- `sms_broadcasts` (geçmiş; yalnızca müdür okur), `sms_outbox.broadcast_id`,
+  `my_sms_broadcasts()` (sırada / gitti / başarısız sayıları).
+- SMS sağlayıcısı yok (§47): mesajlar sırada bekler. Bilinen sınır:
+  `send-sms` her çağrıda 50 mesaj, cron 5 dakikada bir → saatte ~600;
+  büyük kurumda sağlayıcı bağlanınca toplu gönderim API'si ya da döngü
+  eklenmeli.
+- İYS: ekranda "yalnızca bilgilendirme" uyarısı; reklam/kampanya için ticari
+  ileti izni gerekir.
+- Testler: `supabase/tests/bulk_sms_test.mjs`, `test/bulk_sms_test.dart`.
+
+## 53. Deneme karşılaştırma (5 Kasım 2026)
+
+Sunucu değişikliği yok (sonuçlar mevcut `exams` / `exam_subject_results`'tan,
+kazanımlar `exam_answers.outcome`'dan). Denemeler ekranında (öğrenci, koç
+öğrenci detayı, veli) "Denemeleri karşılaştır" → `ExamComparisonScreen`.
+Şartnameden sapmalar: `exams.publisher` zaten vardı (yeni sütun yok);
+dersler `subjects` koduyla eşleştiği için `ders_adi_normalize` gerekmedi
+(TYT_MAT ile AYT_MAT ayrı kalır); deneme satırı öğrenci girdiyse var olduğu
+için "katıldı / yayında" süzgeci yok; view yerine saf Dart.
+
+- `lib/features/exam_comparison/domain/exam_comparator.dart`:
+  `ComparisonMode.forCount` (2-4 tablo, 5+ özet), `compare` (ders satırları,
+  olmayan ders null → "—", en yüksek/düşük net, toplam ve sıra),
+  `summarize` (ders ortalaması, doğrusal eğilimle en çok gelişen/gerileyen
+  3 ders), `outcomes` (en az iki denemede ölçülen kazanımlar, yazım farkı
+  `normalizeLabel` ile eşleşir), `mixed` (TYT/AYT ya da alan karışınca uyarı).
+- Ekran: Denemeler (seçim, "3/4 seçildi", özet bildirimi), Karşılaştırma
+  (tablo + ders bazında çubuk + toplam net çizgi; 5+'da özet), Kazanımlar
+  (yüzde ve ok). PDF: tablo A4 yatay (`renderComparisonPdf`, Canvas → JPEG).
+- Testler: `test/exam_comparison/`.
+
+## 54. Kitap takibi (5 Kasım 2026)
+
+Migration `20261105160000_student_books` (rollback'i var; **canlıda**),
+`send-push` v14 (`book_request`). Test projesine uygulanmadı.
+
+- **Tablolar:** `books` (kurum havuzu; ad + yayın tekil, `norm_key`),
+  `student_books` (dönem sunucuda: Eylül-Ocak "YYYY-Güz", Şubat-Ağustos
+  "YYYY-Bahar", `term_of`), `student_book_limits` (varsayılan 7),
+  `book_progress` (konu `topic_id` ya da serbest, sayfa, soru/D/Y/B, not).
+- **Kurallar (tetikleyicilerde):** öğrenci havuza yalnızca talep ekler
+  (`guard_book` durumu 'pending' yapar); öğrencinin listesine yalnızca
+  aktif havuz kitabı (`BOOK_NOT_IN_POOL`); dönemde eklenen TOPLAM kayıt
+  sınırı (`BOOK_LIMIT`, bitti/bırakıldı da sayılır; koç silerse düşer);
+  öğrenci `student_books`'u güncelleyemez/silemez (politika yok); çalışmayı
+  kendisi 24 saat düzenler/siler; D+Y+B ≤ soru, bitiş ≥ başlangıç sayfası,
+  ileri tarih yok.
+- **RPC'ler:** `approve_book`, `merge_book_request`, `reject_book_request`
+  (talep edene `book_request` bildirimi), `set_book_limit`,
+  `student_books_overview`, `book_usage` (kitap → öğrenci sayısı, ortalama
+  soru; sınıf süzgeci), `topic_gaps` (son 120 gün optik denemede ≥3 soru,
+  başarı < %50, son 60 günde kitap/soru kaydı yok), `import_books`.
+- **Entegrasyon:** D/Y/B girilen çalışma `question_logs`'a kitap adıyla
+  yansır (`mirror_book_progress`; istatistik, konu görünümü, haftalık rapor
+  kendiliğinden içerir). Ders kitaptan, kitap karmaysa seçilen konudan.
+- **Uygulama:** Eğitim sekmesinde "Kitaplarım" (`/student/books`), koç/müdür
+  öğrenci detayında "Kitaplar" sekmesi (konu boşluğu sinyali, limiti artır,
+  durum, sil), veli çocuk ekranında "Kitaplar" (salt okunur + son 7 gün
+  soru özeti), müdür/koç ana sayfasında "Kitap havuzu" (`/admin|coach/books`:
+  havuz, onay bekleyenler + benzer kitap önerisi, Excel ile toplu ekleme;
+  ders "TYT Matematik" biçiminde, tanınmazsa Karma).
+- **Testler:** `supabase/tests/student_books_test.mjs`,
+  `test/student_books_test.dart`.
+
+## 55. Kurum sınavı: optik Excel içe aktarma ve kazanım analizi (6 Kasım 2026)
+
+Migration `20261105170000_exam_import` (rollback'i var; **canlıya uygulandı**
+iki parça hâlinde: `exam_import` + `exam_import_functions`; RLS 7 yeni
+tabloda açık, anon görünümleri okuyamıyor, mevcut 1 optik deneme taşındı).
+Mevcut optik okuma yapısı (§43) genişletildi; ikinci bir sınav yapısı yok.
+
+- **Veri:** `answer_keys` = kurum sınavı (+ `kind` deneme/konu_tarama,
+  `status` draft/published, `wrong_penalty`, `penalty_ratio`).
+  `answer_key_subjects` (soru sayısı, sıra, katsayı), `answer_key_classrooms`,
+  `answer_key_items` (+ `outcome_id`, `difficulty`, `cancelled`),
+  `answer_key_booklets` (B/C/D: kitapçıktaki no → A'daki no, isteğe bağlı o
+  kitapçığın cevabı; `question_no_b` kamera akışı için eşitleniyor).
+  `learning_outcomes` (kurum havuzu: ders > konu > alt konu ağacı, MEB kodu,
+  isteğe bağlı `topic_id`). `exam_sheets` (ham optik, öğrencinin kitapçık
+  sırasıyla), `exam_imports`, `import_templates`.
+  `exams` + `total_net` (katsayılı), `rank_org`, `rank_class`,
+  `classroom_id`; `exam_subject_results` + `wrong_penalty`, `weight`, ders
+  sıralamaları; **net artık `correct - wrong * wrong_penalty`** (elle girilen
+  denemede 0,25 — `guard_exam_scoring` bu sütunları yalnızca puanlamaya
+  bırakır). Uygulamada `SubjectResult.penalty` sunucudan okunur.
+- **Akış:** `save_exam(key, def)` sınavın tamamını kaydeder (yeni sınav
+  taslak). Taslakta optikler yalnızca `exam_sheets`'te durur; öğrenci, veli,
+  istatistikler görmez. `publish_exam` hepsini puanlar (`_apply_sheet`,
+  bildirim ilk eklemede gider) ve sıralar (`_rank_key`). Yayındaki sınavda
+  her yükleme anında puanlanır; anahtar/iptal değişince `save_exam` tüm
+  optikleri yeniden puanlar. Excel: `start_exam_import` → 25'lik
+  `import_exam_sheets` parçaları (en çok 100) → `finish_exam_import`.
+  Aynı öğrenci tekrar yüklenirse güncellenir (kopya yok). Kamera akışı
+  (`submit_optic`) da ham optiği yazar; taslakta önizleme döner (exam_id boş).
+- **Puanlama kuralı** (SQL ve Dart `ExamScorer` aynı, testli): iptal ya da
+  cevapsız soru hiçbir sayıma girmez; TYT'de tüm dersler, AYT/YDT'de işaret
+  konan dersler; net 2 basamak, toplam = Σ net × katsayı.
+- **Analiz görünümleri** (security_invoker): `v_student_outcome_analysis`
+  (net kaybı = yanlış × (1 + katsayı) + boş, ders katsayısıyla),
+  `v_class_outcome_analysis`, `v_institution_outcome_analysis`,
+  `v_question_difficulty` (doğru/boş %, en çok işaretlenen yanlış, ayırt
+  edicilik = en iyi %27 − en zayıf %27). Koçun kurum geneli için
+  `exam_report(key)` (sıralamada koç yalnızca kendi öğrencileri, müdür
+  hepsi); karne için `exam_card_context(exam)`; numara eşleştirme için
+  `exam_import_roster()` (kurumun tüm öğrencileri, personel).
+- **Dart:** `lib/features/exam_import/` (domain: `ExamDefinition`,
+  `OpticResultParser`, `ExamScorer`, `prepareImport` — 60 satırdan büyük
+  dosya `compute` ile isolate'te; data: `ExamAdminRepository`;
+  ekranlar: Kurum sınavları listesi, sınav düzenleme (Bilgiler / Cevap
+  anahtarı / Kazanımlar / Sonuçlar), kazanım havuzu, içe aktarma sihirbazı),
+  `lib/features/exam_analysis/` (`ExamReportRepository`, kazanım
+  analizi: zayıf kazanım, net kaybı haritası, trend; karne ekranı + PDF;
+  sınıf/kurum raporu + Excel). Bellekte: `lib/dev/demo_exam_center.dart`
+  (iki arayüzü birden; demoda 2 yayında + 1 taslak sınav).
+- **Girişler:** müdür/koç ana sayfasında "Kurum sınavları" kartı
+  (`/admin|coach/org-exams`, `…/org-exams/new|:id`, `…/outcomes`);
+  Denemeler ekranında "Kurum sınavı karneleri"; deneme detayında "Karneyi aç".
+- **Şartnameden sapmalar:** tablolar yeni adlarla değil mevcut tablolar
+  genişletilerek; LGS yok (ders listesi ve puan YKS); öğrenci anahtar
+  tablosunu hiç okumaz (doğru cevap kendi `exam_answers` kaydında);
+  puan yalnızca TYT için tahmini (`computeScore`), sunucuda saklanmaz;
+  PDF `pdf`/`printing` yerine mevcut Canvas → JPEG → PDF; zorluk değerleri
+  İngilizce kod (easy/medium/hard).
+- **Testler:** `supabase/tests/exam_import_test.mjs` (taslak gizliliği,
+  A/B kitapçık, iptal, katsayı, yeniden yükleme, %33,3, RLS, rapor, geri
+  alma); eski `exam_batches`/`optic`/`optic_booklet` testleri artık önce bu
+  migration'ı geri alıyor. `test/exam_import/` (parser, scorer, plan, analiz,
+  bellek deposu, ekran akışları, PDF/Excel).
+- **Denenmedi:** gerçek bir optik okuyucu Excel'i ve telefonda akış.
+
+## 56. Finans eklentileri: hesaplar, indirim, kısmi ödeme, makbuz, iade, gelir, toplu ücret, veli (6 Kasım 2026)
+
+Migration `20261106100000_finance_plus` (rollback'i var; **canlıya uygulandı**
+iki parça: `finance_plus` + `finance_plus_functions`; yeni 7 tabloda RLS açık).
+E-fatura / e-arşiv kullanıcı kararıyla yapılmadı.
+
+- **Kısmi ödeme ve makbuz:** `finance_payments` (tahsilat / iade satırları).
+  `record_payment(fee, tutar, …, installment?)` tutarı ödenmemiş taksitlere
+  dağıtır (seçilen taksit önce, sonra en eski vade); kalan borçtan fazlası
+  `FINANCE_OVERPAYMENT`. Makbuz no kurum + yıl başına sıralı
+  (`2026-000001`, `finance_receipt_seq`). Taksidin `paid_amount` / `paid_on`
+  / `method` alanlarını yalnızca tetikleyici yazar (`_sync_installment`,
+  `mentoria.finance_sync`); istemci doğrudan değiştiremez. `void_receipt`
+  makbuzu iptal eder (silinmez, numara tekrar kullanılmaz). Eski ödenmiş
+  taksitler makbuzsuz tahsilat satırına çevrildi ("Önceki kayıt").
+- **İndirim / burs / kardeş:** `finance_discounts`. Ücretin `total`'i
+  indirimsiz ücret; taksit toplamı = total − indirimler (`create_fee`
+  denetler). Sonradan `add_fee_discount`: son vadeli taksitten başlayarak
+  düşer, sıfırlanan taksit silinir.
+- **Kayıt iptali / iade:** `cancel_fee`: ödenmemiş taksitler silinir, kısmen
+  ödenen taksit ödenen tutara iner, ücret `status = cancelled`; iade tahsil
+  edilen netten fazla olamaz, iade makbuzu yazılır. Tahsilatı olan ücret
+  silinemez (`FINANCE_HAS_PAYMENTS`; kurum silinirken basamaklı silme geçer).
+- **Diğer gelirler:** `finance_incomes` + `record_income` (kitap, özel ders,
+  materyal, etkinlik, diğer; makbuz no'lu).
+- **Kasa / banka:** `finance_accounts` (açılış bakiyesi, IBAN, kullanılmıyor),
+  `finance_transfers` (virman). Tahsilat, gelir, gider ve iade hesaba
+  bağlanabilir; bakiye istemcide (`accountBalances`).
+- **Toplu ücret:** `fee_plans` (şablon) + `create_fees_bulk(öğrenciler, …)`:
+  aynı başlıkta (Türkçe harf duyarsız) aktif ücreti olan atlanır; veli adı /
+  telefonu yoklamadaki `student_guardian_phones` kaydından gelir.
+- **Veli:** `my_child_finance(student)` (yalnızca `parent_students` bağı):
+  ücretler, taksitler, indirim toplamı, makbuzlar. Veli panelinde
+  çocuk ekranında "Ödemeler" sekmesi, makbuz PDF'i paylaşılabilir.
+- **Hatırlatma SMS'i** kısmi ödemede kalan tutarı yazar.
+- **Uygulama:** Finans ekranı 6 sekme (Özet, Ücretler, Gelirler, Giderler,
+  Hesaplar, Koçlar). Ücret penceresinde "Ödeme al", "İndirim / burs",
+  makbuz listesi (PDF / iptal), "Kaydı iptal et / iade"; taksite dokununca o
+  taksidin kalanıyla ödeme. Ücret eklemede indirim; "Toplu ücret" (şablon,
+  sınıfa göre seçim, şablon kaydet). Makbuz PDF'i (`receipt_pdf.dart`): A4'te
+  veli ve kurum nüshası, "fatura yerine geçmez" notu. Excel'e makbuzlu
+  tahsilatlar, iadeler, Diğer gelirler ve Hesaplar sayfaları eklendi.
+- **Kelime kuralı:** "fiyat" uygulamada yasak (`org_credits_test`):
+  "indirimsiz ücret" kullanıldı.
+- **Testler:** `supabase/tests/finance_plus_test.mjs`; eski `finance_test` ve
+  `finance_reminders_test` artık tahsilatı `record_payment` ile yazıyor ve
+  önce bu migration'ı geri alıyor. `test/finance_plus_test.dart`.
+  Ayrıca `weekly_guidance_test.mjs` gece 00:00-03:00 arası (UTC / TR farkı)
+  kırılıyordu; tarih Türkiye saatine bağlandı.
+
+## 57. Sınırlı kalanlar: AYT puanı, zorunlu hesap, toplu ücrette aynı başlık (6 Kasım 2026)
+
+- **AYT/YDT tahmini puanı (karne):** AYT puanında TYT'nin %40 payı olduğu için
+  öğrencinin aynı gün ya da önceki en yakın TYT denemesinin netleri alınır
+  (`ReportCard.tytNets`, Supabase'de `_tytNets` tek sorguda 100'er öğrenci).
+  Puan türü öğrencinin alanından (SAY/EA/SÖZ); alan yoksa AYT'de girilen
+  derslere en çok uyan tür seçilir. YDT → DİL. TYT denemesi yoksa kutu
+  görünmez. `estimatedScore` artık `(type, score)` döner, başlık
+  "Tahmini SAY puanı" gibi (`scoreLabel`). Test: `test/exam_import/estimated_score_test.dart`.
+- **Hesap seçimi:** kurumun açık kasa/banka hesabı varsa `AccountPicker`
+  boş bırakılamaz; ödeme şekline göre kendiliğinden seçer (nakit → kasa,
+  kart → POS/banka, havale → banka; `defaultAccountFor`). Kullanıcı elle
+  değiştirmediyse ödeme şekli değişince güncellenir. Hiç hesap yoksa seçici
+  gösterilmez. Sunucu hesapsız kayda yine izin verir (eski kayıtlar, hesap
+  tanımlamamış kurum).
+- **Toplu ücret, aynı başlık:** listede aynı başlıkta aktif ücreti olan
+  öğrenci işaretlenir; seçildiyse "Aynı başlıkta ücreti olanlara da aç"
+  anahtarı çıkar (varsayılan kapalı = atla). Migration
+  `20261106150000_bulk_fee_duplicates` (`create_fees_bulk(..., p_allow_duplicate
+  boolean default false)`, eski 7 parametreli imza kaldırıldı; eski APK'lar
+  varsayılanla çalışır). Rollback var; `finance_test`/`finance_reminders_test`
+  geri almada bunu da önce geri alıyor. Canlıya uygulandı.
+- **E-fatura** yapılmadı: GİB'e bağlı bir özel entegratör (sözleşme + API
+  anahtarı) olmadan kurulamaz; makbuz "fatura yerine geçmez" yazmaya devam eder.

@@ -108,13 +108,16 @@ check((await one(`select booklet_no from public.exam_answers where exam_id = $1 
   'A kitapçığında booklet_no boş');
 
 await asUser(coach.id);
-await expectError('geçersiz kitapçık', () => submit(ayse, {}, 'C', key), 'INVALID_BOOKLET');
+await expectError('geçersiz kitapçık', () => submit(ayse, {}, 'E', key), 'INVALID_BOOKLET');
 const noB = await createKey([{ subject: 'TYT_MAT', no: 1, correct: 'C' }]);
 await expectError('B numarası olmayan anahtarla B okunamaz', () => submit(ayse, { TYT_MAT: ['C'] }, 'B', noB), 'NO_B_KEY');
 
 // --- Geri alma / yeniden uygulama ----------------------------------------------------
 const name = '20261030110000_optic_booklets';
 await asSuper();
+// Bu migration'a bağlı sonraki migration'lar önce geri alınır.
+const laterDeps = migs.filter((f) => f >= '20261105170000_exam_import.sql').map((f) => f.replace('.sql', '')).reverse();
+for (const l of laterDeps) await db.exec(read(rbDir, `${l}.down.sql`));
 await db.exec(read(rbDir, `${name}.down.sql`));
 check((await one(`select count(*) n from information_schema.columns
   where table_name = 'exams' and column_name = 'booklet'`)).n == 0, 'geri alındı');
@@ -123,6 +126,7 @@ r = await db.query(`select public.submit_optic($1, $2, $3) r`, [noB, ali, JSON.s
 check(r.correct === 1, 'eski submit_optic çalışıyor', r);
 await asSuper();
 await db.exec(read(migDir, `${name}.sql`));
+for (const l of [...laterDeps].reverse()) await db.exec(read(migDir, `${l}.sql`));
 check((await one(`select count(*) n from information_schema.columns
   where table_name = 'answer_key_items' and column_name = 'question_no_b'`)).n == 1, 'yeniden uygulandı');
 

@@ -1,3 +1,5 @@
+import '../../finance/presentation/finance_plus_ui.dart' show ChildFinanceView;
+import '../../student_books/presentation/books_screens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -36,7 +38,7 @@ class ParentChildScreen extends ConsumerWidget {
     final name = children.where((c) => c.id == childId).firstOrNull?.fullName;
 
     return DefaultTabController(
-      length: 7,
+      length: 9,
       initialIndex: initialTab.clamp(0, 6),
       child: Scaffold(
         appBar: SkyAppBar(
@@ -52,6 +54,8 @@ class ParentChildScreen extends ConsumerWidget {
               Tab(text: tr('Bal Raporu')),
               Tab(text: tr('Hata Defteri')),
               Tab(text: tr('Plan')),
+              Tab(text: tr('Kitaplar')),
+              Tab(text: tr('Ödemeler')),
             ],
           ),
         ),
@@ -67,6 +71,8 @@ class ParentChildScreen extends ConsumerWidget {
             _ParentRecap(childId: childId, name: name),
             MistakesView(studentId: childId, readOnly: true, bottomPadding: 32),
             WeeklyPlanView(studentId: childId),
+            StudentBooksView(studentId: childId, viewer: BooksViewer.parent),
+            ChildFinanceView(studentId: childId),
           ],
         ),
       ),

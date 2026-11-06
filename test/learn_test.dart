@@ -262,6 +262,8 @@ void main() {
 
       container.invalidate(practiceAnswersProvider('demo-student'));
       await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Fizik'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Fizik'));
       await tester.pumpAndSettle();
       expect(find.text('Hız ve ivme'), findsOneWidget);

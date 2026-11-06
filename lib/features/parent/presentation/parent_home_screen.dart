@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../schedule_generator/presentation/my_timetable.dart';
 import '../../announcements/presentation/announcement_widgets.dart';
 import '../../../core/branding/branding_providers.dart';
 import '../../../core/constants/exam_subjects.dart';
@@ -234,6 +235,7 @@ class _ParentBody extends StatelessWidget {
           ],
         ),
       // Son 14 günde kurumdan ya da koçtan duyuru geldiyse.
+      const MyTimetableCard(),
       const AnnouncementsHomeCard(),
       // Tek kartta hafta: devam, net trendi, ödev.
       WeeklySummaryCard(studentId: child.id, name: child.fullName),

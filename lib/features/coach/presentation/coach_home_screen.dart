@@ -1,7 +1,15 @@
+import '../../exam_import/presentation/org_exams_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../attendance/data/attendance_repository.dart';
+import '../../attendance/presentation/attendance_screen.dart';
+import '../../student_books/presentation/book_pool_screen.dart';
+import '../../student_management/data/student_management_repository.dart';
+import '../../student_management/presentation/students_screen.dart';
+import '../../schedule_generator/data/timetable_repository.dart';
+import '../../schedule_generator/presentation/my_timetable.dart';
 import '../data/risk_repository.dart';
 import 'exam_trends_card.dart';
 import 'risk_card.dart';
@@ -47,6 +55,9 @@ class CoachHomeScreen extends ConsumerWidget {
       ref.invalidate(deletionRequestsProvider);
       ref.invalidate(orgCreditsProvider);
       ref.invalidate(riskListProvider);
+      ref.invalidate(attendanceDayProvider);
+      ref.invalidate(myTimetableProvider);
+      ref.invalidate(managedStudentsProvider);
       return ref.refresh(studentSummariesProvider.future);
     }
 
@@ -281,6 +292,11 @@ class _CoachBodyState extends State<_CoachBody> {
             {'count': missingNumbers},
           ),
         ),
+      const AttendanceHomeCard(basePath: '/coach'),
+      const MyTimetableCard(),
+      const StudentsHomeCard(basePath: '/coach'),
+      const BookPoolHomeCard(basePath: '/coach'),
+      const OrgExamsHomeCard(basePath: '/coach'),
       const AnnouncementsHomeCard(),
       const WeekMeetingsSection(),
       const RiskCard(basePath: '/coach'),

@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/i18n/i18n.dart';
 import '../../auth/data/auth_repository.dart';
+import '../../finance/data/finance_repository.dart';
 import '../../learn/data/practice_repository.dart';
 import '../../../core/constants/exam_subjects.dart';
 import '../../../shared/format.dart';
@@ -49,7 +50,18 @@ enum NotificationKind {
   inactivityWarning(Icons.schedule_rounded, 'inactivity_warning'),
 
   /// Koça: pazartesi sabahı "bu hafta konuşulacaklar" (risk listesi).
-  riskDigest(Icons.crisis_alert_rounded, 'risk_digest');
+  riskDigest(Icons.crisis_alert_rounded, 'risk_digest'),
+
+  /// Kurum müdürüne: sabah 09.00, vadesi bugün olan ödenmemiş taksitler;
+  /// dokununca velilere SMS hatırlatması sorulur.
+  installmentDue(Icons.payments_rounded, 'installment_due'),
+
+  /// Öğrenciye ve bağlı öğretmene: ders programı yayınlandı ya da
+  /// yayındaki program güncellendi.
+  timetable(Icons.calendar_view_week_rounded),
+
+  /// Öğrenciye: kitap talebi onaylandı (ya da reddedildi).
+  bookRequest(Icons.menu_book_rounded, 'book_request');
 
   const NotificationKind(this.icon, [this._db]);
   final IconData icon;
@@ -123,6 +135,17 @@ class AppNotification {
     NotificationKind.riskDigest => tr('Bu hafta {n} öğrenciyle konuş', {
       'n': data['count'] ?? 0,
     }),
+    NotificationKind.installmentDue => tr('Bugün {n} taksitin günü geldi', {
+      'n': data['count'] ?? 0,
+    }),
+    NotificationKind.timetable =>
+      data['updated'] == true
+          ? tr('Ders programın güncellendi')
+          : tr('Ders programın yayınlandı'),
+    NotificationKind.bookRequest =>
+      data['result'] == 'rejected'
+          ? tr('Kitap talebin onaylanmadı')
+          : tr('Talep ettiğin kitap eklendi'),
   };
 
   String get body => switch (kind) {
@@ -179,6 +202,23 @@ class AppNotification {
       '{names}: devam, net ya da ödevde geriye düşüş var. Listeye bak.',
       {'names': (data['names'] as List? ?? const []).join(', ')},
     ),
+    NotificationKind.installmentDue => tr(
+      'Toplam {v}. Velilere hatırlatma gönderilsin mi?',
+      {'v': formatMoney((data['total'] as num?) ?? 0)},
+    ),
+    NotificationKind.timetable => tr('{name}: haftalık derslerine bak.', {
+      'name': data['name'] ?? '',
+    }),
+    NotificationKind.bookRequest =>
+      data['result'] == 'rejected'
+          ? [
+              '${data['book'] ?? ''} (${data['publisher'] ?? ''})',
+              if (data['reason'] != null) '${data['reason']}',
+            ].join(': ')
+          : tr('{book} ({publisher}) havuzda; şimdi seçebilirsin.', {
+              'book': data['book'] ?? '',
+              'publisher': data['publisher'] ?? '',
+            }),
   };
 
   /// "13 Ekim" (haftanın pazartesisi).
@@ -256,6 +296,9 @@ class AppNotification {
       '${data['route'] ?? '/student/announcements'}',
     NotificationKind.inactivityWarning => '/',
     NotificationKind.riskDigest => '${data['route'] ?? '/coach'}',
+    NotificationKind.installmentDue => '${data['route'] ?? '/admin/finance'}',
+    NotificationKind.timetable => '${data['route'] ?? '/student/timetable'}',
+    NotificationKind.bookRequest => '${data['route'] ?? '/student/books'}',
   };
 
   AppNotification markRead() => AppNotification(
