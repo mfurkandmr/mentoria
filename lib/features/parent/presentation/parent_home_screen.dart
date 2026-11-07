@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../schedule_generator/presentation/my_timetable.dart';
 import '../../announcements/presentation/announcement_widgets.dart';
@@ -10,12 +11,16 @@ import '../../../core/i18n/i18n.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/format.dart';
 import '../../../shared/widgets/common.dart';
-import '../../../shared/widgets/effects.dart';
-import '../../../shared/widgets/panel.dart';
 import '../../account/data/account_repository.dart';
 import '../../assignments/presentation/assignment_widgets.dart';
-import '../../auth/data/auth_repository.dart';
-import '../../coach/presentation/manager_widgets.dart' show ManagerSkyAppBar;
+import '../../admin/presentation/cockpit/cockpit_header.dart';
+import '../../admin/presentation/cockpit/cockpit_motion.dart';
+import '../../admin/presentation/cockpit/cockpit_theme.dart';
+import '../../admin/presentation/cockpit/metric_card.dart';
+import '../../admin/presentation/cockpit/metric_strip.dart';
+import '../../admin/presentation/cockpit/section_states.dart';
+import '../../admin/presentation/cockpit/week_hero_card.dart';
+import '../../../shared/widgets/tool_tile.dart';
 import '../../coaching/presentation/coaching_widgets.dart';
 import '../../exams/data/exam.dart';
 import '../../meetings/data/meeting_repository.dart';
@@ -27,9 +32,10 @@ import '../../tracking/presentation/study_view.dart';
 import '../data/weekly_summary_repository.dart';
 import 'weekly_summary_card.dart';
 
-/// Velinin ana ekranı: koç ve müdür panelleriyle aynı dil. Gökyüzü başlığında
-/// konuşan Bızz, çocuğun haftalık özeti, ayrıntı sayfalarına hızlı geçişler,
-/// hedefler, görevler ve ödevler (salt okunur).
+/// Velinin ana ekranı: koç ve müdür panelleriyle aynı kurumsal kokpit
+/// (NOTLAR §68). Üstte kurumun adı ve logosu; çocuğun haftası özet
+/// kartlarında, ardından haftalık özet, ayrıntılar, hedefler, görüşmeler,
+/// görevler ve ödevler (salt okunur). Maskot ve konuşma balonu yok.
 class ParentHomeScreen extends ConsumerStatefulWidget {
   const ParentHomeScreen({super.key});
 
@@ -41,9 +47,11 @@ class _ParentHomeScreenState extends ConsumerState<ParentHomeScreen> {
   String? _childId;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      CockpitThemed(child: Builder(builder: _build));
+
+  Widget _build(BuildContext context) {
     final children = ref.watch(childrenProvider);
-    final profile = ref.watch(currentProfileProvider).value;
     final list = children.value ?? const <ChildRef>[];
     final child = list.isEmpty
         ? null
@@ -64,72 +72,83 @@ class _ParentHomeScreenState extends ConsumerState<ParentHomeScreen> {
       }
     }
 
+    final bottom = 32 + MediaQuery.paddingOf(context).bottom;
     final List<Widget> body = children.when(
+      skipLoadingOnRefresh: true,
       loading: () => const [
-        SliverFillRemaining(hasScrollBody: false, child: BizzLoader()),
+        SliverPadding(
+          padding: EdgeInsets.all(16),
+          sliver: SliverToBoxAdapter(
+            child: HeroStrip(
+              hero: SizedBox(height: 132, child: MetricSkeleton()),
+              cards: [MetricSkeleton(), MetricSkeleton(), MetricSkeleton()],
+            ),
+          ),
+        ),
       ],
       error: (_, _) => [
-        SliverFillRemaining(
-          hasScrollBody: false,
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  tr('Veriler yüklenemedi. İnternet bağlantını kontrol et.'),
+        SliverPadding(
+          padding: const EdgeInsets.all(16),
+          sliver: SliverToBoxAdapter(
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: SectionError(
+                  message: tr(
+                    'Veriler yüklenemedi. İnternet bağlantını kontrol et.',
+                  ),
+                  onRetry: () => ref.invalidate(childrenProvider),
                 ),
-                const SizedBox(height: 12),
-                FilledButton(
-                  onPressed: () => ref.invalidate(childrenProvider),
-                  child: Text(tr('Tekrar dene')),
-                ),
-              ],
+              ),
             ),
           ),
         ),
       ],
       data: (list) => [
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+          padding: EdgeInsets.fromLTRB(16, 16, 16, bottom),
           sliver: SliverToBoxAdapter(
-            child: child == null
-                ? EmptyState(
-                    title: tr('Bağlı öğrenci yok'),
-                    message: tr(
-                      'Çocuğunun profilinden oluşturduğu veli davet koduyla kayıt olduğunda gelişimi burada görünür.',
-                    ),
-                  )
-                : _ParentBody(
-                    children: list,
-                    child: child,
-                    week: week!,
-                    onSelect: (id) => setState(() => _childId = id),
-                  ),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1100),
+                child: child == null
+                    ? EmptyState(
+                        title: tr('Bağlı öğrenci yok'),
+                        message: tr(
+                          'Çocuğunun profilinden oluşturduğu veli davet koduyla kayıt olduğunda gelişimi burada görünür.',
+                        ),
+                      )
+                    : _ParentBody(
+                        children: list,
+                        child: child,
+                        week: week!,
+                        onSelect: (id) => setState(() => _childId = id),
+                      ),
+              ),
+            ),
           ),
         ),
       ],
     );
 
     return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: refresh,
-        edgeOffset: 100,
-        child: CustomScrollView(
-          slivers: [
-            ManagerSkyAppBar(
-              firstName: profile?.firstName ?? '',
-              lines: child == null || week == null
-                  ? [tr('Çocuğun kayıt olunca gelişimini birlikte izleriz! 🐝')]
-                  : _parentBizzLines(child, week),
-              actions: [
-                ProfileInitialsButton(
-                  name: profile?.fullName ?? '',
-                  onPressed: () => context.push('/parent/profile'),
-                ),
-              ],
-            ),
-            ...body,
-          ],
+      body: CockpitBackground(
+        child: RefreshIndicator(
+          onRefresh: refresh,
+          edgeOffset: 64,
+          child: CustomScrollView(
+            key: const ValueKey('parent-scroll'),
+            physics: cockpitScrollPhysics(),
+            slivers: [
+              CockpitHeader(
+                basePath: '/parent',
+                examActions: false,
+                showPending: false,
+                title: context.brand.appName,
+              ),
+              ...body,
+            ],
+          ),
         ),
       ),
     );
@@ -173,33 +192,6 @@ class _ChildWeek {
   }
 }
 
-/// Bızz'ın veliye söyleyecekleri.
-List<String> _parentBizzLines(ChildRef child, _ChildWeek w) {
-  final name = child.fullName.split(' ').first;
-  final change = w.tyt.lastChange;
-  return [
-    if (w.questions > 0)
-      tr('{name} bu hafta {n} soru çözdü 🐝', {'name': name, 'n': w.questions})
-    else
-      tr('{name} bu hafta henüz soru girmedi.', {'name': name}),
-    if (w.minutes > 0)
-      tr('Bu hafta {time} çalıştı ⏱️', {'time': formatMinutes(w.minutes)}),
-    if (w.activeDays > 0)
-      tr('Son 7 günün {n} gününde çalıştı.', {'n': w.activeDays})
-    else
-      tr('Küçük bir moral mesajı bu hafta çok iyi gelebilir 💛'),
-    if (w.tyt.last != null)
-      change != null && change > 0
-          ? tr('Son TYT denemesinde {net} net, öncekinden {d} fazla! 📈', {
-              'net': formatNet(w.tyt.last!.totalNet),
-              'd': formatNet(change),
-            })
-          : tr('Son TYT denemesinde {net} net yaptı.', {
-              'net': formatNet(w.tyt.last!.totalNet),
-            }),
-  ];
-}
-
 class _ParentBody extends StatelessWidget {
   const _ParentBody({
     required this.children,
@@ -215,117 +207,119 @@ class _ParentBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brand = context.brand;
     final tyt = week.tyt;
+    final first = child.fullName.split(' ').first;
     void open(int tab) => context.push('/parent/child/${child.id}?tab=$tab');
+    final n = NumberFormat.decimalPattern(localeTag);
+    final change = tyt.lastChange;
 
-    final items = <Widget>[
+    final sections = <Widget>[
       if (children.length > 1)
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
+        SlidingSegments<String>(
+          segments: {
             for (final c in children)
-              ChoiceChip(
-                avatar: InitialsAvatar(name: c.fullName, size: 24),
-                label: Text(c.fullName),
-                selected: c.id == child.id,
-                onSelected: (_) => onSelect(c.id),
+              c.id: (
+                key: ValueKey('parent-child-${c.id}'),
+                label: c.fullName.split(' ').first,
+                count: null,
               ),
-          ],
+          },
+          value: child.id,
+          onChanged: onSelect,
         ),
-      // Son 14 günde kurumdan ya da koçtan duyuru geldiyse.
-      const MyTimetableCard(),
-      const AnnouncementsHomeCard(),
+      HeroStrip(
+        hero: WeekHeroCard(
+          key: const ValueKey('parent-week'),
+          title: tr('{name} bu hafta', {'name': first}),
+          active: week.activeDays,
+          total: 7,
+          caption: tr('gün çalıştı (son 7 gün)'),
+          ringLabel: tr('devam'),
+          semanticsLabel: tr('Son 7 günün {a} gününde çalıştı', {
+            'a': week.activeDays,
+          }),
+          semanticsHint: tr('Çalışma sürelerini açar'),
+          onTap: () => open(3),
+        ),
+        cards: [
+          MetricCard(
+            key: const ValueKey('parent-questions'),
+            label: tr('Çözülen soru'),
+            value: n.format(week.questions),
+            count: week.questions,
+            format: n.format,
+            detail: week.minutes > 0
+                ? tr('{t} çalışma', {'t': formatMinutes(week.minutes)})
+                : tr('Bu hafta çalışma kaydı yok'),
+            semanticsHint: tr('Soru kayıtlarını açar'),
+            onTap: () => open(1),
+          ),
+          MetricCard(
+            key: const ValueKey('parent-last-net'),
+            label: tr('Son TYT neti'),
+            value: tyt.last == null ? '–' : formatNet(tyt.last!.totalNet),
+            detail: change == null
+                ? tr('Henüz deneme yok')
+                : tr('Öncekine göre {d}', {'d': formatChange(change)}),
+            tone: change == null
+                ? null
+                : change >= 0
+                ? Tone.good
+                : Tone.risk,
+            semanticsHint: tr('Denemeleri açar'),
+            onTap: () => open(0),
+          ),
+          MetricCard(
+            key: const ValueKey('parent-average'),
+            label: tr('TYT ortalaması'),
+            value: tyt.recentAverage == null
+                ? '–'
+                : formatNet(tyt.recentAverage!),
+            detail: tr('son 5 deneme'),
+            semanticsHint: tr('Denemeleri açar'),
+            onTap: () => open(0),
+          ),
+        ],
+      ),
       // Tek kartta hafta: devam, net trendi, ödev.
       WeeklySummaryCard(studentId: child.id, name: child.fullName),
-      PanelSectionTitle(
-        title: tr('{name} bu hafta', {'name': child.fullName}),
-        subtitle: tr('Son 7 gün'),
-      ),
-      StatRow(
-        children: [
-          GlowStat(
-            icon: Icons.edit_note_rounded,
-            label: tr('Çözülen soru'),
-            value: week.questions.toDouble(),
-            color: brand.primary,
-          ),
-          GlowStat(
-            icon: Icons.timer_rounded,
-            label: tr('Çalışma'),
-            value: week.minutes.toDouble(),
-            format: (v) => formatMinutes(v.round()),
-            color: brand.secondary,
-          ),
-          GlowStat(
-            icon: Icons.event_available_rounded,
-            label: tr('Aktif gün'),
-            value: week.activeDays.toDouble(),
-            format: (v) => '${v.round()} / 7',
-            color: brand.success,
-          ),
-        ],
-      ),
-      StatRow(
-        children: [
-          GlowStat(
-            icon: Icons.insights_rounded,
-            label: tr('Son TYT neti'),
-            value: tyt.last?.totalNet ?? 0,
-            format: tyt.last == null ? (_) => '–' : formatNet,
-            caption: tyt.lastChange == null
-                ? null
-                : '${tyt.lastChange! >= 0 ? '↑' : '↓'} '
-                      '${formatChange(tyt.lastChange!)}',
-            color: brand.info,
-          ),
-          GlowStat(
-            icon: Icons.functions_rounded,
-            label: tr('TYT ortalaması'),
-            value: tyt.recentAverage ?? 0,
-            format: tyt.recentAverage == null ? (_) => '–' : formatNet,
-            caption: tr('son 5 deneme'),
-            color: brand.primaryDeep,
-          ),
-        ],
-      ),
-      PanelSectionTitle(
-        title: tr('Ayrıntılar'),
-        subtitle: tr('Denemeler, sorular, konular ve çalışma süresi'),
-      ),
+      const MyTimetableCard(),
+      // Son 14 günde kurumdan ya da koçtan duyuru geldiyse.
+      const AnnouncementsHomeCard(),
       Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          StatRow(
-            children: [
-              QuickActionTile(
-                icon: Icons.fact_check_rounded,
-                label: tr('Denemeler'),
-                color: brand.success,
-                onTap: () => open(0),
+          CockpitHeading(tr('Ayrıntılar')),
+          ToolGrid(
+            warnColor: Tone.warn.of(context),
+            tools: [
+              ToolInfo(
+                id: 'parent-exams',
+                icon: Icons.fact_check_outlined,
+                title: tr('Denemeler'),
+                status: tr('Netler ve ders bazında gelişim'),
+                open: (_) => open(0),
               ),
-              QuickActionTile(
-                icon: Icons.edit_note_rounded,
-                label: tr('Sorular'),
-                color: brand.primary,
-                onTap: () => open(1),
+              ToolInfo(
+                id: 'parent-questions-tool',
+                icon: Icons.edit_note_outlined,
+                title: tr('Sorular'),
+                status: tr('Günlük çözülen soru'),
+                open: (_) => open(1),
               ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          StatRow(
-            children: [
-              QuickActionTile(
-                icon: Icons.checklist_rounded,
-                label: tr('Konular'),
-                color: brand.info,
-                onTap: () => open(2),
+              ToolInfo(
+                id: 'parent-topics',
+                icon: Icons.checklist_outlined,
+                title: tr('Konular'),
+                status: tr('Biten ve kalan konular'),
+                open: (_) => open(2),
               ),
-              QuickActionTile(
-                icon: Icons.timer_rounded,
-                label: tr('Süre'),
-                color: brand.secondary,
-                onTap: () => open(3),
+              ToolInfo(
+                id: 'parent-time',
+                icon: Icons.timer_outlined,
+                title: tr('Süre'),
+                status: tr('Odaklanılan çalışma süresi'),
+                open: (_) => open(3),
               ),
             ],
           ),
@@ -333,7 +327,7 @@ class _ParentBody extends StatelessWidget {
       ),
       GoalsCard(studentId: child.id),
       StudentMeetingsCard(studentId: child.id),
-      SectionCard(
+      CockpitSection(
         title: tr('Koçunun verdiği görevler'),
         child: TaskList(
           studentId: child.id,
@@ -341,7 +335,7 @@ class _ParentBody extends StatelessWidget {
           emptyText: tr('Şu an görev yok.'),
         ),
       ),
-      SectionCard(
+      CockpitSection(
         title: tr('Ödevler'),
         child: AssignmentList(
           studentId: child.id,
@@ -356,9 +350,9 @@ class _ParentBody extends StatelessWidget {
       key: ValueKey(child.id),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (final (i, c) in items.indexed) ...[
-          if (i > 0) const SizedBox(height: 12),
-          staggered(i, c),
+        for (final (i, c) in sections.indexed) ...[
+          if (i > 0) const SizedBox(height: 14),
+          Reveal(index: i, child: c),
         ],
       ],
     );

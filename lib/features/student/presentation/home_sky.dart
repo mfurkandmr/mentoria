@@ -8,6 +8,7 @@ import '../../../core/i18n/i18n.dart';
 import '../../../core/sound/app_sounds.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/widgets/bizz_swap.dart';
+import '../../../shared/widgets/corporate_look.dart';
 import '../../../shared/widgets/effects.dart';
 import '../data/bizz_shake.dart';
 
@@ -322,6 +323,10 @@ class SkyAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Kurum panellerinde (koç, müdür, veli) gökyüzü yok: düz kokpit çubuğu.
+    if (isCorporate(context)) {
+      return AppBar(title: title, actions: actions, bottom: bottom);
+    }
     final phase = DayPhase.of(DateTime.now());
     final ink = phase.ink;
     final theme = Theme.of(context);

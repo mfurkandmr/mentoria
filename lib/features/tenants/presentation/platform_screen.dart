@@ -18,7 +18,17 @@ class PlatformScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tenants = ref.watch(tenantsProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(tr('Dershaneler'))),
+      appBar: AppBar(
+        title: Text(tr('Dershaneler')),
+        actions: [
+          IconButton(
+            key: const ValueKey('platform-errors'),
+            tooltip: tr('Hata kayıtları'),
+            icon: const Icon(Icons.bug_report_outlined),
+            onPressed: () => context.push('/platform/errors'),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/platform/new'),
         icon: const Icon(Icons.add_business_rounded),

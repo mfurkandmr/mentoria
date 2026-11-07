@@ -108,6 +108,16 @@
         "C:/dev/Mentoria/build/web_coach_cockpit"
       ],
       "port": 8779
+    },
+    {
+      "name": "web-site",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "C:/dev/Mentoria/tool/web/build_web.py",
+        "--no-flutter",
+        "--serve"
+      ],
+      "port": 8790
     }
   ]
 }

@@ -3638,4 +3638,28 @@ const enStrings = <String, String>{
       'How often coaches meet their students',
   'Öğrencilerine görev ve ödev ata':
       'Assign tasks and homework to your students',
+  'Bildirimleri aç': 'Turn on notifications',
+  'Ödev, görüşme, mesaj ve deneme sonuçları sayfa kapalıyken de gelsin.':
+      'Get homework, meetings, messages and exam results even when the page is closed.',
+  'Şimdi değil': 'Not now',
+  'Aç': 'Turn on',
+  'Hata kayıtları': 'Error log',
+  'Kayıtlı hata yok': 'No errors recorded',
+  'Web panelinde bir hata olursa burada görünür; aynı hata tekrarlarsa sayacı artar.':
+      'Errors in the web panel show up here; a repeated error increases its counter.',
+  '{n} kez': '{n} times',
+  'Çözüldü, kaldır': 'Resolved, remove',
+  'gün çalıştı (son 7 gün)': 'days studied (last 7 days)',
+  'devam': 'active',
+  'Son 7 günün {a} gününde çalıştı': 'Studied on {a} of the last 7 days',
+  'Çalışma sürelerini açar': 'Opens study time',
+  'Bu hafta çalışma kaydı yok': 'No study logged this week',
+  'Soru kayıtlarını açar': 'Opens question logs',
+  'Öncekine göre {d}': '{d} vs previous',
+  'Denemeleri açar': 'Opens exams',
+  'Netler ve ders bazında gelişim': 'Net scores and progress by subject',
+  'Biten ve kalan konular': 'Completed and remaining topics',
+  'Odaklanılan çalışma süresi': 'Focused study time',
+  'Önceki kart': 'Previous card',
+  'Sonraki kart': 'Next card',
 };

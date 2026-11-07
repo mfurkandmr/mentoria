@@ -20,6 +20,10 @@ class WeekHeroCard extends StatelessWidget {
     required this.onTap,
     this.delta,
     this.title,
+    this.caption,
+    this.ringLabel,
+    this.semanticsLabel,
+    this.semanticsHint,
   });
 
   final int active;
@@ -29,6 +33,16 @@ class WeekHeroCard extends StatelessWidget {
 
   /// Varsayılan "Bu hafta aktif".
   final String? title;
+
+  /// Sayının altındaki satır; varsayılan "öğrenci bu hafta çalıştı".
+  final String? caption;
+
+  /// Halkanın ortasındaki küçük yazı; varsayılan "katılım".
+  final String? ringLabel;
+
+  /// Ekran okuyucu metinleri (varsayılan: öğrenci katılımı).
+  final String? semanticsLabel;
+  final String? semanticsHint;
 
   @override
   Widget build(BuildContext context) {
@@ -71,17 +85,25 @@ class WeekHeroCard extends StatelessWidget {
               splashColor: Colors.white.withValues(alpha: 0.08),
               child: Semantics(
                 button: true,
-                label: tr(
-                  'Bu hafta {a} / {t} öğrenci aktif, katılım yüzde {p}',
-                  {'a': active, 't': total, 'p': percent},
-                ),
-                hint: tr('Bu hafta çalışmayanları açar'),
+                label:
+                    semanticsLabel ??
+                    tr('Bu hafta {a} / {t} öğrenci aktif, katılım yüzde {p}', {
+                      'a': active,
+                      't': total,
+                      'p': percent,
+                    }),
+                hint: semanticsHint ?? tr('Bu hafta çalışmayanları açar'),
                 excludeSemantics: true,
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(18, 18, 14, 18),
                   child: Row(
                     children: [
-                      _Ring(ratio: ratio, low: low, percent: percent),
+                      _Ring(
+                        ratio: ratio,
+                        low: low,
+                        percent: percent,
+                        label: ringLabel ?? tr('katılım'),
+                      ),
                       const SizedBox(width: 18),
                       Expanded(
                         child: Column(
@@ -140,7 +162,7 @@ class WeekHeroCard extends StatelessWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              tr('öğrenci bu hafta çalıştı'),
+                              caption ?? tr('öğrenci bu hafta çalıştı'),
                               style: text.bodySmall?.copyWith(
                                 color: Colors.white.withValues(alpha: 0.75),
                               ),
@@ -166,11 +188,17 @@ class WeekHeroCard extends StatelessWidget {
 
 /// Dolan halka; ortasında yüzde ve "katılım".
 class _Ring extends StatelessWidget {
-  const _Ring({required this.ratio, required this.low, required this.percent});
+  const _Ring({
+    required this.ratio,
+    required this.low,
+    required this.percent,
+    required this.label,
+  });
 
   final double ratio;
   final bool low;
   final int percent;
+  final String label;
 
   static const _size = 96.0;
 
@@ -198,7 +226,7 @@ class _Ring extends StatelessWidget {
               ),
             ),
             Text(
-              tr('katılım'),
+              label,
               style: text.labelSmall?.copyWith(
                 color: Colors.white.withValues(alpha: 0.7),
               ),

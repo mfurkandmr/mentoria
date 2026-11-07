@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../shared/widgets/bizz.dart';
+import '../../../shared/widgets/brand_logo.dart';
 import '../../../core/i18n/i18n.dart';
 
 /// Supabase anahtarları verilmeden çalıştırıldığında gösterilir.
@@ -20,7 +21,7 @@ class SetupScreen extends StatelessWidget {
               children: [
                 const Bizz(size: 140),
                 const SizedBox(height: 8),
-                const MentoriaWordmark(),
+                const BrandLogo(),
                 const SizedBox(height: 24),
                 Text(
                   tr('Supabase bağlantısı eksik'),

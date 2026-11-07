@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /app/
+Disallow: /demo/
+Sitemap: https://mentoria.com.tr/sitemap.xml

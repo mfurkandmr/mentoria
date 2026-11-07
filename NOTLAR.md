@@ -2560,3 +2560,184 @@ renginde, iş yoksa rozet yok). Rota `/coach/pending`, `/admin/pending`.
 - Gruplanmış sekmelerin üst çubuğunda bekleyen işler rozeti ve profil.
 - Test: `admin_cockpit_test` "6 sekme", `coach_cockpit_test` "sekmeleri";
   516 test geçti.
+
+## 65. Web yayını: tanıtım sayfası, panel ve gizli demo (7 Kasım 2026)
+
+- **Adresler (tek alan adı, `mentoria.com.tr`):** `/` tanıtım sayfası
+  (`site/`, düz HTML/CSS, Nunito siteyle birlikte gelir; Google'a istek
+  yok), `/app/` panel (Flutter web, gerçek Supabase), `/demo/` rol seçimi ve
+  `/demo/panel/` örnek verili panel (DEMO=true). Demo **gizli**: sitede
+  bağlantısı yok, `noindex`, robots.txt'de kapalı; toplantıda göstermek için.
+  Yasal metinler `/gizlilik/`, `/aydinlatma/`, `/kullanim-kosullari/`
+  (`assets/legal`'den üretilir, uygulamadakiyle aynı metin), hesap silme
+  `/app/hesap-sil`.
+- **Derleme:** `python tool/web/build_web.py` (ASCII yoldan; `C:\dev\Mentoria`
+  bağlantısı ya da `N:`). İki Flutter derlemesi (`--base-href /app/` ve
+  `/demo/panel/`) + site → `build/site`. `--no-flutter` yalnızca toplar,
+  `--serve` Cloudflare gibi davranan yerel sunucu (http://localhost:8790).
+  `_redirects` panel yollarını (`APP_ROUTES`) index.html'e çevirir;
+  `test/web_test.dart` router'daki her üst düzey yolun listede olduğunu
+  denetler (yeni üst düzey rota = listeye ekle). `_headers` güvenlik
+  başlıkları; `/app` ve `/demo` arama motorlarına kapalı.
+- **Web'e özel davranış:**
+  - Adreslerde `#` yok (`usePathUrlStrategy`): davet linki
+    `https://mentoria.com.tr/app/join/KOD` (`APP_LINK_BASE` web derlemesinde
+    verilir). Şifre sıfırlama bağlantısı da `/app`'e döner (`webAppRoot`).
+  - Açılış animasyonu web'de yok; girişli kullanıcı doğrudan paneline.
+    Oturum tarayıcıda (localStorage) çıkış yapana kadar kalır. Tanıtım
+    sayfası oturumu görürse `/app/`'e yönlendirir (`/?tanitim` ile görülür).
+  - Bütün roller web'de tam ekran (kullanıcı kararı: ortada telefon
+    genişliğinde sütun istenmedi). Öğrenci: 900 px ve üstünde alt menü
+    yerine solda yan menü (`StudentShell`, `student-rail`); veli ve giriş
+    ekranı tam genişlik; koç/müdür zaten yan menülü.
+  - Demo rolü adresten: `?rol=admin|coach|student|parent`, yenilenince
+    yoldaki rol (`Env.activeDemoRole`).
+  - Yükleme ekranı (`web/index.html` + `web/flutter_bootstrap.js`), PWA
+    manifest (Türkçe, yön kilidi yok): Chrome/Edge'de "Yükle", iPhone'da
+    "Ana Ekrana Ekle".
+  - `cupertino_icons` eklendi: çatının iOS tarzı bileşenleri bu yazı tipini
+    kullanıyor, yoksa web/iOS'ta kutucuk çıkıyordu (derleme uyarısı).
+- **Yayın:** `.github/workflows/deploy-web.yml` → Cloudflare Pages. Repo
+  değişkeni `WEB_DEPLOY=true` olana kadar atlanır. Gerekenler: Variables
+  `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `CLOUDFLARE_PROJECT`; Secrets
+  `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
+- **Yayın günü yapılacaklar:** alan adını Cloudflare'e bağla; Pages projesine
+  `mentoria.com.tr` (ve `www` → yönlendirme); Supabase → Authentication →
+  URL Configuration: Site URL `https://mentoria.com.tr/app`, Redirect URLs'e
+  `https://mentoria.com.tr/app/**`; `iletisim@mentoria.com.tr` için
+  Cloudflare Email Routing (Gmail'e yönlendirme); `_redirects`'in 200
+  yönlendirmesini canlıda dene (`/app/login` sayfası yenilenince açılmalı).
+- **Açık:** yasal metinlerde `[AD SOYAD]`, `[ADRES]`, `[WEB ADRESİ]`
+  (`docs/kvkk/00_README.md`) hâlâ boş; web sitesinde de görünür. Doldurulunca
+  `build_legal.py` + `legalVersion` artır.
+- **Web bildirimi (FCM):** VAPID (herkese açık) anahtarı `Env.firebaseVapidKey`
+  varsayılanında. Etkinleşmesi için Firebase konsolunda bir **web uygulaması**
+  kaydı gerekiyor (Project settings → Your apps → Web): `apiKey` ve `appId`
+  env.json'a / GitHub Variables'a `FIREBASE_WEB_API_KEY`,
+  `FIREBASE_WEB_APP_ID` olarak girilir; yoksa web bildirimsiz derlenir.
+  - İzin kendiliğinden sorulmaz: izin henüz sorulmadıysa sağ üstte
+    "Bildirimleri aç" kartı (`WebPushPrompt`, app.dart); "Aç" dokunuşla
+    tarayıcı iznini ister, "Şimdi değil" 14 gün gizler. Token
+    `device_tokens`'a `platform = 'web'` ile yazılır, çıkışta silinir.
+  - Arka plan bildirimini sitenin kökündeki `firebase-messaging-sw.js`
+    gösterir (build_web.py aynı ayarlarla üretir; Firebase JS 13.0.0,
+    firebase_core_web ile aynı sürüm).
+  - `send-push` v16 (canlıda): yalnızca web adreslerine `webpush` bloğu
+    (ikon + dokununca `https://mentoria.com.tr/app<rota>`; `WEB_APP_URL`
+    gizli değeriyle değiştirilebilir). Telefon bildirimleri aynı.
+  - iPhone'da web bildirimi yalnızca site ana ekrana eklenmişse (iOS 16.4+).
+- **Ekran görüntüleri:** `node tool/web/screenshots.mjs` (site `--serve` ile
+  açıkken), demodan `site/img/*.png`.
+
+## 66. Web hata kaydı (7 Kasım 2026)
+
+- Crashlytics web'de çalışmıyor; web panelinde yakalanmayan hatalar kendi
+  tablomuza yazılıyor (üçüncü taraf yok, veri Frankfurt'ta).
+- **Migration** `20261107100000_client_errors` (canlıda; rollback +
+  `supabase/tests/client_errors_test.mjs`): `client_errors` tablosu,
+  `report_client_error()` (anon + authenticated çağırabilir; giriş ekranı
+  hataları da gelsin). Aynı sürümde aynı hata tek satır, sayaç artar;
+  parmak izi = sayıları atılmış mesaj + yığının ilk satırı. Saatte 500 yeni
+  satır sınırı, 90 günden eskiler yazarken ara ara silinir. Yalnızca süper
+  admin okur/siler. Advisor'ın "anon SECURITY DEFINER çağırabilir" uyarısı
+  bilinçli (check_invite gibi).
+- **KVKK:** kimliksiz. Kullanıcı kimliği, e-posta, IP yok; adres yalnızca
+  yol (sorgu/# atılır, sunucuda da kesilir); tarayıcı yerine yalnızca
+  işletim sistemi türü (`web/windows`). Veri envanterine satır eklendi.
+- **Uygulama:** `lib/core/crash/web_error_reporter.dart`; `initCrashReporting`
+  web'de sürüm derlemesinde `FlutterError.onError` ve
+  `PlatformDispatcher.onError`'a bağlar (demo/ayarsız kapalı). Oturumda aynı
+  hata bir kez, en fazla 20 hata; gönderim hatası yutulur.
+- **Görme:** platform paneli (süper admin) → sağ üstte böcek simgesi →
+  `/platform/errors` (`ClientErrorsScreen`): son görülen üstte, dokununca
+  yığın, "Kopyala", "Çözüldü, kaldır". Demo/testte
+  `InMemoryClientErrorRepository`.
+- **Okunaksız yığın:** web derlemesi `--source-maps` ile; harita dosyaları
+  yayına girmez, `build/web_sourcemaps/`'e (CI'da 90 gün saklanan
+  `web-sourcemaps-<sha>` artifact'ı). Çözmek için:
+  `node tool/web/symbolize.mjs build/web_sourcemaps/main.dart.js.map yigin.txt`.
+
+## 67. Tanıtım sitesi kurumsal tasarım (7 Kasım 2026)
+
+- Kullanıcı isteği: samimi değil kurumsal, satış odaklı; dershanelerin
+  kullandığı araçları tek yerde topladığımız öne çıksın; 3D görseller.
+- `site/` yeniden yazıldı: koyu lacivert giriş bölümü (3D eğik panel +
+  telefon + yüzen kartlar, fareyle döner), 8 modül şeridi, "dağınık araçlar
+  yerine tek sistem" (SMS paneli, optik yazılımı, Excel, mesaj grupları...
+  → Mentoria), modül bölümleri (veli iletişimi/SMS, ders programı sihirbazı,
+  deneme ve optik analizi, yoklama, finans, koçluk), kendi markanız, roller,
+  kurulum adımları, güvenlik/KVKK (koyu), demo talebi.
+- 3D: saf CSS (perspective/preserve-3d) + `site/site.js` (kaydırınca
+  belirme, kaydırdıkça eğikten düze gelen görseller, ders bloklarının ve
+  sütunların yerine oturması). "Hareketi azalt" açıksa hepsi son halinde.
+- Ders programı ve finans görselleri CSS ile çizildi (demo verisinde
+  programda çakışma uyarısı, finansta eksi net görünüyordu); diğerleri
+  demodan gerçek ekran (WebP, `node tool/web/screenshots.mjs`).
+- Yazı tipi Poppins (sitenin içinde). Fiyat yok; çağrı "Demo talep edin"
+  (`iletisim@mentoria.com.tr`).
+
+## 68. Veli paneli kurumsal kokpit (7 Kasım 2026)
+
+- Kullanıcı isteği: veli tarafı da koç ve müdür gibi kurumsal olsun.
+- `ParentHomeScreen` kokpit temasında (`CockpitThemed`, `CockpitBackground`):
+  gökyüzü başlığı ve Bızz konuşma balonu kaldırıldı; üstte `CockpitHeader`
+  (markanın adı ve logosu, `title` + `showPending: false`; veli kurum
+  kaydını okuyamadığı için ad markadan). Özet: `WeekHeroCard` ("Elif bu
+  hafta", 7 günün kaçında çalıştı, halka "devam") + üç `MetricCard` (çözülen
+  soru, son TYT neti ve değişimi, TYT ortalaması). Ardından haftalık özet,
+  ders programı, duyurular, "Ayrıntılar" araç ızgarası (denemeler, sorular,
+  konular, süre → ayrıntı sekmeleri), hedefler, görüşmeler, görevler ve
+  ödevler (`CockpitSection`). Birden çok çocukta kayan seçim.
+- `WeekHeroCard` (`caption`, `ringLabel`, ekran okuyucu metinleri) ve
+  `CockpitHeader` (`title`, `showPending`) genelleştirildi; koç/müdürde
+  varsayılanlar aynı.
+- Veli iç sayfaları (`/parent/profile`, `announcements`, `child/:id`)
+  `_cockpitPage` ile açılıyor. `SkyAppBar` kurum panelinde (`isCorporate`)
+  düz çubuğa dönüyor: veli ayrıntı ekranı ve koçun öğrenci detayı da
+  gökyüzüsüz.
+- Test: `features_flow_test` "veli çocuğunun panelini salt okunur görür"
+  kokpit parçalarını ve maskotun olmadığını denetliyor; 526 test geçti.
+
+## 69. Eğitim ekranı web'de (7 Kasım 2026)
+
+- Ders kartları geniş ekranda dev görünüyordu (sabit 2 sütun): artık
+  `GridView.extent` (kart en fazla 240 px; telefonda yine 2 sütun).
+- Bilgi kartları: en fazla 560 × 620 px ortada; fareyle de sürüklenebilir
+  (`dragDevices`); altta ileri/geri düğmeleri (`card-prev`, `card-next`,
+  uçlarda kapalı). Test: `learn_test` ekran senaryosu.
+
+
+## 70. Web'de kaydırma akıcılığı (7 Kasım 2026)
+
+- Derleme `--wasm`: Chrome/Edge/Firefox ve yeni Safari skwasm motoruyla
+  çizer (CanvasKit'ten belirgin akıcı); desteklemeyen tarayıcıya flutter.js
+  kendiliğinden JS + CanvasKit sürümünü yükler. Çapraz köken yalıtımı
+  (COOP/COEP) açılmadı: tek iş parçacıklı skwasm; COEP Supabase görsellerini
+  ve Firebase betiğini bozardı. Hata kaydında wasm satırları
+  `main.dart.wasm.map` ile çözülür (sourcemaps artifact'ında).
+- Kokpit başlığındaki buzlu cam (`BackdropFilter`) web'de kapalı: her
+  karede bulanıklaştırma kaydırmayı takıltıyordu; yerine %96 opak zemin.
+- Web'de kokpit kaydırması düz (`cockpitScrollPhysics()`): fare tekerleğiyle
+  iOS esnemesi takılma gibi hissettiriyordu; telefonda esnek kalır.
+- `LoopBuilder` (sürekli dönen çizimler) `RepaintBoundary` içinde: kaydırılan
+  liste her karede yeniden boyanmıyor.
+- Yerel sunucu (`--serve`) `.mjs`/`.wasm` türlerini açıkça veriyor (Windows
+  `.mjs`'i text/plain veriyordu, wasm sürümü açılmıyordu).
+
+## 71. Yeni logo (7 Kasım 2026)
+
+- Logo: lacivert (#122B4B) yuvarlak kare, beyaz M, turuncu (#F5A623) çizgi.
+  Kullanıcının görselinden ölçülüp vektöre çevrildi: `tool/brand/make_logo.py`
+  → `assets/brand/logo.svg`, uygulama ikonları (`assets/brand/icon/*`),
+  `web/favicon.png`, `web/icons/*` (yuvarlak + maskable). Ardından
+  `dart run flutter_launcher_icons` (web üretimi kapalı: `web.generate: false`,
+  yoksa web ikonlarını ve manifest renklerini ezer). Uyarlanır ikon zemini
+  #122B4B.
+- Uygulamada `MentoriaMark`; varsayılan markada `BrandLogo` = M + "Mentoria",
+  kokpit başlığında da M. **Öğrenci panelinde yalnızca arı**:
+  `BrandLogo(student: true)` → Bızz başı + "mentoria" yazısı. Dershanenin
+  kendi logosu/baş harfi her yerde aynen kalır (beyaz etiket).
+- Site üst çubuğu/alt bilgi/demo/404 `img/icon.png` (= Icon-192) kullanır;
+  web açılış ekranı ve manifest renkleri laciverte çekildi. Giriş ekranındaki
+  Bızz çizimi ve telefondaki tanıtım animasyonu (intro) maskot olarak kaldı.
+- Test: `test/brand_logo_test.dart`.

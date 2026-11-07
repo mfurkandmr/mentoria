@@ -1,5 +1,6 @@
 import 'dart:ui' show ImageFilter;
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -22,15 +23,25 @@ class CockpitHeader extends ConsumerWidget {
     super.key,
     this.basePath = '/admin',
     this.examActions = true,
+    this.title,
+    this.showPending = true,
   });
 
   final String basePath;
   final bool examActions;
 
+  /// Büyük başlık; verilmezse kurumun adı (veli panelinde markanın adı:
+  /// veli kurum kaydını okuyamaz).
+  final String? title;
+
+  /// Bekleyen işler rozeti (koç/müdür); veli panelinde yok.
+  final bool showPending;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final brand = context.brand;
-    final orgName = ref.watch(orgProvider).value?.name ?? brand.appName;
+    final orgName =
+        title ?? ref.watch(orgProvider).value?.name ?? brand.appName;
     final date = DateFormat(
       'd MMMM yyyy, EEEE',
       localeTag,
@@ -59,7 +70,7 @@ class CockpitHeader extends ConsumerWidget {
             onPressed: () => context.push('$basePath/import'),
           ),
         ],
-        PendingWorkButton(basePath: basePath),
+        if (showPending) PendingWorkButton(basePath: basePath),
         CockpitProfileButton(
           name: ref.watch(currentProfileProvider).value?.fullName ?? '',
           route: '$basePath/profile',
@@ -90,31 +101,37 @@ class _CollapsingTitle extends StatelessWidget {
               .clamp(0.0, 1.0);
     final collapsed = 1 - t;
     final text = Theme.of(context).textTheme;
+    final bar = DecoratedBox(
+      decoration: BoxDecoration(
+        color: context.cockpit.surface.withValues(
+          alpha: (kIsWeb ? 0.96 : 0.78) * collapsed,
+        ),
+        border: Border(
+          bottom: BorderSide(
+            color: context.cockpit.border.withValues(alpha: collapsed),
+          ),
+        ),
+      ),
+    );
 
     return Stack(
       fit: StackFit.expand,
       children: [
         // Kaydırınca beliren buzlu cam ve ince alt çizgi.
-        ClipRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(
-              sigmaX: 18 * collapsed,
-              sigmaY: 18 * collapsed,
-            ),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: context.cockpit.surface.withValues(
-                  alpha: 0.78 * collapsed,
-                ),
-                border: Border(
-                  bottom: BorderSide(
-                    color: context.cockpit.border.withValues(alpha: collapsed),
-                  ),
-                ),
+        // Web'de bulanıklaştırma kaydırırken her karede yeniden hesaplanır
+        // ve takılır; orada cam yerine neredeyse opak zemin.
+        if (kIsWeb)
+          bar
+        else
+          ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(
+                sigmaX: 18 * collapsed,
+                sigmaY: 18 * collapsed,
               ),
+              child: bar,
             ),
           ),
-        ),
         // Küçük başlık (çubukta, ortada).
         Positioned(
           top: top,
@@ -196,8 +213,9 @@ class _OrgLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final b = context.brand;
+    if (b.isDefaultBrand) return MentoriaMark(size: size);
     final initial = BrandInitial(size: size, name: name, color: b.ink);
-    if (b.isDefaultBrand || b.logoUrl == null) return initial;
+    if (b.logoUrl == null) return initial;
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),
       child: Image.network(

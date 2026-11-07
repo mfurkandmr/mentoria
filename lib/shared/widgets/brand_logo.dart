@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../core/theme/brand_theme.dart';
 import 'bizz.dart';
 
-/// Uygulamanın her yerindeki logo. Varsayılan markada "mentoria" yazı
-/// logosu; dershanede kendi logosu ve adı (logo yüklenemezse baş harfi).
+/// Uygulamanın her yerindeki logo. Varsayılan markada Mentoria logosu
+/// (lacivert kare, M) ve adı; öğrenci panelinde ([student]) M yerine arı.
+/// Dershanede kendi logosu ve adı (logo yüklenemezse baş harfi).
 class BrandLogo extends StatelessWidget {
   const BrandLogo({
     super.key,
     this.fontSize = 32,
     this.showName = true,
     this.onDark = false,
+    this.student = false,
   });
 
   final double fontSize;
+
+  /// Öğrenci paneli: varsayılan markada logo arı (Bızz) olur.
+  final bool student;
 
   /// Koyu zeminde (gökyüzü başlığı) ad beyaz yazılır.
   final bool onDark;
@@ -24,12 +30,13 @@ class BrandLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final b = context.brand;
-    if (b.isDefaultBrand) {
-      return MentoriaWordmark(fontSize: fontSize, onDark: onDark);
-    }
-
     final size = fontSize * 1.35;
-    final mark = b.logoUrl == null
+    if (b.isDefaultBrand && student) {
+      return MentoriaWordmark(fontSize: fontSize, onDark: onDark, bee: true);
+    }
+    final mark = b.isDefaultBrand
+        ? MentoriaMark(size: size)
+        : b.logoUrl == null
         ? BrandInitial(size: size)
         : ClipRRect(
             borderRadius: BorderRadius.circular(size * 0.22),
@@ -66,6 +73,22 @@ class BrandLogo extends StatelessWidget {
       ],
     );
   }
+}
+
+/// Mentoria logosu: lacivert yuvarlak kare, beyaz M, turuncu çizgi
+/// (assets/brand/logo.svg, üretici: tool/brand/make_logo.py).
+class MentoriaMark extends StatelessWidget {
+  const MentoriaMark({super.key, required this.size});
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context) => SvgPicture.asset(
+    'assets/brand/logo.svg',
+    width: size,
+    height: size,
+    semanticsLabel: 'Mentoria',
+  );
 }
 
 /// Logosu olmayan dershane için ana renkte baş harf rozeti.

@@ -1,3 +1,4 @@
+import '../../../core/config/env.dart';
 import '../../privacy/data/consent_repository.dart';
 import '../../student/data/home_seed.dart';
 import 'package:flutter/foundation.dart';
@@ -10,6 +11,13 @@ import 'profile.dart';
 /// Supabase → Authentication → URL Configuration → Redirect URLs listesine
 /// eklenmeli.
 const mobileAuthRedirect = 'mentoria://reset-password';
+
+/// Web'de e-posta bağlantılarının döneceği adres: uygulamanın kökü
+/// (`APP_LINK_BASE`, ör. `https://mentoria.com.tr/app`; yoksa sitenin kendisi).
+/// Bu adres de Redirect URLs listesinde olmalı (`https://mentoria.com.tr/app/**`).
+String get webAppRoot => Env.appLinkBase.isNotEmpty
+    ? Env.appLinkBase.replaceAll(RegExp(r'/+$'), '')
+    : Uri.base.origin;
 
 class AuthRepository {
   AuthRepository(this._client);
@@ -130,7 +138,7 @@ class AuthRepository {
   Future<void> sendPasswordReset(String email) =>
       _client.auth.resetPasswordForEmail(
         email.trim(),
-        redirectTo: kIsWeb ? Uri.base.origin : mobileAuthRedirect,
+        redirectTo: kIsWeb ? webAppRoot : mobileAuthRedirect,
       );
 
   /// Oturumdaki kullanıcının şifresini değiştirir.

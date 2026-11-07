@@ -231,9 +231,7 @@ class _PendingWorkScreenState extends ConsumerState<PendingWorkScreen> {
             final wide = box.maxWidth >= _wideBreakpoint;
             return ListView(
               key: const ValueKey('pending-scroll'),
-              physics: const AlwaysScrollableScrollPhysics(
-                parent: BouncingScrollPhysics(),
-              ),
+              physics: cockpitScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
               children: [
                 Center(

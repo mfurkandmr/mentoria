@@ -314,7 +314,11 @@ class StudentHomeScreen extends ConsumerWidget {
                           child: Opacity(
                             opacity: 1 - open,
                             child: const Center(
-                              child: BrandLogo(fontSize: 22, onDark: true),
+                              child: BrandLogo(
+                                fontSize: 22,
+                                onDark: true,
+                                student: true,
+                              ),
                             ),
                           ),
                         ),

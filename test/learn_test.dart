@@ -275,6 +275,26 @@ void main() {
         reason: 'kart çevrildi',
       );
 
+      // Web/masaüstü: ileri-geri düğmeleri (fareyle kaydırma zor).
+      expect(
+        tester
+            .widget<IconButton>(find.byKey(const ValueKey('card-prev')))
+            .onPressed,
+        isNull,
+        reason: 'ilk kartta geri kapalı',
+      );
+      await tester.tap(find.byKey(const ValueKey('card-next')));
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<IconButton>(find.byKey(const ValueKey('card-prev')))
+            .onPressed,
+        isNotNull,
+        reason: 'ikinci karta geçti',
+      );
+      await tester.tap(find.byKey(const ValueKey('card-prev')));
+      await tester.pumpAndSettle();
+
       await tester.tap(find.text('Soru çöz'));
       await tester.pumpAndSettle();
       expect(find.text('Soru 10 / 10'), findsOneWidget);

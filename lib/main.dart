@@ -4,6 +4,7 @@ import 'features/student/data/home_seed.dart';
 import 'core/cache/static_cache.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,6 +18,9 @@ import 'features/notifications/push/push_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Web: adreslerde '#' yok (mentoria.com.tr/app/join/KOD). Sunucu bu
+  // yolları index.html'e yönlendirir (tool/web/build_web.py, _redirects).
+  usePathUrlStrategy();
   // Mağaza sürümünde hata ayıklama çıktısı telefon günlüğüne (logcat)
   // yazılmaz: hata metinleri adres / kimlik gibi ayrıntılar taşıyabilir.
   if (kReleaseMode) debugPrint = (String? message, {int? wrapWidth}) {};

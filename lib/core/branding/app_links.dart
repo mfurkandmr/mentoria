@@ -5,7 +5,7 @@ import '../config/env.dart';
 /// Paylaşılabilir linkler.
 ///
 /// Kök adres `APP_LINK_BASE` ile verilebilir (ör. web sürümünün adresi).
-/// Verilmezse web'de uygulamanın kendi adresi (`/#` yönlendirmesiyle),
+/// Verilmezse web'de uygulamanın kendi adresi,
 /// mobilde `mentoria://app` derin bağlantısı kullanılır.
 class AppLinks {
   const AppLinks._();
@@ -14,7 +14,7 @@ class AppLinks {
     if (Env.appLinkBase.isNotEmpty) {
       return Env.appLinkBase.replaceAll(RegExp(r'/+$'), '');
     }
-    if (kIsWeb) return '${Uri.base.origin}/#';
+    if (kIsWeb) return Uri.base.origin;
     return 'mentoria://app';
   }
 

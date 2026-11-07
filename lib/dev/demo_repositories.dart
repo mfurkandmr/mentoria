@@ -35,6 +35,7 @@ import '../features/learn/data/daily_question_repository.dart';
 import '../features/learn/data/practice_repository.dart';
 import '../features/tracking/data/tracking_models.dart';
 import '../features/tracking/data/tracking_repository.dart';
+import '../features/client_errors/data/client_error_repository.dart';
 
 /// Bellekte tutulan takip deposu (demo ve testler için).
 class InMemoryTrackingRepository implements TrackingRepository {
@@ -2302,4 +2303,38 @@ Map<String, List<PrescriptionItem>> demoPrescriptions(List<Topic> topics) {
       item(t('TYT_TUR', 'Yazım Kuralları'), 1, 1),
     ],
   };
+}
+
+/// Demo / test: web hata kayıtları (platform paneli).
+class InMemoryClientErrorRepository implements ClientErrorRepository {
+  InMemoryClientErrorRepository([List<ClientError>? errors])
+    : _errors = errors ?? demoClientErrors();
+
+  final List<ClientError> _errors;
+
+  @override
+  Future<List<ClientError>> recent({int limit = 200}) async => ([
+    ..._errors,
+  ]..sort((a, b) => b.lastSeen.compareTo(a.lastSeen))).take(limit).toList();
+
+  @override
+  Future<void> delete(int id) async => _errors.removeWhere((e) => e.id == id);
+}
+
+List<ClientError> demoClientErrors() {
+  final now = DateTime.now();
+  return [
+    ClientError(
+      id: 1,
+      message: "TypeError: Cannot read properties of null (reading 'id')",
+      appVersion: '0.2.0+2',
+      platform: 'web',
+      count: 3,
+      firstSeen: now.subtract(const Duration(days: 1)),
+      lastSeen: now.subtract(const Duration(hours: 2)),
+      stack: 'at main.dart.js:41023:17\nat main.dart.js:39811:5',
+      urlPath: '/app/coach/students',
+      userAgent: 'web/windows',
+    ),
+  ];
 }

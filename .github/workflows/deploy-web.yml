@@ -1,0 +1,62 @@
+# Web sitesi yayını: tanıtım sayfası + panel (/app) + gizli demo (/demo).
+# main'e her gönderimde derlenir ve Cloudflare Pages'e yüklenir
+# (tool/web/build_web.py). Kurulum (bir kez, GitHub → Settings → Secrets and
+# variables → Actions):
+#   Variables: WEB_DEPLOY = true, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY,
+#              CLOUDFLARE_PROJECT (Pages proje adı, ör. mentoria),
+#              FIREBASE_WEB_API_KEY, FIREBASE_WEB_APP_ID (web bildirimi;
+#              yoksa bildirimsiz derlenir)
+#   Secrets:   CLOUDFLARE_API_TOKEN (yalnızca "Cloudflare Pages: Edit"),
+#              CLOUDFLARE_ACCOUNT_ID
+# WEB_DEPLOY ayarlanana kadar iş atlanır (CI kırılmaz).
+# Supabase publishable anahtarı gizli değildir (tarayıcıda zaten görünür).
+name: Web yayını
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-web
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: vars.WEB_DEPLOY == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.44.6
+          cache: true
+
+      - name: Paketler
+        run: flutter pub get
+
+      - name: Derle ve topla (build/site)
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+          FIREBASE_WEB_API_KEY: ${{ vars.FIREBASE_WEB_API_KEY }}
+          FIREBASE_WEB_APP_ID: ${{ vars.FIREBASE_WEB_APP_ID }}
+        run: python3 tool/web/build_web.py
+
+      # Hata kaydındaki satırları çözmek için (tool/web/symbolize.mjs).
+      - name: Kaynak haritalarını sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-sourcemaps-${{ github.sha }}
+          path: build/web_sourcemaps
+          retention-days: 90
+
+      - name: Cloudflare Pages'e yükle
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy build/site --project-name=${{ vars.CLOUDFLARE_PROJECT }} --branch=main

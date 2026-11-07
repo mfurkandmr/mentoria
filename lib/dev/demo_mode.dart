@@ -54,6 +54,7 @@ import 'demo_students.dart';
 import 'demo_timetable.dart';
 import 'demo_finance.dart';
 import 'demo_optic.dart';
+import '../features/client_errors/data/client_error_repository.dart';
 import 'demo_repositories.dart';
 
 /// Demo modunda Supabase yerine kullanılan sahte veriler.
@@ -94,7 +95,7 @@ Future<List<Override>> buildDemoOverrides([
   /// Testler kendi müdür kokpiti deposunu verebilir (yoksa demo verisi).
   CockpitRepository? cockpit,
 ]) async {
-  role ??= Env.demoRole;
+  role ??= Env.activeDemoRole;
   final exams = InMemoryExamRepository.demo();
   seedDemoBatches(exams);
   final topics = demoTopics();
@@ -474,6 +475,9 @@ Future<List<Override>> buildDemoOverrides([
         // Demo müdürü dershane yönetim panelini de görebilsin.
         superAdmin: role == 'admin',
       ),
+    ),
+    clientErrorRepositoryProvider.overrideWithValue(
+      InMemoryClientErrorRepository(),
     ),
   ];
 }

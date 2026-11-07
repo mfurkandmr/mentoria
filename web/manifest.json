@@ -1,13 +1,16 @@
 {
     "name": "Mentoria",
     "short_name": "Mentoria",
-    "start_url": ".",
+    "start_url": "./",
     "display": "standalone",
-    "background_color": "#FFF8DE",
-    "theme_color": "#FFC531",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#F6F8FC",
+    "theme_color": "#122B4B",
+    "description": "Koç destekli YKS takip ve istatistik paneli",
+    "orientation": "any",
     "prefer_related_applications": false,
+    "scope": "./",
+    "id": "./",
+    "lang": "tr",
     "icons": [
         {
             "src": "icons/Icon-192.png",

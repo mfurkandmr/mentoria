@@ -1,3 +1,4 @@
+import '../../features/client_errors/presentation/client_errors_screen.dart';
 import '../../features/coach/presentation/invite_sheet.dart';
 import '../../features/admin/presentation/cockpit/cockpit_pages.dart';
 import '../../features/admin/presentation/cockpit/exam_plans_screen.dart';
@@ -7,6 +8,7 @@ import 'dart:async';
 import '../../features/avatar/presentation/leaderboard_screen.dart';
 import '../../features/avatar/presentation/avatar_editor_screen.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -90,7 +92,8 @@ final routerProvider = Provider<GoRouter>((ref) {
 
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: '/intro',
+    // Web'de açılış animasyonu yok: girişli kullanıcı doğrudan paneline.
+    initialLocation: kIsWeb ? '/' : '/intro',
     refreshListenable: Listenable.merge([refresh, passwordRecovery]),
     redirect: (context, state) {
       final loc = state.matchedLocation;
@@ -100,13 +103,15 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // Demo modunda giriş yok; doğrudan seçilen rolün ekranları.
       if (Env.isDemo) {
-        final home = switch (Env.demoRole) {
+        final home = switch (Env.activeDemoRole) {
           'coach' => '/coach',
           'admin' => '/admin',
           'parent' => '/parent',
           _ => '/student',
         };
-        if (loc.startsWith('/platform') && Env.demoRole == 'admin') return null;
+        if (loc.startsWith('/platform') && Env.activeDemoRole == 'admin') {
+          return null;
+        }
         return loc.startsWith(home) ? null : home;
       }
 
@@ -141,7 +146,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: '/setup', builder: (_, _) => const SetupScreen()),
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
-      // Web: https://.../#/hesap-sil (mağaza kaydındaki "hesap silme" adresi).
+      // Web: https://mentoria.com.tr/app/hesap-sil (mağaza kaydındaki "hesap silme" adresi).
       GoRoute(
         path: accountDeletionRoute,
         builder: (_, _) => const AccountDeletionScreen(),
@@ -151,7 +156,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, state) =>
             InviteSignupScreen(initialCode: state.uri.queryParameters['code']),
       ),
-      // Davet linki: https://.../#/join/ABCD2345 ya da mentoria://app/join/ABCD2345
+      // Davet linki: https://mentoria.com.tr/app/join/ABCD2345 ya da mentoria://app/join/ABCD2345
       GoRoute(
         path: '/join/:code',
         builder: (_, state) =>
@@ -168,6 +173,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, _) => const PlatformScreen(),
         routes: [
           GoRoute(path: 'new', builder: (_, _) => const TenantEditorScreen()),
+          // Web hata kayıtları (NOTLAR §66); ':id'den önce olmalı.
+          GoRoute(
+            path: 'errors',
+            builder: (_, _) => const ClientErrorsScreen(),
+          ),
           GoRoute(
             path: ':id',
             builder: (_, state) =>
@@ -271,18 +281,27 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/parent',
         builder: (_, _) => const ExitGuard(child: ParentHomeScreen()),
+        // Veli paneli de kokpit temasıyla (NOTLAR §68).
         routes: [
-          GoRoute(path: 'profile', builder: (_, _) => const ProfileScreen()),
+          GoRoute(
+            path: 'profile',
+            pageBuilder: (_, state) =>
+                _cockpitPage(state, const ProfileScreen()),
+          ),
           GoRoute(
             path: 'announcements',
-            builder: (_, _) => const AnnouncementsScreen(),
+            pageBuilder: (_, state) =>
+                _cockpitPage(state, const AnnouncementsScreen()),
           ),
           GoRoute(
             path: 'child/:id',
-            builder: (_, state) => ParentChildScreen(
-              childId: state.pathParameters['id']!,
-              initialTab:
-                  int.tryParse(state.uri.queryParameters['tab'] ?? '') ?? 0,
+            pageBuilder: (_, state) => _cockpitPage(
+              state,
+              ParentChildScreen(
+                childId: state.pathParameters['id']!,
+                initialTab:
+                    int.tryParse(state.uri.queryParameters['tab'] ?? '') ?? 0,
+              ),
             ),
           ),
         ],

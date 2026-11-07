@@ -371,10 +371,12 @@ class _LoopBuilderState extends State<LoopBuilder>
   }
 
   @override
-  Widget build(BuildContext context) => AnimatedBuilder(
-    animation: _c,
-    child: widget.child,
-    builder: (context, child) => widget.builder(context, _c.value, child),
+  Widget build(BuildContext context) => RepaintBoundary(
+    child: AnimatedBuilder(
+      animation: _c,
+      child: widget.child,
+      builder: (context, child) => widget.builder(context, _c.value, child),
+    ),
   );
 }
 

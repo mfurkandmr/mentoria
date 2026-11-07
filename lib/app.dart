@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +13,7 @@ import 'core/theme/app_theme.dart';
 import 'core/theme/brand_theme.dart';
 import 'features/auth/data/presence_repository.dart';
 import 'features/notifications/push/push_service.dart';
+import 'features/notifications/push/web_push_prompt.dart';
 import 'shared/widgets/update_required_screen.dart';
 
 class MentoriaApp extends ConsumerWidget {
@@ -51,7 +53,13 @@ class MentoriaApp extends ConsumerWidget {
       // Dil değişince tüm metinlerin yeniden çevrilmesi için alt ağacı yenile.
       builder: (context, child) => KeyedSubtree(
         key: ValueKey(settings.language),
-        child: mustUpdate ? UpdateRequiredScreen(gate: gate) : child!,
+        child: Stack(
+          children: [
+            mustUpdate ? UpdateRequiredScreen(gate: gate) : child!,
+            // Web: tarayıcı bildirim izni (yalnızca dokunuşla sorulur).
+            if (kIsWeb && !mustUpdate) const WebPushPrompt(),
+          ],
+        ),
       ),
     );
   }

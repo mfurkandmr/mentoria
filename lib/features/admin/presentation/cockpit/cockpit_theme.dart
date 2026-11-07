@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -549,14 +550,20 @@ class CockpitThemed extends StatelessWidget {
   }
 }
 
-/// iOS'taki gibi esnek (yaylanan) kaydırma; kaydırma çubukları
-/// platformun varsayılanı.
+/// Kokpit kaydırması: telefonda iOS gibi esnek (yaylanan). Web'de fare
+/// tekerleğiyle esneme takılma gibi hissettirdiği için düz (NOTLAR §70).
+/// Aşağı çekip yenilemek için her zaman kaydırılabilir.
+ScrollPhysics cockpitScrollPhysics() => const AlwaysScrollableScrollPhysics(
+  parent: kIsWeb ? ClampingScrollPhysics() : BouncingScrollPhysics(),
+);
+
+/// Kaydırma çubukları platformun varsayılanı.
 class _CockpitScroll extends MaterialScrollBehavior {
   const _CockpitScroll();
 
   @override
   ScrollPhysics getScrollPhysics(BuildContext context) =>
-      const BouncingScrollPhysics();
+      kIsWeb ? const ClampingScrollPhysics() : const BouncingScrollPhysics();
 
   @override
   Widget buildOverscrollIndicator(

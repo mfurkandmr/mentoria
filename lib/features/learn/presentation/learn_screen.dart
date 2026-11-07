@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import '../../student_books/presentation/books_screens.dart';
 import 'dart:math' as math;
 
@@ -124,9 +125,10 @@ class _LearnHomeState extends ConsumerState<_LearnHome> {
               const SizedBox(height: 12),
               _TodayBanner(used: used, quota: quota),
               const SizedBox(height: 14),
-              GridView.count(
+              GridView.extent(
                 key: ValueKey(_ayt),
-                crossAxisCount: 2,
+                // Telefonda 2 sütun; geniş ekranda (web) kartlar büyümesin.
+                maxCrossAxisExtent: 240,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 mainAxisSpacing: 12,
@@ -464,43 +466,81 @@ class _CardsViewState extends State<_CardsView> {
     final cards = learnCards[widget.subject] ?? const [];
     final look = subjectLook(widget.subject);
     if (cards.isEmpty) return const SizedBox.shrink();
+    void go(int i) {
+      if (i < 0 || i >= cards.length) return;
+      if (Motion.of(context)) {
+        _pages.animateToPage(
+          i,
+          duration: const Duration(milliseconds: 320),
+          curve: Curves.easeOutCubic,
+        );
+      } else {
+        _pages.jumpToPage(i);
+      }
+    }
+
     return Column(
       children: [
         const SizedBox(height: 16),
         Expanded(
-          child: PageView.builder(
-            controller: _pages,
-            itemCount: cards.length,
-            onPageChanged: (i) {
-              HapticFeedback.selectionClick();
-              setState(() => _page = i);
-            },
-            itemBuilder: (_, i) => AnimatedBuilder(
-              animation: _pages,
-              builder: (context, child) {
-                final p = _pages.hasClients && _pages.position.haveDimensions
-                    ? (_pages.page ?? 0) - i
-                    : (_page - i).toDouble();
-                final t = p.abs().clamp(0.0, 1.0);
-                return Transform.scale(
-                  scale: 1 - 0.08 * t,
-                  child: Opacity(opacity: 1 - 0.4 * t, child: child),
-                );
-              },
-              child: _FlipCard(
-                card: cards[i],
-                color: look.color,
-                index: i,
-                total: cards.length,
+          child: Center(
+            // Geniş ekranda (web) kart telefon boyunda kalsın.
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 560, maxHeight: 620),
+              child: ScrollConfiguration(
+                // Web/masaüstünde fareyle de sürüklenebilsin.
+                behavior: ScrollConfiguration.of(context).copyWith(
+                  dragDevices: {
+                    PointerDeviceKind.touch,
+                    PointerDeviceKind.mouse,
+                    PointerDeviceKind.trackpad,
+                    PointerDeviceKind.stylus,
+                  },
+                ),
+                child: PageView.builder(
+                  controller: _pages,
+                  itemCount: cards.length,
+                  onPageChanged: (i) {
+                    HapticFeedback.selectionClick();
+                    setState(() => _page = i);
+                  },
+                  itemBuilder: (_, i) => AnimatedBuilder(
+                    animation: _pages,
+                    builder: (context, child) {
+                      final p =
+                          _pages.hasClients && _pages.position.haveDimensions
+                          ? (_pages.page ?? 0) - i
+                          : (_page - i).toDouble();
+                      final t = p.abs().clamp(0.0, 1.0);
+                      return Transform.scale(
+                        scale: 1 - 0.08 * t,
+                        child: Opacity(opacity: 1 - 0.4 * t, child: child),
+                      );
+                    },
+                    child: _FlipCard(
+                      card: cards[i],
+                      color: look.color,
+                      index: i,
+                      total: cards.length,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 14),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              IconButton.filledTonal(
+                key: const ValueKey('card-prev'),
+                tooltip: tr('Önceki kart'),
+                onPressed: _page > 0 ? () => go(_page - 1) : null,
+                icon: const Icon(Icons.chevron_left_rounded),
+              ),
+              const SizedBox(width: 10),
               for (var i = 0; i < cards.length; i++)
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 220),
@@ -514,6 +554,15 @@ class _CardsViewState extends State<_CardsView> {
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
+              const SizedBox(width: 10),
+              IconButton.filledTonal(
+                key: const ValueKey('card-next'),
+                tooltip: tr('Sonraki kart'),
+                onPressed: _page < cards.length - 1
+                    ? () => go(_page + 1)
+                    : null,
+                icon: const Icon(Icons.chevron_right_rounded),
+              ),
             ],
           ),
         ),

@@ -638,11 +638,17 @@ class _BizzPainter extends CustomPainter {
   bool shouldRepaint(_BizzPainter old) => old.headOnly != headOnly;
 }
 
-/// "mentoria" yazı logosu.
+/// "mentoria" yazı logosu; [bee] ile başında arı (öğrenci paneli).
 class MentoriaWordmark extends StatelessWidget {
-  const MentoriaWordmark({super.key, this.fontSize = 32, this.onDark = false});
+  const MentoriaWordmark({
+    super.key,
+    this.fontSize = 32,
+    this.onDark = false,
+    this.bee = false,
+  });
 
   final double fontSize;
+  final bool bee;
 
   /// Koyu zeminde (gökyüzü başlığı) "mento" beyaz yazılır.
   final bool onDark;
@@ -655,7 +661,7 @@ class MentoriaWordmark extends StatelessWidget {
       letterSpacing: -0.5,
       color: onDark ? Colors.white : null,
     );
-    return Text.rich(
+    final word = Text.rich(
       TextSpan(
         text: 'mento',
         style: style,
@@ -666,6 +672,15 @@ class MentoriaWordmark extends StatelessWidget {
           ),
         ],
       ),
+    );
+    if (!bee) return word;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Bizz(size: fontSize * 1.5, headOnly: true, interactive: false),
+        SizedBox(width: fontSize * 0.25),
+        Flexible(child: word),
+      ],
     );
   }
 }

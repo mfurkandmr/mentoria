@@ -19,6 +19,7 @@ dart analyze
 dart format .
 dart run flutter_launcher_icons                        # after changing assets/brand/icon/*
 cd supabase/tests && npm install && npm test           # SQL/RLS tests on PGlite (no Supabase needed)
+python tool/web/build_web.py --serve                   # web site: landing + /app + hidden /demo → build/site (NOTLAR §65)
 ```
 
 `env.json` holds `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` (read in `lib/core/config/env.dart`). Other dart-defines: `APP_LINK_BASE` (root for shareable invite/tenant links). Ready-made run configs exist in `.vscode/launch.json` and `.idea/runConfigurations/`.

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{title}} · Mentoria</title>
+  <meta name="theme-color" content="#0A1633">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/site.js" defer></script>
+</head>
+<body>
+  <!-- tool/web/build_web.py, assets/legal metninden üretir (uygulamadakiyle aynı). -->
+  <header class="nav light" id="nav">
+    <div class="wrap">
+      <a class="brand" href="/?tanitim" aria-label="Mentoria ana sayfa"><img src="/img/icon.png" alt="" width="34" height="34">Mentoria</a>
+      <div class="nav-cta"><a class="btn btn-primary btn-sm" href="/app/login">Giriş yap</a></div>
+    </div>
+  </header>
+  <div class="page-top"></div>
+  <main class="doc">
+    <h1>{{title}}</h1>
+    {{content}}
+  </main>
+  <footer>
+    <div class="wrap">
+      <span>© 2026 Mentoria</span>
+      <nav aria-label="Yasal">
+        <a href="/gizlilik/">Gizlilik</a>
+        <a href="/aydinlatma/">KVKK Aydınlatma Metni</a>
+        <a href="/kullanim-kosullari/">Kullanım Koşulları</a>
+        <a href="/app/hesap-sil">Hesap silme</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

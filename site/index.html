@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="tr" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mentoria · Dershaneler için tek yönetim platformu</title>
+  <meta name="description" content="Toplu SMS, ders programı sihirbazı, deneme ve optik analizi, yoklama, finans ve veli iletişimi tek platformda. Dershaneler ve eğitim kurumları için Mentoria.">
+  <link rel="canonical" href="https://mentoria.com.tr/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Mentoria · Dershaneniz için tek platform">
+  <meta property="og:description" content="SMS, ders programı, deneme analizi, yoklama, finans ve veli iletişimi tek yerde.">
+  <meta property="og:url" content="https://mentoria.com.tr/">
+  <meta property="og:image" content="https://mentoria.com.tr/img/kokpit.webp">
+  <meta name="theme-color" content="#0A1633">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="stylesheet" href="/styles.css">
+  <script>
+    document.documentElement.classList.remove('no-js');
+    // Panelde oturumu açık olan kullanıcı siteyi açınca doğrudan paneline
+    // gider (oturum tarayıcıda, çıkış yapana kadar kalır). Tanıtımı görmek
+    // için: mentoria.com.tr/?tanitim
+    try {
+      if (!/[?&]tanitim\b/.test(location.search)) {
+        for (var i = 0; i < localStorage.length; i++) {
+          if (/^sb-.+-auth-token$/.test(localStorage.key(i))) {
+            location.replace('/app/');
+            break;
+          }
+        }
+      }
+    } catch (e) {}
+  </script>
+  <script src="/site.js" defer></script>
+</head>
+<body class="navy">
+  <header class="nav" id="nav">
+    <div class="wrap">
+      <a class="brand" href="/?tanitim" aria-label="Mentoria ana sayfa">
+        <img src="/img/icon.png" alt="" width="34" height="34">Mentoria
+      </a>
+      <nav class="nav-links" aria-label="Bölümler">
+        <a href="#moduller">Modüller</a>
+        <a href="#sms">İletişim</a>
+        <a href="#program">Ders programı</a>
+        <a href="#analiz">Deneme analizi</a>
+        <a href="#guvenlik">Güvenlik</a>
+      </nav>
+      <div class="nav-cta">
+        <a class="login" href="/app/login">Giriş yap</a>
+        <a class="btn btn-primary btn-sm" href="#demo">Demo talep edin</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================================================ Giriş -->
+    <section class="hero">
+      <div class="wrap">
+        <div>
+          <span class="eyebrow"><span class="dot"></span>Dershaneler ve eğitim kurumları için</span>
+          <h1>Dershanenizin bütün işleri <span class="grad">tek platformda.</span></h1>
+          <p class="lead">Toplu SMS, ders programı sihirbazı, deneme ve optik analizi, yoklama, finans ve veli iletişimi.
+            Ayrı programlar, Excel dosyaları ve mesaj grupları yerine tek giriş, tek veri, tek yönetim.</p>
+          <div class="cta">
+            <a class="btn btn-primary" href="#demo">Demo talep edin
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+            <a class="btn btn-ghost" href="#moduller">Modülleri inceleyin</a>
+          </div>
+          <ul class="hero-points">
+            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Kurulum gerektirmez</li>
+            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Kurumunuzun logosu ve renkleri</li>
+            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Veriler AB'deki sunucularda</li>
+          </ul>
+        </div>
+
+        <div class="scene" data-parallax aria-hidden="true">
+          <div class="scene-inner">
+            <div class="device device-desk">
+              <div class="bar"><i></i><i></i><i></i></div>
+              <img src="/img/kokpit.webp" width="1440" height="900" alt="">
+            </div>
+            <div class="device device-phone"><img src="/img/ogrenci.webp" width="780" height="1688" alt=""></div>
+            <div class="float f1 bob">
+              <span class="ic ic-green"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+              <span>Velilere SMS gönderildi<small>Deneme sınavı duyurusu</small></span>
+            </div>
+            <div class="float f2 bob d2">
+              <span class="ic ic-violet"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></span>
+              <span>Deneme analizi hazır<small>Kazanım bazında sonuçlar</small></span>
+            </div>
+            <div class="float f3 bob d3">
+              <span class="ic ic-honey"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+              <span>Ders programı yayınlandı<small>Çakışmasız yerleşim</small></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================== Modül şeridi -->
+    <div class="strip" id="moduller">
+      <div class="wrap">
+        <nav class="strip-card reveal" aria-label="Modüller">
+          <a class="strip-item" href="#sms"><span class="ic ic-green"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>Toplu SMS</a>
+          <a class="strip-item" href="#program"><span class="ic ic-honey"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>Ders programı</a>
+          <a class="strip-item" href="#analiz"><span class="ic ic-violet"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></span>Deneme analizi</a>
+          <a class="strip-item" href="#analiz"><span class="ic ic-blue"><svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/></svg></span>Optik okuma</a>
+          <a class="strip-item" href="#yoklama"><span class="ic ic-green"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>Yoklama</a>
+          <a class="strip-item" href="#finans"><span class="ic ic-honey"><svg viewBox="0 0 24 24"><path d="M20 12V8H6a2 2 0 0 1 0-4h12v4"/><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg></span>Finans</a>
+          <a class="strip-item" href="#sms"><span class="ic ic-red"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Veli iletişimi</a>
+          <a class="strip-item" href="#kocluk"><span class="ic ic-violet"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>Koçluk</a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- ============================================ Dağınık araçlar → tek -->
+    <section>
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow">Neden Mentoria</span>
+          <h2>Dağınık araçlar yerine tek sistem</h2>
+          <p>SMS paneli bir yerde, optik programı başka yerde, ödemeler Excel'de, veliler mesaj gruplarında.
+            Mentoria bunları tek platformda birleştirir; her bilgi bir kez girilir, herkes kendi ekranında görür.</p>
+        </div>
+        <div class="consolidate" id="consolidate">
+          <div class="tools-pile" aria-label="Mentoria'nın yerini aldığı araçlar">
+            <div class="tool-chip tc1"><span class="ic ic-green"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><s>Ayrı SMS paneli</s></div>
+            <div class="tool-chip tc2"><span class="ic ic-blue"><svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/></svg></span><s>Optik okuma yazılımı</s></div>
+            <div class="tool-chip tc3"><span class="ic ic-honey"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg></span><s>Ödeme ve taksit Excel'i</s></div>
+            <div class="tool-chip tc4"><span class="ic ic-red"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.5 8.5 0 0 1-4-1L3 20l1.1-5A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z"/></svg></span><s>Veli mesaj grupları</s></div>
+            <div class="tool-chip tc5"><span class="ic ic-violet"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><s>Ders programı tablosu</s></div>
+            <div class="tool-chip tc6"><span class="ic ic-green"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span><s>Kâğıt yoklama listesi</s></div>
+            <div class="tool-chip tc7"><span class="ic ic-blue"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></span><s>Elle deneme analizi</s></div>
+          </div>
+          <div class="arrow-merge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="platform-card reveal d2">
+            <h3><img src="/img/icon.png" alt="" width="40" height="40">Mentoria</h3>
+            <ul>
+              <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Toplu SMS ve duyuru</li>
+              <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Ders programı sihirbazı</li>
+              <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Deneme ve optik analizi</li>
+              <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Yoklama</li>
+              <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Ödeme, taksit, gider</li>
+              <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Veli paneli ve raporu</li>
+              <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Koçluk ve ödev</li>
+              <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Kitap havuzu</li>
+            </ul>
+            <div class="one-login">Müdür, koç, öğrenci ve veli aynı sistemde; herkes yalnızca yetkisi olan bilgiyi görür.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================== SMS & Veli -->
+    <section class="soft" id="sms">
+      <div class="wrap">
+        <div class="feature">
+          <div class="reveal">
+            <span class="eyebrow">Veli iletişimi</span>
+            <h3>Velilerle iletişimi tek tuşa indirin</h3>
+            <p class="lead2">Duyurudan taksit hatırlatmasına kadar bütün veli iletişimi kurum panelinden.
+              Veli de çocuğunun haftasını kendi ekranından takip eder.</p>
+            <ul class="checks">
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Toplu SMS:</strong> tüm velilere, sınıfa ya da seçili öğrencilere; resmi tatil, deneme sınavı, veli toplantısı şablonları.</span></li>
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Taksit hatırlatma:</strong> vadesi gelen ödemeler için veliye hatırlatma.</span></li>
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Haftalık veli raporu:</strong> çalışma günleri, ödev oranı, son deneme neti ve değişimi.</span></li>
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Duyurular:</strong> kuruma, sınıfa ya da kişiye; bildirim olarak düşer.</span></li>
+            </ul>
+          </div>
+          <div class="feature-visual">
+            <div class="glow"></div>
+            <div class="phones tilt" data-tilt aria-hidden="true">
+              <div class="phone p1"><img src="/img/sms.webp" width="780" height="1688" alt="" loading="lazy"></div>
+              <div class="phone p2"><img src="/img/veli.webp" width="780" height="1688" alt="" loading="lazy"></div>
+              <div class="float badge bob">
+                <span class="ic ic-green"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></span>
+                <span>Haftalık rapor velide<small>Çalışma, ödev, deneme</small></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================== Ders programı -->
+    <section id="program">
+      <div class="wrap">
+        <div class="feature reverse">
+          <div class="reveal">
+            <span class="eyebrow">Ders programı sihirbazı</span>
+            <h3>Haftalarca uğraştıran program birkaç dakikada</h3>
+            <p class="lead2">Sınıfları, öğretmenleri, derslikleri ve kısıtları girin; sihirbaz çakışmasız programı kendisi yerleştirir.
+              İsterseniz derse dokunup sürükleyerek düzenleyin.</p>
+            <ul class="checks">
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Otomatik yerleşim:</strong> öğretmen müsaitliği, derslik ve sınıf kısıtlarına göre.</span></li>
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Çakışma kontrolü:</strong> yerleşemeyen ders ve eksikler tek listede.</span></li>
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Sınıf, öğretmen ve derslik görünümü;</strong> sürükle bırak ile düzenleme.</span></li>
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Tek tuşla yayın:</strong> öğrenci ve öğretmen kendi programını görür, değişince bildirim alır.</span></li>
+            </ul>
+          </div>
+          <div class="feature-visual">
+            <div class="glow"></div>
+            <div class="tilt" data-tilt style="width:100%;display:grid;place-items:center">
+              <div class="tt-stage">
+                <div class="tt reveal-lessons" aria-hidden="true">
+                  <div class="tt-head"><b>12-A · Haftalık program</b><span>Çakışma yok</span></div>
+                  <div class="tt-grid">
+                    <div></div><div class="h">Pzt</div><div class="h">Sal</div><div class="h">Çar</div><div class="h">Per</div><div class="h">Cum</div>
+                    <div class="t">09:00</div>
+                    <div class="lesson l-mat">Matematik<small>A. Kaya</small></div><div class="c"></div><div class="lesson l-fiz">Fizik<small>M. Demir</small></div><div class="lesson l-tur">Türkçe<small>Z. Arslan</small></div><div class="lesson l-mat">Geometri<small>A. Kaya</small></div>
+                    <div class="t">09:50</div>
+                    <div class="lesson l-kim">Kimya<small>S. Yıldız</small></div><div class="lesson l-mat">Matematik<small>A. Kaya</small></div><div class="c"></div><div class="lesson l-biy">Biyoloji<small>E. Şahin</small></div><div class="lesson l-fiz">Fizik<small>M. Demir</small></div>
+                    <div class="t">10:40</div>
+                    <div class="lesson l-tur">Türkçe<small>Z. Arslan</small></div><div class="lesson l-tar">Tarih<small>K. Aydın</small></div><div class="lesson l-mat">Matematik<small>A. Kaya</small></div><div class="c"></div><div class="lesson l-kim">Kimya<small>S. Yıldız</small></div>
+                    <div class="t">11:30</div>
+                    <div class="c"></div><div class="lesson l-fiz">Fizik<small>M. Demir</small></div><div class="lesson l-biy">Biyoloji<small>E. Şahin</small></div><div class="lesson l-mat">Matematik<small>A. Kaya</small></div><div class="lesson l-tur">Türkçe<small>Z. Arslan</small></div>
+                  </div>
+                </div>
+              </div>
+              <div class="float tt-wizard bob" aria-hidden="true">
+                <span class="ic ic-violet"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg></span>
+                <span>Sihirbaz yerleştirdi<small>Öğretmen kısıtlarına uygun</small></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================== Deneme analizi -->
+    <section class="soft" id="analiz">
+      <div class="wrap">
+        <div class="feature">
+          <div class="reveal">
+            <span class="eyebrow">Deneme ve optik analizi</span>
+            <h3>Deneme sonucu yüklendiği an analiz hazır</h3>
+            <p class="lead2">Yayınevi Excel'ini yükleyin ya da optik formları telefonla okutun. Sonuçlar öğrenciye, koça ve veliye
+              aynı anda düşer; hangi kazanımda eksik olduğu tek bakışta görünür.</p>
+            <ul class="checks">
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Excel içe aktarma</strong> ve <strong>telefonla optik okuma;</strong> cevap anahtarı ve kazanımlar.</span></li>
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Kazanım analizi:</strong> sınıf ve öğrenci bazında güçlü ve zayıf konular.</span></li>
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Deneme trendleri:</strong> en çok yükselen ve düşen öğrenciler, karşılaştırma ve karne.</span></li>
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Kurum denemeleri:</strong> planlayın, uygulayın, sonucu kurum içinde sıralayın.</span></li>
+            </ul>
+          </div>
+          <div class="feature-visual">
+            <div class="glow"></div>
+            <div class="tilt" data-tilt style="width:100%;display:grid;place-items:center">
+              <div class="an-stage" aria-hidden="true">
+                <div class="an-card an-main">
+                  <h4>TYT net gelişimi</h4>
+                  <div class="sub">Sınıf ortalaması · son 6 deneme</div>
+                  <div class="bars reveal-bars">
+                    <div class="bar" style="--h:46%"><span>58,2</span></div>
+                    <div class="bar" style="--h:54%"><span>61,7</span></div>
+                    <div class="bar" style="--h:52%"><span>60,9</span></div>
+                    <div class="bar" style="--h:63%"><span>66,4</span></div>
+                    <div class="bar" style="--h:70%"><span>69,8</span></div>
+                    <div class="bar last" style="--h:80%"><span>73,5</span></div>
+                  </div>
+                  <div class="bars-x"><span>D1</span><span>D2</span><span>D3</span><span>D4</span><span>D5</span><span>D6</span></div>
+                </div>
+                <div class="an-card an-heat">
+                  <h4>Kazanım analizi</h4>
+                  <div class="sub">Doğru oranı · şube</div>
+                  <div class="heat">
+                    <span></span><b style="font-size:10px;text-align:center">A</b><b style="font-size:10px;text-align:center">B</b><b style="font-size:10px;text-align:center">C</b><b style="font-size:10px;text-align:center">D</b>
+                    <span class="k">Problemler</span><span class="v v2">72</span><span class="v v3">58</span><span class="v v4">41</span><span class="v v2">69</span>
+                    <span class="k">Fonksiyonlar</span><span class="v v1">84</span><span class="v v2">71</span><span class="v v3">55</span><span class="v v1">81</span>
+                    <span class="k">Paragraf</span><span class="v v1">88</span><span class="v v1">86</span><span class="v v2">74</span><span class="v v2">77</span>
+                    <span class="k">Kuvvet</span><span class="v v3">52</span><span class="v v4">38</span><span class="v v3">49</span><span class="v v3">57</span>
+                  </div>
+                </div>
+                <div class="float an-pill bob">
+                  <span class="ic ic-blue"><svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/></svg></span>
+                  <span>Optik formlar okundu<small>Telefon kamerasıyla</small></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= Yoklama -->
+    <section id="yoklama">
+      <div class="wrap">
+        <div class="feature reverse">
+          <div class="reveal">
+            <span class="eyebrow">Yoklama ve devam</span>
+            <h3>Yoklama saniyeler içinde, devamsızlık anında görünür</h3>
+            <p class="lead2">Öğretmen ya da koç yoklamayı telefondan alır; gelmeyen öğrencinin velisine tek dokunuşla ulaşılır.
+              Kurum paneli devam durumunu ve dikkat isteyen öğrencileri gösterir.</p>
+            <ul class="checks">
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Geldi, gelmedi, geç geldi, izinli;</strong> işaretsizlerin hepsi tek tuşla geldi.</span></li>
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Veliyi arama</strong> yoklama ekranından.</span></li>
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Bekleyen işler:</strong> alınmamış yoklama, onay bekleyen kitap, geciken ödeme tek listede.</span></li>
+            </ul>
+          </div>
+          <div class="feature-visual">
+            <div class="glow"></div>
+            <div class="phones tilt" data-tilt aria-hidden="true">
+              <div class="phone p1"><img src="/img/yoklama.webp" width="780" height="1688" alt="" loading="lazy"></div>
+              <div class="phone p2"><img src="/img/trend.webp" width="780" height="1688" alt="" loading="lazy"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================== Finans -->
+    <section class="soft" id="finans">
+      <div class="wrap">
+        <div class="feature">
+          <div class="reveal">
+            <span class="eyebrow">Finans</span>
+            <h3>Ücret, taksit ve gider takibi kurumun içinde</h3>
+            <p class="lead2">Öğrenci ücretlerini, taksitleri, giderleri ve koç ödemelerini aynı yerde tutun. Geciken taksit
+              kurum özetinde kendiliğinden görünür.</p>
+            <ul class="checks">
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Taksit planı,</strong> kısmi ödeme, indirim ve iade.</span></li>
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Makbuz:</strong> ödeme alınınca PDF makbuz.</span></li>
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Gelir, gider ve koç ödemeleri;</strong> aylık özet ve 6 aylık grafik.</span></li>
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Veli görünümü:</strong> veli kendi ödeme planını görür.</span></li>
+            </ul>
+          </div>
+          <div class="feature-visual">
+            <div class="glow"></div>
+            <div class="tilt" data-tilt style="width:100%;display:grid;place-items:center">
+              <div class="fin-stage" aria-hidden="true">
+                <div class="fin-card fin-main">
+                  <h4 style="font-size:15px">Kasım özeti</h4>
+                  <div class="fin-kpis">
+                    <div class="kpi"><small>Tahsilat</small><b>Hedefin %82'si</b></div>
+                    <div class="kpi"><small>Bekleyen</small><b>14 taksit</b></div>
+                    <div class="kpi"><small>Geciken</small><b style="color:var(--risk)">3 taksit</b></div>
+                  </div>
+                  <div class="inst">
+                    <div class="inst-row"><b>Elif Yılmaz · 3/8</b><span class="chip chip-ok">Ödendi</span></div>
+                    <div class="inst-row"><b>Can Kaya · 4/8</b><span class="chip chip-late">Gecikti</span></div>
+                    <div class="inst-row"><b>Zeynep Arslan · 2/6</b><span class="chip chip-wait">Vadesi 12 Kasım</span></div>
+                  </div>
+                </div>
+                <div class="fin-card fin-receipt">
+                  <h4 style="font-size:14px">Makbuz</h4>
+                  <div class="line"></div><div class="line w60"></div><div class="line"></div>
+                  <div class="stamp"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6L9 17l-5-5"/></svg>Ödeme alındı</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= Koçluk -->
+    <section id="kocluk">
+      <div class="wrap">
+        <div class="feature reverse">
+          <div class="reveal">
+            <span class="eyebrow">Koçluk ve öğrenci takibi</span>
+            <h3>Koç kime ulaşması gerektiğini önceden bilir</h3>
+            <p class="lead2">Çalışması düşen, görüşmeyi kaçıran ya da netinde geriye giden öğrenciler sebebiyle birlikte en üstte.
+              Öğrenci de çalışmasını, ödevlerini ve denemelerini kendi uygulamasından takip eder.</p>
+            <ul class="checks">
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Risk sinyali:</strong> devam, net düşüşü ve ödeve göre haftalık liste.</span></li>
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Görüşme planı,</strong> ödev verme ve haftalık çalışma planı.</span></li>
+              <li><span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span><strong>Öğrenci uygulaması:</strong> soru ve süre takibi, yanlış defteri, günlük soru, kitaplar.</span></li>
+            </ul>
+          </div>
+          <div class="feature-visual">
+            <div class="glow"></div>
+            <div class="desk-stage tilt" data-tilt aria-hidden="true">
+              <div class="device device-desk">
+                <div class="bar"><i></i><i></i><i></i></div>
+                <img src="/img/koc.webp" width="1440" height="900" alt="" loading="lazy">
+              </div>
+              <div class="device device-phone"><img src="/img/ogrenci.webp" width="780" height="1688" alt="" loading="lazy"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================== Kendi markanız -->
+    <section class="soft">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow">Kendi markanız</span>
+          <h2>Öğrenci ve veli sizin markanızı görür</h2>
+          <p>Kurumunuzun adı, logosu ve renkleri panelin her yerinde. Velilere giden davet bağlantısı da kurumunuzun
+            görünümüyle açılır.</p>
+        </div>
+        <div class="brands">
+          <div class="brand-tile bt1 reveal"><div><span class="logo">B</span></div><div><b>Bal Akademi</b><div class="mini"><i></i><i></i><i></i></div></div></div>
+          <div class="brand-tile bt2 reveal d1"><div><span class="logo">Y</span></div><div><b>Yıldız Dershanesi</b><div class="mini"><i></i><i></i><i></i></div></div></div>
+          <div class="brand-tile bt3 reveal d2"><div><span class="logo">A</span></div><div><b>Atlas Eğitim</b><div class="mini"><i></i><i></i><i></i></div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================== Roller -->
+    <section>
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow">Herkes için ayrı ekran</span>
+          <h2>Aynı veri, dört farklı bakış</h2>
+        </div>
+        <div class="roles4">
+          <div class="role-card reveal"><div class="ic ic-violet"><svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg></div><h3>Kurum müdürü</h3><p>Kurum özeti, dikkat gerektirenler, finans, koç performansı.</p></div>
+          <div class="role-card reveal d1"><div class="ic ic-blue"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><h3>Koç ve öğretmen</h3><p>Öğrenciler, görüşmeler, ödev, yoklama ve deneme sonuçları.</p></div>
+          <div class="role-card reveal d2"><div class="ic ic-honey"><svg viewBox="0 0 24 24"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg></div><h3>Öğrenci</h3><p>Günlük çalışma, denemeler, yanlış defteri, program ve ödevler.</p></div>
+          <div class="role-card reveal d3"><div class="ic ic-green"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><h3>Veli</h3><p>Haftalık rapor, deneme sonuçları, devam ve ödeme planı.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================== Nasıl başlar -->
+    <section class="soft">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow">Başlangıç</span>
+          <h2>Kurumunuza nasıl kurulur?</h2>
+          <p>Program indirme yok. Tarayıcıdan açılır, bilgisayarda masaüstü uygulaması gibi yüklenebilir.</p>
+        </div>
+        <div class="steps">
+          <div class="step reveal"><h3>Kurum hesabı açılır</h3><p>Kurumunuzun adı, logosu ve renkleriyle size özel panel hazırlanır.</p></div>
+          <div class="step reveal d1"><h3>Kadro ve öğrenciler katılır</h3><p>Koçlar ve öğrenciler davet koduyla kayıt olur, öğrenciler koçlarına otomatik bağlanır. Öğrenci listeleri Excel'den aktarılabilir.</p></div>
+          <div class="step reveal d2"><h3>Takip başlar</h3><p>Programı yayınlayın, yoklamayı alın, denemeleri yükleyin; herkes kendi ekranından görür.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= Güvenlik -->
+    <section class="dark" id="guvenlik">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow">Güvenlik ve KVKK</span>
+          <h2>Öğrenci verisi güvende</h2>
+          <p>Mentoria'yı 18 yaşından küçük öğrenciler kullanır; sistem bu sorumlulukla tasarlandı.</p>
+        </div>
+        <div class="trust">
+          <div class="trust-item reveal"><div class="ic"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><h3>AB'de barındırma</h3><p>Veriler Avrupa Birliği'ndeki (Frankfurt) sunucularda saklanır.</p></div>
+          <div class="trust-item reveal d1"><div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><h3>Rol bazlı erişim</h3><p>Herkes yalnızca rolünün izin verdiği veriyi görür; kurumlar birbirinin verisine erişemez.</p></div>
+          <div class="trust-item reveal d2"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h3>KVKK süreçleri</h3><p>Aydınlatma ve açık rıza ayrı ayrı; 18 yaş altı için veli onayı. Reklam yok, veri satışı yok.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================== İletişim -->
+    <section id="demo">
+      <div class="wrap">
+        <div class="contact reveal">
+          <h2>Mentoria'yı kurumunuzda görün</h2>
+          <p>Paneli size canlı gösterelim; kurumunuzun ihtiyaçlarına nasıl uyarlanacağını birlikte konuşalım.</p>
+          <div class="cta">
+            <a class="btn btn-primary" href="mailto:iletisim@mentoria.com.tr?subject=Mentoria%20demo%20talebi">Demo talep edin</a>
+            <a class="btn btn-ghost" href="mailto:iletisim@mentoria.com.tr">iletisim@mentoria.com.tr</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <a class="brand" href="/?tanitim"><img src="/img/icon.png" alt="" width="28" height="28">Mentoria</a>
+      <span>© 2026 Mentoria</span>
+      <nav aria-label="Yasal">
+        <a href="/gizlilik/">Gizlilik</a>
+        <a href="/aydinlatma/">KVKK Aydınlatma Metni</a>
+        <a href="/kullanim-kosullari/">Kullanım Koşulları</a>
+        <a href="/app/hesap-sil">Hesap silme</a>
+        <a href="/app/login">Giriş yap</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

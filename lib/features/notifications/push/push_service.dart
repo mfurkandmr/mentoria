@@ -20,13 +20,28 @@ import '../data/notification_repository.dart';
 @pragma('vm:entry-point')
 Future<void> firebaseBackgroundHandler(RemoteMessage message) async {}
 
-/// Firebase'i başlatır. Web, demo ve Supabase'siz çalıştırmada atlanır;
-/// ayar dosyası yoksa ya da hata olursa uygulama bildirimsiz devam eder.
+/// Firebase'i başlatır. Demo ve Supabase'siz çalıştırmada atlanır; web'de
+/// yalnızca web uygulaması ayarları verilmişse (`Env.webPushConfigured`).
+/// Ayar yoksa ya da hata olursa uygulama bildirimsiz devam eder.
 Future<bool> initFirebase() async {
-  if (kIsWeb || Env.isDemo || !Env.isConfigured) return false;
+  if (Env.isDemo || !Env.isConfigured) return false;
+  if (kIsWeb && !Env.webPushConfigured) return false;
   try {
-    await Firebase.initializeApp();
-    FirebaseMessaging.onBackgroundMessage(firebaseBackgroundHandler);
+    if (kIsWeb) {
+      // Arka plan bildirimlerini sitenin kökündeki firebase-messaging-sw.js
+      // gösterir (tool/web/build_web.py aynı ayarlarla üretir).
+      await Firebase.initializeApp(
+        options: const FirebaseOptions(
+          apiKey: Env.firebaseWebApiKey,
+          appId: Env.firebaseWebAppId,
+          messagingSenderId: Env.firebaseSenderId,
+          projectId: Env.firebaseProjectId,
+        ),
+      );
+    } else {
+      await Firebase.initializeApp();
+      FirebaseMessaging.onBackgroundMessage(firebaseBackgroundHandler);
+    }
     return true;
   } catch (e) {
     debugPrint('Firebase başlatılamadı, telefon bildirimleri kapalı: $e');
@@ -40,8 +55,13 @@ Future<bool> initFirebase() async {
 // için bilerek bu API kullanılıyor; yeni API'ye geçiş NOTLAR.md'de.
 // ignore_for_file: deprecated_member_use
 
-/// Telefon bildirimleri (FCM): izin ister, cihaz adresini Supabase'e kaydeder,
-/// çıkışta siler; bildirime dokununca ilgili ekranı açar.
+/// Telefon ve web bildirimleri (FCM): izin ister, cihaz adresini Supabase'e
+/// kaydeder, çıkışta siler; bildirime dokununca ilgili ekranı açar.
+///
+/// Web'de izin kendiliğinden sorulmaz (tarayıcılar sayfa açılır açılmaz
+/// gelen izin isteğini gizler ya da kalıcı engeller; Safari dokunuş ister):
+/// izin henüz sorulmadıysa [webAsk] açılır, `WebPushPrompt` kartı gösterilir,
+/// kullanıcı "Aç"a dokununca [enableWeb] sorar.
 ///
 /// Uygulama açıkken gelen bildirimler zaten uygulama içi kartla
 /// (InAppNotifier) gösterildiği için burada ayrıca gösterilmez.
@@ -53,12 +73,23 @@ class PushService {
   String? _registeredFor;
   StreamSubscription<String>? _refresh;
 
-  bool get _enabled => !kIsWeb && Firebase.apps.isNotEmpty;
+  bool get _enabled => Firebase.apps.isNotEmpty;
+
+  /// Web: izin henüz sorulmadı, kart gösterilsin.
+  static final webAsk = ValueNotifier<bool>(false);
+  String? _webUser;
 
   SupabaseClient get _client => _ref.read(supabaseClientProvider);
 
-  String get _platform =>
-      defaultTargetPlatform == TargetPlatform.iOS ? 'ios' : 'android';
+  String get _platform => kIsWeb
+      ? 'web'
+      : defaultTargetPlatform == TargetPlatform.iOS
+      ? 'ios'
+      : 'android';
+
+  Future<String?> _token() => FirebaseMessaging.instance.getToken(
+    vapidKey: kIsWeb ? Env.firebaseVapidKey : null,
+  );
 
   /// Telefon bildirimlerinin Android kanalı: Mentoria'ya özel ses.
   /// Kimlik AndroidManifest'teki `default_notification_channel_id` ve
@@ -67,7 +98,7 @@ class PushService {
   static const channelId = 'mentoria_bildirim';
 
   static Future<void> _createChannel() async {
-    if (defaultTargetPlatform != TargetPlatform.android) return;
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
     try {
       await FlutterLocalNotificationsPlugin()
           .resolvePlatformSpecificImplementation<
@@ -94,8 +125,9 @@ class PushService {
     await _createChannel();
     final messaging = FirebaseMessaging.instance;
 
-    // Uygulama kapalıyken bildirime dokunularak açıldıysa.
-    final initial = await messaging.getInitialMessage();
+    // Uygulama kapalıyken bildirime dokunularak açıldıysa (web'de bildirime
+    // dokununca servis işçisi adresi kendisi açar).
+    final initial = kIsWeb ? null : await messaging.getInitialMessage();
     if (initial != null) _open(initial);
     // Arka plandayken bildirime dokunulduysa.
     FirebaseMessaging.onMessageOpenedApp.listen(_open);
@@ -108,10 +140,22 @@ class PushService {
     if (!_enabled || _registeredFor == userId) return;
     try {
       final messaging = FirebaseMessaging.instance;
-      final settings = await messaging.requestPermission();
-      if (settings.authorizationStatus == AuthorizationStatus.denied) return;
+      if (kIsWeb) {
+        _webUser = userId;
+        final status =
+            (await messaging.getNotificationSettings()).authorizationStatus;
+        if (status != AuthorizationStatus.authorized) {
+          webAsk.value = status == AuthorizationStatus.notDetermined;
+          return;
+        }
+      } else {
+        final settings = await messaging.requestPermission();
+        if (settings.authorizationStatus == AuthorizationStatus.denied) {
+          return;
+        }
+      }
 
-      final token = await messaging.getToken();
+      final token = await _token();
       if (token == null) return;
       await _save(token);
       _registeredFor = userId;
@@ -123,13 +167,36 @@ class PushService {
     }
   }
 
+  /// Web: "Bildirimleri aç" kartından (dokunuşla) izin ister ve kaydeder.
+  /// İzin verilirse true.
+  Future<bool> enableWeb() async {
+    final user = _webUser;
+    if (!_enabled || !kIsWeb || user == null) return false;
+    try {
+      final settings = await FirebaseMessaging.instance.requestPermission();
+      webAsk.value = false;
+      if (settings.authorizationStatus != AuthorizationStatus.authorized) {
+        return false;
+      }
+      await register(user);
+      return _registeredFor == user;
+    } catch (e) {
+      debugPrint('Web bildirim izni alınamadı: $e');
+      return false;
+    }
+  }
+
   /// Çıkıştan ÖNCE çağrılır: bu cihaza artık bu hesabın bildirimi gelmesin.
   Future<void> unregister() async {
+    webAsk.value = false;
+    _webUser = null;
     if (!_enabled) return;
+    // Web'de izin verilmemişken token istemek izin penceresi açar.
+    if (kIsWeb && _registeredFor == null) return;
     try {
       await _refresh?.cancel();
       _refresh = null;
-      final token = await FirebaseMessaging.instance.getToken();
+      final token = await _token();
       if (token != null) {
         await _client.rpc(
           'unregister_device_token',

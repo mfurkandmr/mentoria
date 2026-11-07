@@ -111,10 +111,7 @@ class CockpitTab extends ConsumerWidget {
         },
         child: CustomScrollView(
           key: const ValueKey('cockpit-scroll'),
-          // iOS'taki gibi esnek kaydırma.
-          physics: const BouncingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics(),
-          ),
+          physics: cockpitScrollPhysics(),
           slivers: [
             const CockpitHeader(),
             SliverPadding(

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mentoria/shared/widgets/bizz.dart';
+import 'package:mentoria/features/admin/presentation/cockpit/cockpit_header.dart';
+import 'package:mentoria/features/admin/presentation/cockpit/metric_card.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:mentoria/shared/motion.dart';
@@ -280,10 +283,22 @@ void main() {
     _phone(tester);
     await tester.pumpWidget(await _app('parent', const ParentHomeScreen()));
     await tester.pumpAndSettle();
-    expect(find.text('Elif Yılmaz bu hafta'), findsOneWidget);
-    // Koç paneliyle aynı dil: renkli özet kutuları ve hızlı geçişler.
-    expect(find.byType(GlowStat), findsNWidgets(5));
-    expect(find.widgetWithText(QuickActionTile, 'Sorular'), findsOneWidget);
+    // Koç ve müdür paneliyle aynı kurumsal kokpit (NOTLAR §68): maskotsuz
+    // üst çubuk, haftalık halka ve özet kartları, ayrıntı araçları.
+    expect(find.byType(CockpitHeader), findsOneWidget);
+    expect(find.text('Elif bu hafta'), findsOneWidget);
+    expect(find.byKey(const ValueKey('parent-week')), findsOneWidget);
+    expect(find.byType(MetricCard), findsNWidgets(3));
+    expect(find.byType(Bizz), findsNothing);
+    await tester.dragUntilVisible(
+      find.byKey(const ValueKey('parent-questions-tool')),
+      find.byType(CustomScrollView).first,
+      const Offset(0, -300),
+    );
+    // Ayrıntı araçları: denemeler, sorular, konular, süre.
+    for (final id in ['parent-exams', 'parent-topics', 'parent-time']) {
+      expect(find.byKey(ValueKey(id)), findsOneWidget, reason: id);
+    }
     await tester.dragUntilVisible(
       find.text('Koçunun verdiği görevler'),
       find.byType(CustomScrollView).first,

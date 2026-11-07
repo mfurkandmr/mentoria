@@ -250,9 +250,7 @@ class _CoachHomeScreenState extends ConsumerState<CoachHomeScreen> {
         edgeOffset: 64,
         child: CustomScrollView(
           key: const ValueKey('coach-scroll'),
-          physics: const BouncingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics(),
-          ),
+          physics: cockpitScrollPhysics(),
           slivers: [
             const CockpitHeader(basePath: '/coach', examActions: false),
             ...body,

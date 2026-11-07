@@ -1,4 +1,4 @@
-// Yeni bildirim → kullanıcının telefonlarına FCM ile gönder.
+// Yeni bildirim → kullanıcının telefonlarına ve tarayıcılarına FCM ile gönder.
 //
 // Çağıran: notifications tablosundaki `push_on_notification` tetikleyicisi
 // (pg_net, tekli: {"notification_id": "..."}) ya da yoğun anlarda push_queue'yu
@@ -10,10 +10,14 @@
 //   PUSH_WEBHOOK_SECRET   tetikleyiciyle paylaşılan parola (Vault'takiyle aynı)
 //   FCM_SERVICE_ACCOUNT   Firebase → Service accounts → private key JSON'u
 // SUPABASE_URL ve SUPABASE_SERVICE_ROLE_KEY Supabase tarafından otomatik verilir.
+// İsteğe bağlı: WEB_APP_URL (web bildirimine dokununca açılan panel kökü;
+// varsayılan https://mentoria.com.tr/app).
 //
 // JWT doğrulaması kapalı deploy edilir (verify_jwt = false); yetki parolayla.
 
 import { createClient } from 'jsr:@supabase/supabase-js@2';
+
+const WEB_APP_URL = (Deno.env.get('WEB_APP_URL') ?? 'https://mentoria.com.tr/app').replace(/\/+$/, '');
 
 type ServiceAccount = {
   project_id: string;
@@ -321,16 +325,22 @@ Deno.serve(async (req) => {
 
   const { data: devices, error: devErr } = await db
     .from('device_tokens')
-    .select('user_id, token')
+    .select('user_id, token, platform')
     .in('user_id', [...new Set(rows.map((n) => n.user_id))]);
   if (devErr) return json({ error: devErr.message }, 500);
   if (!devices?.length) return json({ sent: 0, reason: 'cihaz yok' });
 
-  const tokensOf = new Map<string, string[]>();
+  type Device = { token: string; web: boolean };
+  const tokensOf = new Map<string, Device[]>();
   for (const d of devices) {
-    tokensOf.set(d.user_id, [...(tokensOf.get(d.user_id) ?? []), d.token]);
+    tokensOf.set(d.user_id, [
+      ...(tokensOf.get(d.user_id) ?? []),
+      { token: d.token, web: d.platform === 'web' },
+    ]);
   }
-  const jobs = rows.flatMap((n) => (tokensOf.get(n.user_id) ?? []).map((token) => ({ n, token })));
+  const jobs = rows.flatMap((n) =>
+    (tokensOf.get(n.user_id) ?? []).map(({ token, web }) => ({ n, token, web }))
+  );
   if (!jobs.length) return json({ sent: 0, reason: 'cihaz yok' });
 
   const auth = await accessToken(sa);
@@ -338,7 +348,7 @@ Deno.serve(async (req) => {
 
   let sent = 0;
   const stale: string[] = [];
-  const sendOne = async ({ n, token }: { n: NotificationRow; token: string }) => {
+  const sendOne = async ({ n, token, web }: { n: NotificationRow; token: string; web: boolean }) => {
     const { title, body, route } = texts(n);
     const res = await fetch(url, {
       method: 'POST',
@@ -357,6 +367,16 @@ Deno.serve(async (req) => {
             notification: { channel_id: 'mentoria_bildirim', sound: 'mentoria_bildirim' },
           },
           apns: { payload: { aps: { sound: 'mentoria_bildirim.wav' } } },
+          // Web (tarayıcı): dokununca panelde ilgili sayfa açılır (sitenin
+          // kökündeki firebase-messaging-sw.js). Yalnızca web adreslerine.
+          ...(web
+            ? {
+              webpush: {
+                notification: { icon: `${WEB_APP_URL}/icons/Icon-192.png` },
+                fcm_options: { link: `${WEB_APP_URL}${route.startsWith('/') ? route : '/'}` },
+              },
+            }
+            : {}),
         },
       }),
     });
