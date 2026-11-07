@@ -114,7 +114,15 @@ void _printed(OpticTemplate t) {
 
   testWidgets('boş yazdırılan formda işaret okunmaz', (tester) async {
     await tester.runAsync(() async {
-      final png = await renderOpticFormPng(t, dpi: 120);
+      // Uygulamadaki gibi gerçek yazı tipiyle: test ortamının kutu çizen
+      // varsayılan yazı tipinde rakam etiketleri baloncuğu koyulaştırıp
+      // Linux'ta (CI) işaret gibi okunuyordu.
+      await _loadNunito();
+      final png = await renderOpticFormPng(
+        t,
+        dpi: 120,
+        fontFamily: 'OpticNunito',
+      );
       final r = readOpticImage(img.decodePng(png)!, t, ExamType.tyt);
       expect(r.uncertain, isEmpty);
       expect(r.answers.values.expand((l) => l).whereType<String>(), isEmpty);
