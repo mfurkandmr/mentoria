@@ -4,7 +4,12 @@ import '../../../core/i18n/i18n.dart';
 import 'spreadsheet_reader.dart';
 
 export 'spreadsheet_reader.dart'
-    show SheetRows, SpreadsheetException, SpreadsheetProblem, readSpreadsheet;
+    show
+        SheetRows,
+        SpreadsheetException,
+        SpreadsheetProblem,
+        readSpreadsheet,
+        readSpreadsheetInBackground;
 
 /// Türkçe karakterleri sadeleştirip harf/rakam dışını atar.
 String normalize(String s) {

@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../core/data/paged_fetch.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../auth/data/auth_repository.dart';
 
@@ -1121,16 +1122,21 @@ class SupabaseFinanceRepository implements FinanceRepository {
 
   @override
   Future<List<StudentFee>> fetchFees() async {
-    final rows = await _client
-        .from('finance_fees')
-        .select(
-          'id, student_id, student_name, title, total, note, created_at, '
-          'due_day, payer_name, payer_phone, status, cancelled_on, cancel_note, '
-          'finance_installments(id, fee_id, due_on, amount, paid_on, paid_amount, method, reminded_at), '
-          'finance_discounts(kind, amount, note), '
-          'finance_payments(id, fee_id, installment_id, kind, amount, paid_on, method, account_id, receipt_no, note, voided_at)',
-        )
-        .order('created_at', ascending: false);
+    // Toplu ücretlerin created_at'i aynı olur; id sayfalamayı kesinleştirir.
+    final rows = await fetchAllPages(
+      (from, to) => _client
+          .from('finance_fees')
+          .select(
+            'id, student_id, student_name, title, total, note, created_at, '
+            'due_day, payer_name, payer_phone, status, cancelled_on, cancel_note, '
+            'finance_installments(id, fee_id, due_on, amount, paid_on, paid_amount, method, reminded_at), '
+            'finance_discounts(kind, amount, note), '
+            'finance_payments(id, fee_id, installment_id, kind, amount, paid_on, method, account_id, receipt_no, note, voided_at)',
+          )
+          .order('created_at', ascending: false)
+          .order('id')
+          .range(from, to),
+    );
     return [for (final r in rows) StudentFee.fromJson(r)];
   }
 
@@ -1263,11 +1269,15 @@ class SupabaseFinanceRepository implements FinanceRepository {
 
   @override
   Future<List<FinanceIncome>> fetchIncomes() async {
-    final rows = await _client
-        .from('finance_incomes')
-        .select()
-        .order('received_on', ascending: false)
-        .order('created_at', ascending: false);
+    final rows = await fetchAllPages(
+      (from, to) => _client
+          .from('finance_incomes')
+          .select()
+          .order('received_on', ascending: false)
+          .order('created_at', ascending: false)
+          .order('id')
+          .range(from, to),
+    );
     return [for (final r in rows) FinanceIncome.fromJson(r)];
   }
 
@@ -1313,10 +1323,14 @@ class SupabaseFinanceRepository implements FinanceRepository {
 
   @override
   Future<List<FinanceTransfer>> fetchTransfers() async {
-    final rows = await _client
-        .from('finance_transfers')
-        .select('id, from_account, to_account, amount, moved_on, note')
-        .order('moved_on', ascending: false);
+    final rows = await fetchAllPages(
+      (from, to) => _client
+          .from('finance_transfers')
+          .select('id, from_account, to_account, amount, moved_on, note')
+          .order('moved_on', ascending: false)
+          .order('id')
+          .range(from, to),
+    );
     return [for (final r in rows) FinanceTransfer.fromJson(r)];
   }
 
@@ -1395,13 +1409,17 @@ class SupabaseFinanceRepository implements FinanceRepository {
 
   @override
   Future<List<FinanceExpense>> fetchExpenses() async {
-    final rows = await _client
-        .from('finance_expenses')
-        .select(
-          'id, spent_on, category, amount, note, coach_id, coach_name, account_id',
-        )
-        .order('spent_on', ascending: false)
-        .order('created_at', ascending: false);
+    final rows = await fetchAllPages(
+      (from, to) => _client
+          .from('finance_expenses')
+          .select(
+            'id, spent_on, category, amount, note, coach_id, coach_name, account_id',
+          )
+          .order('spent_on', ascending: false)
+          .order('created_at', ascending: false)
+          .order('id')
+          .range(from, to),
+    );
     return [for (final r in rows) FinanceExpense.fromJson(r)];
   }
 

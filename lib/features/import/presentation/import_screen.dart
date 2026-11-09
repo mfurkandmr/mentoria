@@ -91,7 +91,9 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
         }
         return;
       }
-      _load(files.first.name, readSpreadsheet(bytes));
+      final sheets = await readSpreadsheetInBackground(bytes);
+      if (!mounted) return;
+      _load(files.first.name, sheets);
     } on SpreadsheetException catch (e) {
       if (mounted) showMessage(context, _problemText(e.problem));
     } catch (_) {

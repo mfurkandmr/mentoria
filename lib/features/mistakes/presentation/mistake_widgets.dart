@@ -139,6 +139,11 @@ class MistakePhoto extends ConsumerWidget {
               width: double.infinity,
               fit: fit,
               gaplessPlayback: true,
+              // Liste küçük resmi tam boyutta açılmasın (kırpma payıyla 1,5 kat).
+              cacheHeight: height.isFinite
+                  ? (height * MediaQuery.devicePixelRatioOf(context) * 1.5)
+                        .round()
+                  : null,
               semanticLabel: tr('Soru fotoğrafı'),
             ),
       loading: () => SizedBox(

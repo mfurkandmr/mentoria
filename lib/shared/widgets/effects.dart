@@ -75,9 +75,10 @@ class FadeSlideIn extends StatefulWidget {
   final Duration duration;
   final double offset;
 
-  /// Listelerde sıra numarasına göre gecikme.
+  /// Listelerde sıra numarasına göre gecikme. Üst sınırlı: uzun listede alttaki
+  /// kartlar kaydırınca bir saniyeden uzun boş beklemesin.
   static Duration stagger(int index, [int stepMs = 60]) =>
-      Duration(milliseconds: 80 + index * stepMs);
+      Duration(milliseconds: 80 + (index > 6 ? 6 : index) * stepMs);
 
   @override
   State<FadeSlideIn> createState() => _FadeSlideInState();

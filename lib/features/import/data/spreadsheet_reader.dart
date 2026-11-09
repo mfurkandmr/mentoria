@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 import 'package:excel/excel.dart' as xl;
+import 'package:flutter/foundation.dart' show compute;
 import 'package:xml/xml.dart';
 
 /// Bir sayfanın hücreleri (metin olarak).
@@ -32,6 +33,11 @@ class SpreadsheetException implements Exception {
   @override
   String toString() => 'SpreadsheetException($problem, $cause)';
 }
+
+/// [readSpreadsheet]'in arka planda çalışanı: büyük dosyada arayüz donmaz.
+/// Hata olursa aynı [SpreadsheetException] gelir.
+Future<Map<String, SheetRows>> readSpreadsheetInBackground(Uint8List bytes) =>
+    compute(readSpreadsheet, bytes);
 
 /// Yayınevlerinin ve optik okuyucuların verdiği sonuç dosyalarını okur;
 /// biçimi uzantıdan değil içerikten anlar:

@@ -128,6 +128,16 @@ void main() {
     await t.pump();
     expect(find.textContaining('Resmi tatil nedeniyle'), findsOneWidget);
   });
+
+  testWidgets("deneme sonucu SMS'i açılıp kapanır", (t) async {
+    await pump(t);
+    final tile = find.byKey(const ValueKey('sms-exam-results'));
+    expect(t.widget<SwitchListTile>(tile).value, isTrue);
+    await t.tap(tile);
+    await t.pumpAndSettle();
+    expect(repo.examResultSms, isFalse);
+    expect(t.widget<SwitchListTile>(tile).value, isFalse);
+  });
 }
 
 WidgetTester tester(WidgetTester t) => t;

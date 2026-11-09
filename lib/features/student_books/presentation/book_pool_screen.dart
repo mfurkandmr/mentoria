@@ -399,9 +399,10 @@ class _BookImportScreenState extends ConsumerState<BookImportScreen> {
     try {
       final files = await FilePicker.pickFiles(type: FileType.any);
       if (files.isEmpty) return;
-      final sheets = readSpreadsheet(
+      final sheets = await readSpreadsheetInBackground(
         Uint8List.fromList(await files.first.readAsBytes()),
       );
+      if (!mounted) return;
       _parse(sheets.values.first);
     } catch (_) {
       if (mounted) {

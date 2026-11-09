@@ -246,7 +246,8 @@ class _NewAnswerKeyScreenState extends ConsumerState<NewAnswerKeyScreen> {
       final Uint8List bytes = Uint8List.fromList(
         await files.first.readAsBytes(),
       );
-      final book = readSpreadsheet(bytes);
+      final book = await readSpreadsheetInBackground(bytes);
+      if (!mounted) return;
       // En çok satırı olan sayfa.
       final rows = book.values.reduce((a, b) => a.length >= b.length ? a : b);
       setState(() {

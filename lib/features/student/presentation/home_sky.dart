@@ -196,108 +196,117 @@ class _SkyHeaderState extends State<SkyHeader> {
         _say ??
         (widget.lines.isEmpty ? '' : widget.lines[_line % widget.lines.length]);
 
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        LoopBuilder(
-          period: const Duration(seconds: 24),
-          // Başlık kapanırken güneş/ay da solar; küçük çubukta takılı kalmaz.
-          builder: (_, t, _) => CustomPaint(
-            painter: _SkyPainter(phase, t, bodies: widget.contentOpacity),
+    // Başlık tamamen kapanınca animasyonlar durur (ana sayfa kaydırılmışken
+    // boşuna kare üretilmez). Her katman kendi başına yeniden çizilir.
+    return TickerMode(
+      enabled: widget.contentOpacity > 0.01,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          RepaintBoundary(
+            child: LoopBuilder(
+              period: const Duration(seconds: 24),
+              // Başlık kapanırken güneş/ay da solar; küçük çubukta takılı kalmaz.
+              builder: (_, t, _) => CustomPaint(
+                painter: _SkyPainter(phase, t, bodies: widget.contentOpacity),
+              ),
+            ),
           ),
-        ),
-        if (widget.avatar != null)
-          Positioned(
-            top: MediaQuery.paddingOf(context).top + 26,
-            left: 0,
-            right: 0,
-            child: IgnorePointer(
-              ignoring: widget.contentOpacity < 0.5,
-              child: Opacity(
-                opacity: widget.contentOpacity,
-                child: Align(
-                  alignment: const Alignment(0.08, 0),
-                  child: LoopBuilder(
-                    period: const Duration(seconds: 4),
-                    child: widget.avatar,
-                    builder: (_, t, child) => Transform.translate(
-                      offset: Offset(0, 4 * math.sin(t * 2 * math.pi)),
-                      child: child,
+          if (widget.avatar != null)
+            Positioned(
+              top: MediaQuery.paddingOf(context).top + 26,
+              left: 0,
+              right: 0,
+              child: IgnorePointer(
+                ignoring: widget.contentOpacity < 0.5,
+                child: Opacity(
+                  opacity: widget.contentOpacity,
+                  child: Align(
+                    alignment: const Alignment(0.08, 0),
+                    child: RepaintBoundary(
+                      child: LoopBuilder(
+                        period: const Duration(seconds: 4),
+                        child: RepaintBoundary(child: widget.avatar),
+                        builder: (_, t, child) => Transform.translate(
+                          offset: Offset(0, 4 * math.sin(t * 2 * math.pi)),
+                          child: child,
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-        // İçerik hep alta yaslı, doğal boyunda kalır; başlık kapanırken
-        // sıkışmak yerine üstten kırpılıp solar.
-        ClipRect(
-          child: OverflowBox(
-            alignment: Alignment.bottomCenter,
-            maxHeight: double.infinity,
-            child: Opacity(
-              opacity: widget.contentOpacity,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 12, 16),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            // Dershanede kurum adı da görünür: "16 Ekim Cuma · Bal Akademi"
-                            context.brand.isDefaultBrand
-                                ? date
-                                : '$date · ${context.brand.appName}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: text.labelLarge?.copyWith(
-                              color: ink.withValues(alpha: 0.75),
-                              fontWeight: FontWeight.w700,
+          // İçerik hep alta yaslı, doğal boyunda kalır; başlık kapanırken
+          // sıkışmak yerine üstten kırpılıp solar.
+          ClipRect(
+            child: OverflowBox(
+              alignment: Alignment.bottomCenter,
+              maxHeight: double.infinity,
+              child: Opacity(
+                opacity: widget.contentOpacity,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 12, 16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              // Dershanede kurum adı da görünür: "16 Ekim Cuma · Bal Akademi"
+                              context.brand.isDefaultBrand
+                                  ? date
+                                  : '$date · ${context.brand.appName}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: text.labelLarge?.copyWith(
+                                color: ink.withValues(alpha: 0.75),
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            '${phase.greeting},',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: text.titleLarge?.copyWith(
-                              color: ink,
-                              fontWeight: FontWeight.w800,
+                            const SizedBox(height: 2),
+                            Text(
+                              '${phase.greeting},',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: text.titleLarge?.copyWith(
+                                color: ink,
+                                fontWeight: FontWeight.w800,
+                              ),
                             ),
-                          ),
-                          Text(
-                            '${widget.firstName}!',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: text.headlineMedium?.copyWith(
-                              color: ink,
-                              fontWeight: FontWeight.w900,
-                              height: 1.1,
+                            Text(
+                              '${widget.firstName}!',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: text.headlineMedium?.copyWith(
+                                color: ink,
+                                fontWeight: FontWeight.w900,
+                                height: 1.1,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 12),
-                          GestureDetector(
-                            onTap: _next,
-                            child: _SpeechBubble(text: line),
-                          ),
-                        ],
+                            const SizedBox(height: 12),
+                            GestureDetector(
+                              onTap: _next,
+                              child: _SpeechBubble(text: line),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    GestureDetector(
-                      onTap: _next,
-                      child: BizzSwap(size: 104, controller: _bizz),
-                    ),
-                  ],
+                      GestureDetector(
+                        onTap: _next,
+                        child: BizzSwap(size: 104, controller: _bizz),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

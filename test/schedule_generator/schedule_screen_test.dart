@@ -164,7 +164,8 @@ void main() {
     await t.tap(find.text('Ders programı'));
     await t.pumpAndSettle();
     expect(find.text('Güz dönemi'), findsOneWidget);
-    expect(find.text('Pazartesi'), findsOneWidget);
+    // Pazartesi günleri başlık "Pazartesi (bugün)" olur.
+    expect(find.textContaining('Pazartesi'), findsOneWidget);
     expect(find.textContaining('Matematik'), findsWidgets);
   });
 

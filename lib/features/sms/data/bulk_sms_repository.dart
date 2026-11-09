@@ -98,6 +98,12 @@ abstract interface class BulkSmsRepository {
   });
 
   Future<List<SmsBroadcast>> history();
+
+  /// Kurum sınavı yayınlanınca (ve yeni optik gelince) sonuç velilere SMS
+  /// ile gitsin mi (varsayılan açık; yalnızca müdür).
+  Future<bool> examResultSmsEnabled();
+
+  Future<void> setExamResultSms(bool enabled);
 }
 
 class SupabaseBulkSmsRepository implements BulkSmsRepository {
@@ -133,10 +139,22 @@ class SupabaseBulkSmsRepository implements BulkSmsRepository {
     for (final r in await _client.rpc('my_sms_broadcasts') as List)
       SmsBroadcast.fromJson(Map<String, dynamic>.from(r as Map)),
   ];
+
+  @override
+  Future<bool> examResultSmsEnabled() async =>
+      await _client.rpc<bool>('exam_result_sms_enabled');
+
+  @override
+  Future<void> setExamResultSms(bool enabled) =>
+      _client.rpc<void>('set_exam_result_sms', params: {'p_enabled': enabled});
 }
 
 final bulkSmsRepositoryProvider = Provider<BulkSmsRepository>(
   (ref) => SupabaseBulkSmsRepository(ref.watch(supabaseClientProvider)),
+);
+
+final examResultSmsProvider = FutureProvider<bool>(
+  (ref) => ref.watch(bulkSmsRepositoryProvider).examResultSmsEnabled(),
 );
 
 final smsHistoryProvider = FutureProvider<List<SmsBroadcast>>(

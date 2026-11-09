@@ -334,6 +334,9 @@ class _BulkSmsScreenState extends ConsumerState<BulkSmsScreen> {
             ),
           ),
           const SizedBox(height: 20),
+          CockpitHeading(tr('Otomatik SMS')),
+          const _ExamResultSmsTile(),
+          const SizedBox(height: 12),
           CockpitHeading(tr('Gönderilenler')),
           AsyncView(
             value: history,
@@ -374,6 +377,50 @@ class _BulkSmsScreenState extends ConsumerState<BulkSmsScreen> {
                   ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Kurum sınavı sonucu velilere otomatik SMS (açık/kapalı).
+class _ExamResultSmsTile extends ConsumerStatefulWidget {
+  const _ExamResultSmsTile();
+
+  @override
+  ConsumerState<_ExamResultSmsTile> createState() => _ExamResultSmsTileState();
+}
+
+class _ExamResultSmsTileState extends ConsumerState<_ExamResultSmsTile> {
+  bool _busy = false;
+
+  Future<void> _set(bool value) async {
+    setState(() => _busy = true);
+    try {
+      await ref.read(bulkSmsRepositoryProvider).setExamResultSms(value);
+      ref.invalidate(examResultSmsProvider);
+    } catch (_) {
+      if (mounted) showMessage(context, tr('Kaydedilemedi. Tekrar dene.'));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final on = ref.watch(examResultSmsProvider);
+    return Card(
+      margin: EdgeInsets.zero,
+      child: SwitchListTile(
+        key: const ValueKey('sms-exam-results'),
+        secondary: const Icon(Icons.fact_check_outlined),
+        title: Text(tr('Deneme sonuçları velilere gitsin')),
+        subtitle: Text(
+          tr(
+            'Kurum sınavı yayınlanınca her öğrencinin velisine toplam net, kurum sırası ve ders ders doğru, yanlış, net SMS ile gider; sonradan yüklenen optikler de. Her öğrenci için bir kez. Ders sayısına göre mesaj birkaç SMS tutar.',
+          ),
+        ),
+        value: on.value ?? false,
+        onChanged: _busy || !on.hasValue ? null : _set,
       ),
     );
   }

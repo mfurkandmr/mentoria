@@ -76,4 +76,13 @@ class InMemoryBulkSmsRepository implements BulkSmsRepository {
 
   @override
   Future<List<SmsBroadcast>> history() async => [..._history];
+
+  /// Deneme sonucu SMS'i açık mı (sunucuda organizations.exam_result_sms).
+  bool examResultSms = true;
+
+  @override
+  Future<bool> examResultSmsEnabled() async => examResultSms;
+
+  @override
+  Future<void> setExamResultSms(bool enabled) async => examResultSms = enabled;
 }

@@ -294,7 +294,12 @@ class _BizzState extends State<Bizz> with SingleTickerProviderStateMixin {
         onTap: widget.interactive ? _onTap : null,
         child: SizedBox.square(
           dimension: widget.size,
-          child: CustomPaint(painter: _BizzPainter(_frame, headOnly: headOnly)),
+          // Sürekli hareket ediyor; çevresindeki ekranı yeniden çizdirmesin.
+          child: RepaintBoundary(
+            child: CustomPaint(
+              painter: _BizzPainter(_frame, headOnly: headOnly),
+            ),
+          ),
         ),
       ),
     );

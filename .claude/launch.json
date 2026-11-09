@@ -110,6 +110,18 @@
       "port": 8779
     },
     {
+      "name": "demo-student-perf",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8780",
+        "--directory",
+        "C:/dev/Mentoria/build/web_perf"
+      ],
+      "port": 8780
+    },
+    {
       "name": "web-site",
       "runtimeExecutable": "python",
       "runtimeArgs": [

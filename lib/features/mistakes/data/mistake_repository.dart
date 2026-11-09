@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../core/cache/timed_cache.dart';
 import '../../../core/constants/exam_subjects.dart';
 import '../../auth/data/auth_repository.dart';
 
@@ -239,6 +240,9 @@ final mistakeCardsProvider = FutureProvider.family<List<MistakeCard>, String>(
       ref.watch(mistakeRepositoryProvider).fetchCards(studentId),
 );
 
-final mistakePhotoProvider = FutureProvider.family<Uint8List?, String>(
-  (ref, path) => ref.watch(mistakeRepositoryProvider).loadPhoto(path),
-);
+/// Fotoğraf baytları ekrandan çıktıktan 5 dakika sonra bellekten atılır.
+final mistakePhotoProvider = FutureProvider.autoDispose
+    .family<Uint8List?, String>((ref, path) {
+      ref.cacheFor(const Duration(minutes: 5));
+      return ref.watch(mistakeRepositoryProvider).loadPhoto(path);
+    });

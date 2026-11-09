@@ -102,9 +102,10 @@ class _ImportWizardState extends ConsumerState<ImportWizardScreen> {
     try {
       final files = await FilePicker.pickFiles(type: FileType.any);
       if (files.isEmpty) return;
-      final sheets = readSpreadsheet(
+      final sheets = await readSpreadsheetInBackground(
         Uint8List.fromList(await files.first.readAsBytes()),
       );
+      if (!mounted) return;
       await _useRows(sheets.values.first, files.first.name);
     } catch (_) {
       messenger.showSnackBar(

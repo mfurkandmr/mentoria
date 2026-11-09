@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../core/data/paged_fetch.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../auth/data/profile.dart';
 
@@ -103,10 +104,14 @@ class SupabaseAdminRepository implements AdminRepository {
 
   @override
   Future<List<OrgMember>> fetchMembers() async {
-    final rows = await _client
-        .from('profiles')
-        .select('id, full_name, role, created_at')
-        .order('full_name');
+    final rows = await fetchAllPages(
+      (from, to) => _client
+          .from('profiles')
+          .select('id, full_name, role, created_at')
+          .order('full_name')
+          .order('id')
+          .range(from, to),
+    );
     return [
       for (final r in rows)
         OrgMember(

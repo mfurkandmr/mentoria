@@ -80,7 +80,10 @@ const o1 = (await one(`insert into public.learning_outcomes (subject_id, name) v
 check(o1.org_id === A.org, 'kurum ve tenant tetikleyiciyle dolar', o1);
 const o1a = (await one(`insert into public.learning_outcomes (subject_id, parent_id, name, code) values ($1, $2, 'Yaş problemleri', 'M.12.1') returning id`, [mat, o1.id])).id;
 const o2 = (await one(`insert into public.learning_outcomes (subject_id, name) values ($1, 'Sayılar') returning id`, [mat])).id;
+// outcome_label doğrudan çağrılamaz (20261109130000_security_tighten): sunucu tarafı.
+await asSuper();
 check((await one(`select public.outcome_label($1) l`, [o1a])).l === 'Problemler — Yaş problemleri', 'etiket: konu — alt konu');
+await asUser(A.admin);
 await expectError('aynı ad tekrar eklenmez', () =>
   db.query(`insert into public.learning_outcomes (subject_id, name) values ($1, 'PROBLEMLER')`, [mat]), 'learning_outcomes_unique');
 const imp1 = (await one(`select public.import_learning_outcomes($1) r`, [JSON.stringify([

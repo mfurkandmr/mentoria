@@ -2741,3 +2741,122 @@ renginde, iş yoksa rozet yok). Rota `/coach/pending`, `/admin/pending`.
   web açılış ekranı ve manifest renkleri laciverte çekildi. Giriş ekranındaki
   Bızz çizimi ve telefondaki tanıtım animasyonu (intro) maskot olarak kaldı.
 - Test: `test/brand_logo_test.dart`.
+- Açılış animasyonu (`intro_screen.dart`, telefonda): Bızz yerine logo
+  (`BrandLogo(showName: false)`: varsayılanda M, dershanede kendi logosu);
+  yukarıdan inip yaylanarak büyür, hafif dönüşle oturur, bal damlaları
+  saçılır, harfler düşer.
+
+## 72. Kurum sınavı sonucu velilere SMS (7 Kasım 2026)
+
+- Migration `20261107120000_exam_result_sms` (rollback + `exam_result_sms_test.mjs`,
+  canlıda uygulandı). Kurum sınavı (answer_keys) yayınlanınca ve yayındaki
+  sınava yeni optik gelince (Excel, kamera) `_rank_key` sonunda
+  `_queue_exam_result_sms`: her öğrencinin velisine (`guardian_phone_of`)
+  "<Kurum>: <Öğrenci> - <Sınav> sonucu: 72,25 net, kurum sırası 12/240.
+  Ayrıntılar uygulamada." `sms_outbox.exam_id` tekil: her deneme bir kez;
+  anahtar düzeltme/yeniden yükleme tekrar göndermez (sonuç değişse de).
+  Yalnızca son 3 günde oluşan denemeler (ayar sonradan açılınca eski
+  sınavlar toplu gitmez). Telefonu olmayan atlanır.
+- `organizations.exam_result_sms` (varsayılan açık); müdür "Velilere SMS"
+  ekranındaki "Otomatik SMS" anahtarıyla kapatır (`exam_result_sms_enabled`,
+  `set_exam_result_sms`; InMemory'de `examResultSms`).
+- Koçun kendi Excel deneme yüklemesi (eski `import`, kurum sınavı değil) SMS
+  göndermez. Sağlayıcı bağlanana kadar mesajlar sırada bekler.
+- KVKK envanterine "Veliye giden SMS'ler" satırı eklendi.
+- `20261109100000_exam_result_sms_subjects`: mesaja ders ders satırlar eklendi
+  ("Matematik 22 doğru 3 yanlış 21,25 net"; `subjects.sort` sırasıyla, üst sınır
+  800 karakter). TYT'de 9 ders olduğundan mesaj yaklaşık 3 SMS tutuyordu.
+- `20261109110000_exam_result_sms_short`: ders satırları kısaldı ("Mat 22D 3Y
+  21,25"; kısaltmalar ders koduna göre SQL'de). TYT mesajı yaklaşık 260 karakter,
+  yani 2 SMS; çok uzun kurum, öğrenci veya sınav adı 3'e çıkarabilir.
+
+## 73. Performans geçişi (9 Kasım 2026)
+
+- Migration `20261109120000_performance_pass` (rollback +
+  `performance_pass_test.mjs`, canlıda). Sonuçlar aynı kalır:
+  - Index: `exams (batch_id, source)`, `exams (student_id, exam_type, taken_on,
+    created_at)`, `notifications (kind, ref_id)` ve index'siz 13 yabancı anahtar.
+    Kapsanan `exam_answers (subject_id)` ve `exams (created_by)` kalktı.
+  - `student_summaries` artık DEFINER (satır başına RLS yok). RLS'in verdiği
+    kurallar sorguda açık: dershane, lisans ve koç bağı. Sonuncusu olmazsa iki
+    koçlu öğrenci koçun listesinde iki kez çıkar.
+  - `weekly_summary_data` tarih süzgeci index'i kullanır; `activity_weeks` tek
+    geçiş (test eski ve yeni çıktıyı birebir karşılaştırır).
+  - `cron.job_run_details` hiç temizlenmiyordu (127 bin satır, veritabanının
+    yarısı). `purge-cron-history` her gece 7 günden eskisini siler.
+- Advisor'daki "kullanılmayan 133 index" bilerek silinmedi: canlıda 6 profil var,
+  kullanım istatistiği henüz bir şey göstermez.
+- İstemci:
+  - Tema yalnızca marka değişince kurulur (`_appThemesProvider`, `Branding ==`).
+    Önceden kök her yenilendiğinde 400 ms'lik tema geçişi baştan başlıyordu.
+  - Profil yalnızca kullanıcı değişince ya da `userUpdated` olayında çekilir;
+    saatlik token yenilemesi artık profil, marka ve avatar isteği tetiklemez.
+    Sonuç: başka cihazdan yapılan profil değişikliği yeniden girişe ya da
+    `invalidate`'e kadar görünmez.
+  - Ana sayfa başlığı: gökyüzü, avatar ve Bızz ayrı `RepaintBoundary`; başlık
+    kapanınca `TickerMode` animasyonları durdurur. `FadeSlideIn.stagger` üst
+    sınırlı (6. sıradan sonrası aynı gecikme).
+  - Hata defteri: `cacheHeight` ve `mistakePhotoProvider` autoDispose (5 dakika).
+  - Excel okuma arka planda (`readSpreadsheetInBackground`, 6 ekran).
+- Hata düzeltmeleri:
+  - `fetchCardsForExam` ve `fetchOutcomeHistory` sayfalı (`_outcomeRows`). Sunucu
+    tek cevapta 1000 satır verdiği için büyük sınavda karneler sessizce eksik
+    kazanımla gelirdi. Canlıdaki `max_rows` ayarı SQL'den okunamıyor; varsayılan
+    1000 varsayıldı.
+  - `schedule_screen_test` her pazartesi kalıyordu ("Pazartesi (bugün)").
+- 1000 satır sınırı: ortak `fetchAllPages` (`lib/core/data/paged_fetch.dart`).
+  Sayfalı olanlar: ücretler, gelirler, giderler, virmanlar, kurum üyeleri,
+  `student_summaries`, `managed_students_list`, `attendance_day`. Son sıra ölçütü
+  benzersiz olmalı (toplu ücretlerin `created_at`'i aynıdır). Yeni büyüyebilen
+  liste eklerken bunu kullan. `save_attendance` 1000'lik parçalarla gönderilir.
+  Dikkat: postgrest-dart'ta `.order()` varsayılanı azalan; RPC'ler bu yüzden
+  `ascending: true` ile çağrılır. Gerçek hesapla denenmedi (demo in-memory).
+- Yapılmadı: `my_risk_list` N+1 yeniden yazımı, sıralama önbelleği, bahçe ekranı
+  çizimi, yazı tipi küçültme (ölçüm gerekir). Kitap havuzu ve silme talepleri
+  sayfasız (1000'i aşması beklenmiyor); yoklama SMS'inin 1000 öğrenci sınırı duruyor.
+
+## 74. Kaydırma ve dokunma hissi düzeltmeleri (9 Kasım 2026)
+
+- `Reveal`: tembel listede bölüm kaydırınca yeniden kurulup gecikmeyle beliriyor,
+  hızlı kaydırmada boşluk görünüyordu. Artık sayfa kaydırılmışsa anında görünür.
+- `Pressable`: `Listener` kaydırma başlayınca iptal almadığından kart parmak
+  kalkana kadar küçük kalıyordu. `kTouchSlop` aşılınca eski boyuna döner.
+- `CockpitHeader`: başlık tam açıkken `BackdropFilter` çizilmez (görünmeyen blur).
+- Test: `test/cockpit_motion_test.dart`. Web demoda kaydırma denendi; telefonda
+  denenmedi, FPS ölçülmedi. Commit yok, APK yok.
+
+## 75. Güvenlik kontrolü (9 Kasım 2026)
+
+- SQL/RLS: 48 test dosyası, 72 migration üzerinde geçti. Depoda ve git geçmişinde
+  sır kalıbı çıkmadı. Edge Function'lar parolasız isteğe 401 döndü.
+- Advisor: kritik yok. Girişsiz çağrılabilen 4 DEFINER: `check_invite`,
+  `tenant_branding`, `report_client_error`, `match_student_number`.
+- Düşük bulgular, düzeltilmedi: `outcome_label`/`outcome_topic` UUID bilen her
+  girişli kullanıcıya RLS'i aşarak kazanım adı/konusu döner (uygulama çağırmıyor,
+  izin kaldırılabilir); `match_student_number` yalnızca bulunamayan numarayı
+  sayar, `ok`/`taken` sınırsız; `report_client_error` saatlik 500 sınırı girişsiz
+  doldurulabilir. Sızdırılmış parola koruması hâlâ kapalı.
+- `save_schedule_entries` kurum dışı kimliği `guard_timetable_row` ile reddediyor.
+- Sızma testi değil: canlıda katalog okundu, veri yazılmadı. DEFINER'ların hepsi
+  tek tek okunmadı.
+
+## 76. Güvenlik sıkılaştırması (9 Kasım 2026)
+
+- Migration `20261109130000_security_tighten` canlıda (rollback ve
+  `supabase/tests/security_tighten_test.mjs` ile).
+- `outcome_label`/`outcome_topic` doğrudan çağrılamaz; `save_exam` kullanmaya
+  devam eder. §75'teki iki bulgu kapandı.
+- `match_student_number`: `taken` de `invite_check_failures`'a sayılır (IP başına
+  10 dakikada 30). `ok` bilerek sayılmaz: okul ağında aynı IP'den toplu kayıt
+  engellenmesin. Bu yüzden boş numaraları denemek hâlâ sınırsız; yalnızca dolu
+  numarayı bulmak sınırlı.
+- `report_client_error` saatlik sınırı ve kapalı parola koruması duruyor.
+
+## 77. Veli SMS izni kararı ve hesapsız tarama (9 Kasım 2026)
+
+- **Bilinçli karar, düzeltilmedi:** `_queue_exam_result_sms`, 18 yaş üstü öğrencinin
+  `parent_view` iznine bakmıyor; sonuç veli/ödeyen numarasına sıraya girebilir.
+  Kullanıcı "sorun değil" dedi. Canlıda bu türden SMS yok, sağlayıcı bağlı değil.
+- 42Crunch hesap açılamadığı için kullanılmadı, `42c-ast` kaldırıldı.
+- Hesapsız tarama (canlı şema, OSV, npm audit, web başlıkları): yeni açık yok.
+  CSP eklenmedi; Flutter web'i bozabileceği için denenmeden eklenmemeli.

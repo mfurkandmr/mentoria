@@ -16,6 +16,17 @@ import 'features/notifications/push/push_service.dart';
 import 'features/notifications/push/web_push_prompt.dart';
 import 'shared/widgets/update_required_screen.dart';
 
+/// Tema yalnızca marka değişince kurulur. Her seferinde yeni tema nesnesi
+/// üretmek, kök her yenilendiğinde 400 ms'lik tema geçişini baştan başlatırdı.
+final _appThemesProvider = Provider((ref) {
+  final brand = BrandTheme.fromBranding(ref.watch(activeBrandingProvider));
+  return (
+    appName: brand.appName,
+    light: AppTheme.light(brand),
+    dark: AppTheme.dark(brand),
+  );
+});
+
 class MentoriaApp extends ConsumerWidget {
   const MentoriaApp({super.key});
 
@@ -31,16 +42,16 @@ class MentoriaApp extends ConsumerWidget {
       ref.watch(presenceBootstrapProvider);
     }
     // Dershane markası: renkler, logo ve uygulama adı çalışma anında değişir.
-    final brand = BrandTheme.fromBranding(ref.watch(activeBrandingProvider));
+    final themes = ref.watch(_appThemesProvider);
     // Sunucu daha yeni bir sürüm istiyorsa başka hiçbir ekran açılmaz.
     final gate = ref.watch(updateGateProvider).value;
     final mustUpdate = gate != null && gate.requiredFor();
 
     return MaterialApp.router(
-      title: brand.appName,
+      title: themes.appName,
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light(brand),
-      darkTheme: AppTheme.dark(brand),
+      theme: themes.light,
+      darkTheme: themes.dark,
       themeMode: settings.themeMode,
       themeAnimationDuration: const Duration(milliseconds: 400),
       themeAnimationCurve: Curves.easeInOut,

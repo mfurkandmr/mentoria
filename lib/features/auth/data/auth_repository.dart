@@ -175,7 +175,19 @@ final authStateProvider = StreamProvider<AuthState>(
   (ref) => ref.watch(supabaseClientProvider).auth.onAuthStateChange,
 );
 
-final currentProfileProvider = FutureProvider<Profile?>((ref) async {
+/// Girişli kullanıcının kimliği. Saatlik token yenilemesi gibi olaylarda değer
+/// aynı kaldığı için bağlı olanlar yeniden çalışmaz.
+final _currentUserIdProvider = Provider<String?>((ref) {
   ref.watch(authStateProvider);
+  return ref.watch(supabaseClientProvider).auth.currentUser?.id;
+});
+
+final currentProfileProvider = FutureProvider<Profile?>((ref) async {
+  // Profil yalnızca kullanıcı değişince ya da hesabı güncellenince çekilir;
+  // arkasına bağlı marka, süper admin ve avatar istekleri de boşuna tekrarlanmaz.
+  ref.watch(_currentUserIdProvider);
+  ref.listen(authStateProvider, (_, next) {
+    if (next.value?.event == AuthChangeEvent.userUpdated) ref.invalidateSelf();
+  });
   return ref.watch(authRepositoryProvider).fetchCurrentProfile();
 });

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../core/data/paged_fetch.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../auth/data/auth_repository.dart';
 
@@ -138,28 +139,38 @@ class SupabaseAttendanceRepository implements AttendanceRepository {
 
   @override
   Future<List<AttendanceRow>> fetchDay(DateTime day) async {
-    final rows =
-        await _client.rpc(
-              'attendance_day',
-              params: {'p_day': attendanceDay(day)},
-            )
-            as List;
+    final rows = await fetchAllPages(
+      (from, to) => _client
+          .rpc<PostgrestList>(
+            'attendance_day',
+            params: {'p_day': attendanceDay(day)},
+          )
+          .order('full_name', ascending: true)
+          .order('student_id', ascending: true)
+          .range(from, to),
+    );
     return [
       for (final r in rows)
-        AttendanceRow.fromJson(Map<String, dynamic>.from(r as Map)),
+        AttendanceRow.fromJson(Map<String, dynamic>.from(r)),
     ];
   }
 
   @override
   Future<void> save(DateTime day, Map<String, AttendanceStatus?> marks) async {
-    if (marks.isEmpty) return;
-    await _client.rpc(
-      'save_attendance',
-      params: {
-        'p_day': attendanceDay(day),
-        'p_marks': {for (final e in marks.entries) e.key: e.value?.db},
-      },
-    );
+    // Sunucu tek çağrıda en çok 1000 işaret alır. Parça yarıda kalırsa
+    // aynı kayıt yeniden gönderilebilir (işaretler üzerine yazılır).
+    final entries = marks.entries.toList();
+    for (var i = 0; i < entries.length; i += 1000) {
+      await _client.rpc(
+        'save_attendance',
+        params: {
+          'p_day': attendanceDay(day),
+          'p_marks': {
+            for (final e in entries.skip(i).take(1000)) e.key: e.value?.db,
+          },
+        },
+      );
+    }
   }
 
   @override

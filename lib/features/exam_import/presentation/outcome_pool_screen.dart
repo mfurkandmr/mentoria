@@ -126,9 +126,10 @@ class _OutcomePoolScreenState extends ConsumerState<OutcomePoolScreen> {
     try {
       final files = await FilePicker.pickFiles(type: FileType.any);
       if (files.isEmpty) return;
-      final sheets = readSpreadsheet(
+      final sheets = await readSpreadsheetInBackground(
         Uint8List.fromList(await files.first.readAsBytes()),
       );
+      if (!mounted) return;
       final (rows, unknown) = parseOutcomeSheet(sheets.values.first);
       if (rows.isEmpty) {
         messenger.showSnackBar(

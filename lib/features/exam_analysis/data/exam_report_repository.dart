@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/cache/static_cache.dart';
 import '../../../core/constants/exam_subjects.dart';
+import '../../../core/data/paged_fetch.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../exam_import/domain/exam_scorer.dart';
 import '../domain/outcome_analysis.dart';
@@ -546,10 +547,7 @@ class SupabaseExamReportRepository implements ExamReportRepository {
     final List exams = await q.order('rank_org');
     if (exams.isEmpty) return const [];
     final report = await fetchReport(keyId);
-    final List stats = await _client
-        .from('v_student_outcome_analysis')
-        .select()
-        .eq('key_id', keyId);
+    final stats = await _outcomeRows('key_id', keyId);
     final byExam = <String, List<OutcomeStat>>{};
     for (final s in stats) {
       byExam
@@ -600,15 +598,34 @@ class SupabaseExamReportRepository implements ExamReportRepository {
   @override
   Future<List<OutcomeStat>> fetchOutcomeHistory(String studentId) async {
     final codes = await _subjectCodes();
-    final List rows = await _client
-        .from('v_student_outcome_analysis')
-        .select()
-        .eq('student_id', studentId)
-        .not('key_id', 'is', null)
-        .order('taken_on')
-        .limit(5000);
+    final rows = await _outcomeRows(
+      'student_id',
+      studentId,
+      keyedOnly: true,
+      maxRows: 5000,
+    );
     return [for (final r in rows) _stat(r as Map, codes)];
   }
+
+  /// Kazanım satırları; 100 öğrencilik bir sınav bile tek cevaba sığmaz.
+  Future<List<Map<String, dynamic>>> _outcomeRows(
+    String column,
+    String value, {
+    bool keyedOnly = false,
+    int? maxRows,
+  }) => fetchAllPages((from, to) {
+    var query = _client
+        .from('v_student_outcome_analysis')
+        .select()
+        .eq(column, value);
+    if (keyedOnly) query = query.not('key_id', 'is', null);
+    return query
+        .order('taken_on')
+        .order('exam_id')
+        .order('subject_id')
+        .order('outcome_key')
+        .range(from, to);
+  }, maxRows: maxRows);
 
   @override
   Future<ExamReport> fetchReport(String keyId) async {

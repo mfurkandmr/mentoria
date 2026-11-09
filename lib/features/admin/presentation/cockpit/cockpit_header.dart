@@ -119,8 +119,9 @@ class _CollapsingTitle extends StatelessWidget {
       children: [
         // Kaydırınca beliren buzlu cam ve ince alt çizgi.
         // Web'de bulanıklaştırma kaydırırken her karede yeniden hesaplanır
-        // ve takılır; orada cam yerine neredeyse opak zemin.
-        if (kIsWeb)
+        // ve takılır; orada cam yerine neredeyse opak zemin. Başlık tam
+        // açıkken cam görünmez: filtre boşuna maliyet çıkarmasın.
+        if (kIsWeb || collapsed == 0)
           bar
         else
           ClipRect(

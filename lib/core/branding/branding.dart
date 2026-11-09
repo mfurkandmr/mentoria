@@ -58,6 +58,31 @@ class Branding {
       primary.toARGB32() == mentoria.primary.toARGB32() &&
       secondary.toARGB32() == mentoria.secondary.toARGB32();
 
+  // Sunucudan aynı marka yeniden gelince tema baştan kurulmasın.
+  @override
+  bool operator ==(Object other) =>
+      other is Branding &&
+      other.tenantId == tenantId &&
+      other.name == name &&
+      other.slug == slug &&
+      other.logoUrl == logoUrl &&
+      other.primary == primary &&
+      other.secondary == secondary &&
+      other.isActive == isActive &&
+      other.font == font;
+
+  @override
+  int get hashCode => Object.hash(
+    tenantId,
+    name,
+    slug,
+    logoUrl,
+    primary,
+    secondary,
+    isActive,
+    font,
+  );
+
   Branding copyWith({
     String? name,
     String? slug,

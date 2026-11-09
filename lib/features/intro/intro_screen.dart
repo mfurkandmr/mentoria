@@ -7,10 +7,12 @@ import 'package:go_router/go_router.dart';
 import '../../core/i18n/i18n.dart';
 import '../../core/theme/brand_theme.dart';
 import '../../shared/motion.dart';
-import '../../shared/widgets/bizz.dart';
+import '../../shared/widgets/brand_logo.dart';
 import '../../shared/widgets/effects.dart';
 
-/// Açılış animasyonu: petekler belirir, Bızz uçarak gelir, harfler düşer.
+/// Açılış animasyonu: petekler belirir, logo yaylanarak belirir (hafif
+/// dönüp oturur, bal damlaları saçılır), harfler düşer. Varsayılan markada
+/// Mentoria logosu (M), dershanede kendi logosu ya da baş harfi.
 /// Dokununca atlanır; "hareketi azalt" açıksa hemen geçer.
 class IntroScreen extends StatefulWidget {
   const IntroScreen({super.key});
@@ -25,14 +27,11 @@ class _IntroScreenState extends State<IntroScreen>
   static const _landAt = 0.42;
 
   late final _c = AnimationController(vsync: this, duration: _total);
-  final _bizz = BizzController();
-  bool _landed = false;
   bool _left = false;
 
   @override
   void initState() {
     super.initState();
-    _bizz.flying = true;
     _c.addListener(_onTick);
     _c.addStatusListener((s) {
       if (s == AnimationStatus.completed) _finish();
@@ -45,23 +44,14 @@ class _IntroScreenState extends State<IntroScreen>
     if (_c.isAnimating || _c.value > 0) return;
     if (Motion.of(context)) {
       _c.forward();
-      // Bızz uçarak gelirken vızıltı, konunca çan (ayarlardan kapatılabilir).
+      // Açılış sesi (ayarlardan kapatılabilir).
       AppSounds.play(AppSound.intro);
     } else {
       WidgetsBinding.instance.addPostFrameCallback((_) => _finish());
     }
   }
 
-  void _onTick() {
-    if (!_landed && _c.value >= _landAt) {
-      _landed = true;
-      _bizz
-        ..flying = false
-        ..mood = BizzMood.happy
-        ..celebrate();
-    }
-    setState(() {});
-  }
+  void _onTick() => setState(() {});
 
   void _finish() {
     if (_left || !mounted) return;
@@ -72,7 +62,6 @@ class _IntroScreenState extends State<IntroScreen>
   @override
   void dispose() {
     _c.dispose();
-    _bizz.dispose();
     super.dispose();
   }
 
@@ -84,22 +73,15 @@ class _IntroScreenState extends State<IntroScreen>
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final size = MediaQuery.sizeOf(context);
-    final bizzSize = math.min(size.width * 0.5, 200.0);
+    final logoSize = math.min(size.width * 0.36, 150.0);
 
-    // Bızz'ın uçuş yolu: sol alttan kavisle ortaya.
-    final fly = _interval(0, _landAt, Curves.easeOutCubic);
-    const start = Offset(-0.9, 0.9);
-    const ctrl = Offset(-0.7, -0.6);
+    // Logo: yukarıdan inip yaylanarak büyür, hafif dönüşle oturur.
     const end = Offset(0, -0.18);
-    final p = Offset(
-      math.pow(1 - fly, 2) * start.dx +
-          2 * (1 - fly) * fly * ctrl.dx +
-          fly * fly * end.dx,
-      math.pow(1 - fly, 2) * start.dy +
-          2 * (1 - fly) * fly * ctrl.dy +
-          fly * fly * end.dy,
-    );
-    final tilt = (1 - fly) * 0.35;
+    final pop = _interval(0.08, _landAt, Curves.elasticOut);
+    final appear = _interval(0.08, 0.2);
+    final drop = _interval(0.08, _landAt * 0.8, Curves.easeOutCubic);
+    final p = Offset(end.dx, end.dy - 0.35 * (1 - drop));
+    final tilt = (1 - drop) * -0.5;
 
     final burst = _interval(_landAt, _landAt + 0.3);
     final outro = _interval(0.9, 1.0, Curves.easeIn);
@@ -138,24 +120,36 @@ class _IntroScreenState extends State<IntroScreen>
                 CustomPaint(
                   painter: _BurstPainter(
                     brand: context.brand,
-                    center: Alignment(
-                      end.dx,
-                      end.dy,
-                    ).alongSize(size).translate(0, bizzSize * 0.1),
+                    center: Alignment(end.dx, end.dy).alongSize(size),
                     t: burst,
                   ),
                 ),
               Align(
                 alignment: Alignment(p.dx, p.dy),
-                child: Transform.rotate(
-                  angle: tilt,
-                  child: Transform.scale(
-                    scale: 0.55 + 0.45 * fly,
-                    child: Bizz(
-                      size: bizzSize,
-                      controller: _bizz,
-                      intro: true,
-                      interactive: false,
+                child: Opacity(
+                  opacity: appear,
+                  child: Transform.rotate(
+                    angle: tilt,
+                    child: Transform.scale(
+                      scale: 0.3 + 0.7 * pop,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(logoSize * 0.22),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(
+                                0xFF122B4B,
+                              ).withValues(alpha: 0.28 * appear),
+                              blurRadius: logoSize * 0.25,
+                              offset: Offset(0, logoSize * 0.1),
+                            ),
+                          ],
+                        ),
+                        child: BrandLogo(
+                          fontSize: logoSize / 1.35,
+                          showName: false,
+                        ),
+                      ),
                     ),
                   ),
                 ),

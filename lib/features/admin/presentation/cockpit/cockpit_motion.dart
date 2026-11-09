@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart' show kTouchSlop;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -47,7 +48,8 @@ abstract final class CockpitHaptics {
 }
 
 /// Bölümün ilk görünüşü: aşağıdan 16 px süzülerek ve hafifçe büyüyerek
-/// belirir. [index] sıralı gecikme verir. Hareketi azaltta anında görünür.
+/// belirir. [index] sıralı gecikme verir. Hareketi azaltta ve sayfa
+/// kaydırılmışken anında görünür.
 class Reveal extends StatefulWidget {
   const Reveal({super.key, required this.child, this.index = 0});
 
@@ -71,7 +73,12 @@ class _RevealState extends State<Reveal> with SingleTickerProviderStateMixin {
     super.didChangeDependencies();
     if (_started) return;
     _started = true;
-    if (!Motion.of(context)) {
+    // Tembel listede bölüm, kaydırılınca (ilk kez ya da geri dönüşte) yeniden
+    // kurulur. O anda animasyon ve gecikme boşluk gibi görünür: anında göster.
+    final position = Scrollable.maybeOf(context)?.position;
+    final scrolled =
+        position != null && position.hasPixels && position.pixels > 0;
+    if (!Motion.of(context) || scrolled) {
       _c.value = 1;
       return;
     }
@@ -121,6 +128,7 @@ class Pressable extends StatefulWidget {
 
 class _PressableState extends State<Pressable> {
   bool _down = false;
+  Offset _start = Offset.zero;
 
   void _set(bool v) {
     if (_down != v) setState(() => _down = v);
@@ -128,7 +136,15 @@ class _PressableState extends State<Pressable> {
 
   @override
   Widget build(BuildContext context) => Listener(
-    onPointerDown: (_) => _set(true),
+    onPointerDown: (e) {
+      _start = e.position;
+      _set(true);
+    },
+    // Parmak kayıyorsa bu dokunma değil kaydırmadır: kart hemen eski boyuna
+    // döner (Listener, kaydırma başlayınca iptal almaz).
+    onPointerMove: (e) {
+      if (_down && (e.position - _start).distance > kTouchSlop) _set(false);
+    },
     onPointerUp: (_) => _set(false),
     onPointerCancel: (_) => _set(false),
     child: AnimatedScale(

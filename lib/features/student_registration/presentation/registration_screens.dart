@@ -211,7 +211,9 @@ class _RosterImportScreenState extends ConsumerState<RosterImportScreen> {
       final files = await FilePicker.pickFiles(type: FileType.any);
       if (files.isEmpty) return;
       final bytes = Uint8List.fromList(await files.first.readAsBytes());
-      _load(files.first.name, readSpreadsheet(bytes));
+      final sheets = await readSpreadsheetInBackground(bytes);
+      if (!mounted) return;
+      _load(files.first.name, sheets);
     } on SpreadsheetException catch (e) {
       if (mounted) {
         showMessage(

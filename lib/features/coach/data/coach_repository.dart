@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/constants/exam_subjects.dart';
+import '../../../core/data/paged_fetch.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../../core/i18n/i18n.dart';
 
@@ -125,7 +126,15 @@ class SupabaseCoachRepository implements CoachRepository {
 
   @override
   Future<List<StudentSummary>> fetchStudents() async {
-    final rows = await _client.rpc('student_summaries') as List;
+    // Müdürde iki koçlu öğrenci iki satırdır; coach_id sırayı kesinleştirir.
+    final rows = await fetchAllPages(
+      (from, to) => _client
+          .rpc<PostgrestList>('student_summaries')
+          .order('full_name', ascending: true)
+          .order('student_id', ascending: true)
+          .order('coach_id', ascending: true)
+          .range(from, to),
+    );
     return [
       for (final r in rows)
         StudentSummary.fromJson(Map<String, dynamic>.from(r as Map)),

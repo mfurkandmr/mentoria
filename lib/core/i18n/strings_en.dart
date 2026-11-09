@@ -2821,6 +2821,10 @@ const enStrings = <String, String>{
   'Yalnızca bilgilendirme gönder: reklam ya da kampanya içerikli SMS için velinin ticari ileti izni (İYS) gerekir.':
       'Send information only: advertising or campaign SMS needs the parent\'s commercial message consent (İYS).',
   'Gönderilenler': 'Sent',
+  'Otomatik SMS': 'Automatic SMS',
+  'Deneme sonuçları velilere gitsin': 'Send exam results to parents',
+  'Kurum sınavı yayınlanınca her öğrencinin velisine toplam net, kurum sırası ve ders ders doğru, yanlış, net SMS ile gider; sonradan yüklenen optikler de. Her öğrenci için bir kez. Ders sayısına göre mesaj birkaç SMS tutar.':
+      "When an institution exam is published, each student's parent gets the total net, institution rank and correct, wrong and net per subject by SMS, including sheets uploaded later. Once per student. Depending on the number of subjects, a message may take several SMS.",
   'Henüz SMS gönderilmedi.': 'No SMS sent yet.',
   '{n} veli': '{n} parents',
   '{n} gitti': '{n} delivered',

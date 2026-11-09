@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../core/data/paged_fetch.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../auth/data/auth_repository.dart';
 
@@ -210,8 +211,15 @@ class SupabaseStudentManagementRepository
 
   @override
   Future<List<ManagedStudent>> fetchStudents() async => [
-    for (final r in await _client.rpc('managed_students_list') as List)
-      ManagedStudent.fromJson(Map<String, dynamic>.from(r as Map)),
+    for (final r in await fetchAllPages(
+      (from, to) => _client
+          .rpc<PostgrestList>('managed_students_list')
+          .order('full_name', ascending: true)
+          .order('student_id', ascending: true)
+          .order('classroom_id', ascending: true)
+          .range(from, to),
+    ))
+      ManagedStudent.fromJson(Map<String, dynamic>.from(r)),
   ];
 
   @override
