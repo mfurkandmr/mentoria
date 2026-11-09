@@ -2860,3 +2860,26 @@ renginde, iş yoksa rozet yok). Rota `/coach/pending`, `/admin/pending`.
 - 42Crunch hesap açılamadığı için kullanılmadı, `42c-ast` kaldırıldı.
 - Hesapsız tarama (canlı şema, OSV, npm audit, web başlıkları): yeni açık yok.
   CSP eklenmedi; Flutter web'i bozabileceği için denenmeden eklenmemeli.
+
+## 78. Öğretmen ödemeleri (9 Kasım 2026)
+
+Migration `20261109140000_teacher_pay` (rollback + `teacher_pay_test.mjs`).
+Finans → "Koç ve öğretmen" sekmesinde koçların altına öğretmen bölümü eklendi
+(`lib/features/finance/presentation/teacher_pay_ui.dart`). Uygulama para
+göndermez: kayıt defteridir.
+
+- **Öğretmen ≠ koç:** öğretmenler `teachers` tablosunda, hesabı olmayabilir; bu
+  yüzden `coach_pay_rates` kullanılmadı. Yeni `teacher_pay_rates`: ödeme şekli
+  (`hourly` / `fixed`), tutar, not. Ödeme `finance_expenses` satırı (`salary`),
+  `teacher_id` + `teacher_name`; öğretmen silinse de kayıt adıyla kalır. Bir gider
+  aynı anda koça ve öğretmene bağlanamaz.
+- **Saat:** yayındaki programda öğretmenin her satırı 1 ders saati (süresi 60
+  dakika olmak zorunda değil). Yayında program yoksa saat elle yazılır.
+- **Ödeme formu:** saat başına: hafta (varsayılan 4) × haftalık saat × ücret önerilir,
+  her alan değişir (tatil, ek ders). Saat ve ücret ödeme notuna otomatik yazılır.
+- `fetchEntries` artık `fetchAllPages` ile (1000 satır sınırı).
+- Koç hesabına bağlı öğretmen iki yerde de görünür; kart "Koç hesabına bağlı" der.
+- `finance_test.mjs` rollback listesine yeni migration eklendi. KVKK maddesi:
+  `docs/kvkk/00_README.md`.
+- Web önizleme: `-o` ile mutlak `C:/dev/...` verilince `assets/fonts` boş kaldı,
+  ikonlar kutucuk çıktı (kod sorunu değil). Telefonda denenmedi.

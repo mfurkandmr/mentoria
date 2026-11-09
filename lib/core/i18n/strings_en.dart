@@ -3666,4 +3666,36 @@ const enStrings = <String, String>{
   'Odaklanılan çalışma süresi': 'Focused study time',
   'Önceki kart': 'Previous card',
   'Sonraki kart': 'Next card',
+  // Öğretmen ödemeleri (NOTLAR §78)
+  'Koç ve öğretmen': 'Coaches and teachers',
+  'Koç / öğretmen': 'Coach / teacher',
+  'Saat başına': 'Per hour',
+  'Sabit tutar': 'Fixed amount',
+  'Öğretmenler': 'Teachers',
+  'Haftalık saatler yayındaki ders programından gelir.':
+      'Weekly hours come from the published timetable.',
+  'Yayında ders programı yok; saati ödeme sırasında elle yazabilirsin.':
+      'No timetable is published; you can enter the hours when recording a payment.',
+  'Ders programı yüklenemedi.': 'The timetable could not be loaded.',
+  'Ders programına öğretmen ekleyince ücret ve ödemelerini buradan tutarsın.':
+      'Add teachers to the timetable to track their pay and payments here.',
+  'Haftada {h} ders saati': '{h} lesson hours a week',
+  'Programda dersi yok': 'No lessons in the timetable',
+  'Ücret girilmedi': 'No pay set',
+  'Saat başına {v} · haftalık {w}': '{v} per hour · {w} a week',
+  'Aylık sabit {v}': '{v} fixed per month',
+  'Bu ay ödenen: {v}': 'Paid this month: {v}',
+  'Ödeme kaydet': 'Record payment',
+  'Ücreti düzenle': 'Edit pay',
+  'Koç hesabına bağlı': 'Linked to a coach account',
+  'Saat ücreti': 'Hourly rate',
+  'Aylık sabit tutar': 'Monthly fixed amount',
+  'Hafta sayısı': 'Number of weeks',
+  'Ders saati': 'Lesson hours',
+  'Haftada {h} ders saati × hafta sayısı. Tatil varsa saati düzeltebilirsin.':
+      '{h} lesson hours a week × number of weeks. Adjust the hours for holidays.',
+  '{m}: {h} ders saati × {r}': '{m}: {h} lesson hours × {r}',
+  '{m} sabit ödeme': '{m} fixed payment',
+  'Bu öğretmen artık kurumda kayıtlı değil.':
+      'This teacher is no longer registered at the institution.',
 };

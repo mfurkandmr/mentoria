@@ -39,6 +39,11 @@ class InMemoryTimetableRepository implements TimetableRepository {
 
   String _next(String p) => '$p-${_id++}';
 
+  /// Öğretmenler: kimlik → ad (demo finans aynı öğretmenlere ödeme yazar).
+  Map<String, String> get teacherNames => {
+    for (final t in _teachers) t.teacher.id: t.teacher.name,
+  };
+
   /// Demo kurumu: 6 gün × 6 ders saati, 6 öğretmen (biri demo koç
   /// hesabına bağlı), 3 sınıf, 3 derslik ve yayında bir program.
   factory InMemoryTimetableRepository.demo({

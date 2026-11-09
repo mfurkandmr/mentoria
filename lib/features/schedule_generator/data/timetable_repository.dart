@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../core/data/paged_fetch.dart';
 import '../../auth/data/auth_repository.dart';
 import '../domain/models.dart';
 
@@ -526,13 +527,16 @@ class SupabaseTimetableRepository implements TimetableRepository {
 
   @override
   Future<List<ScheduleEntry>> fetchEntries(String scheduleId) async => [
-    for (final r
-        in await _client
-            .from('schedule_entries')
-            .select(
-              'teacher_id, classroom_id, room_id, time_slot_id, branch, locked',
-            )
-            .eq('schedule_id', scheduleId))
+    for (final r in await fetchAllPages(
+      (from, to) => _client
+          .from('schedule_entries')
+          .select(
+            'teacher_id, classroom_id, room_id, time_slot_id, branch, locked',
+          )
+          .eq('schedule_id', scheduleId)
+          .order('id')
+          .range(from, to),
+    ))
       ScheduleEntry.fromJson(Map<String, dynamic>.from(r)),
   ];
 

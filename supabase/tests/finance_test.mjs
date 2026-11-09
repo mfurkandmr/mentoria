@@ -153,7 +153,7 @@ const name = '20261105100000_finance';
 const next = '20261105110000_finance_reminders';
 await asSuper();
 // Üstüne kurulan finance_plus önce geri alınır.
-const laterDeps = ['20261106100000_finance_plus', '20261106150000_bulk_fee_duplicates'].filter((n) => migs.includes(`${n}.sql`));
+const laterDeps = ['20261106100000_finance_plus', '20261106150000_bulk_fee_duplicates', '20261109140000_teacher_pay'].filter((n) => migs.includes(`${n}.sql`));
 for (const l of [...laterDeps].reverse()) await db.exec(read(rbDir, `${l}.down.sql`));
 await db.exec(read(rbDir, `${next}.down.sql`));
 await db.exec(read(rbDir, `${name}.down.sql`));

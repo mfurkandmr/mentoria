@@ -126,3 +126,7 @@
       kurum duyuruları için de kullanılıyor; aydınlatma metnindeki amaçlara
       "kurum bilgilendirme SMS'leri" eklenmeli. Ticari/kampanya SMS'i için
       İYS kaydı ve onay gerekir (uygulama yalnızca uyarıyor, içeriği denetlemiyor).
+- [ ] Öğretmen ödemeleri (9 Kasım 2026, NOTLAR.md §78): `teacher_pay_rates` ve
+      `finance_expenses` öğretmenin ücretini, ödemelerini ve müdürün notunu tutar;
+      öğretmenin uygulama hesabı olmayabilir. Veri envanterine, veri işleme
+      sözleşmesine ve aydınlatma metnine eklenmeli; saklama süresi avukata sorulsun.

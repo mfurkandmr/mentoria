@@ -10,6 +10,7 @@ class InMemoryFinanceRepository implements FinanceRepository {
     List<StudentFee> fees = const [],
     List<FinanceExpense> expenses = const [],
     Map<String, CoachPayRate> rates = const {},
+    this.teachers = const {},
     this.guardians = const {},
     this.parentOf = const {},
     this.orgName = 'Demo Kurum',
@@ -21,6 +22,9 @@ class InMemoryFinanceRepository implements FinanceRepository {
   final Map<String, String> students;
   final Map<String, String> coaches;
 
+  /// Ders programındaki öğretmenler: kimlik → ad.
+  final Map<String, String> teachers;
+
   /// Öğrenci → (veli adı, telefon) — yoklamadaki kayıt (toplu ücrette).
   final Map<String, (String?, String)> guardians;
 
@@ -31,6 +35,7 @@ class InMemoryFinanceRepository implements FinanceRepository {
   final List<StudentFee> _fees;
   final List<FinanceExpense> _expenses;
   final Map<String, CoachPayRate> _rates;
+  final _teacherRates = <String, TeacherPayRate>{};
   final _incomes = <FinanceIncome>[];
   final _accounts = <FinanceAccount>[];
   final _transfers = <FinanceTransfer>[];
@@ -54,6 +59,7 @@ class InMemoryFinanceRepository implements FinanceRepository {
   factory InMemoryFinanceRepository.demo({
     required Map<String, String> students,
     required Map<String, String> coaches,
+    Map<String, String> teachers = const {},
     DateTime? now,
   }) {
     final today = now ?? DateTime.now();
@@ -194,6 +200,22 @@ class InMemoryFinanceRepository implements FinanceRepository {
         coachId: coach.key,
         monthlySalary: 25000,
         perStudent: 1000,
+      );
+    }
+    // Biri saat başına, biri sabit: iki ödeme şekli de görünsün.
+    final teacherIds = teachers.keys.toList();
+    if (teacherIds.isNotEmpty) {
+      repo._teacherRates[teacherIds.first] = TeacherPayRate(
+        teacherId: teacherIds.first,
+        amount: 400,
+        note: 'Ödeme ayın 5. günü havaleyle',
+      );
+    }
+    if (teacherIds.length > 2) {
+      repo._teacherRates[teacherIds[2]] = TeacherPayRate(
+        teacherId: teacherIds[2],
+        type: TeacherPayType.fixed,
+        amount: 22000,
       );
     }
     return repo;
@@ -539,6 +561,9 @@ class InMemoryFinanceRepository implements FinanceRepository {
     if (d.coachId != null && !coaches.containsKey(d.coachId)) {
       throw StateError('FINANCE_BAD_COACH');
     }
+    if (d.teacherId != null && !teachers.containsKey(d.teacherId)) {
+      throw StateError('FINANCE_BAD_TEACHER');
+    }
     _checkAccount(d.accountId);
     _expenses
       ..add(
@@ -550,6 +575,8 @@ class InMemoryFinanceRepository implements FinanceRepository {
           note: d.note,
           coachId: d.coachId,
           coachName: coaches[d.coachId],
+          teacherId: d.teacherId,
+          teacherName: teachers[d.teacherId],
           accountId: d.accountId,
         ),
       )
@@ -569,6 +596,19 @@ class InMemoryFinanceRepository implements FinanceRepository {
       throw StateError('FINANCE_BAD_COACH');
     }
     _rates[rate.coachId] = rate;
+  }
+
+  @override
+  Future<Map<String, TeacherPayRate>> fetchTeacherPayRates() async => {
+    ..._teacherRates,
+  };
+
+  @override
+  Future<void> saveTeacherPayRate(TeacherPayRate rate) async {
+    if (!teachers.containsKey(rate.teacherId)) {
+      throw StateError('FINANCE_BAD_TEACHER');
+    }
+    _teacherRates[rate.teacherId] = rate;
   }
 
   @override

@@ -278,7 +278,7 @@ Uint8List buildFinanceWorkbook({
     tr('Tarih'),
     tr('Gider türü'),
     tr('Tutar (₺)'),
-    tr('Koç'),
+    tr('Koç / öğretmen'),
     tr('Not'),
   ]);
   for (final e in periodExpenses) {
@@ -286,7 +286,7 @@ Uint8List buildFinanceWorkbook({
       t(_date(e.spentOn)),
       t(e.category.label),
       money(e.amount),
-      t(e.coachName ?? ''),
+      t(e.coachName ?? e.teacherName ?? ''),
       t(e.note ?? ''),
     ]);
   }

@@ -15,6 +15,7 @@ import '../../coach/data/coach_repository.dart';
 import '../data/finance_excel.dart';
 import '../data/finance_repository.dart';
 import 'finance_plus_ui.dart';
+import 'teacher_pay_ui.dart';
 
 DateTime _today() {
   final n = DateTime.now();
@@ -77,7 +78,7 @@ class _FinanceScreenState extends ConsumerState<FinanceScreen> {
               Tab(text: tr('Gelirler')),
               Tab(text: tr('Giderler')),
               Tab(text: tr('Hesaplar')),
-              Tab(text: tr('Koçlar')),
+              Tab(text: tr('Koç ve öğretmen')),
             ],
           ),
         ),
@@ -1230,6 +1231,7 @@ class _ExpensesTab extends ConsumerWidget {
                       [
                         e.category.label,
                         if (e.coachName != null) e.coachName!,
+                        if (e.teacherName != null) e.teacherName!,
                       ].join(' · '),
                     ),
                     subtitle: Text(
@@ -1505,22 +1507,23 @@ class _CoachesTab extends ConsumerWidget {
           for (final m in all)
             if (m.role == UserRole.coach) m,
         ];
-        if (coaches.isEmpty) {
-          return EmptyState(
-            title: tr('Henüz koç yok'),
-            message: tr('Koç davet edince maaş ve primi buradan tutarsın.'),
-          );
-        }
         return ListView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
           children: [
-            Text(
-              tr(
-                'Önerilen ödeme = aylık maaş + öğrenci sayısı × öğrenci başı prim.',
+            if (coaches.isEmpty)
+              EmptyState(
+                title: tr('Henüz koç yok'),
+                message: tr('Koç davet edince maaş ve primi buradan tutarsın.'),
+              )
+            else ...[
+              Text(
+                tr(
+                  'Önerilen ödeme = aylık maaş + öğrenci sayısı × öğrenci başı prim.',
+                ),
+                style: text.bodySmall,
               ),
-              style: text.bodySmall,
-            ),
-            const SizedBox(height: 8),
+              const SizedBox(height: 8),
+            ],
             for (final c in coaches)
               Builder(
                 builder: (context) {
@@ -1605,6 +1608,8 @@ class _CoachesTab extends ConsumerWidget {
                   );
                 },
               ),
+            const SizedBox(height: 16),
+            const TeachersPaySection(),
           ],
         );
       },

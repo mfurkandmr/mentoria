@@ -19,6 +19,9 @@ DateTime _today() {
 /// Sunucu hata kodu → kullanıcıya metin.
 String financeError(Object e) {
   final s = '$e';
+  if (s.contains('FINANCE_BAD_TEACHER')) {
+    return tr('Bu öğretmen artık kurumda kayıtlı değil.');
+  }
   if (s.contains('FINANCE_OVERPAYMENT')) {
     return tr('Kalan borçtan fazla tutar girildi.');
   }

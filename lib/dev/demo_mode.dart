@@ -351,6 +351,7 @@ Future<List<Override>> buildDemoOverrides([
               'demo-coach': 'Ayşe Koç',
               'demo-coach-2': 'Burak Yıldız',
             },
+            teachers: demoTimetable.teacherNames,
           ),
     ),
     attendanceRepositoryProvider.overrideWithValue(

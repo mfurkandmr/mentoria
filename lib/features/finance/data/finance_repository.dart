@@ -775,6 +775,8 @@ class FinanceExpense {
     this.note,
     this.coachId,
     this.coachName,
+    this.teacherId,
+    this.teacherName,
     this.accountId,
   });
 
@@ -786,6 +788,8 @@ class FinanceExpense {
     note: j['note'] as String?,
     coachId: j['coach_id'] as String?,
     coachName: j['coach_name'] as String?,
+    teacherId: j['teacher_id'] as String?,
+    teacherName: j['teacher_name'] as String?,
     accountId: j['account_id'] as String?,
   );
 
@@ -798,6 +802,10 @@ class FinanceExpense {
   /// Maaş / prim bir koça bağlıysa; koç silindiyse null, ad kalır.
   final String? coachId;
   final String? coachName;
+
+  /// Ödeme bir öğretmene bağlıysa; öğretmen silindiyse null, ad kalır.
+  final String? teacherId;
+  final String? teacherName;
   final String? accountId;
 }
 
@@ -821,6 +829,46 @@ class CoachPayRate {
 
   /// Bu ayın önerilen ödemesi: maaş + öğrenci sayısı × prim.
   double suggested(int students) => monthlySalary + perStudent * students;
+}
+
+/// Öğretmene ödeme şekli.
+enum TeacherPayType {
+  hourly('hourly'),
+  fixed('fixed');
+
+  const TeacherPayType(this.db);
+
+  final String db;
+
+  static TeacherPayType fromDb(String? v) =>
+      v == 'fixed' ? TeacherPayType.fixed : TeacherPayType.hourly;
+
+  String get label => switch (this) {
+    TeacherPayType.hourly => tr('Saat başına'),
+    TeacherPayType.fixed => tr('Sabit tutar'),
+  };
+}
+
+/// Öğretmenin ödeme şekli, tutarı (saat ücreti ya da aylık sabit) ve notu.
+class TeacherPayRate {
+  const TeacherPayRate({
+    required this.teacherId,
+    this.type = TeacherPayType.hourly,
+    this.amount = 0,
+    this.note,
+  });
+
+  factory TeacherPayRate.fromJson(Map<String, dynamic> j) => TeacherPayRate(
+    teacherId: j['teacher_id'] as String,
+    type: TeacherPayType.fromDb(j['pay_type'] as String?),
+    amount: _num(j['amount']),
+    note: j['note'] as String?,
+  );
+
+  final String teacherId;
+  final TeacherPayType type;
+  final double amount;
+  final String? note;
 }
 
 class FeeDraft {
@@ -899,6 +947,7 @@ class ExpenseDraft {
     required this.amount,
     this.note,
     this.coachId,
+    this.teacherId,
     this.accountId,
   });
 
@@ -907,6 +956,7 @@ class ExpenseDraft {
   final double amount;
   final String? note;
   final String? coachId;
+  final String? teacherId;
   final String? accountId;
 }
 
@@ -1030,6 +1080,15 @@ bool coachPaidIn(
       _sameMonth(e.spentOn, month),
 );
 
+/// Öğretmene o ay yazılan ödemelerin toplamı.
+double teacherPaidIn(
+  List<FinanceExpense> expenses,
+  String teacherId,
+  DateTime month,
+) => expenses
+    .where((e) => e.teacherId == teacherId && _sameMonth(e.spentOn, month))
+    .fold(0.0, (s, e) => s + e.amount);
+
 abstract interface class FinanceRepository {
   /// Kurumdaki tüm ücretler, taksitleriyle; en yeni önce.
   Future<List<StudentFee>> fetchFees();
@@ -1113,6 +1172,9 @@ abstract interface class FinanceRepository {
 
   Future<Map<String, CoachPayRate>> fetchPayRates();
   Future<void> savePayRate(CoachPayRate rate);
+
+  Future<Map<String, TeacherPayRate>> fetchTeacherPayRates();
+  Future<void> saveTeacherPayRate(TeacherPayRate rate);
 }
 
 class SupabaseFinanceRepository implements FinanceRepository {
@@ -1413,7 +1475,8 @@ class SupabaseFinanceRepository implements FinanceRepository {
       (from, to) => _client
           .from('finance_expenses')
           .select(
-            'id, spent_on, category, amount, note, coach_id, coach_name, account_id',
+            'id, spent_on, category, amount, note, coach_id, coach_name, '
+            'teacher_id, teacher_name, account_id',
           )
           .order('spent_on', ascending: false)
           .order('created_at', ascending: false)
@@ -1431,6 +1494,7 @@ class SupabaseFinanceRepository implements FinanceRepository {
         'amount': d.amount,
         'note': d.note,
         'coach_id': d.coachId,
+        'teacher_id': d.teacherId,
         'account_id': d.accountId,
       });
 
@@ -1455,6 +1519,26 @@ class SupabaseFinanceRepository implements FinanceRepository {
         'monthly_salary': r.monthlySalary,
         'per_student': r.perStudent,
       });
+
+  @override
+  Future<Map<String, TeacherPayRate>> fetchTeacherPayRates() async {
+    final rows = await _client
+        .from('teacher_pay_rates')
+        .select('teacher_id, pay_type, amount, note');
+    return {
+      for (final r in rows)
+        r['teacher_id'] as String: TeacherPayRate.fromJson(r),
+    };
+  }
+
+  @override
+  Future<void> saveTeacherPayRate(TeacherPayRate r) =>
+      _client.from('teacher_pay_rates').upsert({
+        'teacher_id': r.teacherId,
+        'pay_type': r.type.db,
+        'amount': r.amount,
+        'note': r.note,
+      });
 }
 
 final financeRepositoryProvider = Provider<FinanceRepository>(
@@ -1471,6 +1555,10 @@ final financeExpensesProvider = FutureProvider<List<FinanceExpense>>(
 
 final coachPayRatesProvider = FutureProvider<Map<String, CoachPayRate>>(
   (ref) => ref.watch(financeRepositoryProvider).fetchPayRates(),
+);
+
+final teacherPayRatesProvider = FutureProvider<Map<String, TeacherPayRate>>(
+  (ref) => ref.watch(financeRepositoryProvider).fetchTeacherPayRates(),
 );
 
 final financeIncomesProvider = FutureProvider<List<FinanceIncome>>(

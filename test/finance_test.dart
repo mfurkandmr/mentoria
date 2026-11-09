@@ -8,6 +8,8 @@ import 'package:mentoria/dev/demo_mode.dart';
 import 'package:mentoria/features/coach/data/coach_repository.dart';
 import 'package:mentoria/features/finance/data/finance_repository.dart';
 import 'package:mentoria/features/finance/presentation/finance_screen.dart';
+import 'package:mentoria/features/finance/presentation/teacher_pay_ui.dart';
+import 'package:mentoria/features/schedule_generator/domain/models.dart';
 import 'package:mentoria/shared/motion.dart';
 
 FeeInstallment _inst(String id, DateTime due, {DateTime? paidOn}) =>
@@ -181,6 +183,7 @@ void main() {
       repo = InMemoryFinanceRepository(
         students: const {'demo-student': 'Elif Yılmaz', 'demo-can': 'Can Kaya'},
         coaches: const {'demo-coach': 'Ayşe Koç'},
+        teachers: const {'t-ahmet': 'Ahmet Kaya', 't-ayse': 'Ayşe Koç'},
         fees: [
           _fee([
             _inst('late', DateTime(2020, 1, 10)),
@@ -319,6 +322,147 @@ void main() {
         (ExpenseCategory.salary, 'demo-coach', amount),
       );
       expect(find.text('Bu ay ödendi'), findsOneWidget);
+    });
+
+    testWidgets('öğretmen: saat programdan gelir, ücret ve ödeme kaydedilir', (
+      t,
+    ) async {
+      final c = await pump(t);
+      final hours = (await c.read(teacherWeeklyHoursProvider.future))!;
+      final weekly = hours['t-ahmet']!;
+      expect(weekly, greaterThan(0));
+
+      await openTab(t, 5);
+      final card = find
+          .ancestor(of: find.text('Ahmet Kaya'), matching: find.byType(Card))
+          .first;
+      await t.dragUntilVisible(
+        find.text('Ahmet Kaya'),
+        find.byType(ListView).last,
+        const Offset(0, -200),
+      );
+      await t.pumpAndSettle();
+      expect(
+        find.descendant(
+          of: card,
+          matching: find.text('Haftada $weekly ders saati'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: card, matching: find.text('Ücret girilmedi')),
+        findsOneWidget,
+      );
+
+      // Saat ücreti ve not kaydedilir.
+      await t.tap(
+        find.descendant(of: card, matching: find.byTooltip('Ücreti düzenle')),
+      );
+      await t.pumpAndSettle();
+      await t.enterText(find.widgetWithText(TextField, 'Saat ücreti'), '300');
+      await t.enterText(
+        find.widgetWithText(TextField, 'Not (isteğe bağlı)'),
+        'Ayın başında öder',
+      );
+      await t.tap(find.widgetWithText(FilledButton, 'Kaydet'));
+      await t.pumpAndSettle();
+      final rate = (await repo.fetchTeacherPayRates())['t-ahmet']!;
+      expect(
+        (rate.type, rate.amount, rate.note),
+        (TeacherPayType.hourly, 300.0, 'Ayın başında öder'),
+      );
+
+      // Ödeme: 4 hafta × haftalık saat × ücret önerilir, hafta değişince güncellenir.
+      await t.tap(
+        find.descendant(of: card, matching: find.text('Ödeme kaydet')),
+      );
+      await t.pumpAndSettle();
+      expect(
+        t
+            .widget<TextField>(find.byKey(const ValueKey('teacher-pay-amount')))
+            .controller!
+            .text,
+        '${weekly * 4 * 300}',
+      );
+      await t.enterText(find.byKey(const ValueKey('teacher-pay-weeks')), '2');
+      await t.pumpAndSettle();
+      final save = find.byKey(const ValueKey('teacher-pay-save'));
+      await t.ensureVisible(save);
+      await t.pumpAndSettle();
+      await t.tap(save);
+      await t.pumpAndSettle();
+
+      final e = (await repo.fetchExpenses()).single;
+      final amount = (weekly * 2 * 300).toDouble();
+      expect(
+        (e.category, e.teacherId, e.teacherName, e.coachId, e.amount),
+        (ExpenseCategory.salary, 't-ahmet', 'Ahmet Kaya', null, amount),
+      );
+      expect(e.note, contains('${weekly * 2} ders saati'));
+      expect(
+        find.descendant(
+          of: card,
+          matching: find.text('Bu ay ödenen: ${formatMoney(amount)}'),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('öğretmen: sabit tutar saat istemez', (t) async {
+      final c = await pump(t);
+      await repo.saveTeacherPayRate(
+        const TeacherPayRate(
+          teacherId: 't-ahmet',
+          type: TeacherPayType.fixed,
+          amount: 15000,
+        ),
+      );
+      c.invalidate(teacherPayRatesProvider);
+      await openTab(t, 5);
+      await t.dragUntilVisible(
+        find.text('Ahmet Kaya'),
+        find.byType(ListView).last,
+        const Offset(0, -200),
+      );
+      await t.pumpAndSettle();
+      final card = find
+          .ancestor(of: find.text('Ahmet Kaya'), matching: find.byType(Card))
+          .first;
+      expect(
+        find.descendant(
+          of: card,
+          matching: find.text('Aylık sabit ${formatMoney(15000)}'),
+        ),
+        findsOneWidget,
+      );
+      await t.tap(
+        find.descendant(of: card, matching: find.text('Ödeme kaydet')),
+      );
+      await t.pumpAndSettle();
+      expect(find.byKey(const ValueKey('teacher-pay-hours')), findsNothing);
+      await t.ensureVisible(find.byKey(const ValueKey('teacher-pay-save')));
+      await t.pumpAndSettle();
+      await t.tap(find.byKey(const ValueKey('teacher-pay-save')));
+      await t.pumpAndSettle();
+      final e = (await repo.fetchExpenses()).single;
+      expect((e.teacherId, e.amount), ('t-ahmet', 15000.0));
+    });
+
+    test('haftalık saat: programdaki satırlar öğretmene göre sayılır', () {
+      ScheduleEntry entry(String teacher, String slot) => ScheduleEntry(
+        teacherId: teacher,
+        classroomId: 'c',
+        timeSlotId: slot,
+        branch: 'Matematik',
+      );
+      expect(
+        weeklyHoursByTeacher([
+          entry('a', 's1'),
+          entry('a', 's2'),
+          entry('b', 's1'),
+        ]),
+        {'a': 2, 'b': 1},
+      );
     });
   });
 }
