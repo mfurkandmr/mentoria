@@ -12,6 +12,7 @@ import '../../../shared/widgets/common.dart';
 import '../../exam_analysis/presentation/exam_report_screen.dart';
 import '../data/exam_admin_repository.dart';
 import '../domain/exam_definition.dart';
+import 'exam_package_flow.dart';
 import 'import_wizard_screen.dart';
 import 'outcome_picker.dart';
 
@@ -33,6 +34,12 @@ class OrgExamsScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(tr('Kurum sınavları')),
         actions: [
+          IconButton(
+            key: const ValueKey('exam-from-files'),
+            tooltip: tr('Dosyalardan sınav kur'),
+            icon: const Icon(Icons.drive_folder_upload_outlined),
+            onPressed: () => createExamFromFiles(context, ref, basePath),
+          ),
           IconButton(
             key: const ValueKey('open-outcomes'),
             tooltip: tr('Kazanım havuzu'),
@@ -1091,6 +1098,68 @@ class _OutcomeTabState extends ConsumerState<_OutcomeTab> {
 // ---------------------------------------------------------------------
 // Sonuçlar: Excel yükle, kamerayla oku, yayınla, rapor
 // ---------------------------------------------------------------------
+/// Yayın öncesi kontrol: öğrenci her sorudaki hatasını ve konusunu görsün diye
+/// anahtar ve kazanım tam olmadan yayınlanmaz (sunucu da reddeder).
+class _PublishChecklist extends StatelessWidget {
+  const _PublishChecklist({required this.exam, required this.gaps});
+
+  final ExamDefinition exam;
+  final ExamKeyGaps gaps;
+
+  String _detail(Map<String, List<int>> gaps) => [
+    for (final e in gaps.entries)
+      '${subjectByCode(e.key).name}: ${e.value.length > 8 ? tr('{n} soru', {'n': e.value.length}) : e.value.join(', ')}',
+  ].join(' · ');
+
+  @override
+  Widget build(BuildContext context) {
+    final b = context.brand;
+    Widget row(String key, bool ok, String title, String? detail) => ListTile(
+      key: ValueKey(key),
+      dense: true,
+      contentPadding: EdgeInsets.zero,
+      leading: Icon(
+        ok ? Icons.check_circle_rounded : Icons.error_outline_rounded,
+        color: ok ? b.success : b.danger,
+      ),
+      title: Text(title),
+      subtitle: detail == null ? null : Text(detail),
+    );
+    return SectionCard(
+      title: tr('Yayın kontrolü'),
+      subtitle: tr('Üçü de tamam olunca sonuçlar yayınlanır.'),
+      child: Column(
+        children: [
+          row(
+            'check-answers',
+            gaps.answerCount == 0,
+            gaps.answerCount == 0
+                ? tr('Cevap anahtarı tam')
+                : tr('{n} sorunun cevabı eksik', {'n': gaps.answerCount}),
+            gaps.answerCount == 0 ? null : _detail(gaps.noAnswer),
+          ),
+          row(
+            'check-outcomes',
+            gaps.outcomeCount == 0,
+            gaps.outcomeCount == 0
+                ? tr('Bütün soruların kazanımı var')
+                : tr('{n} sorunun kazanımı eksik', {'n': gaps.outcomeCount}),
+            gaps.outcomeCount == 0 ? null : _detail(gaps.noOutcome),
+          ),
+          row(
+            'check-sheets',
+            exam.sheetCount > 0,
+            exam.sheetCount > 0
+                ? tr('Optik çıktısı yüklendi')
+                : tr('Optik çıktısı yüklenmedi'),
+            null,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _ResultsTab extends ConsumerWidget {
   const _ResultsTab({
     required this.exam,
@@ -1110,6 +1179,7 @@ class _ResultsTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final e = exam;
     final hasKey = e.questions.any((q) => !q.isCancelled);
+    final gaps = e.keyGaps;
     final text = Theme.of(context).textTheme;
     Future<String?> ready() async {
       if (e.id != null && !dirty) return e.id;
@@ -1134,6 +1204,10 @@ class _ResultsTab extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 12),
+        if (e.isDraft) ...[
+          _PublishChecklist(exam: e, gaps: gaps),
+          const SizedBox(height: 12),
+        ],
         FilledButton.icon(
           key: const ValueKey('open-import'),
           onPressed: !hasKey
@@ -1149,7 +1223,7 @@ class _ResultsTab extends ConsumerWidget {
                   await onPublished(id);
                 },
           icon: const Icon(Icons.upload_file_rounded),
-          label: Text(tr('Optik okuyucu Excel\'ini yükle')),
+          label: Text(tr('Optik okuyucu çıktısını yükle')),
         ),
         if (!hasKey)
           Padding(
@@ -1171,7 +1245,8 @@ class _ResultsTab extends ConsumerWidget {
         if (e.isDraft)
           FilledButton.tonalIcon(
             key: const ValueKey('publish-exam'),
-            onPressed: e.id == null || e.sheetCount == 0 || dirty
+            onPressed:
+                e.id == null || e.sheetCount == 0 || dirty || !gaps.isComplete
                 ? null
                 : () async {
                     final ok = await confirm(
@@ -1198,10 +1273,16 @@ class _ResultsTab extends ConsumerWidget {
                         ),
                       );
                       await onPublished(e.id!);
-                    } catch (_) {
+                    } catch (err) {
                       messenger.showSnackBar(
                         SnackBar(
-                          content: Text(tr('Yayınlanamadı. Tekrar dene.')),
+                          content: Text(
+                            '$err'.contains('EXAM_KEY_INCOMPLETE')
+                                ? tr(
+                                    'Cevabı ya da kazanımı eksik soru var; önce tamamla.',
+                                  )
+                                : tr('Yayınlanamadı. Tekrar dene.'),
+                          ),
                         ),
                       );
                     }
@@ -1269,7 +1350,7 @@ ToolInfo orgExamsTool(WidgetRef ref, String basePath) {
     title: tr('Kurum sınavları'),
     status: drafts > 0
         ? tr('{n} sınavın sonuçları yayın bekliyor', {'n': drafts})
-        : tr('Optik sonuçları, kazanım analizi ve karneler'),
+        : tr('Cevap anahtarı, kazanım ve optik çıktısını yükle'),
     needsAction: drafts > 0,
     open: (context) => context.push('$basePath/org-exams'),
   );

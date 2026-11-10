@@ -8,9 +8,11 @@ import '../../../core/i18n/i18n.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/format.dart';
 import '../../../shared/widgets/common.dart';
+import '../../../shared/widgets/panel.dart';
 import '../../import/data/spreadsheet_reader.dart';
 import '../data/exam_admin_repository.dart';
 import '../domain/exam_definition.dart';
+import '../domain/exam_package.dart';
 import '../domain/import_plan.dart';
 import '../domain/optic_result_parser.dart';
 
@@ -41,12 +43,26 @@ String warningText(RowWarning w) {
 /// Optik okuyucu Excel'i: dosya → sütun eşleştirme (ya da kayıtlı şablon) →
 /// doğrulama raporu → içe aktarma → özet.
 class ImportWizardScreen extends ConsumerStatefulWidget {
-  const ImportWizardScreen({super.key, required this.examId, this.rows});
+  const ImportWizardScreen({
+    super.key,
+    required this.examId,
+    this.rows,
+    this.template,
+    this.fileName,
+    this.notes = const [],
+  });
 
   final String examId;
 
-  /// Önceden okunmuş sayfa (dosya seçmeden; testler).
+  /// Önceden okunmuş sayfa (dosya seçmeden; testler ve sabit sütunlu optik).
   final List<List<String>>? rows;
+
+  /// Verilirse sütun eşleştirme atlanır, doğrudan doğrulama raporu açılır.
+  final ImportTemplate? template;
+  final String? fileName;
+
+  /// Raporun başında gösterilen açıklamalar (ör. tahmin edilen kitapçık).
+  final List<String> notes;
 
   @override
   ConsumerState<ImportWizardScreen> createState() => _ImportWizardState();
@@ -94,7 +110,15 @@ class _ImportWizardState extends ConsumerState<ImportWizardScreen> {
       _exam = exam;
       _roster = roster;
     });
-    if (widget.rows != null) await _useRows(widget.rows!, 'optik.xlsx');
+    if (widget.rows == null) return;
+    await _useRows(widget.rows!, widget.fileName ?? 'optik.xlsx');
+    if (widget.template != null && mounted) {
+      setState(() {
+        _template = widget.template;
+        _saveTemplate = false;
+      });
+      await _validate();
+    }
   }
 
   Future<void> _pick() async {
@@ -102,9 +126,13 @@ class _ImportWizardState extends ConsumerState<ImportWizardScreen> {
     try {
       final files = await FilePicker.pickFiles(type: FileType.any);
       if (files.isEmpty) return;
-      final sheets = await readSpreadsheetInBackground(
-        Uint8List.fromList(await files.first.readAsBytes()),
-      );
+      final bytes = Uint8List.fromList(await files.first.readAsBytes());
+      final text = decodeText(bytes);
+      if (looksLikeFixedWidthOptic(text)) {
+        if (mounted) await _useFixedWidth(text, files.first.name);
+        return;
+      }
+      final sheets = await readSpreadsheetInBackground(bytes);
       if (!mounted) return;
       await _useRows(sheets.values.first, files.first.name);
     } catch (_) {
@@ -116,6 +144,38 @@ class _ImportWizardState extends ConsumerState<ImportWizardScreen> {
         ),
       );
     }
+  }
+
+  /// Optik makinesinin sabit sütunlu .txt çıktısı. B kitapçığının fiziksel
+  /// sırası kayıtlı sınavda tutulmadığı için çok kitapçıklı sınavda kazanım
+  /// tablosu da gerekir: o zaman "Dosyalardan sınav kur" kullanılır.
+  Future<void> _useFixedWidth(String text, String name) async {
+    final exam = _exam!;
+    if (exam.bookletList.length > 1) {
+      showMessage(
+        context,
+        tr(
+          'Bu sınavda birden çok kitapçık var. Optik .txt çıktısını Kurum sınavları > Dosyalardan sınav kur ile anahtar ve kazanım tablosuyla birlikte yükle.',
+        ),
+      );
+      return;
+    }
+    final total = exam.subjects.fold<int>(0, (s, x) => s + x.questionCount);
+    final List<OpticLine> lines;
+    try {
+      lines = parseFixedWidthOptic(text, total);
+    } on ExamPackageException {
+      showMessage(context, tr('Optik çıktısının satırları okunamadı.'));
+      return;
+    }
+    final r = opticRowsFor(lines, exam, const {});
+    await _useRows(r.rows, name);
+    if (!mounted) return;
+    setState(() {
+      _template = r.template;
+      _saveTemplate = false;
+    });
+    await _validate();
   }
 
   Future<void> _useRows(List<List<String>> rows, String name) async {
@@ -300,7 +360,7 @@ class _ImportWizardState extends ConsumerState<ImportWizardScreen> {
       EmptyState(
         title: _exam!.name,
         message: tr(
-          'Optik okuyucunun verdiği Excel ya da CSV dosyasını seç. Her satır bir öğrenci; cevaplar "ABDC…" biçiminde tek hücrede olmalı.',
+          'Optik okuyucunun verdiği dosyayı seç: Excel, CSV ya da makinenin sabit sütunlu .txt çıktısı. Her satır bir öğrenci.',
         ),
         action: FilledButton.icon(
           key: const ValueKey('pick-optic-file'),
@@ -506,6 +566,8 @@ class _ImportWizardState extends ConsumerState<ImportWizardScreen> {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              for (final n in widget.notes)
+                PanelNotice(icon: Icons.info_outline_rounded, message: n),
               Card(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),

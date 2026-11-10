@@ -140,15 +140,23 @@ class _TrendCard extends ConsumerWidget {
 /// Karne: üstte toplam net, puan ve sıralamalar; ders tablosu, konu analizi
 /// ve soru soru inceleme.
 class ReportCardScreen extends ConsumerWidget {
-  const ReportCardScreen({super.key, required this.examId});
+  const ReportCardScreen({
+    super.key,
+    required this.examId,
+    this.initialTab = 0,
+  });
 
   final String examId;
+
+  /// Açılış sekmesi: 0 özet, 1 konu analizi, 2 soru soru.
+  final int initialTab;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final card = ref.watch(reportCardProvider(examId));
     return DefaultTabController(
       length: 3,
+      initialIndex: initialTab,
       child: Scaffold(
         appBar: AppBar(
           title: Text(card.value?.examName ?? tr('Karne')),
@@ -448,20 +456,64 @@ class _OutcomeBar extends StatelessWidget {
   }
 }
 
-class _Questions extends StatelessWidget {
+/// Soru soru: önce yanlış ve boşlar; her satırda konu, cevap ve doğrusu.
+class _Questions extends StatefulWidget {
   const _Questions({required this.card});
   final ReportCard card;
 
   @override
+  State<_Questions> createState() => _QuestionsState();
+}
+
+class _QuestionsState extends State<_Questions> {
+  bool _all = false;
+
+  @override
   Widget build(BuildContext context) {
     final b = context.brand;
+    final wrong = widget.card.responses.where(
+      (r) =>
+          r.result == ResponseResult.wrong || r.result == ResponseResult.blank,
+    );
     final bySubject = <String, List<QuestionResponse>>{};
-    for (final r in card.responses) {
+    for (final r in _all ? widget.card.responses : wrong) {
       bySubject.putIfAbsent(r.subject, () => []).add(r);
     }
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Wrap(
+            spacing: 8,
+            children: [
+              ChoiceChip(
+                key: const ValueKey('questions-wrong'),
+                label: Text(tr('Yanlış ve boşlar ({n})', {'n': wrong.length})),
+                selected: !_all,
+                onSelected: (_) => setState(() => _all = false),
+              ),
+              ChoiceChip(
+                key: const ValueKey('questions-all'),
+                label: Text(
+                  tr('Bütün sorular ({n})', {
+                    'n': widget.card.responses.length,
+                  }),
+                ),
+                selected: _all,
+                onSelected: (_) => setState(() => _all = true),
+              ),
+            ],
+          ),
+        ),
+        if (bySubject.isEmpty)
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: Text(
+              tr('Bu sınavda yanlış ya da boş soru yok.'),
+              textAlign: TextAlign.center,
+            ),
+          ),
         for (final e in bySubject.entries)
           SectionCard(
             title: subjectByCode(e.key).name,
@@ -488,17 +540,25 @@ class _Questions extends StatelessWidget {
                         ),
                       ),
                     ),
-                    title: Text(switch (r.result) {
+                    title: r.outcome == null
+                        ? null
+                        : Text(
+                            r.outcome!,
+                            style: const TextStyle(fontWeight: FontWeight.w700),
+                          ),
+                    subtitle: Text(switch (r.result) {
                       ResponseResult.cancelled => tr('İptal edilen soru'),
                       ResponseResult.blank => tr('Boş · doğru cevap {c}', {
                         'c': r.correct,
                       }),
-                      _ => tr('Senin cevabın {m} · doğru cevap {c}', {
+                      ResponseResult.correct => tr('Doğru · cevap {c}', {
+                        'c': r.correct,
+                      }),
+                      _ => tr('Cevap {m} · doğrusu {c}', {
                         'm': r.marked,
                         'c': r.correct,
                       }),
                     }),
-                    subtitle: r.outcome == null ? null : Text(r.outcome!),
                   ),
               ],
             ),
@@ -523,6 +583,116 @@ class ReportCardsButton extends StatelessWidget {
       ),
     ),
     icon: const Icon(Icons.assignment_outlined),
-    label: Text(tr('Kurum sınavı karneleri')),
+    label: Text(tr('Sınav analizleri')),
   );
+}
+
+/// Son kurum sınavının kısa analizi: en çok net kaybedilen konular ve soru soru
+/// analize geçiş. Ana sayfada ve Denemeler'de görünür; sınav yoksa boş kalır.
+class LastExamAnalysisCard extends ConsumerWidget {
+  const LastExamAnalysisCard({super.key, required this.studentId});
+
+  final String studentId;
+
+  void _open(BuildContext context, String examId, int tab) =>
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => ReportCardScreen(examId: examId, initialTab: tab),
+        ),
+      );
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cards = ref.watch(reportCardsProvider(studentId)).value;
+    if (cards == null || cards.isEmpty) return const SizedBox.shrink();
+    final last = cards.reduce((a, b) => b.takenOn.isAfter(a.takenOn) ? b : a);
+    final card = ref.watch(reportCardProvider(last.examId)).value;
+    if (card == null) return const SizedBox.shrink();
+    final b = context.brand;
+    final text = Theme.of(context).textTheme;
+    final wrong = card.subjects.fold(0, (s, x) => s + x.wrong);
+    final blank = card.subjects.fold(0, (s, x) => s + x.blank);
+    final correct = card.subjects.fold(0, (s, x) => s + x.correct);
+    final lost = lostNetMap(card.outcomes).take(3).toList();
+    return Card(
+      key: const ValueKey('last-exam-analysis'),
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              tr('Son sınav analizi'),
+              style: text.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+            ),
+            Text(
+              '${card.examName} · ${formatShortDate(card.takenOn)}',
+              style: text.bodySmall,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              tr('{c} doğru · {w} yanlış · {b} boş · {n} net', {
+                'c': correct,
+                'w': wrong,
+                'b': blank,
+                'n': formatNet(card.totalNet),
+              }),
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+            if (lost.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              Text(tr('En çok net kaybedilen konular'), style: text.bodySmall),
+              for (final o in lost)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '${subjectByCode(o.subject).name} · ${o.outcome}',
+                        ),
+                      ),
+                      Text(
+                        tr('−{n} net', {'n': formatNet(o.lostNet)}),
+                        style: TextStyle(
+                          color: b.danger,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton(
+                    key: const ValueKey('last-exam-wrong'),
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(0, 44),
+                    ),
+                    onPressed: () => _open(context, card.examId, 2),
+                    child: Text(tr('Yanlışları gör')),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton(
+                    key: const ValueKey('last-exam-outcomes'),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(0, 44),
+                    ),
+                    onPressed: () => _open(context, card.examId, 1),
+                    child: Text(tr('Konu analizi')),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

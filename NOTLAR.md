@@ -2883,3 +2883,84 @@ göndermez: kayıt defteridir.
   `docs/kvkk/00_README.md`.
 - Web önizleme: `-o` ile mutlak `C:/dev/...` verilince `assets/fonts` boş kaldı,
   ikonlar kutucuk çıktı (kod sorunu değil). Telefonda denenmedi.
+
+## 79. Gelirlerde tahsilat özeti ve kalabalık demo (9 Kasım 2026)
+
+- Gelirler sekmesinin başında "Bu ay öğrenci tahsilatı" kartı (`_MonthCollectionCard`);
+  liste ücret dışı gelirlerle sınırlı kaldı.
+- **Hata düzeltmesi:** `InMemoryFinanceRepository.demo` `teachers` almıyordu; §78'in
+  demosunda öğretmene ücret/ödeme kaydetmek `FINANCE_BAD_TEACHER` veriyordu.
+- **`DEMO_RICH`** (`lib/dev/demo_rich.dart`): 24 öğrenci, 4 koç; deneme, çalışma, görev,
+  görüşme, yoklama (21 gün), kitap, SMS geçmişi, duyuru, risk, finans (ücret, maaş,
+  öğretmen ödemesi, gider, gelir). Web `/demo` bu bayrakla derlenir
+  (`tool/web/build_web.py`). Testler küçük demoya bağlı; varsayılan kapalı,
+  `test/demo_rich_test.dart` `demoRichEnabled` ile açar.
+- Kokpit sayıları elle yazılmadı, `richCockpitData` öteki demo verisinden hesaplar.
+- Kalabalık demoda koç yalnızca kendi öğrencilerini görür (küçük demoda hepsi).
+- Bütün adlar ve telefonlar uydurma. Commit yok.
+
+## 80. Personel yönetimi ve çek / senet (9 Kasım 2026)
+
+Migration `20261109150000_staff_cheques` (rollback + `staff_cheques_test.mjs`), canlıda.
+Yalnızca müdür. Uygulama para hareketi yapmaz.
+
+- **Personel** (`lib/features/staff/`, `/admin/staff`; Kurum araçları ve Koçlar sekmesi):
+  `staff_members` kart, `staff_leaves` izin. Liste kart + koç + ders programı öğretmenini
+  birleştirir (`mergePersonnel`); kartı olmayan koç / öğretmene izin ya da düzenleme girilince
+  kart açılır. Ayrılan kişi `end_on` ile "Ayrılanlar"a düşer, kayıt kalır. Ödeme:
+  `finance_expenses.staff_id`; kart silinse de ad kalır. Bir gider en çok bir kişiye bağlanır.
+- **Bilerek yok:** TC kimlik, IBAN, sağlık ayrıntısı, belge yükleme, bordro (KVKK ve kapsam).
+- **Çek / senet** (Finans son sekme, `cheques_ui.dart`; Özet'te vade uyarısı, Excel'de sayfa):
+  `finance_cheques`; ekleme ve ilk durumda silme doğrudan, durum yalnızca `set_cheque_status`.
+  Tahsil: ücret seçiliyse `record_payment`, değilse `record_income` (`method = other`). Ödendi:
+  `finance_expenses` (`other`). Geri alma / karşılıksız: makbuz iptal ya da gider silinir.
+  Kayıt düzenleme yok (sil, yeniden ekle). Vade bildirimi yok, uygulama içi uyarı var.
+- SQL'de `select (f()).*` fonksiyonu sütun başına çağırır; `select * from f()` kullan.
+- `org_credits_test` ₺ iznine `lib/features/staff/` eklendi (kurumun kendi defteri).
+- Web'de yeni ikon boş görünürse tarayıcı eski `MaterialIcons` dosyasını önbellekten
+  veriyordur: Ctrl+F5. Telefonda ve gerçek hesapla denenmedi. Commit yok.
+
+## 81. Sınav yükleme akışı ve öğrenci analizi (9 Kasım 2026)
+
+Kullanıcı kararı: her deneme cevap anahtarı ve kazanımla, optik okuyucu çıktısından
+yüklenir; öğrenci hangi konuda ne yanlış yaptığını doğrudan görür.
+
+- Migration `20261109160000_exam_key_required` (canlıda): `publish_exam`, iptal edilmemiş
+  her sorunun cevabı ve kazanımı yoksa `EXAM_KEY_INCOMPLETE` verir. Serbest metin kazanım
+  (`outcome`) da sayılır. Eski yayınlar değişmez. Yayındaki sınavda sonradan kazanım
+  silmek engellenmedi (`save_exam`); yalnızca yayın anı denetleniyor.
+- Sınavın Sonuçlar sekmesinde "Yayın kontrolü" (`ExamDefinition.keyGaps`); eksikse düğme kapalı.
+- Menüden kaldırıldı: Deneme yükle, Yüklenen denemeler, Optik oku (kısa yol). Rotalar duruyor;
+  kamera okuma sınavın içinden açılır. Koç ve öğrencinin elle deneme girmesi duruyor.
+- Öğrenci: ana sayfa ve Denemeler'de `LastExamAnalysisCard`; karne Soru soru sekmesi önce
+  yanlış ve boşları gösterir, satır başlığı konu. Düğme adı "Sınav analizleri".
+- **Açık:** sabit genişlikli .txt optik çıktısı okunmaz (yalnızca Excel, CSV, ayraçlı TXT).
+  Kurumun gerçek makine dosyasıyla denenmedi; örnek dosya gerekli.
+
+## 82. Kitap raporu (9 Kasım 2026)
+
+Migration `20261109170000_book_report` (canlıda), `book_question_report(term)`; müdür kurumu,
+koç kendi öğrencilerini görür. Ekran `/admin|coach/book-report`: öğrenciye ya da kitaba göre,
+arama, ders ve sınıf süzgeci. Sayılar yalnızca Kitaplarım'a girilen çalışmalardan gelir;
+Soru sekmesinde serbest kaynak yazılan kayıt kitaba bağlanmaz. Dönem seçici ve Excel yok.
+
+## 83. Optik paketi: sabit sütunlu .txt, anahtar ve kazanım tablosu (9 Kasım 2026)
+
+Kullanıcının örnek dosyaları `test/fixtures/optic/` (TYT07): optik çıktısı (40 satır, 159
+karakter, UTF-8, sondaki 120 karakter cevap, öncesi kitapçık), anahtar metni (A ve B),
+`soru_kazanim` CSV'si (`;`, A cevabı, B'deki yeri, zorluk). `lib/features/exam_import/domain/exam_package.dart`.
+
+- Kurum sınavları > "Dosyalardan sınav kur": üç dosya birlikte seçilir, içerikten tanınır.
+  Anahtar + tablo çapraz denetlenir (A cevabı, B anahtarı, B yerleri); çelişki hepsiyle
+  bildirilir. Kazanımlar havuza eklenip sorulara bağlanır, sınav taslak kaydedilir, optik
+  seçildiyse doğrulama raporu açılır (sütun eşleştirme atlanır).
+- B kitapçığında Sosyal ve Fen bölümünde soru dersler arasında karışabiliyor; sistem
+  kitapçığı ders içinde tuttuğu için cevaplar ders sırasına yeniden dizilir (`bookletOrders`).
+  Bu sıra sınavda saklanmaz: kayıtlı çok kitapçıklı sınava .txt'yi sonradan yüklemek için
+  sihirbaz "Dosyalardan sınav kur"u önerir. Tek kitapçıkta .txt sihirbazda doğrudan okunur.
+- Kitapçığı boş satır: iki anahtarla puanlanır, fark ≥10 doğruysa o kitapçık seçilir ve raporda
+  not düşülür (örnekte 2026040 B: 65'e 23); değilse A kalır.
+- Şimdilik yalnızca TYT dosyadan kurulur (ders sınırları TYT'ye göre). `*` boş sayılır.
+- Örnekte: Elif 72 D / 38 Y / 10 B = 62,5 net; en yüksek Vildan 104,75; Can Öztürk boş;
+  Gökhan'ın numarası 0045127 (kurum kaydında 45127 ise eşleşir). Canlı kurumda denenmedi;
+  numaralar kurum listesinde yoksa raporda "eşleşmedi" çıkar.

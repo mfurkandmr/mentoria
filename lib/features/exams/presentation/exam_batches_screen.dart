@@ -84,14 +84,9 @@ class ExamBatchesScreen extends ConsumerWidget {
         ),
         actions: [
           IconButton(
-            tooltip: tr('Optik oku'),
-            icon: const Icon(Icons.document_scanner_outlined),
-            onPressed: () => context.push('$basePath/optic'),
-          ),
-          IconButton(
-            tooltip: tr('Deneme sonuçlarını yükle'),
+            tooltip: tr('Sınav yükle'),
             icon: const Icon(Icons.upload_file),
-            onPressed: () => context.push('$basePath/import'),
+            onPressed: () => context.push('$basePath/org-exams'),
           ),
         ],
       ),
@@ -114,7 +109,7 @@ class ExamBatchesScreen extends ConsumerWidget {
                   'Excel\'den yüklediğin ya da elle girdiğin denemeler burada listelenir.',
                 ),
                 action: FilledButton.icon(
-                  onPressed: () => context.push('$basePath/import'),
+                  onPressed: () => context.push('$basePath/org-exams'),
                   icon: const Icon(Icons.upload_file),
                   label: Text(tr('Deneme yükle')),
                 ),

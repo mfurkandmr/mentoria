@@ -189,12 +189,10 @@ void main() {
     expect(_visited.last, '/coach/homework');
     await _back(tester);
 
-    // Sınavlar: yükle, yüklenen denemeler.
+    // Sınavlar: bütün yüklemeler kurum sınavından.
     await tab('Sınavlar');
-    for (final (id, route) in [
-      ('tool-import', '/coach/import'),
-      ('tool-exam-batches', '/coach/exams'),
-    ]) {
+    expect(find.byKey(const ValueKey('tool-import')), findsNothing);
+    for (final (id, route) in [('org-exams-card', '/coach/org-exams')]) {
       await tester.tap(find.byKey(ValueKey(id)));
       await tester.pumpAndSettle();
       expect(_visited.last, route, reason: id);
@@ -216,7 +214,6 @@ void main() {
     await _show(tester, find.text('Bu haftaki görüşmeler'));
     await _show(tester, find.text('Son 8 hafta'));
     for (final (title, route) in [
-      ('Optik oku', '/coach/optic'),
       ('Yoklama', '/coach/attendance'),
       ('Sınıflar ve öğrenciler', '/coach/roster'),
       ('Kurum sınavları', '/coach/org-exams'),

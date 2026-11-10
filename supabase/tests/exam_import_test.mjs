@@ -170,6 +170,32 @@ check((await rows(`select 1 from public.exams where batch_id = $1`, [key])).leng
 await asUser(A.student);
 check((await rows(`select 1 from public.exams where batch_id = $1`, [key])).length === 0, 'öğrenci taslak sonucu görmez');
 
+console.log('Anahtar ve kazanım zorunlu');
+await asUser(A.coach);
+const incomplete = async (name, items) => (await one(`select public.save_exam(null, $1) id`,
+  [def({ name, booklets: {}, items })])).id;
+const full = [1, 2, 3, 4].map((no) => ({ subject: 'TYT_TUR', no, correct: 'A', outcome: 'Paragraf' }));
+const mathRows = [1, 2, 3, 4].map((no) => ({ subject: 'TYT_MAT', no, correct: 'A', outcome_id: o2 }));
+const k1 = await incomplete('Kazanımsız', [...full, ...mathRows,
+  { subject: 'TYT_MAT', no: 5, correct: 'A' }]);
+await expectError('kazanımı eksik soru varken yayınlanamaz',
+  () => db.query(`select public.publish_exam($1)`, [k1]), 'EXAM_KEY_INCOMPLETE');
+const k2 = await incomplete('Cevapsız', [...full, ...mathRows,
+  { subject: 'TYT_MAT', no: 5, outcome_id: o2 }]);
+await expectError('cevabı eksik soru varken yayınlanamaz',
+  () => db.query(`select public.publish_exam($1)`, [k2]), 'EXAM_KEY_INCOMPLETE');
+const k3 = await incomplete('Satırı yok', [...full, ...mathRows]);
+await expectError('hiç girilmemiş soru varken yayınlanamaz',
+  () => db.query(`select public.publish_exam($1)`, [k3]), 'EXAM_KEY_INCOMPLETE');
+const k4 = await incomplete('İptalli', [...full, ...mathRows,
+  { subject: 'TYT_MAT', no: 5, correct: 'A', cancelled: true }]);
+check((await one(`select public.publish_exam($1) n`, [k4])).n === 0, 'iptal edilen soru kazanım istemez');
+await asSuper();
+await expectError('eksik sayacı doğrudan çağrılamaz', async () => {
+  await asUser(A.coach);
+  await db.query(`select public._exam_key_gaps($1)`, [k1]);
+}, 'permission');
+
 console.log('Yayınlama ve puanlama');
 await asUser(A.coach);
 check((await one(`select public.publish_exam($1) n`, [key])).n === 2, 'yayınlanınca 2 optik puanlandı');

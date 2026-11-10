@@ -69,6 +69,18 @@ class ExamSubjectDef {
 }
 
 /// A kitapçığında bir soru: doğru cevap, kazanım, zorluk, iptal.
+/// Yayın öncesi eksikler: ders kodu → soru numaraları.
+class ExamKeyGaps {
+  const ExamKeyGaps({this.noAnswer = const {}, this.noOutcome = const {}});
+
+  final Map<String, List<int>> noAnswer;
+  final Map<String, List<int>> noOutcome;
+
+  int get answerCount => noAnswer.values.fold(0, (s, l) => s + l.length);
+  int get outcomeCount => noOutcome.values.fold(0, (s, l) => s + l.length);
+  bool get isComplete => answerCount == 0 && outcomeCount == 0;
+}
+
 class KeyQuestion {
   const KeyQuestion({
     required this.subject,
@@ -208,6 +220,30 @@ class ExamDefinition {
 
   /// Bir yanlışın götürdüğü net.
   double get penalty => wrongPenalty ? penaltyRatio : 0;
+
+  /// Sunucudaki yayın kuralı: iptal edilmemiş her sorunun cevabı ve kazanımı
+  /// olmalı (öğrenci her sorudaki hatasını ve konusunu görsün diye).
+  ExamKeyGaps get keyGaps {
+    final noAnswer = <String, List<int>>{};
+    final noOutcome = <String, List<int>>{};
+    for (final s in subjects) {
+      final byNumber = {
+        for (final q in questions)
+          if (q.subject == s.code) q.number: q,
+      };
+      for (var n = 1; n <= s.questionCount; n++) {
+        final q = byNumber[n];
+        if (q?.cancelled ?? false) continue;
+        if (q?.correct == null) {
+          noAnswer.putIfAbsent(s.code, () => []).add(n);
+        }
+        final hasOutcome =
+            q?.outcomeId != null || (q?.outcome?.trim().isNotEmpty ?? false);
+        if (!hasOutcome) noOutcome.putIfAbsent(s.code, () => []).add(n);
+      }
+    }
+    return ExamKeyGaps(noAnswer: noAnswer, noOutcome: noOutcome);
+  }
 
   /// Kullanılabilen kitapçıklar (A her zaman).
   List<String> get bookletList => [

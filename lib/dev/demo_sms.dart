@@ -22,6 +22,9 @@ class InMemoryBulkSmsRepository implements BulkSmsRepository {
   final outbox = <(String, String)>[];
   int _id = 0;
 
+  /// Demo: daha önce gönderilmiş SMS'ler (en yeni önce).
+  void seedHistory(List<SmsBroadcast> list) => _history.addAll(list);
+
   @override
   Future<SmsReach> send({
     required String body,

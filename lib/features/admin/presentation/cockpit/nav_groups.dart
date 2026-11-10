@@ -14,31 +14,11 @@ import 'org_tools_section.dart';
 /// sayfadaki "Kurum araçları" aynı [ToolInfo]'ları kullanır; burada
 /// konuya göre toplanır.
 
-/// Sınavlar: deneme yükleme, yüklenen denemeler, optik, kurum sınavları,
-/// deneme trendleri (müdürde ayrıca deneme planı).
+/// Sınavlar: kurum sınavları ve deneme trendleri (müdürde ayrıca deneme planı).
 List<ToolInfo> examTools(WidgetRef ref, String basePath) => [
-  ToolInfo(
-    id: 'tool-import',
-    icon: Icons.upload_file_outlined,
-    title: tr('Deneme yükle'),
-    status: tr('Deneme sonuç dosyasını yükle, öğrencilere dağıt'),
-    open: (c) => c.push('$basePath/import'),
-  ),
-  ToolInfo(
-    id: 'tool-exam-batches',
-    icon: Icons.inventory_2_outlined,
-    title: tr('Yüklenen denemeler'),
-    status: tr('Son 7 gündeki yüklemeler silinebilir'),
-    open: (c) => c.push('$basePath/exams'),
-  ),
+  // Bütün denemeler kurum sınavı olarak yüklenir: anahtar, kazanım, optik çıktısı.
+  // Öğrenci böylece her sorudaki hatasını görür (NOTLAR §81).
   orgExamsTool(ref, basePath),
-  ToolInfo(
-    id: 'tool-optic',
-    icon: Icons.document_scanner_outlined,
-    title: tr('Optik oku'),
-    status: tr('Optik formları telefonla oku'),
-    open: (c) => c.push('$basePath/optic'),
-  ),
   trendsTool(basePath),
   if (basePath == '/admin')
     ToolInfo(

@@ -59,6 +59,7 @@ Uint8List buildFinanceWorkbook({
   List<FinanceIncome> incomes = const [],
   List<FinanceAccount> accounts = const [],
   List<FinanceTransfer> transfers = const [],
+  List<FinanceCheque> cheques = const [],
 }) {
   final book = xl.Excel.createExcel();
   final defaultSheet = book.getDefaultSheet();
@@ -278,7 +279,7 @@ Uint8List buildFinanceWorkbook({
     tr('Tarih'),
     tr('Gider türü'),
     tr('Tutar (₺)'),
-    tr('Koç / öğretmen'),
+    tr('Personel'),
     tr('Not'),
   ]);
   for (final e in periodExpenses) {
@@ -286,9 +287,40 @@ Uint8List buildFinanceWorkbook({
       t(_date(e.spentOn)),
       t(e.category.label),
       money(e.amount),
-      t(e.coachName ?? e.teacherName ?? ''),
+      t(e.payeeName ?? ''),
       t(e.note ?? ''),
     ]);
+  }
+
+  // --- Çek ve senet (vadesi dönemde olanlar) ---
+  final periodCheques = [
+    for (final c in cheques)
+      if (period.contains(c.dueOn)) c,
+  ]..sort((a, b) => a.dueOn.compareTo(b.dueOn));
+  if (periodCheques.isNotEmpty) {
+    final chq = book[tr('Çek ve senet')];
+    header(chq, [
+      tr('Vade'),
+      tr('Yön'),
+      tr('Tür'),
+      tr('Seri no'),
+      tr('Banka'),
+      tr('Kişi'),
+      tr('Tutar (₺)'),
+      tr('Durum'),
+    ]);
+    for (final c in periodCheques) {
+      chq.appendRow([
+        t(_date(c.dueOn)),
+        t(c.direction.label),
+        t(c.kind.label),
+        t(c.serialNo ?? ''),
+        t(c.bank ?? ''),
+        t(c.partyName),
+        money(c.amount),
+        t(c.status.label),
+      ]);
+    }
   }
 
   // --- Öğrenci bakiyeleri (bugün itibarıyla) ---

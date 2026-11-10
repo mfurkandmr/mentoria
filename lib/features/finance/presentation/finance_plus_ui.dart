@@ -19,6 +19,12 @@ DateTime _today() {
 /// Sunucu hata kodu → kullanıcıya metin.
 String financeError(Object e) {
   final s = '$e';
+  if (s.contains('FINANCE_BAD_FEE')) {
+    return tr('Seçilen ücret bu öğrenciye ait değil.');
+  }
+  if (s.contains('STAFF_BAD_REF')) {
+    return tr('Bu personel kartı artık yok.');
+  }
   if (s.contains('FINANCE_BAD_TEACHER')) {
     return tr('Bu öğretmen artık kurumda kayıtlı değil.');
   }
@@ -1160,12 +1166,75 @@ class _BulkFeeSheetState extends ConsumerState<BulkFeeSheet> {
 // Diğer gelirler
 // ---------------------------------------------------------------------------
 
+/// Gelirler sekmesinin başı: öğrenci ödemeleri burada listelenmez, bu ayın
+/// tahsilatı müdür aramasın diye özetlenir (ayrıntısı Ücretler sekmesinde).
+class _MonthCollectionCard extends StatelessWidget {
+  const _MonthCollectionCard({required this.fees});
+
+  final List<StudentFee> fees;
+
+  @override
+  Widget build(BuildContext context) {
+    final today = _today();
+    final s = monthSummary(
+      fees,
+      const [],
+      DateTime(today.year, today.month),
+      today: today,
+    );
+    final text = Theme.of(context).textTheme;
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    tr('Bu ay öğrenci tahsilatı'),
+                    style: text.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+                Text(
+                  formatMoney(s.collected),
+                  key: const ValueKey('income-month-collected'),
+                  style: text.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ],
+            ),
+            if (s.refunds > 0)
+              Text(
+                tr('İade: {v}', {'v': formatMoney(s.refunds)}),
+                style: text.bodySmall,
+              ),
+            const SizedBox(height: 4),
+            Text(
+              tr(
+                'Öğrenci ödemelerinin ayrıntısı Ücretler sekmesinde. Aşağıda ücret dışı gelirler var.',
+              ),
+              style: text.bodySmall,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class IncomesTab extends ConsumerWidget {
   const IncomesTab({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final incomes = ref.watch(financeIncomesProvider);
+    final fees = ref.watch(financeFeesProvider).value;
     final brand = context.brand;
     return AsyncView(
       value: incomes,
@@ -1173,6 +1242,7 @@ class IncomesTab extends ConsumerWidget {
       builder: (list) => ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
         children: [
+          if (fees != null) _MonthCollectionCard(fees: fees),
           Align(
             alignment: Alignment.centerRight,
             child: FilledButton.icon(

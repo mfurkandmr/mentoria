@@ -777,6 +777,8 @@ class FinanceExpense {
     this.coachName,
     this.teacherId,
     this.teacherName,
+    this.staffId,
+    this.staffName,
     this.accountId,
   });
 
@@ -790,6 +792,8 @@ class FinanceExpense {
     coachName: j['coach_name'] as String?,
     teacherId: j['teacher_id'] as String?,
     teacherName: j['teacher_name'] as String?,
+    staffId: j['staff_id'] as String?,
+    staffName: j['staff_name'] as String?,
     accountId: j['account_id'] as String?,
   );
 
@@ -806,7 +810,14 @@ class FinanceExpense {
   /// Ödeme bir öğretmene bağlıysa; öğretmen silindiyse null, ad kalır.
   final String? teacherId;
   final String? teacherName;
+
+  /// Ödeme bir personel kartına bağlıysa; kart silindiyse null, ad kalır.
+  final String? staffId;
+  final String? staffName;
   final String? accountId;
+
+  /// Gidere bağlı kişinin adı (koç, öğretmen ya da personel).
+  String? get payeeName => coachName ?? teacherName ?? staffName;
 }
 
 /// Koçun aylık maaşı ve öğrenci başına primi.
@@ -948,6 +959,7 @@ class ExpenseDraft {
     this.note,
     this.coachId,
     this.teacherId,
+    this.staffId,
     this.accountId,
   });
 
@@ -957,7 +969,289 @@ class ExpenseDraft {
   final String? note;
   final String? coachId;
   final String? teacherId;
+  final String? staffId;
   final String? accountId;
+}
+
+// ---------------------------------------------------------------------------
+// Çek ve senet
+// ---------------------------------------------------------------------------
+
+enum ChequeDirection {
+  received('received'),
+  given('given');
+
+  const ChequeDirection(this.db);
+
+  final String db;
+
+  String get label => switch (this) {
+    ChequeDirection.received => tr('Alınan'),
+    ChequeDirection.given => tr('Verilen'),
+  };
+}
+
+enum ChequeKind {
+  cheque('cheque'),
+  note('note');
+
+  const ChequeKind(this.db);
+
+  final String db;
+
+  String get label => switch (this) {
+    ChequeKind.cheque => tr('Çek'),
+    ChequeKind.note => tr('Senet'),
+  };
+}
+
+enum ChequeStatus {
+  portfolio('portfolio'),
+  deposited('deposited'),
+  collected('collected'),
+  endorsed('endorsed'),
+  bounced('bounced'),
+  returned('returned'),
+  issued('issued'),
+  paid('paid'),
+  cancelled('cancelled');
+
+  const ChequeStatus(this.db);
+
+  final String db;
+
+  static ChequeStatus fromDb(String? v) => ChequeStatus.values.firstWhere(
+    (s) => s.db == v,
+    orElse: () => ChequeStatus.portfolio,
+  );
+
+  String get label => switch (this) {
+    ChequeStatus.portfolio => tr('Portföyde'),
+    ChequeStatus.deposited => tr('Tahsilde'),
+    ChequeStatus.collected => tr('Tahsil edildi'),
+    ChequeStatus.endorsed => tr('Ciro edildi'),
+    ChequeStatus.bounced => tr('Karşılıksız'),
+    ChequeStatus.returned => tr('İade edildi'),
+    ChequeStatus.issued => tr('Bekliyor'),
+    ChequeStatus.paid => tr('Ödendi'),
+    ChequeStatus.cancelled => tr('İptal edildi'),
+  };
+}
+
+/// Duruma geçiren düğmenin yazısı.
+String chequeActionLabel(ChequeStatus next) => switch (next) {
+  ChequeStatus.portfolio => tr('Portföye geri al'),
+  ChequeStatus.deposited => tr('Tahsile ver'),
+  ChequeStatus.collected => tr('Tahsil edildi olarak işle'),
+  ChequeStatus.endorsed => tr('Ciro et'),
+  ChequeStatus.bounced => tr('Karşılıksız olarak işle'),
+  ChequeStatus.returned => tr('İade et'),
+  ChequeStatus.issued => tr('Bekliyor durumuna geri al'),
+  ChequeStatus.paid => tr('Ödendi olarak işle'),
+  ChequeStatus.cancelled => tr('İptal et'),
+};
+
+class FinanceCheque {
+  const FinanceCheque({
+    required this.id,
+    required this.direction,
+    this.kind = ChequeKind.cheque,
+    this.serialNo,
+    this.bank,
+    required this.partyName,
+    this.studentId,
+    this.studentName,
+    this.feeId,
+    required this.amount,
+    this.issueOn,
+    required this.dueOn,
+    required this.status,
+    this.statusOn,
+    this.accountId,
+    this.endorsedTo,
+    this.receiptNo,
+    this.expenseId,
+    this.note,
+  });
+
+  factory FinanceCheque.fromJson(Map<String, dynamic> j) => FinanceCheque(
+    id: j['id'] as String,
+    direction: j['direction'] == 'given'
+        ? ChequeDirection.given
+        : ChequeDirection.received,
+    kind: j['kind'] == 'note' ? ChequeKind.note : ChequeKind.cheque,
+    serialNo: j['serial_no'] as String?,
+    bank: j['bank'] as String?,
+    partyName: j['party_name'] as String,
+    studentId: j['student_id'] as String?,
+    studentName: j['student_name'] as String?,
+    feeId: j['fee_id'] as String?,
+    amount: _num(j['amount']),
+    issueOn: j['issue_on'] == null
+        ? null
+        : DateTime.parse(j['issue_on'] as String),
+    dueOn: DateTime.parse(j['due_on'] as String),
+    status: ChequeStatus.fromDb(j['status'] as String?),
+    statusOn: j['status_on'] == null
+        ? null
+        : DateTime.parse(j['status_on'] as String),
+    accountId: j['account_id'] as String?,
+    endorsedTo: j['endorsed_to'] as String?,
+    receiptNo: j['receipt_no'] as String?,
+    expenseId: j['expense_id'] as String?,
+    note: j['note'] as String?,
+  );
+
+  final String id;
+  final ChequeDirection direction;
+  final ChequeKind kind;
+  final String? serialNo;
+  final String? bank;
+
+  /// Alınanda kimden, verilende kime.
+  final String partyName;
+  final String? studentId;
+  final String? studentName;
+
+  /// Tahsil edilince işleneceği ücret; yoksa ücret dışı gelir yazılır.
+  final String? feeId;
+  final double amount;
+  final DateTime? issueOn;
+  final DateTime dueOn;
+  final ChequeStatus status;
+  final DateTime? statusOn;
+  final String? accountId;
+  final String? endorsedTo;
+  final String? receiptNo;
+  final String? expenseId;
+  final String? note;
+
+  /// Henüz sonuçlanmadı: portföyde, tahsilde ya da ödenmeyi bekliyor.
+  bool get isOpen =>
+      status == ChequeStatus.portfolio ||
+      status == ChequeStatus.deposited ||
+      status == ChequeStatus.issued;
+
+  bool isOverdue(DateTime today) => isOpen && dueOn.isBefore(today);
+
+  /// Sunucudaki set_cheque_status geçişleriyle aynı.
+  List<ChequeStatus> get nextStatuses => switch (status) {
+    ChequeStatus.portfolio => const [
+      ChequeStatus.deposited,
+      ChequeStatus.collected,
+      ChequeStatus.endorsed,
+      ChequeStatus.bounced,
+      ChequeStatus.returned,
+    ],
+    ChequeStatus.deposited => const [
+      ChequeStatus.collected,
+      ChequeStatus.bounced,
+      ChequeStatus.portfolio,
+    ],
+    ChequeStatus.collected => const [
+      ChequeStatus.bounced,
+      ChequeStatus.portfolio,
+    ],
+    ChequeStatus.endorsed => const [
+      ChequeStatus.bounced,
+      ChequeStatus.portfolio,
+    ],
+    ChequeStatus.returned => const [ChequeStatus.portfolio],
+    ChequeStatus.issued => const [
+      ChequeStatus.paid,
+      ChequeStatus.bounced,
+      ChequeStatus.cancelled,
+    ],
+    ChequeStatus.paid => const [ChequeStatus.bounced, ChequeStatus.issued],
+    ChequeStatus.cancelled => const [ChequeStatus.issued],
+    ChequeStatus.bounced => [
+      direction == ChequeDirection.received
+          ? ChequeStatus.portfolio
+          : ChequeStatus.issued,
+    ],
+  };
+}
+
+class ChequeDraft {
+  const ChequeDraft({
+    required this.direction,
+    this.kind = ChequeKind.cheque,
+    this.serialNo,
+    this.bank,
+    required this.partyName,
+    this.studentId,
+    this.feeId,
+    required this.amount,
+    this.issueOn,
+    required this.dueOn,
+    this.note,
+  });
+
+  final ChequeDirection direction;
+  final ChequeKind kind;
+  final String? serialNo;
+  final String? bank;
+  final String partyName;
+  final String? studentId;
+  final String? feeId;
+  final double amount;
+  final DateTime? issueOn;
+  final DateTime dueOn;
+  final String? note;
+}
+
+class ChequeSummary {
+  const ChequeSummary({
+    this.portfolio = 0,
+    this.monthIn = 0,
+    this.monthOut = 0,
+    this.overdueAmount = 0,
+    this.overdueCount = 0,
+    this.soonCount = 0,
+  });
+
+  /// Elimizdeki alınan çek ve senetler (portföyde + tahsilde).
+  final double portfolio;
+
+  /// Vadesi bu ay olan, sonuçlanmamış kayıtlar.
+  final double monthIn;
+  final double monthOut;
+  final double overdueAmount;
+  final int overdueCount;
+
+  /// Vadesi önümüzdeki 7 gün içinde.
+  final int soonCount;
+}
+
+ChequeSummary chequeSummary(Iterable<FinanceCheque> all, DateTime today) {
+  var portfolio = 0.0, monthIn = 0.0, monthOut = 0.0, overdue = 0.0;
+  var overdueCount = 0, soon = 0;
+  final week = today.add(const Duration(days: 7));
+  for (final c in all) {
+    if (!c.isOpen) continue;
+    if (c.direction == ChequeDirection.received) portfolio += c.amount;
+    if (c.dueOn.isBefore(today)) {
+      overdue += c.amount;
+      overdueCount++;
+    } else if (!c.dueOn.isAfter(week)) {
+      soon++;
+    }
+    if (_sameMonth(c.dueOn, today)) {
+      if (c.direction == ChequeDirection.received) {
+        monthIn += c.amount;
+      } else {
+        monthOut += c.amount;
+      }
+    }
+  }
+  return ChequeSummary(
+    portfolio: portfolio,
+    monthIn: monthIn,
+    monthOut: monthOut,
+    overdueAmount: overdue,
+    overdueCount: overdueCount,
+    soonCount: soon,
+  );
 }
 
 /// Toplamı [count] aylık taksite böler: tutarlar tam lira, kuruş farkı son
@@ -1175,6 +1469,21 @@ abstract interface class FinanceRepository {
 
   Future<Map<String, TeacherPayRate>> fetchTeacherPayRates();
   Future<void> saveTeacherPayRate(TeacherPayRate rate);
+
+  /// Çek ve senetler, vadesi en yakın önce.
+  Future<List<FinanceCheque>> fetchCheques();
+  Future<void> addCheque(ChequeDraft draft);
+  Future<void> deleteCheque(String id);
+
+  /// Durum değiştirir; tahsil edilince ücrete ya da gelire, ödenince gidere
+  /// işler, geri alınınca o kaydı iptal eder.
+  Future<void> setChequeStatus(
+    String id,
+    ChequeStatus status, {
+    DateTime? on,
+    String? accountId,
+    String? endorsedTo,
+  });
 }
 
 class SupabaseFinanceRepository implements FinanceRepository {
@@ -1476,7 +1785,7 @@ class SupabaseFinanceRepository implements FinanceRepository {
           .from('finance_expenses')
           .select(
             'id, spent_on, category, amount, note, coach_id, coach_name, '
-            'teacher_id, teacher_name, account_id',
+            'teacher_id, teacher_name, staff_id, staff_name, account_id',
           )
           .order('spent_on', ascending: false)
           .order('created_at', ascending: false)
@@ -1495,6 +1804,7 @@ class SupabaseFinanceRepository implements FinanceRepository {
         'note': d.note,
         'coach_id': d.coachId,
         'teacher_id': d.teacherId,
+        'staff_id': d.staffId,
         'account_id': d.accountId,
       });
 
@@ -1539,6 +1849,59 @@ class SupabaseFinanceRepository implements FinanceRepository {
         'amount': r.amount,
         'note': r.note,
       });
+
+  @override
+  Future<List<FinanceCheque>> fetchCheques() async {
+    final rows = await fetchAllPages(
+      (from, to) => _client
+          .from('finance_cheques')
+          .select()
+          .order('due_on')
+          .order('id')
+          .range(from, to),
+    );
+    return [for (final r in rows) FinanceCheque.fromJson(r)];
+  }
+
+  @override
+  Future<void> addCheque(ChequeDraft d) =>
+      _client.from('finance_cheques').insert({
+        'direction': d.direction.db,
+        'kind': d.kind.db,
+        'serial_no': d.serialNo,
+        'bank': d.bank,
+        'party_name': d.partyName,
+        'student_id': d.studentId,
+        'fee_id': d.feeId,
+        'amount': d.amount,
+        'issue_on': d.issueOn == null ? null : _ymd(d.issueOn!),
+        'due_on': _ymd(d.dueOn),
+        // İlk durumu sunucu yazar; sütun boş geçilemediği için yer tutucu.
+        'status': 'portfolio',
+        'note': d.note,
+      });
+
+  @override
+  Future<void> deleteCheque(String id) =>
+      _client.from('finance_cheques').delete().eq('id', id);
+
+  @override
+  Future<void> setChequeStatus(
+    String id,
+    ChequeStatus status, {
+    DateTime? on,
+    String? accountId,
+    String? endorsedTo,
+  }) => _client.rpc(
+    'set_cheque_status',
+    params: {
+      'p_id': id,
+      'p_status': status.db,
+      'p_on': on == null ? null : _ymd(on),
+      'p_account': accountId,
+      'p_endorsed_to': endorsedTo,
+    },
+  );
 }
 
 final financeRepositoryProvider = Provider<FinanceRepository>(
@@ -1559,6 +1922,10 @@ final coachPayRatesProvider = FutureProvider<Map<String, CoachPayRate>>(
 
 final teacherPayRatesProvider = FutureProvider<Map<String, TeacherPayRate>>(
   (ref) => ref.watch(financeRepositoryProvider).fetchTeacherPayRates(),
+);
+
+final financeChequesProvider = FutureProvider<List<FinanceCheque>>(
+  (ref) => ref.watch(financeRepositoryProvider).fetchCheques(),
 );
 
 final financeIncomesProvider = FutureProvider<List<FinanceIncome>>(

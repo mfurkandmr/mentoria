@@ -11,6 +11,7 @@ flutter run --dart-define-from-file=env.json          # real Supabase (copy env.
 flutter run --dart-define=DEMO=true                    # no backend, in-memory sample data
 flutter run --dart-define=DEMO=true --dart-define=DEMO_ROLE=coach   # student (default) | coach | admin | parent
 flutter run --dart-define=DEMO=true --dart-define=DEMO_TENANT=yildiz  # white-label preview
+flutter run --dart-define=DEMO=true --dart-define=DEMO_RICH=true  # crowded demo (24 students, 4 coaches; web /demo uses this, tests don't)
 flutter test                                           # all Dart tests
 flutter test test/exams/exam_logic_test.dart           # single file
 flutter test --plain-name "koddaki her tr() metninin"  # single test by name

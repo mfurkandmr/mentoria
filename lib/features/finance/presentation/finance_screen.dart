@@ -14,6 +14,7 @@ import '../../auth/data/profile.dart';
 import '../../coach/data/coach_repository.dart';
 import '../data/finance_excel.dart';
 import '../data/finance_repository.dart';
+import 'cheques_ui.dart';
 import 'finance_plus_ui.dart';
 import 'teacher_pay_ui.dart';
 
@@ -57,7 +58,7 @@ class _FinanceScreenState extends ConsumerState<FinanceScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 6,
+      length: 7,
       child: Scaffold(
         appBar: AppBar(
           title: Text(tr('Finans')),
@@ -79,6 +80,7 @@ class _FinanceScreenState extends ConsumerState<FinanceScreen> {
               Tab(text: tr('Giderler')),
               Tab(text: tr('Hesaplar')),
               Tab(text: tr('Koç ve öğretmen')),
+              Tab(text: tr('Çek ve senet')),
             ],
           ),
         ),
@@ -90,6 +92,7 @@ class _FinanceScreenState extends ConsumerState<FinanceScreen> {
             _ExpensesTab(),
             AccountsTab(),
             _CoachesTab(),
+            ChequesTab(),
           ],
         ),
       ),
@@ -439,6 +442,7 @@ class _SummaryTabState extends ConsumerState<_SummaryTab> {
                 ),
               ],
             ),
+            const ChequesDueBanner(),
             const SizedBox(height: 12),
             SectionCard(
               title: tr('Son 6 ay'),
@@ -1232,6 +1236,7 @@ class _ExpensesTab extends ConsumerWidget {
                         e.category.label,
                         if (e.coachName != null) e.coachName!,
                         if (e.teacherName != null) e.teacherName!,
+                        if (e.staffName != null) e.staffName!,
                       ].join(' · '),
                     ),
                     subtitle: Text(
@@ -1287,6 +1292,7 @@ Future<void> showAddExpense(
   BuildContext context, {
   ExpenseCategory category = ExpenseCategory.rent,
   String? coachId,
+  String? staffId,
   double? amount,
   String? note,
 }) => showModalBottomSheet<void>(
@@ -1296,6 +1302,7 @@ Future<void> showAddExpense(
   builder: (_) => _AddExpenseSheet(
     category: category,
     coachId: coachId,
+    staffId: staffId,
     amount: amount,
     note: note,
   ),
@@ -1305,12 +1312,16 @@ class _AddExpenseSheet extends ConsumerStatefulWidget {
   const _AddExpenseSheet({
     required this.category,
     this.coachId,
+    this.staffId,
     this.amount,
     this.note,
   });
 
   final ExpenseCategory category;
   final String? coachId;
+
+  /// Personel kartından açıldıysa ödeme o karta bağlanır.
+  final String? staffId;
   final double? amount;
   final String? note;
 
@@ -1358,7 +1369,8 @@ class _AddExpenseSheetState extends ConsumerState<_AddExpenseSheet> {
               category: _category,
               amount: amount,
               note: _note.text.trim().isEmpty ? null : _note.text.trim(),
-              coachId: _forCoach ? _coach : null,
+              coachId: _forCoach && widget.staffId == null ? _coach : null,
+              staffId: widget.staffId,
               accountId: _account,
             ),
           ),
@@ -1401,7 +1413,7 @@ class _AddExpenseSheetState extends ConsumerState<_AddExpenseSheet> {
               ],
               onChanged: (v) => setState(() => _category = v ?? _category),
             ),
-            if (_forCoach) ...[
+            if (_forCoach && widget.staffId == null) ...[
               const SizedBox(height: 10),
               DropdownButtonFormField<String?>(
                 initialValue: _coach,
@@ -1751,6 +1763,9 @@ Future<void> showFinanceExportDialog(
   final transfers = await ref
       .read(financeTransfersProvider.future)
       .catchError((_) => <FinanceTransfer>[]);
+  final cheques = await ref
+      .read(financeChequesProvider.future)
+      .catchError((_) => <FinanceCheque>[]);
   if (!context.mounted) return;
   // Kayıtların olduğu yıllar + bu yıl.
   final years = {
@@ -1775,6 +1790,7 @@ Future<void> showFinanceExportDialog(
       incomes: incomes,
       accounts: accounts,
       transfers: transfers,
+      cheques: cheques,
     );
     await SharePlus.instance.share(
       ShareParams(

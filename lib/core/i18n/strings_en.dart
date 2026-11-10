@@ -3698,4 +3698,202 @@ const enStrings = <String, String>{
   '{m} sabit ödeme': '{m} fixed payment',
   'Bu öğretmen artık kurumda kayıtlı değil.':
       'This teacher is no longer registered at the institution.',
+  'Bu ay öğrenci tahsilatı': 'Student payments this month',
+  'Öğrenci ödemelerinin ayrıntısı Ücretler sekmesinde. Aşağıda ücret dışı gelirler var.':
+      'Student payment details are in the Fees tab. Non-fee income is listed below.',
+  // Personel ve çek (NOTLAR §80)
+  'Personel': 'Staff',
+  'Müdür yardımcısı': 'Assistant manager',
+  'Rehber öğretmen': 'Guidance counsellor',
+  'Sekreter': 'Secretary',
+  'Muhasebe': 'Accounting',
+  'Temizlik': 'Cleaning',
+  'Tam zamanlı': 'Full time',
+  'Yarı zamanlı': 'Part time',
+  'Ders saati ücretli': 'Paid per lesson hour',
+  'Yıllık izin': 'Annual leave',
+  'Raporlu': 'Sick leave',
+  'Ücretsiz izin': 'Unpaid leave',
+  'Mazeret izni': 'Excused leave',
+  'Bu tarihlerde kişinin başka bir izni var.':
+      'This person already has leave on these dates.',
+  'Bu koç ya da öğretmenin zaten bir kartı var.':
+      'This coach or teacher already has a card.',
+  'Çalışan kartları, izinler ve ödemeler': 'Staff cards, leave and payments',
+  '{n} çalışan; izin ve ödemeler': '{n} staff; leave and payments',
+  'Personel ekle': 'Add staff',
+  'Aktif çalışan': 'Active staff',
+  'Bugün izinde': 'On leave today',
+  'Aylık sabit ücret': 'Monthly fixed pay',
+  'Saatlik ödemeler hariç': 'Excluding hourly pay',
+  'Ad ara': 'Search by name',
+  'Diğer personel': 'Other staff',
+  'Ayrılanlar': 'Former staff',
+  'Bu listede kimse yok.': 'Nobody on this list.',
+  'Personel kartı': 'Staff card',
+  'Bu kişi artık listede yok.': 'This person is no longer listed.',
+  'Haftalık ders': 'Weekly lessons',
+  '{h} ders saati': '{h} lesson hours',
+  'İşe giriş': 'Start date',
+  'Ayrılış': 'End date',
+  'Acil durumda': 'Emergency contact',
+  'Henüz kart açılmadı. Bilgileri düzenleyince kart açılır.':
+      'No card yet. Editing the details creates one.',
+  'İzinler': 'Leave',
+  '{y} yıllık izin: {u} / {r} gün': '{y} annual leave: {u} / {r} days',
+  'İzin ekle': 'Add leave',
+  'İzin kaydı yok.': 'No leave records.',
+  '{k} · {n} gün': '{k} · {n} days',
+  'İzin kaydı silinsin mi?': 'Delete this leave record?',
+  'Başlangıç: {d}': 'Start: {d}',
+  'Bitiş: {d}': 'End: {d}',
+  'Sağlık ayrıntısı yazma.': 'Do not enter health details.',
+  '{y} toplamı: {v}': '{y} total: {v}',
+  'Ödeme kaydı yok.': 'No payment records.',
+  'Adı yaz.': 'Enter the name.',
+  'Yıllık izin 0-60 gün olabilir.': 'Annual leave can be 0-60 days.',
+  'Ayrılış günü işe girişten önce olamaz.':
+      'The end date cannot be before the start date.',
+  'Kart ve izinler silinir; koç hesabı ya da ders programındaki öğretmen silinmez.':
+      'The card and leave are deleted; the coach account or timetable teacher stays.',
+  'Kart ve izinler silinir; ödeme kayıtları adıyla kalır. Çalışan ayrıldıysa ayrılış günü girmek daha iyi.':
+      'The card and leave are deleted; payment records keep the name. If the person left, entering an end date is better.',
+  'Kartı düzenle': 'Edit card',
+  'Çalışma şekli': 'Employment type',
+  'Yıllık izin hakkı (gün)': 'Annual leave allowance (days)',
+  'Acil durumda aranacak kişi': 'Emergency contact name',
+  'Acil durum telefonu': 'Emergency contact phone',
+  'Kimlik numarası ve sağlık bilgisi yazma; gerekmeyen kişisel bilgi tutma.':
+      'Do not enter ID numbers or health details; keep only necessary personal data.',
+  'Alınan': 'Received',
+  'Verilen': 'Given',
+  'Çek': 'Cheque',
+  'Senet': 'Promissory note',
+  'Portföyde': 'In portfolio',
+  'Tahsilde': 'At the bank',
+  'Tahsil edildi': 'Collected',
+  'Ciro edildi': 'Endorsed',
+  'Karşılıksız': 'Bounced',
+  'İade edildi': 'Returned',
+  'Portföye geri al': 'Return to portfolio',
+  'Tahsile ver': 'Deposit at the bank',
+  'Tahsil edildi olarak işle': 'Mark as collected',
+  'Ciro et': 'Endorse',
+  'Karşılıksız olarak işle': 'Mark as bounced',
+  'İade et': 'Return',
+  'Bekliyor durumuna geri al': 'Return to pending',
+  'Ödendi olarak işle': 'Mark as paid',
+  'Bu kayıt bu duruma geçirilemez.': 'This record cannot move to that status.',
+  'İşlem görmüş kayıt silinemez; önceki duruma geri al.':
+      'A processed record cannot be deleted; return it to its previous status.',
+  'Ciro edilen kişiyi yaz.': 'Enter the endorsee.',
+  'Çek ve senet': 'Cheques and notes',
+  'Tahsilde olanlar dahil': 'Including those at the bank',
+  'Vadesi geçen': 'Overdue',
+  'Bu ay alınacak': 'Receivable this month',
+  'Bu ay ödenecek': 'Payable this month',
+  'Çek / senet ekle': 'Add cheque / note',
+  'Veliden ya da kişilerden alınan çek ve senet yok.':
+      'No cheques or notes received.',
+  'Kurumun verdiği çek ve senet yok.':
+      'No cheques or notes issued by the institution.',
+  'Vadesi geçti': 'Overdue',
+  '{n} kaydın vadesi geçti': '{n} records are overdue',
+  '{n} kaydın vadesi 7 gün içinde': '{n} records are due within 7 days',
+  'İşlem geri alınsın mı?': 'Undo this action?',
+  'Tahsilat makbuzu iptal edilir.': 'The collection receipt will be voided.',
+  'Yazılan gider silinir.': 'The recorded expense will be deleted.',
+  'Düzenleme: {d}': 'Issued: {d}',
+  'Ciro edilen: {n}': 'Endorsed to: {n}',
+  'Makbuz: {n}': 'Receipt: {n}',
+  'Kaydı sil': 'Delete record',
+  'Ciro edilen kişi': 'Endorsee',
+  'Kişi ya da kurum adını yaz.': 'Enter a person or organisation name.',
+  'Alınan çek / senet': 'Received cheque / note',
+  'Verilen çek / senet': 'Issued cheque / note',
+  'Kimden': 'From',
+  'Seri no': 'Serial no',
+  'Düzenleme tarihi (isteğe bağlı)': 'Issue date (optional)',
+  'Hangi ücrete sayılsın': 'Apply to which fee',
+  'Seçilmezse tahsil edilince ücret dışı gelir yazılır.':
+      'If none is selected, it is recorded as non-fee income when collected.',
+  '{t} · kalan {v}': '{t} · {v} remaining',
+  'Seçilen ücret bu öğrenciye ait değil.':
+      'The selected fee does not belong to this student.',
+  'Bu personel kartı artık yok.': 'This staff card no longer exists.',
+  'Yön': 'Direction',
+  'Kişi': 'Person',
+  'Ara': 'Call',
+  // Kurum sınavı akışı (NOTLAR §81)
+  'Yayın kontrolü': 'Publishing check',
+  'Üçü de tamam olunca sonuçlar yayınlanır.':
+      'Results can be published when all three are complete.',
+  'Cevap anahtarı tam': 'Answer key complete',
+  '{n} sorunun cevabı eksik': '{n} questions have no answer',
+  'Bütün soruların kazanımı var': 'All questions have outcomes',
+  '{n} sorunun kazanımı eksik': '{n} questions have no outcome',
+  'Optik çıktısı yüklendi': 'Optic output uploaded',
+  'Optik çıktısı yüklenmedi': 'Optic output not uploaded',
+  'Optik okuyucu çıktısını yükle': 'Upload the optic reader output',
+  'Cevabı ya da kazanımı eksik soru var; önce tamamla.':
+      'Some questions have no answer or outcome; complete them first.',
+  'Cevap anahtarı, kazanım ve optik çıktısını yükle':
+      'Upload the answer key, outcomes and optic output',
+  'Yanlış ve boşlar ({n})': 'Wrong and blank ({n})',
+  'Bütün sorular ({n})': 'All questions ({n})',
+  'Bu sınavda yanlış ya da boş soru yok.':
+      'No wrong or blank questions in this exam.',
+  'Doğru · cevap {c}': 'Correct · answer {c}',
+  'Cevap {m} · doğrusu {c}': 'Answered {m} · correct answer {c}',
+  'Sınav analizleri': 'Exam analyses',
+  'Son sınav analizi': 'Latest exam analysis',
+  '{c} doğru · {w} yanlış · {b} boş · {n} net':
+      '{c} correct · {w} wrong · {b} blank · {n} net',
+  'En çok net kaybedilen konular': 'Topics losing the most net',
+  'Yanlışları gör': 'See mistakes',
+  'Soru soru analiz ve karne': 'Question analysis and report card',
+  'Sınav yükle': 'Upload exam',
+  // Kitap raporu (NOTLAR §82)
+  'Kitap raporu': 'Book report',
+  'Hangi öğrenci hangi kitaptan kaç soru çözdü':
+      'Which student solved how many questions from which book',
+  'Kitaptan çözen öğrenci': 'Students solving from books',
+  'Öğrenciye göre': 'By student',
+  'Kitaba göre': 'By book',
+  'Öğrenci, numara ya da kitap ara': 'Search student, number or book',
+  'Bu dönem öğrenci kitabı yok. Öğrenciler Kitaplarım ekranından kitap seçip çözdüğü soruyu girince burada görünür.':
+      'No student books this term. They appear here when students pick books and enter solved questions in My Books.',
+  'Bu süzgeçle kayıt yok.': 'No records with this filter.',
+  '{n} kitap': '{n} books',
+  // Sınav paketi (NOTLAR §83)
+  'Dosyalardan sınav kur': 'Create exam from files',
+  'Bu sınavda birden çok kitapçık var. Optik .txt çıktısını Kurum sınavları > Dosyalardan sınav kur ile anahtar ve kazanım tablosuyla birlikte yükle.':
+      'This exam has several booklets. Upload the optic .txt output with the answer key and outcome table via Institution exams > Create exam from files.',
+  'Optik çıktısının satırları okunamadı.':
+      'The optic output lines could not be read.',
+  'Optik okuyucunun verdiği dosyayı seç: Excel, CSV ya da makinenin sabit sütunlu .txt çıktısı. Her satır bir öğrenci.':
+      'Pick the optic reader\'s file: Excel, CSV or the machine\'s fixed-width .txt output. One student per row.',
+  'Sınav türü anlaşılmadı: "{d}". Şimdilik yalnızca TYT dosyadan kurulur.':
+      'Exam type not recognised: "{d}". Only TYT can be created from files for now.',
+  'Bölüm listesi ders sırasıyla uyuşmuyor: {d}':
+      'The section list does not match the subject order: {d}',
+  'Cevap anahtarı soru sayısını tutmuyor: {d}':
+      'The answer key does not match the question count: {d}',
+  'Kazanım tablosundaki cevap anahtarla çelişiyor (soru {d}).':
+      'The outcome table answer conflicts with the key (question {d}).',
+  'B kitapçığının soru yerleri eksik ya da tekrarlı.':
+      'Booklet B question positions are missing or repeated.',
+  'B anahtarı A ile çelişiyor (soru {d}).':
+      'The B key conflicts with A (question {d}).',
+  'Optik çıktısının {d}. satırı okunamadı.':
+      'Line {d} of the optic output could not be read.',
+  '{n} ({no}): kitapçık boştu. {b} sayıldı; {b} anahtarıyla {c} doğru, öbürüyle {o} doğru.':
+      '{n} ({no}): booklet was blank. Counted as {b}; {c} correct with the {b} key, {o} with the other.',
+  'Dosyalar kullanılamadı': 'The files could not be used',
+  'Cevap anahtarı dosyası bulunamadı ("A KITAPÇIĞI" satırı olmalı).':
+      'No answer key file found (it needs an "A KITAPÇIĞI" line).',
+  'Kazanım tablosu bulunamadı ("soru_no" başlığı olmalı).':
+      'No outcome table found (it needs a "soru_no" header).',
+  'Sınav kaydedilemedi. Tekrar dene.':
+      'The exam could not be saved. Try again.',
 };

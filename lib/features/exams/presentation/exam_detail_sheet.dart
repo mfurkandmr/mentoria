@@ -99,6 +99,26 @@ class ExamDetailSheet extends ConsumerWidget {
               ].join(' · '),
               style: text.bodySmall?.copyWith(color: muted),
             ),
+            // Kurum sınavıysa soru soru analiz, konu analizi ve karne.
+            if (ref
+                    .watch(reportCardsProvider(studentId))
+                    .value
+                    ?.any((c) => c.examId == exam.id) ??
+                false)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: FilledButton.icon(
+                  key: const ValueKey('open-exam-card'),
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) =>
+                          ReportCardScreen(examId: exam.id, initialTab: 2),
+                    ),
+                  ),
+                  icon: const Icon(Icons.assignment_outlined),
+                  label: Text(tr('Soru soru analiz ve karne')),
+                ),
+              ),
             const SizedBox(height: 16),
             Table(
               columnWidths: const {
@@ -153,25 +173,6 @@ class ExamDetailSheet extends ConsumerWidget {
               padding: const EdgeInsets.only(top: 12),
               child: ExamAnswersView(examId: exam.id),
             ),
-            // Kurum sınavıysa karne (sıralama, konu analizi, PDF).
-            if (ref
-                    .watch(reportCardsProvider(studentId))
-                    .value
-                    ?.any((c) => c.examId == exam.id) ??
-                false)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: OutlinedButton.icon(
-                  key: const ValueKey('open-exam-card'),
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => ReportCardScreen(examId: exam.id),
-                    ),
-                  ),
-                  icon: const Icon(Icons.assignment_outlined),
-                  label: Text(tr('Karneyi aç')),
-                ),
-              ),
             if (canDelete && !exam.editable) ...[
               const SizedBox(height: 8),
               Row(

@@ -60,14 +60,9 @@ class CockpitHeader extends ConsumerWidget {
       actions: [
         if (examActions) ...[
           IconButton(
-            tooltip: tr('Yüklediğin denemeler'),
-            icon: const Icon(Icons.fact_check_outlined),
-            onPressed: () => context.push('$basePath/exams'),
-          ),
-          IconButton(
-            tooltip: tr('Deneme sonuçlarını yükle'),
+            tooltip: tr('Sınav yükle'),
             icon: const Icon(Icons.upload_file),
-            onPressed: () => context.push('$basePath/import'),
+            onPressed: () => context.push('$basePath/org-exams'),
           ),
         ],
         if (showPending) PendingWorkButton(basePath: basePath),

@@ -130,3 +130,9 @@
       `finance_expenses` öğretmenin ücretini, ödemelerini ve müdürün notunu tutar;
       öğretmenin uygulama hesabı olmayabilir. Veri envanterine, veri işleme
       sözleşmesine ve aydınlatma metnine eklenmeli; saklama süresi avukata sorulsun.
+- [ ] Personel (9 Kasım 2026, NOTLAR.md §80): `staff_members` çalışanın adı, görevi,
+      telefonu, e-postası, işe giriş/ayrılış, maaşı, izinleri ve acil durum kişisini tutar;
+      izin türünde "raporlu" sağlıkla ilişkili sayılabilir (KVKK özel nitelikli veri), avukata
+      sorulsun. Veri envanteri, çalışan aydınlatma metni ve saklama süresi eklenmeli.
+- [ ] Çek / senet (9 Kasım 2026, NOTLAR.md §80): keşideci / lehtar adı, öğrenci bağlantısı ve
+      banka bilgisi tutuluyor. Mali kayıt saklama süresi ve envantere ekleme avukata sorulsun.

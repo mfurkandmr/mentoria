@@ -95,9 +95,11 @@ void main() {
       }
       // Kurum finansı müdürün kendi kayıt defteri (dershane ücretleri, ₺
       // gösterir); Mentoria satışı değil. Satın alma sözcükleri orada da yasak.
-      final finance = f.path
-          .replaceAll(r'\', '/')
-          .contains('lib/features/finance/');
+      // Personel maaşı da aynı defterin parçası.
+      final path = f.path.replaceAll(r'\', '/');
+      final finance =
+          path.contains('lib/features/finance/') ||
+          path.contains('lib/features/staff/');
       final lines = f.readAsLinesSync();
       for (final (i, l) in lines.indexed) {
         final t = l.trimLeft();

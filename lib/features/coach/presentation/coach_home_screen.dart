@@ -35,6 +35,7 @@ import '../../schedule_generator/data/timetable_repository.dart';
 import '../../schedule_generator/presentation/my_timetable.dart';
 import '../../student_books/data/books_repository.dart';
 import '../../student_books/presentation/book_pool_screen.dart';
+import '../../student_books/presentation/book_report_screen.dart';
 import '../../student_management/data/student_management_repository.dart';
 import '../../student_management/presentation/students_screen.dart';
 import '../../tracking/presentation/study_view.dart' show formatMinutes;
@@ -287,6 +288,7 @@ class _CoachStudentsTabState extends ConsumerState<_CoachStudentsTab> {
         attendanceTool(ref, '/coach'),
         ?timetable,
         bookPoolTool(ref, '/coach'),
+        bookReportTool('/coach'),
         ToolInfo(
           id: 'tool-homework',
           icon: Icons.assignment_add,
@@ -436,19 +438,13 @@ class _CoachBodyState extends ConsumerState<_CoachBody> {
           ToolGrid(
             warnColor: Tone.warn.of(context),
             tools: [
-              ToolInfo(
-                id: 'tool-optic',
-                icon: Icons.document_scanner_outlined,
-                title: tr('Optik oku'),
-                status: tr('Optik formları telefonla oku'),
-                open: (c) => c.push('/coach/optic'),
-              ),
               attendanceTool(ref, '/coach'),
               ?timetable,
               studentsTool(ref, '/coach'),
               orgExamsTool(ref, '/coach'),
               trendsTool('/coach'),
               bookPoolTool(ref, '/coach'),
+              bookReportTool('/coach'),
             ],
           ),
         ],

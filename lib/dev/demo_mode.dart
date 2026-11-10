@@ -54,6 +54,9 @@ import 'demo_students.dart';
 import 'demo_timetable.dart';
 import 'demo_finance.dart';
 import 'demo_optic.dart';
+import 'demo_rich.dart';
+import 'demo_staff.dart';
+import '../features/staff/data/staff_repository.dart';
 import '../features/client_errors/data/client_error_repository.dart';
 import 'demo_repositories.dart';
 
@@ -115,33 +118,34 @@ Future<List<Override>> buildDemoOverrides([
   await seedDemoTracking(tracking, 'demo-student');
   await seedDemoTracking(tracking, 'demo-can', scale: 0.5);
   await seedDemoCoaching(coaching, 'demo-student');
+  if (demoRichEnabled) {
+    await seedDemoTracking(tracking, richZeynep.id, scale: richZeynep.activity);
+    await seedRichStudents(tracking, coaching);
+  }
   // Can hesabının silinmesini istemiş (koç panelinde rozet görünsün).
   final deletionRequests = {
     'demo-can': DateTime.now().subtract(const Duration(days: 1)),
   };
 
+  // Koç yalnızca kendi öğrencilerini görür (küçük demoda hepsi görünür).
+  final visibleStudents = demoRichEnabled && role == 'coach'
+      ? {
+          for (final e in demoStudents().entries)
+            if (demoCoachOf()[e.key] == 'demo-coach') e.key: e.value,
+        }
+      : demoStudents();
+
   final coach = InMemoryCoachRepository(
     exams,
-    demoStudents(),
+    visibleStudents,
     tracking: tracking,
     coaching: coaching,
-    coaches: {
-      'demo-student': 'demo-coach',
-      'demo-can': 'demo-coach',
-      'demo-zeynep': 'demo-coach-2',
-    },
-    coachNames: const {
-      'demo-coach': 'Ayşe Koç',
-      'demo-coach-2': 'Burak Yıldız',
-    },
+    coaches: demoCoachOf(),
+    coachNames: demoCoachNames(),
     deletionRequests: deletionRequests,
   );
 
-  final meetingCoaches = {
-    'demo-student': 'demo-coach',
-    'demo-can': 'demo-coach',
-    'demo-zeynep': 'demo-coach-2',
-  };
+  final meetingCoaches = demoCoachOf();
   final meetings = InMemoryMeetingRepository(
     myId: switch (role) {
       'coach' => 'demo-coach',
@@ -156,8 +160,7 @@ Future<List<Override>> buildDemoOverrides([
     },
     names: {
       for (final e in demoStudents().entries) e.key: e.value.$1,
-      'demo-coach': 'Ayşe Koç',
-      'demo-coach-2': 'Burak Yıldız',
+      ...demoCoachNames(),
     },
   );
   seedDemoMeetings(meetings);
@@ -281,6 +284,14 @@ Future<List<Override>> buildDemoOverrides([
         role: UserRole.coach,
         createdAt: now,
       ),
+      if (demoRichEnabled)
+        for (final e in richCoachNames.entries)
+          OrgMember(
+            id: e.key,
+            fullName: e.value,
+            role: UserRole.coach,
+            createdAt: now,
+          ),
       for (final e in demoStudents().entries)
         OrgMember(
           id: e.key,
@@ -315,6 +326,40 @@ Future<List<Override>> buildDemoOverrides([
     rewardRanks: ranking.rewardRanks,
   );
 
+  final demoStaff = InMemoryStaffRepository.demo();
+  final demoFinance =
+      finance ??
+      InMemoryFinanceRepository.demo(
+        students: {for (final e in demoStudents().entries) e.key: e.value.$1},
+        coaches: demoCoachNames(),
+        teachers: demoTimetable.teacherNames,
+        teacherLookup: (id) => demoTimetable.teacherNames[id],
+        staffLookup: demoStaff.nameOf,
+        staffSalaries: demoStaff.salaries(),
+      );
+  CockpitRepository demoCockpit;
+  if (cockpit != null) {
+    demoCockpit = cockpit;
+  } else if (demoRichEnabled) {
+    final data = richCockpitData(
+      students: await coach.fetchStudents(),
+      examsOf: exams.examsOf,
+      fees: await demoFinance.fetchFees(),
+      coachNames: demoCoachNames(),
+      examPlans: demoCockpitData().examPlans,
+    );
+    demoCockpit = InMemoryCockpitRepository(
+      data: data,
+      weeks: richActivityWeeks(
+        students: data.students,
+        active: data.active,
+        questions: data.questions,
+      ),
+    );
+  } else {
+    demoCockpit = InMemoryCockpitRepository();
+  }
+
   return [
     currentProfileProvider.overrideWith(
       (ref) async => Profile(
@@ -335,30 +380,17 @@ Future<List<Override>> buildDemoOverrides([
     coachingRepositoryProvider.overrideWithValue(coaching),
     accountRepositoryProvider.overrideWithValue(account),
     adminRepositoryProvider.overrideWithValue(admin),
-    cockpitRepositoryProvider.overrideWithValue(
-      cockpit ?? InMemoryCockpitRepository(),
-    ),
+    cockpitRepositoryProvider.overrideWithValue(demoCockpit),
     presenceRepositoryProvider.overrideWithValue(
       const NoopPresenceRepository(),
     ),
-    financeRepositoryProvider.overrideWithValue(
-      finance ??
-          InMemoryFinanceRepository.demo(
-            students: {
-              for (final e in demoStudents().entries) e.key: e.value.$1,
-            },
-            coaches: const {
-              'demo-coach': 'Ayşe Koç',
-              'demo-coach-2': 'Burak Yıldız',
-            },
-            teachers: demoTimetable.teacherNames,
-          ),
-    ),
+    financeRepositoryProvider.overrideWithValue(demoFinance),
+    staffRepositoryProvider.overrideWithValue(demoStaff),
     attendanceRepositoryProvider.overrideWithValue(
       attendance ??
           InMemoryAttendanceRepository.demo(
             students: {
-              for (final e in demoStudents().entries) e.key: e.value.$1,
+              for (final e in visibleStudents.entries) e.key: e.value.$1,
             },
           ),
     ),
@@ -367,12 +399,11 @@ Future<List<Override>> buildDemoOverrides([
       students ??
           InMemoryStudentManagementRepository(
             timetable: demoTimetable,
-            students: demoStudents(),
-            coachOf: {for (final s in demoStudents().keys) s: 'demo-coach'},
-            coaches: const {
-              'demo-coach': 'Ayşe Koç',
-              'demo-coach-2': 'Burak Yıldız',
-            },
+            students: visibleStudents,
+            coachOf: demoRichEnabled
+                ? demoCoachOf()
+                : {for (final s in demoStudents().keys) s: 'demo-coach'},
+            coaches: demoCoachNames(),
             isAdmin: role == 'admin',
           ),
     ),
@@ -386,19 +417,26 @@ Future<List<Override>> buildDemoOverrides([
           InMemoryBooksRepository.demo(
             viewerId: profile.id,
             viewerRole: role,
-            managed: {...demoStudents().keys},
+            managed: {...visibleStudents.keys},
+            studentNames: {
+              for (final e in visibleStudents.entries) e.key: e.value.$1,
+            },
+            classOf: demoTimetable.classOf,
             children: const {'demo-student'},
           ),
     ),
     bulkSmsRepositoryProvider.overrideWithValue(
       bulkSms ??
-          InMemoryBulkSmsRepository(
+          (InMemoryBulkSmsRepository(
             phoneOf: {
-              for (final (i, id) in demoStudents().keys.indexed)
+              for (final (i, id) in demoStudents().keys.take(3).indexed)
                 id: i.isEven ? '+90532111223$i' : null,
+              if (demoRichEnabled)
+                for (final (i, s) in richStudents.indexed)
+                  s.id: richGuardian(i, s)?.$2,
             },
             classOf: (s) => demoTimetable.classOf(s)?.$1,
-          ),
+          )..seedHistory(demoRichEnabled ? richSmsHistory() : const [])),
     ),
     orgCreditsRepositoryProvider.overrideWithValue(
       credits ??
@@ -460,7 +498,7 @@ Future<List<Override>> buildDemoOverrides([
     ),
     examTrendRepositoryProvider.overrideWithValue(
       InMemoryExamTrendRepository(exams, {
-        for (final e in demoStudents().entries) e.key: e.value.$1,
+        for (final e in visibleStudents.entries) e.key: e.value.$1,
       }),
     ),
     dailyQuestionRepositoryProvider.overrideWithValue(
@@ -488,7 +526,74 @@ Map<String, (String, String?)> demoStudents() => {
   'demo-student': ('Elif Yılmaz', '1042'),
   'demo-can': ('Can Kaya', null),
   'demo-zeynep': ('Zeynep Arslan', '1077'),
+  if (demoRichEnabled)
+    for (final s in richStudents) s.id: (s.name, s.number),
 };
+
+/// Öğrenci → koç.
+Map<String, String> demoCoachOf() => {
+  'demo-student': 'demo-coach',
+  'demo-can': 'demo-coach',
+  'demo-zeynep': 'demo-coach-2',
+  if (demoRichEnabled)
+    for (final s in richStudents) s.id: s.coachId,
+};
+
+/// Koç → ad.
+Map<String, String> demoCoachNames() => {
+  'demo-coach': 'Ayşe Koç',
+  'demo-coach-2': 'Burak Yıldız',
+  if (demoRichEnabled) ...richCoachNames,
+};
+
+/// Kalabalık demonun öğrencileri: çalışma kayıtları, hedefleri, koç görevleri.
+Future<void> seedRichStudents(
+  InMemoryTrackingRepository tracking,
+  InMemoryCoachingRepository coaching,
+) async {
+  const targets = [
+    ('Orta Doğu Teknik Üniversitesi', 'Makine Mühendisliği', 8000),
+    ('Hacettepe Üniversitesi', 'Tıp', 1500),
+    ('Ankara Üniversitesi', 'Hukuk', 12000),
+    ('İstanbul Üniversitesi', 'İşletme', 30000),
+    ('Ege Üniversitesi', 'Eczacılık', 15000),
+    ('Gazi Üniversitesi', 'Türkçe Öğretmenliği', 40000),
+  ];
+  const tasks = [
+    ('Paragraf: günde 40 soru', 'TYT_TUR'),
+    ('Problemler: 80 soru', 'TYT_MAT'),
+    ('Fizik konu tekrarı + 40 soru', 'TYT_FIZ'),
+    ('Son deneme yanlışlarını çöz', null),
+  ];
+  final today = dateOnly(DateTime.now());
+  for (final (i, s) in richStudents.indexed) {
+    if (s.activity > 0) {
+      await seedDemoTracking(tracking, s.id, scale: s.activity);
+      final t = targets[i % targets.length];
+      await tracking.saveGoals(
+        s.id,
+        Goals(
+          dailyQuestions: 80 + i * 5,
+          dailyMinutes: 150 + i * 5,
+          targetUniversity: t.$1,
+          targetDepartment: t.$2,
+          targetRank: t.$3,
+        ),
+      );
+    }
+    for (var k = 0; k < 1 + i % 3; k++) {
+      final task = tasks[(i + k) % tasks.length];
+      await coaching.createTask(
+        s.id,
+        TaskDraft(
+          title: task.$1,
+          subjectCode: task.$2,
+          dueOn: today.add(Duration(days: 1 + (i + k) % 6)),
+        ),
+      );
+    }
+  }
+}
 
 /// Bellekte tutulan deneme deposu (demo ve testler için), öğrenci bazında.
 class InMemoryExamRepository implements ExamRepository {
@@ -521,6 +626,10 @@ class InMemoryExamRepository implements ExamRepository {
             ],
           ),
       ],
+      if (demoRichEnabled) ...{
+        richZeynep.id: richExamsOf(richZeynep, elif),
+        for (final s in richStudents) s.id: richExamsOf(s, elif),
+      },
     });
   }
 
@@ -866,6 +975,19 @@ void seedDemoBatches(InMemoryExamRepository exams) {
     results: [
       SubjectResult(code: 'TYT_TUR', correct: tur, wrong: 4, blank: 0),
       SubjectResult(code: 'TYT_MAT', correct: mat, wrong: 6, blank: 0),
+      // Kalabalık demoda deneme tam: yarım deneme son neti düşük gösteriyordu.
+      if (demoRichEnabled) ...[
+        for (final (code, correct) in const [
+          ('TYT_TAR', 4),
+          ('TYT_COG', 4),
+          ('TYT_FEL', 4),
+          ('TYT_DIN', 4),
+          ('TYT_FIZ', 6),
+          ('TYT_KIM', 6),
+          ('TYT_BIY', 5),
+        ])
+          SubjectResult(code: code, correct: correct, wrong: 1, blank: 0),
+      ],
     ],
   );
   final recent = now.subtract(const Duration(days: 2));

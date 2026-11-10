@@ -138,7 +138,7 @@ def build_flutter() -> None:
         cwd=ROOT, check=True)
     subprocess.run(
         [flutter, *common, "--base-href", DEMO_BASE, "-o", "build/web_demo",
-         "--dart-define=DEMO=true"],
+         "--dart-define=DEMO=true", "--dart-define=DEMO_RICH=true"],
         cwd=ROOT, check=True)
 
 

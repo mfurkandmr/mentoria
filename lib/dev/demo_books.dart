@@ -1,3 +1,4 @@
+import 'demo_rich.dart';
 import '../features/student_books/data/books_repository.dart';
 
 class _StudentBookRow {
@@ -28,6 +29,8 @@ class InMemoryBooksRepository implements BooksRepository {
     required this.viewerId,
     required this.viewerRole,
     this.managed = const {},
+    this.studentNames = const {},
+    this.classOf,
     this.children = const {},
     List<Book> pool = const [],
     this.now,
@@ -40,6 +43,10 @@ class InMemoryBooksRepository implements BooksRepository {
 
   /// Koç/müdürün yönettiği öğrenciler.
   final Set<String> managed;
+
+  /// Kitap raporu için öğrenci adı ve sınıfı (kimlik, ad).
+  final Map<String, String> studentNames;
+  final (String, String)? Function(String studentId)? classOf;
 
   /// Velinin çocukları.
   final Set<String> children;
@@ -78,6 +85,8 @@ class InMemoryBooksRepository implements BooksRepository {
     required String viewerRole,
     Set<String> managed = const {},
     Set<String> children = const {},
+    Map<String, String> studentNames = const {},
+    (String, String)? Function(String studentId)? classOf,
   }) {
     const pool = [
       Book(
@@ -142,11 +151,63 @@ class InMemoryBooksRepository implements BooksRepository {
       viewerId: viewerId,
       viewerRole: viewerRole,
       managed: managed,
+      studentNames: studentNames,
+      classOf: classOf,
       children: children,
-      pool: pool,
+      pool: [
+        ...pool,
+        if (demoRichEnabled)
+          const Book(
+            id: 'b-345',
+            name: '3-4-5 AYT Matematik',
+            publisher: '3-4-5 Yayınları',
+            subjectCode: 'AYT_MAT',
+          ),
+      ],
     );
     final term = repo._term;
     final today = DateTime.now();
+    if (demoRichEnabled) {
+      const pick = ['b-1', 'b-2', 'b-3', 'b-4', 'b-7', 'b-8'];
+      for (final (i, s) in richStudents.indexed) {
+        for (var k = 0; k < 2; k++) {
+          repo._books.add(
+            _StudentBookRow(
+              'sb-rich-$i-$k',
+              s.id,
+              pick[(i + k * 2) % pick.length],
+              term,
+              (i + k) % 5 == 0
+                  ? StudentBookStatus.finished
+                  : StudentBookStatus.active,
+              today.subtract(Duration(days: 20 + i + k * 7)),
+              'student',
+            ),
+          );
+          if (s.activity == 0) continue;
+          for (var d = 0; d < 3; d++) {
+            final q = ((30 + (i * 7 + k * 11) % 45) * s.activity).round();
+            repo._progress.add(
+              BookProgress(
+                id: 'bp-rich-$i-$k-$d',
+                studentBookId: 'sb-rich-$i-$k',
+                studiedOn: today.subtract(Duration(days: 2 + d * 4 + k)),
+                questions: q,
+                correct: (q * (0.55 + s.ability * 0.2)).round(),
+                wrong: (q * 0.2).round(),
+                blank:
+                    q -
+                    (q * (0.55 + s.ability * 0.2)).round() -
+                    (q * 0.2).round(),
+                enteredRole: 'student',
+                createdBy: s.id,
+                createdAt: today.subtract(Duration(days: 2 + d * 4 + k)),
+              ),
+            );
+          }
+        }
+      }
+    }
     for (final (i, b) in ['b-1', 'b-2', 'b-4'].indexed) {
       repo._books.add(
         _StudentBookRow(
@@ -159,6 +220,44 @@ class InMemoryBooksRepository implements BooksRepository {
           'student',
         ),
       );
+    }
+    if (demoRichEnabled) {
+      // Örnek döküm: Elif, 3-4-5 AYT Matematik'ten 239 soru.
+      repo._books.add(
+        _StudentBookRow(
+          'sb-elif-345',
+          'demo-student',
+          'b-345',
+          term,
+          StudentBookStatus.active,
+          today.subtract(const Duration(days: 35)),
+          'student',
+        ),
+      );
+      for (final (d, q) in const [60, 55, 48, 40, 36].indexed) {
+        final day = today.subtract(Duration(days: 3 + d * 6));
+        repo._progress.add(
+          BookProgress(
+            id: 'bp-elif-345-$d',
+            studentBookId: 'sb-elif-345',
+            studiedOn: day,
+            topicText: const [
+              'Trigonometri',
+              'Türev',
+              'İntegral',
+              'Limit',
+              'Logaritma',
+            ][d],
+            questions: q,
+            correct: q - 8,
+            wrong: 5,
+            blank: 3,
+            enteredRole: 'student',
+            createdBy: 'demo-student',
+            createdAt: day,
+          ),
+        );
+      }
     }
     for (var d = 0; d < 5; d++) {
       repo._progress.add(
@@ -456,6 +555,45 @@ class InMemoryBooksRepository implements BooksRepository {
     final p = _progress.where((x) => x.id == id).firstOrNull;
     if (p == null || !_canEdit(p)) throw StateError('NOT_ALLOWED');
     _progress.remove(p);
+  }
+
+  @override
+  Future<List<BookReportRow>> questionReport({String? term}) async {
+    final t = term ?? _term;
+    final rows = <BookReportRow>[];
+    for (final b in _books) {
+      if (!_isManager || !managed.contains(b.studentId) || b.term != t) {
+        continue;
+      }
+      final book = _pool.where((x) => x.id == b.bookId).firstOrNull;
+      if (book == null) continue;
+      final p = [
+        for (final x in _progress)
+          if (x.studentBookId == b.id) x,
+      ];
+      final last = p.isEmpty
+          ? null
+          : p.map((x) => x.studiedOn).reduce((a, c) => c.isAfter(a) ? c : a);
+      final cls = classOf?.call(b.studentId);
+      rows.add(
+        BookReportRow(
+          studentId: b.studentId,
+          studentName: studentNames[b.studentId] ?? b.studentId,
+          classroomId: cls?.$1,
+          classroomName: cls?.$2,
+          bookId: book.id,
+          bookName: book.name,
+          publisher: book.publisher,
+          subjectCode: book.subjectCode,
+          questions: p.fold(0, (s, x) => s + x.solved),
+          correct: p.fold(0, (s, x) => s + (x.correct ?? 0)),
+          wrong: p.fold(0, (s, x) => s + (x.wrong ?? 0)),
+          blank: p.fold(0, (s, x) => s + (x.blank ?? 0)),
+          lastStudied: last,
+        ),
+      );
+    }
+    return rows;
   }
 
   @override

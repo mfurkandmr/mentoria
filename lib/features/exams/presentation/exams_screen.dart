@@ -177,6 +177,8 @@ class _ExamsList extends StatelessWidget {
     final change = stats.lastChange;
 
     final top = <Widget>[
+      // Son kurum sınavı: hangi konuda ne yanlış yapıldı (sınav yoksa boş).
+      LastExamAnalysisCard(studentId: studentId),
       StatRow(
         children: [
           GlowStat(

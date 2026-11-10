@@ -1,6 +1,7 @@
 import '../features/schedule_generator/data/timetable_repository.dart';
 import '../features/schedule_generator/domain/models.dart';
 import '../features/schedule_generator/domain/schedule_generator.dart';
+import 'demo_rich.dart';
 
 class _Schedule {
   _Schedule(this.info, this.entries);
@@ -127,22 +128,30 @@ class InMemoryTimetableRepository implements TimetableRepository {
       Room(id: 'r-2', name: 'D-2', capacity: 20),
       Room(id: 'r-3', name: 'D-3', capacity: 20),
     ];
-    const classrooms = [
+    // Kalabalık demoda öğrenciler sınıflarına dağılır.
+    List<String> classOfRich(String classroomId) => [
+      if (demoRichEnabled)
+        for (final s in [richZeynep, ...richStudents])
+          if (s.classroomId == classroomId) s.id,
+    ];
+    final classrooms = [
       ClassroomRecord(
-        Classroom(id: 'c-say', name: 'Sayısal-1', homeRoomId: 'r-1'),
+        const Classroom(id: 'c-say', name: 'Sayısal-1', homeRoomId: 'r-1'),
         level: '12',
         field: 'SAY',
-        studentIds: ['demo-student', 'demo-can'],
+        studentIds: ['demo-student', 'demo-can', ...classOfRich('c-say')],
       ),
       ClassroomRecord(
-        Classroom(id: 'c-ea', name: 'Eşit Ağırlık-1', homeRoomId: 'r-2'),
+        const Classroom(id: 'c-ea', name: 'Eşit Ağırlık-1', homeRoomId: 'r-2'),
         level: '12',
         field: 'EA',
+        studentIds: classOfRich('c-ea'),
       ),
       ClassroomRecord(
-        Classroom(id: 'c-soz', name: 'Sözel-1', homeRoomId: 'r-3'),
+        const Classroom(id: 'c-soz', name: 'Sözel-1', homeRoomId: 'r-3'),
         level: 'graduate',
         field: 'SOZ',
+        studentIds: classOfRich('c-soz'),
       ),
     ];
     var n = 0;

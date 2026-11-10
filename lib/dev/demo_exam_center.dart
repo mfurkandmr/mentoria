@@ -1,3 +1,4 @@
+import 'demo_rich.dart';
 import '../core/constants/exam_subjects.dart';
 import '../features/exam_analysis/data/exam_report_repository.dart';
 import '../features/exam_analysis/domain/outcome_analysis.dart';
@@ -88,6 +89,24 @@ class InMemoryExamCenter implements ExamAdminRepository, ExamReportRepository {
     final paragraf = add('TYT_TUR', 'Paragraf');
     final anaFikir = add('TYT_TUR', 'Ana düşünce', paragraf);
     final sozcuk = add('TYT_TUR', 'Sözcükte anlam');
+    // Kalabalık demo: gerçek bir TYT gibi 40'ar soru, daha çok konu.
+    final rich = demoRichEnabled;
+    final trig = rich ? add('TYT_MAT', 'Trigonometri') : '';
+    final func = rich ? add('TYT_MAT', 'Fonksiyonlar') : '';
+    final perSubject = rich ? 40 : 10;
+    String mathOutcome(int n) {
+      if (!rich) return n <= 3 ? yas : (n <= 6 ? isci : sayi);
+      return switch (n % 10) {
+        9 => trig,
+        8 => func,
+        6 || 7 => sayi,
+        3 || 4 || 5 => isci,
+        _ => yas,
+      };
+    }
+
+    String turkishOutcome(int n) =>
+        (rich ? n % 10 < 6 : n <= 6) ? anaFikir : sozcuk;
     c.templates['tpl-1'] = const ImportTemplate(
       id: 'tpl-1',
       name: 'Okul optik okuyucusu',
@@ -102,22 +121,22 @@ class InMemoryExamCenter implements ExamAdminRepository, ExamReportRepository {
     );
 
     List<KeyQuestion> key(DateTime day) => [
-      for (var n = 1; n <= 10; n++)
+      for (var n = 1; n <= perSubject; n++)
         KeyQuestion(
           subject: 'TYT_MAT',
           number: n,
           correct: 'ABCDE'[(n * 3 + day.day) % 5],
-          outcomeId: n <= 3 ? yas : (n <= 6 ? isci : sayi),
-          outcome: c.label(n <= 3 ? yas : (n <= 6 ? isci : sayi)),
+          outcomeId: mathOutcome(n),
+          outcome: c.label(mathOutcome(n)),
           cancelled: n == 10 && day.day == 1,
         ),
-      for (var n = 1; n <= 10; n++)
+      for (var n = 1; n <= perSubject; n++)
         KeyQuestion(
           subject: 'TYT_TUR',
           number: n,
           correct: 'ABCDE'[(n + day.day) % 5],
-          outcomeId: n <= 6 ? anaFikir : sozcuk,
-          outcome: c.label(n <= 6 ? anaFikir : sozcuk),
+          outcomeId: turkishOutcome(n),
+          outcome: c.label(turkishOutcome(n)),
         ),
     ];
     ExamDefinition def(String id, String name, DateTime day, ExamStatus st) =>
@@ -128,9 +147,9 @@ class InMemoryExamCenter implements ExamAdminRepository, ExamReportRepository {
           takenOn: day,
           status: st,
           createdBy: viewerId,
-          subjects: const [
-            ExamSubjectDef(code: 'TYT_TUR', questionCount: 10),
-            ExamSubjectDef(code: 'TYT_MAT', questionCount: 10),
+          subjects: [
+            ExamSubjectDef(code: 'TYT_TUR', questionCount: perSubject),
+            ExamSubjectDef(code: 'TYT_MAT', questionCount: perSubject),
           ],
           questions: key(day),
         );
@@ -168,7 +187,12 @@ class InMemoryExamCenter implements ExamAdminRepository, ExamReportRepository {
     for (final (i, s) in roster.indexed) {
       for (final id in ['org-exam-1', 'org-exam-2']) {
         final e = c.exams[id]!;
-        final hit = id == 'org-exam-1' ? 5 + i : 6 + i;
+        // Kalabalık kurumda herkes tam yapmasın diye başarı 3-9 arası döner.
+        // Demo öğrencisi (ilk sıradaki) kurumun üst sıralarında.
+        final level = rich
+            ? (i == 0 ? 8 : 3 + (i * 3) % 7)
+            : (i < 4 ? 5 + i : 3 + (i * 3) % 7);
+        final hit = id == 'org-exam-1' ? level : level + 1;
         String? mark(KeyQuestion q, int n) => n % 10 < hit
             ? q.correct
             : (n % 4 == 0 ? null : 'ABCDE'[(n + 1) % 5]);
@@ -282,6 +306,7 @@ class InMemoryExamCenter implements ExamAdminRepository, ExamReportRepository {
   Future<int> publishExam(String id) async {
     final e = exams[id]!;
     if (!e.isDraft) throw StateError('ALREADY_PUBLISHED');
+    if (!e.keyGaps.isComplete) throw StateError('EXAM_KEY_INCOMPLETE');
     exams[id] = e.copyWith(status: ExamStatus.published);
     _rescore(id);
     return _results[id]?.length ?? 0;

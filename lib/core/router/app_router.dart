@@ -27,6 +27,8 @@ import '../../features/account/presentation/profile_screen.dart';
 import '../../features/admin/presentation/admin_home_screen.dart';
 import '../../features/attendance/presentation/attendance_screen.dart';
 import '../../features/finance/presentation/finance_screen.dart';
+import '../../features/staff/presentation/staff_screen.dart';
+import '../../features/student_books/presentation/book_report_screen.dart';
 import '../../features/schedule_generator/presentation/schedule_screen.dart';
 import '../../features/schedule_generator/presentation/setup_wizard_screen.dart';
 import '../../features/sms/presentation/bulk_sms_screen.dart';
@@ -354,6 +356,11 @@ GoRoute _managerRoutes(String base, Widget home) => GoRoute(
       path: 'books',
       pageBuilder: (_, state) => _cockpitPage(state, const BookPoolScreen()),
     ),
+    // Hangi öğrenci hangi kitaptan kaç soru çözdü.
+    GoRoute(
+      path: 'book-report',
+      pageBuilder: (_, state) => _cockpitPage(state, const BookReportScreen()),
+    ),
     // Kurum sınavları: optik Excel içe aktarma, kazanım analizi, karneler.
     GoRoute(
       path: 'org-exams',
@@ -467,6 +474,21 @@ GoRoute _managerRoutes(String base, Widget home) => GoRoute(
                 scheduleId: state.pathParameters['id']!,
                 autoGenerate: state.uri.queryParameters['generate'] == '1',
               ),
+            ),
+          ),
+        ],
+      ),
+    // Personel: yalnızca müdür.
+    if (base == '/admin')
+      GoRoute(
+        path: 'staff',
+        pageBuilder: (_, state) => _cockpitPage(state, const StaffScreen()),
+        routes: [
+          GoRoute(
+            path: ':key',
+            pageBuilder: (_, state) => _cockpitPage(
+              state,
+              StaffDetailScreen(personKey: state.pathParameters['key']!),
             ),
           ),
         ],

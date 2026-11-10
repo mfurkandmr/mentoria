@@ -36,6 +36,7 @@ import '../features/learn/data/practice_repository.dart';
 import '../features/tracking/data/tracking_models.dart';
 import '../features/tracking/data/tracking_repository.dart';
 import '../features/client_errors/data/client_error_repository.dart';
+import 'demo_rich.dart';
 
 /// Bellekte tutulan takip deposu (demo ve testler için).
 class InMemoryTrackingRepository implements TrackingRepository {
@@ -1338,6 +1339,27 @@ void seedDemoMeetings(InMemoryMeetingRepository repo) {
   if (!day(DateTime.monday, 0).isAfter(today)) {
     repo._statuses[(zeynep, day(DateTime.monday, 0))] = MeetingStatus.held;
   }
+  if (!demoRichEnabled) return;
+  // Kalabalık demo: her öğrencinin haftalık görüşmesi; beşte biri gelmedi.
+  for (final (i, s) in richStudents.indexed) {
+    final weekday = 1 + i % 5;
+    final id = repo.add(
+      MeetingDraft(
+        studentId: s.id,
+        firstDate: day(weekday, 3),
+        hour: 9 + i % 8,
+        minute: i.isEven ? 0 : 30,
+      ),
+      coachId: s.coachId,
+    );
+    for (final ago in [2, 1, 0]) {
+      final on = day(weekday, ago);
+      if (!on.isBefore(today)) continue;
+      repo._statuses[(id, on)] = (i + ago) % 5 == 0
+          ? MeetingStatus.missed
+          : MeetingStatus.held;
+    }
+  }
 }
 
 /// Bellekte hata defteri (demo ve testler). Fotoğraflar bellekte tutulur.
@@ -1996,6 +2018,32 @@ void seedDemoAnnouncements(InMemoryAnnouncementRepository repo) {
     ),
     at: now.subtract(const Duration(days: 1, hours: 2)),
   );
+  if (!demoRichEnabled) return;
+  repo.seed(
+    from: UserRole.admin,
+    sender: 'Mehmet Demir',
+    audience: AnnouncementAudience.everyone,
+    title: 'Veli toplantısı perşembe',
+    body: 'Veli toplantımız perşembe 18.30\'da konferans salonunda yapılacak.',
+    at: now.subtract(const Duration(days: 3)),
+  );
+  repo.seed(
+    from: UserRole.admin,
+    sender: 'Mehmet Demir',
+    audience: AnnouncementAudience.everyone,
+    title: 'Kasım deneme takvimi',
+    body:
+        'Bu ayın deneme takvimi kurum panosuna asıldı, uygulamadan da görebilirsiniz.',
+    at: now.subtract(const Duration(days: 8)),
+  );
+  repo.seed(
+    from: UserRole.coach,
+    sender: 'Ayşe Koç',
+    audience: AnnouncementAudience.myStudents,
+    title: 'Haftalık görüşme saatleri',
+    body: 'Görüşme saatini değiştirmek isteyen bu akşama kadar bana yazsın.',
+    at: now.subtract(const Duration(days: 5)),
+  );
 }
 
 /// Bellekte tutulan KVKK rıza deposu (demo ve testler için).
@@ -2223,8 +2271,31 @@ class InMemoryRiskRepository implements RiskRepository {
 }
 
 /// Demo koçunun bu haftaki riskli öğrencileri.
-List<RiskEntry> demoRiskEntries() => const [
-  RiskEntry(
+List<RiskEntry> demoRiskEntries() => [
+  if (demoRichEnabled) ...const [
+    RiskEntry(
+      studentId: 'demo-nisa',
+      name: 'Nisa Erdem',
+      score: 74,
+      days: 0,
+      meetingsMissed: 2,
+      netDrop: 0,
+      homeworkTotal: 5,
+      homeworkDone: 1,
+    ),
+    RiskEntry(
+      studentId: 'demo-kerem',
+      name: 'Kerem Polat',
+      score: 55,
+      days: 2,
+      meetingsMissed: 1,
+      netDrop: 3.5,
+      examType: 'TYT',
+      homeworkTotal: 6,
+      homeworkDone: 3,
+    ),
+  ],
+  const RiskEntry(
     studentId: 'demo-can',
     name: 'Can Kaya',
     score: 68,
@@ -2235,7 +2306,7 @@ List<RiskEntry> demoRiskEntries() => const [
     homeworkTotal: 4,
     homeworkDone: 1,
   ),
-  RiskEntry(
+  const RiskEntry(
     studentId: 'demo-student',
     name: 'Elif Yılmaz',
     score: 33,

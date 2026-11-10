@@ -82,8 +82,8 @@ const def = (name) => JSON.stringify({
   wrong_penalty: true, penalty_ratio: 0.25, classrooms: [cls],
   subjects: [{ subject: 'TYT_MAT', count: 4, weight: 1 }, { subject: 'TYT_TUR', count: 2, weight: 1 }],
   items: [
-    ...[1, 2, 3, 4].map((no) => ({ subject: 'TYT_MAT', no, correct: 'A' })),
-    ...[1, 2].map((no) => ({ subject: 'TYT_TUR', no, correct: 'A' })),
+    ...[1, 2, 3, 4].map((no) => ({ subject: 'TYT_MAT', no, correct: 'A', outcome: 'Konu' })),
+    ...[1, 2].map((no) => ({ subject: 'TYT_TUR', no, correct: 'A', outcome: 'Konu' })),
   ],
 });
 const good = { TYT_MAT: ['A', 'A', 'A', 'B'], TYT_TUR: ['A', 'A'] };

@@ -1,0 +1,121 @@
+soru_no;bolum;kazanim;zorluk;a_cevap;b_sorusunun_yeri
+1;Türkçe;Sözcükte Anlam;Orta;D;20
+2;Türkçe;Sözcükte Anlam;Orta;C;12
+3;Türkçe;Sözcükte Anlam;Zor;B;5
+4;Türkçe;Sözcükte Anlam;Kolay;B;8
+5;Türkçe;Cümlede Anlam;Kolay;D;18
+6;Türkçe;Cümlede Anlam;Kolay;E;19
+7;Türkçe;Cümlede Anlam;Orta;C;28
+8;Türkçe;Cümlede Anlam;Kolay;E;36
+9;Türkçe;Paragrafta Anlam;Orta;C;22
+10;Türkçe;Paragrafta Anlam;Kolay;D;39
+11;Türkçe;Paragrafta Anlam;Kolay;E;3
+12;Türkçe;Paragrafta Anlam;Zor;A;23
+13;Türkçe;Paragrafta Anlam;Zor;B;24
+14;Türkçe;Paragrafta Anlam;Kolay;A;2
+15;Türkçe;Paragrafta Anlam;Orta;D;35
+16;Türkçe;Paragrafta Anlam;Kolay;B;25
+17;Türkçe;Söz Sanatları;Zor;B;4
+18;Türkçe;Ses Bilgisi;Kolay;C;27
+19;Türkçe;Ses Bilgisi;Kolay;B;16
+20;Türkçe;Yazım Kuralları;Orta;C;31
+21;Türkçe;Yazım Kuralları;Kolay;E;14
+22;Türkçe;Yazım Kuralları;Zor;E;37
+23;Türkçe;Noktalama İşaretleri;Kolay;A;29
+24;Türkçe;Noktalama İşaretleri;Orta;A;30
+25;Türkçe;Noktalama İşaretleri;Kolay;E;34
+26;Türkçe;Sözcük Türleri;Orta;A;9
+27;Türkçe;Sözcük Türleri;Orta;D;17
+28;Türkçe;Sözcük Türleri;Zor;C;15
+29;Türkçe;Sözcük Türleri;Orta;B;32
+30;Türkçe;Cümlenin Ögeleri;Kolay;A;13
+31;Türkçe;Cümlenin Ögeleri;Orta;C;11
+32;Türkçe;Cümlenin Ögeleri;Orta;D;38
+33;Türkçe;Fiilimsiler;Kolay;B;6
+34;Türkçe;Fiilimsiler;Orta;E;26
+35;Türkçe;Cümle Çeşitleri;Orta;A;1
+36;Türkçe;Cümle Çeşitleri;Kolay;A;33
+37;Türkçe;Anlatım Bozukluğu;Kolay;A;10
+38;Türkçe;Anlatım Bozukluğu;Kolay;B;21
+39;Türkçe;Yapı Bakımından Sözcükler;Orta;B;7
+40;Türkçe;Yapı Bakımından Sözcükler;Zor;A;40
+41;Sosyal Bilimler;Tarih Bilimi;Zor;C;43
+42;Sosyal Bilimler;İlk ve Orta Çağ'da Türk Dünyası;Orta;C;50
+43;Sosyal Bilimler;İlk ve Orta Çağ'da Türk Dünyası;Zor;B;41
+44;Sosyal Bilimler;İslam Medeniyetinin Doğuşu;Zor;E;58
+45;Sosyal Bilimler;Osmanlı Kuruluş Dönemi;Orta;A;55
+46;Sosyal Bilimler;Doğal Sistemler;Orta;E;44
+47;Sosyal Bilimler;Doğal Sistemler;Orta;E;54
+48;Sosyal Bilimler;Beşeri Sistemler;Orta;B;59
+49;Sosyal Bilimler;Beşeri Sistemler;Orta;D;57
+50;Sosyal Bilimler;Türkiye'nin Coğrafi Konumu;Kolay;A;45
+51;Sosyal Bilimler;Felsefeye Giriş;Orta;C;46
+52;Sosyal Bilimler;Felsefeye Giriş;Zor;D;48
+53;Sosyal Bilimler;Bilgi Felsefesi;Orta;B;60
+54;Sosyal Bilimler;Bilgi Felsefesi;Zor;A;56
+55;Sosyal Bilimler;Varlık Felsefesi;Orta;A;47
+56;Sosyal Bilimler;Bilgi ve İnanç;Kolay;D;42
+57;Sosyal Bilimler;Bilgi ve İnanç;Kolay;A;49
+58;Sosyal Bilimler;İslam ve İbadet;Zor;D;51
+59;Sosyal Bilimler;İslam ve İbadet;Orta;D;52
+60;Sosyal Bilimler;Ahlak ve Değerler;Orta;B;53
+61;Temel Matematik;Temel Kavramlar;Orta;A;83
+62;Temel Matematik;Temel Kavramlar;Zor;A;93
+63;Temel Matematik;Temel Kavramlar;Zor;B;63
+64;Temel Matematik;Sayı Basamakları;Kolay;A;94
+65;Temel Matematik;Sayı Basamakları;Kolay;D;99
+66;Temel Matematik;Bölme ve Bölünebilme;Orta;D;85
+67;Temel Matematik;Bölme ve Bölünebilme;Orta;D;72
+68;Temel Matematik;Bölme ve Bölünebilme;Orta;E;82
+69;Temel Matematik;EBOB - EKOK;Zor;C;73
+70;Temel Matematik;EBOB - EKOK;Zor;E;74
+71;Temel Matematik;Rasyonel Sayılar;Kolay;A;88
+72;Temel Matematik;Rasyonel Sayılar;Kolay;A;87
+73;Temel Matematik;Basit Eşitsizlikler;Orta;D;92
+74;Temel Matematik;Basit Eşitsizlikler;Zor;C;91
+75;Temel Matematik;Mutlak Değer;Kolay;B;68
+76;Temel Matematik;Mutlak Değer;Kolay;B;98
+77;Temel Matematik;Üslü Sayılar;Orta;A;79
+78;Temel Matematik;Üslü Sayılar;Zor;A;67
+79;Temel Matematik;Köklü Sayılar;Orta;A;100
+80;Temel Matematik;Köklü Sayılar;Zor;B;80
+81;Temel Matematik;Çarpanlara Ayırma;Orta;D;61
+82;Temel Matematik;Çarpanlara Ayırma;Kolay;A;62
+83;Temel Matematik;Oran - Orantı;Zor;E;76
+84;Temel Matematik;Oran - Orantı;Orta;E;64
+85;Temel Matematik;Yaş Problemleri;Orta;D;95
+86;Temel Matematik;Yaş Problemleri;Kolay;E;90
+87;Temel Matematik;Hız Problemleri;Zor;A;66
+88;Temel Matematik;Hız Problemleri;Kolay;B;75
+89;Temel Matematik;İşçi Problemleri;Orta;B;71
+90;Temel Matematik;Yüzde, Kâr - Zarar Problemleri;Orta;D;69
+91;Temel Matematik;Yüzde, Kâr - Zarar Problemleri;Orta;C;96
+92;Temel Matematik;Kümeler;Orta;D;97
+93;Temel Matematik;Kümeler;Zor;D;65
+94;Temel Matematik;Fonksiyonlar;Zor;D;70
+95;Temel Matematik;Fonksiyonlar;Zor;A;81
+96;Temel Matematik;Permütasyon - Kombinasyon;Kolay;C;84
+97;Temel Matematik;Olasılık;Orta;E;78
+98;Temel Matematik;Üçgenler;Zor;B;89
+99;Temel Matematik;Üçgenler;Zor;B;77
+100;Temel Matematik;Üçgenler;Orta;C;86
+101;Fen Bilimleri;Madde ve Özellikleri;Orta;D;111
+102;Fen Bilimleri;Madde ve Özellikleri;Zor;C;120
+103;Fen Bilimleri;Hareket ve Kuvvet;Orta;E;108
+104;Fen Bilimleri;Hareket ve Kuvvet;Zor;D;110
+105;Fen Bilimleri;Basınç;Orta;C;103
+106;Fen Bilimleri;Optik;Zor;D;116
+107;Fen Bilimleri;Optik;Orta;A;101
+108;Fen Bilimleri;Atom ve Periyodik Sistem;Orta;B;115
+109;Fen Bilimleri;Atom ve Periyodik Sistem;Kolay;E;112
+110;Fen Bilimleri;Kimyasal Türler Arası Etkileşimler;Orta;B;113
+111;Fen Bilimleri;Kimyasal Türler Arası Etkileşimler;Orta;B;118
+112;Fen Bilimleri;Maddenin Halleri;Orta;A;104
+113;Fen Bilimleri;Karışımlar;Orta;B;106
+114;Fen Bilimleri;Karışımlar;Kolay;B;102
+115;Fen Bilimleri;Hücre;Zor;D;107
+116;Fen Bilimleri;Hücre;Orta;B;109
+117;Fen Bilimleri;Canlıların Sınıflandırılması;Orta;A;119
+118;Fen Bilimleri;Canlıların Sınıflandırılması;Orta;B;105
+119;Fen Bilimleri;Ekosistem Ekolojisi;Kolay;E;117
+120;Fen Bilimleri;Ekosistem Ekolojisi;Orta;E;114

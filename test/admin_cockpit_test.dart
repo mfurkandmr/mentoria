@@ -151,12 +151,11 @@ void main() {
       expect(find.byType(Bizz), findsNothing);
       expect(find.textContaining('Günaydın'), findsNothing);
       // Eski kısayollar üst çubukta.
-      expect(find.byTooltip('Yüklediğin denemeler'), findsOneWidget);
-      expect(find.byTooltip('Deneme sonuçlarını yükle'), findsOneWidget);
+      expect(find.byTooltip('Sınav yükle'), findsOneWidget);
       expect(find.byTooltip('Profil'), findsOneWidget);
-      await tester.tap(find.byTooltip('Yüklediğin denemeler'));
+      await tester.tap(find.byTooltip('Sınav yükle'));
       await tester.pumpAndSettle();
-      expect(_visited.last, '/admin/exams');
+      expect(_visited.last, '/admin/org-exams');
     });
 
     testWidgets('dört kart: değerler ve geçen haftaya göre değişim', (
@@ -761,24 +760,21 @@ void main() {
           'attendance-home-card',
           'timetable-admin-card',
           'book-pool-card',
+          'tool-book-report',
         ],
       );
       expect(find.text('Öğrenci daveti'), findsOneWidget);
 
       await tab('Sınavlar');
-      for (final id in [
-        'tool-import',
-        'tool-exam-batches',
-        'org-exams-card',
-        'tool-optic',
-        'tool-trends',
-        'tool-exam-plans',
-      ]) {
+      for (final id in ['org-exams-card', 'tool-trends', 'tool-exam-plans']) {
         expect(find.byKey(ValueKey(id)), findsOneWidget, reason: id);
       }
-      await tester.tap(find.byKey(const ValueKey('tool-exam-batches')));
+      // Eski yükleme yolları yok: her sınav anahtar ve kazanımla yüklenir.
+      expect(find.byKey(const ValueKey('tool-import')), findsNothing);
+      expect(find.byKey(const ValueKey('tool-optic')), findsNothing);
+      await tester.tap(find.byKey(const ValueKey('org-exams-card')));
       await tester.pumpAndSettle();
-      expect(_visited.last, '/admin/exams');
+      expect(_visited.last, '/admin/org-exams');
       GoRouter.of(tester.element(find.textContaining('sayfa /'))).pop();
       await tester.pumpAndSettle();
 

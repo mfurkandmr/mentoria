@@ -43,6 +43,7 @@ import '../data/home_providers.dart';
 import '../data/home_seed.dart';
 import '../../mistakes/data/mistake_repository.dart';
 import '../../garden/presentation/garden_screen.dart';
+import '../../exam_analysis/presentation/report_card_screen.dart';
 import 'home_sky.dart';
 import '../../ranking/data/ranking_repository.dart';
 
@@ -143,6 +144,8 @@ class StudentHomeScreen extends ConsumerWidget {
       const KvkkHomeCard(),
       // Koçla sıradaki görüşme (planlı görüşme yoksa görünmez).
       NextMeetingCard(studentId: id),
+      // Son kurum sınavında hangi konuda ne yanlış yapıldı (sınav yoksa boş).
+      LastExamAnalysisCard(studentId: id),
       _TodayCard(studentId: id),
       // Son 14 günde duyuru geldiyse.
       const StudentScheduleCard(),

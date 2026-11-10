@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../core/data/paged_fetch.dart';
 import '../../../core/constants/exam_subjects.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../auth/data/auth_repository.dart';
@@ -124,6 +125,62 @@ class StudentBook {
   final int blank;
   final DateTime? lastStudied;
   final int entries;
+}
+
+/// Kitap raporunun bir satırı: bir öğrencinin bir kitaptan çözdüğü sorular.
+class BookReportRow {
+  const BookReportRow({
+    required this.studentId,
+    required this.studentName,
+    this.studentNumber,
+    this.classroomId,
+    this.classroomName,
+    required this.bookId,
+    required this.bookName,
+    required this.publisher,
+    this.subjectCode,
+    this.questions = 0,
+    this.correct = 0,
+    this.wrong = 0,
+    this.blank = 0,
+    this.lastStudied,
+  });
+
+  factory BookReportRow.fromJson(Map<String, dynamic> j) => BookReportRow(
+    studentId: j['student_id'] as String,
+    studentName: j['student_name'] as String? ?? '',
+    studentNumber: j['student_number'] as String?,
+    classroomId: j['classroom_id'] as String?,
+    classroomName: j['classroom_name'] as String?,
+    bookId: j['book_id'] as String,
+    bookName: j['book_name'] as String,
+    publisher: j['publisher'] as String? ?? '',
+    subjectCode: j['subject_code'] as String?,
+    questions: j['questions'] as int? ?? 0,
+    correct: j['correct'] as int? ?? 0,
+    wrong: j['wrong'] as int? ?? 0,
+    blank: j['blank'] as int? ?? 0,
+    lastStudied: j['last_studied'] == null
+        ? null
+        : DateTime.parse(j['last_studied'] as String),
+  );
+
+  final String studentId;
+  final String studentName;
+  final String? studentNumber;
+  final String? classroomId;
+  final String? classroomName;
+  final String bookId;
+  final String bookName;
+  final String publisher;
+
+  /// Karma kitapta null.
+  final String? subjectCode;
+  final int questions;
+  final int correct;
+  final int wrong;
+  final int blank;
+  final DateTime? lastStudied;
 }
 
 /// Dönem hakkı ve kitaplar.
@@ -337,6 +394,10 @@ abstract interface class BooksRepository {
   /// Kitap kimliği → kullanım (koç: kendi öğrencileri, müdür: kurum).
   Future<Map<String, BookUsage>> usage({String? classroomId});
   Future<List<TopicGap>> topicGaps(String studentId);
+
+  /// Hangi öğrenci hangi kitaptan kaç soru çözdü (koç: kendi öğrencileri,
+  /// müdür: kurum). [term] boşsa bu dönem.
+  Future<List<BookReportRow>> questionReport({String? term});
 }
 
 class SupabaseBooksRepository implements BooksRepository {
@@ -580,6 +641,21 @@ class SupabaseBooksRepository implements BooksRepository {
   }
 
   @override
+  Future<List<BookReportRow>> questionReport({String? term}) async {
+    final rows = await fetchAllPages(
+      (from, to) async =>
+          await _client
+                  .rpc('book_question_report', params: {'p_term': term})
+                  .range(from, to)
+              as List<dynamic>,
+    );
+    return [
+      for (final r in rows)
+        BookReportRow.fromJson(Map<String, dynamic>.from(r as Map)),
+    ];
+  }
+
+  @override
   Future<Map<String, BookUsage>> usage({String? classroomId}) async => {
     for (final r
         in await _client.rpc('book_usage', params: {'p_classroom': classroomId})
@@ -629,6 +705,10 @@ final bookProgressProvider = FutureProvider.family<List<BookProgress>, String>(
 
 final bookUsageProvider = FutureProvider<Map<String, BookUsage>>(
   (ref) => ref.watch(booksRepositoryProvider).usage(),
+);
+
+final bookReportProvider = FutureProvider<List<BookReportRow>>(
+  (ref) => ref.watch(booksRepositoryProvider).questionReport(),
 );
 
 final topicGapsProvider = FutureProvider.family<List<TopicGap>, String>(

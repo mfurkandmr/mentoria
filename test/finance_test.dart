@@ -448,6 +448,32 @@ void main() {
       expect((e.teacherId, e.amount), ('t-ahmet', 15000.0));
     });
 
+    test('demo deposu öğretmene ücret ve ödeme yazabilir', () async {
+      final demo = InMemoryFinanceRepository.demo(
+        students: const {'demo-student': 'Elif Yılmaz'},
+        coaches: const {},
+        teachers: const {'t-ahmet': 'Ahmet Kaya'},
+      );
+      await demo.saveTeacherPayRate(
+        const TeacherPayRate(teacherId: 't-ahmet', amount: 300),
+      );
+      await demo.addExpense(
+        ExpenseDraft(
+          spentOn: DateTime.now(),
+          category: ExpenseCategory.salary,
+          amount: 1200,
+          teacherId: 't-ahmet',
+        ),
+      );
+      expect(
+        (await demo.fetchExpenses())
+            .where((e) => e.teacherId != null)
+            .single
+            .teacherName,
+        'Ahmet Kaya',
+      );
+    });
+
     test('haftalık saat: programdaki satırlar öğretmene göre sayılır', () {
       ScheduleEntry entry(String teacher, String slot) => ScheduleEntry(
         teacherId: teacher,

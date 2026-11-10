@@ -1,3 +1,4 @@
+import 'demo_rich.dart';
 import '../features/attendance/data/attendance_repository.dart';
 
 /// Bellekte tutulan yoklama (demo ve testler için). Sunucudaki kuralları
@@ -33,6 +34,8 @@ class InMemoryAttendanceRepository implements AttendanceRepository {
       phones: {
         if (students.isNotEmpty)
           students.keys.first: ('Selin Yılmaz', '+905321234567'),
+        if (demoRichEnabled)
+          for (final (i, s) in richStudents.indexed) s.id: ?richGuardian(i, s),
       },
       fallbackPhones: students.keys.skip(1).take(1).toSet(),
     );
@@ -43,6 +46,22 @@ class InMemoryAttendanceRepository implements AttendanceRepository {
       repo._marks[(id, y)] = i++ == 2
           ? AttendanceStatus.absent
           : AttendanceStatus.present;
+    }
+    if (demoRichEnabled) {
+      // Son üç hafta: pazar hariç, ara sıra gelmeyen, geç kalan, izinli.
+      for (var d = 1; d <= 21; d++) {
+        final day = DateTime(t.year, t.month, t.day - d);
+        if (day.weekday == DateTime.sunday) continue;
+        final key = attendanceDay(day);
+        for (final (k, id) in students.keys.indexed) {
+          repo._marks[(id, key)] = switch ((k * 7 + d * 5) % 29) {
+            0 => AttendanceStatus.absent,
+            1 => AttendanceStatus.late,
+            2 => AttendanceStatus.excused,
+            _ => AttendanceStatus.present,
+          };
+        }
+      }
     }
     return repo;
   }

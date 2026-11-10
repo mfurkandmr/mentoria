@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../staff/presentation/staff_screen.dart';
+import '../../../student_books/presentation/book_report_screen.dart';
 import '../../../../core/i18n/i18n.dart';
 import '../../../../shared/widgets/tool_tile.dart';
 import '../../../announcements/presentation/announcement_widgets.dart';
@@ -81,11 +83,13 @@ class OrgToolsSection extends ConsumerWidget {
         tools: [
           attendanceTool(ref, '/admin'),
           financeTool(ref),
+          staffTool(ref),
           studentsTool(ref, '/admin'),
           timetableAdminTool(ref),
           orgExamsTool(ref, '/admin'),
           trendsTool('/admin'),
           bookPoolTool(ref, '/admin'),
+          bookReportTool('/admin'),
           bulkSmsTool(),
         ],
       ),

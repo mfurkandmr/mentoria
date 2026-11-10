@@ -229,6 +229,36 @@ const imp = (await one(`select public.import_books($1) r`, [JSON.stringify([
 ])])).r;
 check(imp.inserted === 1 && imp.skipped === 1, 'içe aktarmada mükerrer atlanır', imp);
 
+console.log('Kitap raporu (kim hangi kitaptan kaç soru çözdü)');
+await asSuper();
+const aytMat = (await one(`select id from public.subjects where code = 'AYT_MAT'`)).id;
+await asUser(A.admin);
+const lim = await one(`select count(*)::int c from public.student_books where student_id = $1 and term = $2`, [A.student, term]);
+await db.query(`select public.set_book_limit($1, $2, 'rapor testi')`, [A.student, lim.c + 2]);
+const rb = await one(`insert into public.books (name, publisher, subject_id) values ('3-4-5 AYT Matematik', '3-4-5 Yayınları', $1) returning id`, [aytMat]);
+const rsb = await one(`insert into public.student_books (student_id, book_id) values ($1, $2) returning id`, [A.student, rb.id]);
+await db.query(`insert into public.book_progress (student_book_id, questions, correct, wrong, blank) values ($1, 200, 150, 30, 20), ($1, 39, 30, 5, 4)`, [rsb.id]);
+const rb2 = await one(`insert into public.books (name, publisher) values ('Hiç çözülmeyen', 'Yayın') returning id`);
+await db.query(`insert into public.student_books (student_id, book_id) values ($1, $2)`, [A.student, rb2.id]);
+const report = await rows(`select * from public.book_question_report()`);
+const row = report.find((r) => r.book_id === rb.id);
+check(row && row.questions === 239 && row.correct === 180 && row.wrong === 35 && row.blank === 24 && row.subject_code === 'AYT_MAT'
+  && row.student_name === 'Bal Akademi Öğrenci', 'müdür öğrenci ve kitap başına soruyu görür', row);
+check(report.find((r) => r.book_id === rb2.id)?.questions === 0, 'çözülmeyen kitap 0 soru');
+check((await rows(`select * from public.book_question_report('2020-Güz')`)).length === 0, 'dönem süzgeci çalışır');
+await asUser(A.coach);
+check((await rows(`select * from public.book_question_report()`)).some((r) => r.book_id === rb.id), 'koç kendi öğrencisini görür');
+await asUser(B.admin);
+check((await rows(`select * from public.book_question_report()`)).every((r) => r.student_id !== A.student), 'başka kurumun müdürü görmez');
+await asUser(B.coach);
+check((await rows(`select * from public.book_question_report()`)).every((r) => r.student_id !== A.student), 'başka kurumun koçu görmez');
+await asUser(A.student);
+check((await rows(`select * from public.book_question_report()`)).length === 0, 'öğrenciye boş döner');
+await asUser(A.parent);
+check((await rows(`select * from public.book_question_report()`)).length === 0, 'veliye boş döner');
+await asAnon();
+await expectError('anonim çağıramaz', () => db.query(`select * from public.book_question_report()`), 'permission');
+
 console.log('Geri alma ve yeniden uygulama');
 await asSuper();
 const name = '20261105160000_student_books';

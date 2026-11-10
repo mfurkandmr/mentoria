@@ -211,16 +211,12 @@ class _TeacherCard extends ConsumerWidget {
                 ),
                 FilledButton.tonal(
                   style: _inline,
-                  onPressed: () => showModalBottomSheet<void>(
-                    context: context,
-                    isScrollControlled: true,
-                    showDragHandle: true,
-                    builder: (_) => _TeacherPaySheet(
-                      name: record.teacher.name,
-                      teacherId: record.teacher.id,
-                      weeklyHours: weeklyHours,
-                      rate: rate,
-                    ),
+                  onPressed: () => showTeacherPaySheet(
+                    context,
+                    name: record.teacher.name,
+                    teacherId: record.teacher.id,
+                    weeklyHours: weeklyHours,
+                    rate: rate,
                   ),
                   child: Text(tr('Ödeme kaydet')),
                 ),
@@ -244,6 +240,25 @@ class _TeacherCard extends ConsumerWidget {
     );
   }
 }
+
+/// Öğretmene ödeme kaydı (Finans ve personel kartından açılır).
+Future<void> showTeacherPaySheet(
+  BuildContext context, {
+  required String name,
+  required String teacherId,
+  required int weeklyHours,
+  required TeacherPayRate rate,
+}) => showModalBottomSheet<void>(
+  context: context,
+  isScrollControlled: true,
+  showDragHandle: true,
+  builder: (_) => _TeacherPaySheet(
+    name: name,
+    teacherId: teacherId,
+    weeklyHours: weeklyHours,
+    rate: rate,
+  ),
+);
 
 /// Öğretmenin kayıtlı ödeme şekli, tutarı ve notu.
 class _TeacherRateDialog extends StatefulWidget {

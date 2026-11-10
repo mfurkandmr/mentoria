@@ -340,6 +340,32 @@ void main() {
       expect(fee.payments.single.accountId, kasa.id);
     });
 
+    testWidgets('gelirler başında bu ayın öğrenci tahsilatı görünür', (
+      t,
+    ) async {
+      r = repo();
+      await r.addFee(draft());
+      var fee = (await r.fetchFees()).single;
+      final now = DateTime.now();
+      await r.recordPayment(fee.id, amount: 5000, paidOn: now);
+      // Geçen ayın ödemesi bu ayın özetine girmez.
+      await r.recordPayment(
+        fee.id,
+        amount: 2000,
+        paidOn: DateTime(now.year, now.month - 1, 15),
+      );
+      await pump(t, const IncomesTab());
+      expect(find.text('Bu ay öğrenci tahsilatı'), findsOneWidget);
+      expect(
+        t
+            .widget<Text>(find.byKey(const ValueKey('income-month-collected')))
+            .data,
+        formatMoney(5000),
+      );
+      // Öğrenci ödemesi gelir listesine yazılmaz.
+      expect(await r.fetchIncomes(), isEmpty);
+    });
+
     testWidgets('gelir ve hesap eklenir', (t) async {
       r = repo();
       await pump(t, const IncomesTab());

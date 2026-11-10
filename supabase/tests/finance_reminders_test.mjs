@@ -132,7 +132,7 @@ check((await one(`select count(*)::int c from public.sms_outbox`)).c === 0, '90 
 console.log('Geri alma ve yeniden uygulama');
 const name = '20261105110000_finance_reminders';
 // Üstüne kurulan finance_plus önce geri alınır.
-const laterDeps = ['20261106100000_finance_plus', '20261106150000_bulk_fee_duplicates'].filter((n) => migs.includes(`${n}.sql`));
+const laterDeps = ['20261106100000_finance_plus', '20261106150000_bulk_fee_duplicates', '20261109150000_staff_cheques'].filter((n) => migs.includes(`${n}.sql`));
 for (const l of [...laterDeps].reverse()) await db.exec(read(rbDir, `${l}.down.sql`));
 await db.exec(read(rbDir, `${name}.down.sql`));
 check((await one(`select to_regclass('public.sms_outbox') t`)).t === null, 'SMS kuyruğu kaldırıldı');

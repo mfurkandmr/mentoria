@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../staff/presentation/staff_screen.dart';
+import '../../student_books/presentation/book_report_screen.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../shared/widgets/common.dart';
 import '../../../shared/widgets/tool_strip.dart';
@@ -278,6 +280,7 @@ class _StudentsTabState extends ConsumerState<_StudentsTab> {
                   attendanceTool(ref, '/admin'),
                   timetableAdminTool(ref),
                   bookPoolTool(ref, '/admin'),
+                  bookReportTool('/admin'),
                 ],
               ),
               const SizedBox(height: 14),
@@ -397,6 +400,7 @@ class _CoachesTab extends ConsumerWidget {
         final strip = ToolStrip(
           warnColor: Tone.warn.of(context),
           tools: [
+            staffTool(ref),
             ToolInfo(
               id: 'tool-invites',
               icon: Icons.vpn_key_outlined,

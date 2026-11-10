@@ -19,6 +19,10 @@ class Env {
   /// (arayüz geliştirme ve mağaza ekran görüntüleri için).
   static const isDemo = bool.fromEnvironment('DEMO');
 
+  /// `--dart-define=DEMO_RICH=true`: demo kurumu kalabalık açılır (24 öğrenci,
+  /// 4 koç); sunum için. Testler küçük demo verisini kullanır.
+  static const demoRich = bool.fromEnvironment('DEMO_RICH');
+
   /// Demo modunda hangi rolün ekranları açılsın: `student` (varsayılan) ya da
   /// `coach` (`--dart-define=DEMO_ROLE=coach`).
   static const demoRole = String.fromEnvironment(
