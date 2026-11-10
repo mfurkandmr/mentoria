@@ -193,9 +193,18 @@ class InMemoryExamCenter implements ExamAdminRepository, ExamReportRepository {
             ? (i == 0 ? 8 : 3 + (i * 3) % 7)
             : (i < 4 ? 5 + i : 3 + (i * 3) % 7);
         final hit = id == 'org-exam-1' ? level : level + 1;
-        String? mark(KeyQuestion q, int n) => n % 10 < hit
-            ? q.correct
-            : (n % 4 == 0 ? null : 'ABCDE'[(n + 1) % 5]);
+        // Yanlış işaret doğru şıktan hep farklı olmalı; yoksa sınav gününe
+        // göre "yanlış" denk gelip doğru sayılıyordu (tarihe bağlı sonuç).
+        // Kalabalık demoda demo öğrencisi Türkçede kaçırdığını boş bırakır:
+        // en çok net kaybettiren kazanım hep matematikte (Trigonometri) kalır.
+        String? mark(KeyQuestion q, int n) {
+          if (n % 10 < hit) return q.correct;
+          if (n % 4 == 0 || (rich && i == 0 && q.subject != 'TYT_MAT')) {
+            return null;
+          }
+          return 'ABCDE'[('ABCDE'.indexOf(q.correct ?? 'A') + 1) % 5];
+        }
+
         c.sheets.putIfAbsent(id, () => {})[s.id] = _Sheet('A', {
           for (final subj in e.subjects)
             subj.code: [
