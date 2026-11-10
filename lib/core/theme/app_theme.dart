@@ -46,7 +46,15 @@ class AppTheme {
           .textTheme(base.textTheme)
           .apply(bodyColor: scheme.onSurface, displayColor: scheme.onSurface),
       appBarTheme: AppBarTheme(
-        backgroundColor: Colors.transparent,
+        // İçerik altına kayınca yüzey rengine yumuşakça döner.
+        backgroundColor: WidgetStateColor.resolveWith(
+          (s) => s.contains(WidgetState.scrolledUnder)
+              ? scheme.surface
+              : Colors.transparent,
+        ),
+        surfaceTintColor: Colors.transparent,
+        shadowColor: Colors.black26,
+        scrolledUnderElevation: isDark ? 0 : 0.6,
         foregroundColor: scheme.onSurface,
         elevation: 0,
         centerTitle: false,

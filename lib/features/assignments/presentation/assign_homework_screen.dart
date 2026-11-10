@@ -174,24 +174,25 @@ class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
         ),
         SizedBox(
           height: 56,
-          child: ListView(
+          child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
-            children: [
-              for (final s in _subjects)
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: ChoiceChip(
-                    label: Text(s.name),
-                    selected: s.code == _subject,
-                    onSelected: (_) => setState(() {
-                      _subject = s.code;
-                      _topicSearch.clear();
-                      _topicQuery = '';
-                    }),
-                  ),
+            itemCount: _subjects.length,
+            itemBuilder: (context, i) {
+              final s = _subjects[i];
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: ChoiceChip(
+                  label: Text(s.name),
+                  selected: s.code == _subject,
+                  onSelected: (_) => setState(() {
+                    _subject = s.code;
+                    _topicSearch.clear();
+                    _topicQuery = '';
+                  }),
                 ),
-            ],
+              );
+            },
           ),
         ),
         Padding(

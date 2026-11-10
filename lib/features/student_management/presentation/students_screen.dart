@@ -262,17 +262,18 @@ class _StudentsScreenState extends ConsumerState<StudentsScreen> {
             ),
           ],
         )
-      : ListView(
+      : ListView.builder(
           padding: const EdgeInsets.fromLTRB(12, 4, 12, 100),
-          children: [
-            for (final x in list)
-              StudentRow(
-                student: x.student,
-                reasons: x.reasons,
-                onTap: () =>
-                    openStudentEditor(context, ref, x.student, widget.basePath),
-              ),
-          ],
+          itemCount: list.length,
+          itemBuilder: (context, i) {
+            final x = list[i];
+            return StudentRow(
+              student: x.student,
+              reasons: x.reasons,
+              onTap: () =>
+                  openStudentEditor(context, ref, x.student, widget.basePath),
+            );
+          },
         );
 
   Widget _pendingList(List<ExpectedStudent> list) => ListView(

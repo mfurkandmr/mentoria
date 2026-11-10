@@ -469,22 +469,39 @@ class _StudentPickerState extends State<_StudentPicker> {
               onChanged: (v) => setState(() => _q = v.trim()),
             ),
             Expanded(
-              child: ListView(
-                children: [
-                  for (final s in shown)
-                    CheckboxListTile(
+              child: Builder(
+                builder: (context) {
+                  Widget row(int i) {
+                    final s = shown[i];
+                    return CheckboxListTile(
                       key: ValueKey('sms-pick-${s.id}'),
                       dense: true,
                       value: _picked.contains(s.id),
-                      title: Text(s.fullName),
-                      subtitle: Text(s.classroomName ?? tr('Atanmadı')),
+                      title: Text(
+                        s.fullName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      subtitle: Text(
+                        s.classroomName ?? tr('Atanmadı'),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       onChanged: (v) => setState(
                         () => v == true
                             ? _picked.add(s.id)
                             : _picked.remove(s.id),
                       ),
-                    ),
-                ],
+                    );
+                  }
+
+                  return ListView.builder(
+                    itemCount: shown.length,
+                    // Satırlar eş yükseklikte: kaydırma konumu ölçmeden hesaplanır.
+                    prototypeItem: shown.isEmpty ? null : row(0),
+                    itemBuilder: (context, i) => row(i),
+                  );
+                },
               ),
             ),
           ],

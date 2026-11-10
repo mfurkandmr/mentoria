@@ -62,85 +62,86 @@ class ClassesScreen extends ConsumerWidget {
               ref.invalidate(timetableSetupProvider);
               ref.invalidate(managedStudentsProvider);
             },
-            child: ListView(
+            child: ListView.builder(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
-              children: [
-                for (final c in sorted)
-                  Builder(
-                    builder: (context) {
-                      final n = students
-                          .where((x) => x.classroomId == c.classroom.id)
-                          .length;
-                      final full = c.capacity != null && n > c.capacity!;
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 8),
-                        child: ListTile(
-                          key: ValueKey('class-${c.classroom.id}'),
-                          leading: Icon(
-                            c.active
-                                ? Icons.meeting_room_outlined
-                                : Icons.do_not_disturb_on_outlined,
-                          ),
-                          title: Text(c.classroom.name),
-                          subtitle: Text(
-                            [
-                              levelLabel(c.level),
-                              fieldLabel(c.field),
-                              c.capacity == null
-                                  ? tr('{n} öğrenci', {'n': n})
-                                  : tr('{n} / {max} öğrenci', {
-                                      'n': n,
-                                      'max': c.capacity!,
-                                    }),
-                              if (!c.active) tr('Pasif'),
-                            ].join(' · '),
-                            style: full
-                                ? TextStyle(
-                                    color: Theme.of(context).colorScheme.error,
-                                  )
-                                : null,
-                          ),
-                          trailing: _admin
-                              ? PopupMenuButton<String>(
-                                  tooltip: tr('Diğer'),
-                                  onSelected: (v) => switch (v) {
-                                    'edit' => editClassroom(context, ref, c),
-                                    'toggle' => _toggle(context, ref, c),
-                                    _ => _delete(context, ref, c, n),
-                                  },
-                                  itemBuilder: (_) => [
-                                    PopupMenuItem(
-                                      value: 'edit',
-                                      child: Text(tr('Düzenle')),
-                                    ),
-                                    PopupMenuItem(
-                                      value: 'toggle',
-                                      child: Text(
-                                        c.active
-                                            ? tr('Pasifleştir')
-                                            : tr('Etkinleştir'),
-                                      ),
-                                    ),
-                                    PopupMenuItem(
-                                      value: 'delete',
-                                      child: Text(tr('Sil')),
-                                    ),
-                                  ],
+              itemCount: sorted.length,
+              itemBuilder: (context, i) {
+                final c = sorted[i];
+                return Builder(
+                  builder: (context) {
+                    final n = students
+                        .where((x) => x.classroomId == c.classroom.id)
+                        .length;
+                    final full = c.capacity != null && n > c.capacity!;
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      child: ListTile(
+                        key: ValueKey('class-${c.classroom.id}'),
+                        leading: Icon(
+                          c.active
+                              ? Icons.meeting_room_outlined
+                              : Icons.do_not_disturb_on_outlined,
+                        ),
+                        title: Text(c.classroom.name),
+                        subtitle: Text(
+                          [
+                            levelLabel(c.level),
+                            fieldLabel(c.field),
+                            c.capacity == null
+                                ? tr('{n} öğrenci', {'n': n})
+                                : tr('{n} / {max} öğrenci', {
+                                    'n': n,
+                                    'max': c.capacity!,
+                                  }),
+                            if (!c.active) tr('Pasif'),
+                          ].join(' · '),
+                          style: full
+                              ? TextStyle(
+                                  color: Theme.of(context).colorScheme.error,
                                 )
-                              : const Icon(Icons.chevron_right),
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => ClassDetailScreen(
-                                classroomId: c.classroom.id,
-                                basePath: basePath,
-                              ),
+                              : null,
+                        ),
+                        trailing: _admin
+                            ? PopupMenuButton<String>(
+                                tooltip: tr('Diğer'),
+                                onSelected: (v) => switch (v) {
+                                  'edit' => editClassroom(context, ref, c),
+                                  'toggle' => _toggle(context, ref, c),
+                                  _ => _delete(context, ref, c, n),
+                                },
+                                itemBuilder: (_) => [
+                                  PopupMenuItem(
+                                    value: 'edit',
+                                    child: Text(tr('Düzenle')),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'toggle',
+                                    child: Text(
+                                      c.active
+                                          ? tr('Pasifleştir')
+                                          : tr('Etkinleştir'),
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'delete',
+                                    child: Text(tr('Sil')),
+                                  ),
+                                ],
+                              )
+                            : const Icon(Icons.chevron_right),
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => ClassDetailScreen(
+                              classroomId: c.classroom.id,
+                              basePath: basePath,
                             ),
                           ),
                         ),
-                      );
-                    },
-                  ),
-              ],
+                      ),
+                    );
+                  },
+                );
+              },
             ),
           );
         },
@@ -546,35 +547,33 @@ class ClassDetailScreen extends ConsumerWidget {
           if (inClass.isEmpty) {
             return Center(child: Text(tr('Bu sınıfta öğrenci yok.')));
           }
-          return ListView(
+          return ListView.builder(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
-            children: [
-              for (final s in inClass)
-                StudentRow(
-                  student: s,
-                  onTap: () => openStudentEditor(context, ref, s, basePath),
-                  trailing: IconButton(
-                    tooltip: tr('Sınıftan çıkar'),
-                    icon: const Icon(Icons.person_remove_outlined),
-                    onPressed: () async {
-                      try {
-                        await ref
-                            .read(studentManagementRepositoryProvider)
-                            .assignToClass([s.id], null);
-                        ref.invalidate(managedStudentsProvider);
-                        ref.invalidate(timetableSetupProvider);
-                      } catch (_) {
-                        if (context.mounted) {
-                          showMessage(
-                            context,
-                            tr('Kaydedilemedi. Tekrar dene.'),
-                          );
-                        }
+            itemCount: inClass.length,
+            itemBuilder: (context, i) {
+              final s = inClass[i];
+              return StudentRow(
+                student: s,
+                onTap: () => openStudentEditor(context, ref, s, basePath),
+                trailing: IconButton(
+                  tooltip: tr('Sınıftan çıkar'),
+                  icon: const Icon(Icons.person_remove_outlined),
+                  onPressed: () async {
+                    try {
+                      await ref
+                          .read(studentManagementRepositoryProvider)
+                          .assignToClass([s.id], null);
+                      ref.invalidate(managedStudentsProvider);
+                      ref.invalidate(timetableSetupProvider);
+                    } catch (_) {
+                      if (context.mounted) {
+                        showMessage(context, tr('Kaydedilemedi. Tekrar dene.'));
                       }
-                    },
-                  ),
+                    }
+                  },
                 ),
-            ],
+              );
+            },
           );
         },
       ),
@@ -646,26 +645,41 @@ class _PickStudentsDialogState extends State<_PickStudentsDialog> {
               onChanged: (v) => setState(() => _q = v.trim()),
             ),
             Expanded(
-              child: ListView(
-                children: [
-                  for (final s in shown)
-                    CheckboxListTile(
+              child: Builder(
+                builder: (context) {
+                  Widget row(int i) {
+                    final s = shown[i];
+                    return CheckboxListTile(
                       dense: true,
                       value: _picked.contains(s.id),
-                      title: Text(s.fullName),
+                      title: Text(
+                        s.fullName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       subtitle: Text(
                         [
                           s.studentNumber ?? tr('Numarası yok'),
                           s.classroomName ?? tr('Atanmadı'),
                         ].join(' · '),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       onChanged: (v) => setState(
                         () => v == true
                             ? _picked.add(s.id)
                             : _picked.remove(s.id),
                       ),
-                    ),
-                ],
+                    );
+                  }
+
+                  return ListView.builder(
+                    itemCount: shown.length,
+                    // Satırlar eş yükseklikte: kaydırma konumu ölçmeden hesaplanır.
+                    prototypeItem: shown.isEmpty ? null : row(0),
+                    itemBuilder: (context, i) => row(i),
+                  );
+                },
               ),
             ),
           ],

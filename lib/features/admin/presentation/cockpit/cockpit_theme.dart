@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -533,36 +532,14 @@ class CockpitThemed extends StatelessWidget {
     final dark = Theme.of(context).brightness == Brightness.dark;
     return Theme(
       data: cockpitTheme(context.brand, dark: dark),
-      child: ScrollConfiguration(
-        behavior: const _CockpitScroll(),
-        child: child,
-      ),
+      child: child,
     );
   }
 }
 
-/// Kokpit kaydırması: telefonda iOS gibi esnek (yaylanan). Web'de fare
-/// tekerleğiyle esneme takılma gibi hissettirdiği için düz (NOTLAR §70).
-/// Aşağı çekip yenilemek için her zaman kaydırılabilir.
-ScrollPhysics cockpitScrollPhysics() => const AlwaysScrollableScrollPhysics(
-  parent: kIsWeb ? ClampingScrollPhysics() : BouncingScrollPhysics(),
-);
-
-/// Kaydırma çubukları platformun varsayılanı.
-class _CockpitScroll extends MaterialScrollBehavior {
-  const _CockpitScroll();
-
-  @override
-  ScrollPhysics getScrollPhysics(BuildContext context) =>
-      kIsWeb ? const ClampingScrollPhysics() : const BouncingScrollPhysics();
-
-  @override
-  Widget buildOverscrollIndicator(
-    BuildContext context,
-    Widget child,
-    ScrollableDetails details,
-  ) => child;
-}
+/// Kokpit listeleri: aşağı çekip yenilemek için her zaman kaydırılabilir.
+/// Esneme / germe platformun kendi davranışıdır (iOS yaylanır, Android gerer).
+ScrollPhysics cockpitScrollPhysics() => const AlwaysScrollableScrollPhysics();
 
 /// Müdür / koç kokpitinin içinde mi? Ortak bileşenler (öğrenci kartı,
 /// avatar) burada dekoratif renk yerine nötr görünür. Açılan pencerelerde

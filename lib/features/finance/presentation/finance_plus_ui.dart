@@ -1914,96 +1914,97 @@ class ChildFinanceView extends ConsumerWidget {
                 ),
               ],
             )
-          : ListView(
+          : ListView.builder(
               padding: const EdgeInsets.all(16),
-              children: [
-                for (final f in c.fees)
-                  SectionCard(
-                    title: f.title,
-                    subtitle: f.isCancelled
-                        ? tr('Kayıt iptal edildi')
-                        : tr('Kalan: {v}', {'v': formatMoney(f.remaining)}),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          [
-                            tr('Ücret: {v}', {'v': formatMoney(f.total)}),
-                            if (f.discountTotal > 0)
-                              tr('İndirim: {v}', {
-                                'v': formatMoney(f.discountTotal),
-                              }),
-                            tr('Ödenen: {v}', {'v': formatMoney(f.paid)}),
-                          ].join(' · '),
-                          style: text.bodySmall,
+              itemCount: c.fees.length,
+              itemBuilder: (context, i) {
+                final f = c.fees[i];
+                return SectionCard(
+                  title: f.title,
+                  subtitle: f.isCancelled
+                      ? tr('Kayıt iptal edildi')
+                      : tr('Kalan: {v}', {'v': formatMoney(f.remaining)}),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        [
+                          tr('Ücret: {v}', {'v': formatMoney(f.total)}),
+                          if (f.discountTotal > 0)
+                            tr('İndirim: {v}', {
+                              'v': formatMoney(f.discountTotal),
+                            }),
+                          tr('Ödenen: {v}', {'v': formatMoney(f.paid)}),
+                        ].join(' · '),
+                        style: text.bodySmall,
+                      ),
+                      const SizedBox(height: 6),
+                      for (final i in f.installments)
+                        ListTile(
+                          dense: true,
+                          contentPadding: EdgeInsets.zero,
+                          leading: Icon(
+                            i.isPaid
+                                ? Icons.check_circle_rounded
+                                : i.isOverdue(today)
+                                ? Icons.error_outline_rounded
+                                : Icons.schedule_rounded,
+                            color: i.isPaid
+                                ? brand.success
+                                : i.isOverdue(today)
+                                ? brand.danger
+                                : null,
+                          ),
+                          title: Text(
+                            '${formatLongDate(i.dueOn)} · ${formatMoney(i.amount)}',
+                          ),
+                          subtitle: i.isPaid
+                              ? Text(tr('Ödendi'))
+                              : i.isPartial
+                              ? Text(
+                                  tr('{p} ödendi, {r} kaldı', {
+                                    'p': formatMoney(i.paidAmount),
+                                    'r': formatMoney(i.open),
+                                  }),
+                                )
+                              : i.isOverdue(today)
+                              ? Text(tr('Gecikti'))
+                              : null,
                         ),
+                      if (f.receipts.isNotEmpty) ...[
                         const SizedBox(height: 6),
-                        for (final i in f.installments)
+                        Text(tr('Makbuzlar'), style: text.titleSmall),
+                        for (final r in f.receipts)
                           ListTile(
                             dense: true,
                             contentPadding: EdgeInsets.zero,
-                            leading: Icon(
-                              i.isPaid
-                                  ? Icons.check_circle_rounded
-                                  : i.isOverdue(today)
-                                  ? Icons.error_outline_rounded
-                                  : Icons.schedule_rounded,
-                              color: i.isPaid
-                                  ? brand.success
-                                  : i.isOverdue(today)
-                                  ? brand.danger
-                                  : null,
-                            ),
                             title: Text(
-                              '${formatLongDate(i.dueOn)} · ${formatMoney(i.amount)}',
+                              '${r.isRefund ? tr('İade') : tr('Tahsilat')} · ${formatMoney(r.amount)}',
                             ),
-                            subtitle: i.isPaid
-                                ? Text(tr('Ödendi'))
-                                : i.isPartial
-                                ? Text(
-                                    tr('{p} ödendi, {r} kaldı', {
-                                      'p': formatMoney(i.paidAmount),
-                                      'r': formatMoney(i.open),
-                                    }),
-                                  )
-                                : i.isOverdue(today)
-                                ? Text(tr('Gecikti'))
-                                : null,
-                          ),
-                        if (f.receipts.isNotEmpty) ...[
-                          const SizedBox(height: 6),
-                          Text(tr('Makbuzlar'), style: text.titleSmall),
-                          for (final r in f.receipts)
-                            ListTile(
-                              dense: true,
-                              contentPadding: EdgeInsets.zero,
-                              title: Text(
-                                '${r.isRefund ? tr('İade') : tr('Tahsilat')} · ${formatMoney(r.amount)}',
-                              ),
-                              subtitle: Text(
-                                [
-                                  formatShortDate(r.date),
-                                  r.number ?? tr('Eski kayıt'),
-                                ].join(' · '),
-                              ),
-                              trailing: r.number == null
-                                  ? null
-                                  : IconButton(
-                                      tooltip: tr('Makbuzu paylaş (PDF)'),
-                                      icon: const Icon(
-                                        Icons.picture_as_pdf_outlined,
-                                      ),
-                                      onPressed: () => shareReceipt(
-                                        context,
-                                        feeReceiptDoc(f, r, orgName: c.orgName),
-                                      ),
+                            subtitle: Text(
+                              [
+                                formatShortDate(r.date),
+                                r.number ?? tr('Eski kayıt'),
+                              ].join(' · '),
+                            ),
+                            trailing: r.number == null
+                                ? null
+                                : IconButton(
+                                    tooltip: tr('Makbuzu paylaş (PDF)'),
+                                    icon: const Icon(
+                                      Icons.picture_as_pdf_outlined,
                                     ),
-                            ),
-                        ],
+                                    onPressed: () => shareReceipt(
+                                      context,
+                                      feeReceiptDoc(f, r, orgName: c.orgName),
+                                    ),
+                                  ),
+                          ),
                       ],
-                    ),
+                    ],
                   ),
-              ],
+                );
+              },
             ),
     );
   }

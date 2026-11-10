@@ -945,20 +945,35 @@ class _StudentPickerState extends State<_StudentPicker> {
                   Navigator.pop(context, const RosterStudent(id: '', name: '')),
             ),
             Expanded(
-              child: ListView(
-                children: [
-                  for (final s in list)
-                    ListTile(
-                      title: Text(s.name),
+              child: Builder(
+                builder: (context) {
+                  Widget row(int i) {
+                    final s = list[i];
+                    return ListTile(
+                      title: Text(
+                        s.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       subtitle: Text(
                         [
                           if (s.number != null) s.number!,
                           if (s.className != null) s.className!,
                         ].join(' · '),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       onTap: () => Navigator.pop(context, s),
-                    ),
-                ],
+                    );
+                  }
+
+                  return ListView.builder(
+                    itemCount: list.length,
+                    // Satırlar eş yükseklikte: kaydırma konumu ölçmeden hesaplanır.
+                    prototypeItem: list.isEmpty ? null : row(0),
+                    itemBuilder: (context, i) => row(i),
+                  );
+                },
               ),
             ),
           ],

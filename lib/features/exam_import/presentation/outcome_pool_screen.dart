@@ -225,43 +225,44 @@ class _OutcomePoolScreenState extends ConsumerState<OutcomePoolScreen> {
                     ],
                   );
                 }
-                return ListView(
+                return ListView.builder(
                   padding: const EdgeInsets.only(bottom: 96),
-                  children: [
-                    for (final r in roots)
-                      _OutcomeNode(
-                        tree: t,
-                        node: r,
-                        onAdd: (id) => _add(parentId: id),
-                        onRename: (o) async {
-                          final name = await _ask(
-                            tr('Adı değiştir'),
-                            initial: o.name,
-                          );
-                          if (name == null) return;
-                          await _run(
-                            () => ref
-                                .read(examAdminRepositoryProvider)
-                                .updateOutcome(o.id, name: name, code: o.code),
-                          );
-                        },
-                        onDelete: (o) async {
-                          final ok = await confirm(
-                            context,
-                            title: tr('Kazanım silinsin mi?'),
-                            message: tr(
-                              'Alt konuları da silinir. Sınavlardaki eşleştirmeler kaldırılır; geçmiş sonuçlardaki ad kalır.',
-                            ),
-                          );
-                          if (!ok) return;
-                          await _run(
-                            () => ref
-                                .read(examAdminRepositoryProvider)
-                                .deleteOutcome(o.id),
-                          );
-                        },
-                      ),
-                  ],
+                  itemCount: roots.length,
+                  itemBuilder: (context, i) {
+                    final r = roots[i];
+                    return _OutcomeNode(
+                      tree: t,
+                      node: r,
+                      onAdd: (id) => _add(parentId: id),
+                      onRename: (o) async {
+                        final name = await _ask(
+                          tr('Adı değiştir'),
+                          initial: o.name,
+                        );
+                        if (name == null) return;
+                        await _run(
+                          () => ref
+                              .read(examAdminRepositoryProvider)
+                              .updateOutcome(o.id, name: name, code: o.code),
+                        );
+                      },
+                      onDelete: (o) async {
+                        final ok = await confirm(
+                          context,
+                          title: tr('Kazanım silinsin mi?'),
+                          message: tr(
+                            'Alt konuları da silinir. Sınavlardaki eşleştirmeler kaldırılır; geçmiş sonuçlardaki ad kalır.',
+                          ),
+                        );
+                        if (!ok) return;
+                        await _run(
+                          () => ref
+                              .read(examAdminRepositoryProvider)
+                              .deleteOutcome(o.id),
+                        );
+                      },
+                    );
+                  },
                 );
               },
             ),

@@ -246,26 +246,27 @@ class _Picker extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: ListView(
+          child: ListView.builder(
             padding: const EdgeInsets.fromLTRB(12, 4, 12, 32),
-            children: [
-              for (final e in exams)
-                CheckboxListTile(
-                  key: ValueKey('pick-${e.id}'),
-                  value: selected.contains(e.id),
-                  onChanged: (_) => onToggle(e.id),
-                  title: Text(e.name),
-                  subtitle: Text(
-                    [
-                      _day(e.takenOn),
-                      if (e.publisher != null && e.publisher!.isNotEmpty)
-                        e.publisher!,
-                      e.examType.label,
-                      tr('{n} net', {'n': formatNet(e.totalNet)}),
-                    ].join(' · '),
-                  ),
+            itemCount: exams.length,
+            itemBuilder: (context, i) {
+              final e = exams[i];
+              return CheckboxListTile(
+                key: ValueKey('pick-${e.id}'),
+                value: selected.contains(e.id),
+                onChanged: (_) => onToggle(e.id),
+                title: Text(e.name),
+                subtitle: Text(
+                  [
+                    _day(e.takenOn),
+                    if (e.publisher != null && e.publisher!.isNotEmpty)
+                      e.publisher!,
+                    e.examType.label,
+                    tr('{n} net', {'n': formatNet(e.totalNet)}),
+                  ].join(' · '),
                 ),
-            ],
+              );
+            },
           ),
         ),
       ],

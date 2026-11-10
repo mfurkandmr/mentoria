@@ -513,35 +513,33 @@ class _NewDuelSheetState extends ConsumerState<_NewDuelSheet> {
                           textAlign: TextAlign.center,
                         ),
                       )
-                    : ListView(
+                    : ListView.builder(
                         shrinkWrap: true,
-                        children: [
-                          for (final o in list)
-                            ListTile(
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 4,
-                              ),
-                              leading: StudentAvatar(
-                                config: o.avatar,
-                                size: 40,
-                              ),
-                              title: Text(
-                                o.name,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                              trailing: Icon(
-                                _opponent == o.id
-                                    ? Icons.radio_button_checked_rounded
-                                    : Icons.radio_button_off_rounded,
-                                color: _opponent == o.id
-                                    ? _duelColors.last
-                                    : null,
-                              ),
-                              onTap: () => setState(() => _opponent = o.id),
+                        itemCount: list.length,
+                        itemBuilder: (context, i) {
+                          final o = list[i];
+                          return ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 4,
                             ),
-                        ],
+                            leading: StudentAvatar(config: o.avatar, size: 40),
+                            title: Text(
+                              o.name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                            trailing: Icon(
+                              _opponent == o.id
+                                  ? Icons.radio_button_checked_rounded
+                                  : Icons.radio_button_off_rounded,
+                              color: _opponent == o.id
+                                  ? _duelColors.last
+                                  : null,
+                            ),
+                            onTap: () => setState(() => _opponent = o.id),
+                          );
+                        },
                       ),
               ),
             ),
