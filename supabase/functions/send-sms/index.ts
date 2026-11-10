@@ -1,4 +1,5 @@
-// SMS kuyruğunu (public.sms_outbox) boşaltır: taksit hatırlatmaları.
+// SMS kuyruğunu (public.sms_outbox) boşaltır: taksit hatırlatmaları, yoklama,
+// sınav sonucu ve toplu SMS. Mesajlar claim_sms() ile kilitlenerek alınır.
 //
 // Çağıran: kick_sms() (pg_net; müdür hatırlatma gönderince ve pg_cron ile 5
 // dakikada bir, sırada mesaj varsa). Mesajlar service role ile okunur.
@@ -22,21 +23,36 @@ const json = (body: unknown, status = 200) =>
     headers: { 'Content-Type': 'application/json' },
   });
 
-// Netgsm: GET /sms/send/get → "00 <görev no>" (ya da 01/02) başarılı, diğer
-// kodlar hata (20 metin, 30 kimlik, 40 gönderici adı, 50/51 İYS, 70 parametre,
+// Netgsm REST v2: POST /sms/rest/v2/send, Basic auth, JSON gövde. Kullanıcı
+// kodu ve parola adrese yazılmaz (adresler sağlayıcı ve ara sunucu
+// kayıtlarında kalabilir). Yanıt {"code":"00","jobid":"..."}; 00 dışı kodlar
+// hata (20 metin, 30 kimlik, 40 gönderici adı, 50/51 İYS, 70 parametre,
 // 80 sınır, 85 tekrar).
 async function sendNetgsm(sms: Sms): Promise<Result> {
-  const params = new URLSearchParams({
-    usercode: Deno.env.get('NETGSM_USERCODE') ?? '',
-    password: Deno.env.get('NETGSM_PASSWORD') ?? '',
-    gsmno: sms.phone.replace(/^\+/, ''),
-    message: sms.body,
-    msgheader: Deno.env.get('NETGSM_HEADER') ?? '',
-    dil: 'TR',
+  const user = Deno.env.get('NETGSM_USERCODE') ?? '';
+  const pass = Deno.env.get('NETGSM_PASSWORD') ?? '';
+  const res = await fetch('https://api.netgsm.com.tr/sms/rest/v2/send', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Basic ${btoa(`${user}:${pass}`)}`,
+    },
+    body: JSON.stringify({
+      msgheader: Deno.env.get('NETGSM_HEADER') ?? '',
+      encoding: 'TR',
+      messages: [{ msg: sms.body, no: sms.phone.replace(/^\+/, '') }],
+    }),
   });
-  const res = await fetch(`https://api.netgsm.com.tr/sms/send/get?${params}`);
   const text = (await res.text()).trim();
-  return /^0[012]\b/.test(text) ? { ok: true } : { ok: false, error: `netgsm ${text.slice(0, 80)}` };
+  let code = '';
+  try {
+    code = String(JSON.parse(text)?.code ?? '');
+  } catch {
+    // JSON değilse metnin kendisi hata olarak yazılır.
+  }
+  return res.ok && code === '00'
+    ? { ok: true }
+    : { ok: false, error: `netgsm ${res.status} ${(code || text).slice(0, 80)}` };
 }
 
 Deno.serve(async (req) => {
@@ -59,12 +75,9 @@ Deno.serve(async (req) => {
     { auth: { persistSession: false } },
   );
 
-  const { data, error } = await db
-    .from('sms_outbox')
-    .select('id, phone, body')
-    .eq('status', 'queued')
-    .order('created_at')
-    .limit(50);
+  // claim_sms mesajları kilitleyip 'sending' yapar: fonksiyon aynı anda iki
+  // kez çalışsa da (zamanlayıcı + yoklama) bir mesaj yalnızca birine düşer.
+  const { data, error } = await db.rpc('claim_sms', { p_limit: 50 });
   if (error) return json({ error: error.message }, 500);
 
   let sent = 0;

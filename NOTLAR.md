@@ -2997,3 +2997,22 @@ confirm / warn`); `CockpitMotion` ve `CockpitHaptics` kalktı.
   dolu düğmenin içeriği küçülür (tema ile bütün düğme ölçeklenemiyor). Karışık içerikli
   uzun listeler (`ListView(children)`) dönüştürülmedi. Tarih seçici çatının süresiyle
   açılır. Alt sayfa eğrisi çatıda sabit, yalnızca süresi ayarlanır.
+
+## 85. İnceleme düzeltmeleri: oturum değişimi, SMS kilidi (10 Kasım 2026)
+
+- **Önceki hesabın verisi:** repository sağlayıcıları `supabaseClientProvider` yerine
+  `sessionClient(ref)` ile istemci alır (`auth_repository.dart`); bu yardımcı oturumdaki
+  kullanıcı kimliğini de izler. Çıkış yapıp başka hesapla girince repository yeniden
+  kurulur, ona bağlı bütün `FutureProvider`'lar sıfırlanır (önceden öğrenci listesi,
+  finans, kurum bilgisi aşağı çekip yenileyene kadar önceki hesabınki kalıyordu). Ayrı bir
+  sağlayıcı değil, çünkü istemci nesnesi hep aynı; Riverpod `==` ile eşit değerde
+  bağımlıları yenilemez. Yeni repository yazarken `sessionClient(ref)` kullanın;
+  `test/auth/session_scope_test.dart` tarar. İstisna: `app_version.dart` (oturumsuz).
+- **Çift SMS:** `send-sms` (v2) mesajları `claim_sms()` ile alır (migration
+  `20261110100000_sms_claim`, canlıda): `for update skip locked` + `status = 'sending'`.
+  15 dakikadan uzun `sending` kalan mesaj yeniden gönderilmez, `failed` olur (gitmiş
+  olabilir). Test: `supabase/tests/sms_claim_test.mjs`.
+- **Netgsm:** GET + adreste parola yerine REST v2 (`POST /sms/rest/v2/send`, Basic auth,
+  JSON; yanıt `code: "00"`). Biçim resmi dokümandan değil, Netgsm Go istemcisinin
+  (`mobinova/netgsm-go`) kaynağından doğrulandı; sağlayıcı bağlanınca ilk mesajla deneyin.
+- **Demo + env.json:** router'daki oturum dinleyicisi demo modunda Supabase'e dokunmaz.
