@@ -85,7 +85,7 @@ class SupabaseAvatarRepository implements AvatarRepository {
 }
 
 final avatarRepositoryProvider = Provider<AvatarRepository>(
-  (ref) => SupabaseAvatarRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseAvatarRepository(sessionClient(ref)),
 );
 
 /// Katalog: id → parça. Oturum boyunca önbellekte kalır.

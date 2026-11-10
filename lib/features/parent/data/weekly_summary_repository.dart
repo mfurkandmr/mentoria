@@ -88,7 +88,7 @@ class SupabaseWeeklySummaryRepository implements WeeklySummaryRepository {
 }
 
 final weeklySummaryRepositoryProvider = Provider<WeeklySummaryRepository>(
-  (ref) => SupabaseWeeklySummaryRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseWeeklySummaryRepository(sessionClient(ref)),
 );
 
 final weeklySummaryProvider = FutureProvider.family<WeeklySummary, String>(

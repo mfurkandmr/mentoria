@@ -68,7 +68,7 @@ class SupabaseOrgCreditsRepository implements OrgCreditsRepository {
 }
 
 final orgCreditsRepositoryProvider = Provider<OrgCreditsRepository>(
-  (ref) => SupabaseOrgCreditsRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseOrgCreditsRepository(sessionClient(ref)),
 );
 
 final licenseActiveProvider = FutureProvider<bool>(

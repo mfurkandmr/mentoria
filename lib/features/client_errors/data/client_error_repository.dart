@@ -73,7 +73,7 @@ class SupabaseClientErrorRepository implements ClientErrorRepository {
 }
 
 final clientErrorRepositoryProvider = Provider<ClientErrorRepository>(
-  (ref) => SupabaseClientErrorRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseClientErrorRepository(sessionClient(ref)),
 );
 
 final clientErrorsProvider = FutureProvider.autoDispose<List<ClientError>>(

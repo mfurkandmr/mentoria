@@ -145,7 +145,7 @@ class SupabaseAccountRepository implements AccountRepository {
 }
 
 final accountRepositoryProvider = Provider<AccountRepository>(
-  (ref) => SupabaseAccountRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseAccountRepository(sessionClient(ref)),
 );
 
 /// Giriş yapan kişinin bilgileri; çıkış yapıp başka hesapla girilince yeniden

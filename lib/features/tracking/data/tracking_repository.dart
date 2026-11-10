@@ -268,7 +268,7 @@ class SupabaseTrackingRepository implements TrackingRepository {
 }
 
 final trackingRepositoryProvider = Provider<TrackingRepository>(
-  (ref) => SupabaseTrackingRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseTrackingRepository(sessionClient(ref)),
 );
 
 /// Son 30 günlük listelerin başlangıç günü (bugün dahil 30 gün).

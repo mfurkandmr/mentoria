@@ -720,7 +720,7 @@ class SupabaseExamReportRepository implements ExamReportRepository {
 }
 
 final examReportRepositoryProvider = Provider<ExamReportRepository>(
-  (ref) => SupabaseExamReportRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseExamReportRepository(sessionClient(ref)),
 );
 
 final reportCardsProvider = FutureProvider.family<List<CardSummary>, String>(

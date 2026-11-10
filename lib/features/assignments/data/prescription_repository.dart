@@ -70,7 +70,7 @@ class SupabasePrescriptionRepository implements PrescriptionRepository {
 }
 
 final prescriptionRepositoryProvider = Provider<PrescriptionRepository>(
-  (ref) => SupabasePrescriptionRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabasePrescriptionRepository(sessionClient(ref)),
 );
 
 final prescriptionProvider =

@@ -208,7 +208,7 @@ class SupabaseExamRepository implements ExamRepository {
 }
 
 final examRepositoryProvider = Provider<ExamRepository>(
-  (ref) => SupabaseExamRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseExamRepository(sessionClient(ref)),
 );
 
 /// Bir öğrencinin tüm denemeleri (yeniden eskiye). RLS sayesinde öğrenci

@@ -414,7 +414,7 @@ List<OutcomeMistakes> mistakesByOutcome(List<ExamAnswer> answers) {
 }
 
 final opticRepositoryProvider = Provider<OpticRepository>(
-  (ref) => SupabaseOpticRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseOpticRepository(sessionClient(ref)),
 );
 
 final answerKeysProvider = FutureProvider<List<AnswerKey>>(

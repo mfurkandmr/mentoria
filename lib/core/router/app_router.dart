@@ -588,7 +588,9 @@ StatefulShellBranch _branch(String path, Widget screen) => StatefulShellBranch(
 /// Oturum açılıp kapandığında router'ın yönlendirmeyi yeniden çalıştırmasını sağlar.
 class _AuthRefresh extends ChangeNotifier {
   _AuthRefresh() {
-    if (Env.isConfigured) {
+    // Demo modunda Supabase başlatılmaz (main.dart); env.json verilse bile
+    // Supabase.instance'a dokunmak açılışta çökerdi.
+    if (Env.isConfigured && !Env.isDemo) {
       _sub = Supabase.instance.client.auth.onAuthStateChange.listen((s) {
         if (s.event == AuthChangeEvent.passwordRecovery) {
           passwordRecovery.value = true;

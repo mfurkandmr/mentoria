@@ -437,7 +437,7 @@ class SupabaseNotificationRepository implements NotificationRepository {
 }
 
 final notificationRepositoryProvider = Provider<NotificationRepository>(
-  (ref) => SupabaseNotificationRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseNotificationRepository(sessionClient(ref)),
 );
 
 final notificationsProvider =

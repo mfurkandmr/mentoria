@@ -182,6 +182,21 @@ final _currentUserIdProvider = Provider<String?>((ref) {
   return ref.watch(supabaseClientProvider).auth.currentUser?.id;
 });
 
+/// Repository sağlayıcılarının istemcisi. Oturumdaki kullanıcı kimliğini de
+/// izler: kullanıcı değişince (çıkış, başka hesapla giriş) repository yeniden
+/// kurulur ve ona bağlı bütün sağlayıcılar sıfırlanır; ortak bilgisayarda
+/// önceki hesabın verisi (öğrenci listesi, finans, kurum) yeni hesaba
+/// görünmez. Token yenilemesinde kimlik aynı kaldığından hiçbir şey yeniden
+/// çekilmez.
+///
+/// Ayrı bir sağlayıcı değil, çünkü istemci nesnesi hep aynıdır; Riverpod
+/// değeri değişmeyen sağlayıcının bağımlılarını yenilemez. Kimliği doğrudan
+/// izlemek gerekir.
+SupabaseClient sessionClient(Ref ref) {
+  ref.watch(_currentUserIdProvider);
+  return ref.watch(supabaseClientProvider);
+}
+
 final currentProfileProvider = FutureProvider<Profile?>((ref) async {
   // Profil yalnızca kullanıcı değişince ya da hesabı güncellenince çekilir;
   // arkasına bağlı marka, süper admin ve avatar istekleri de boşuna tekrarlanmaz.

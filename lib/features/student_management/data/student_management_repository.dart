@@ -257,9 +257,7 @@ class SupabaseStudentManagementRepository
 
 final studentManagementRepositoryProvider =
     Provider<StudentManagementRepository>(
-      (ref) => SupabaseStudentManagementRepository(
-        ref.watch(supabaseClientProvider),
-      ),
+      (ref) => SupabaseStudentManagementRepository(sessionClient(ref)),
     );
 
 final managedStudentsProvider = FutureProvider<List<ManagedStudent>>(

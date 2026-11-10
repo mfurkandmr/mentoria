@@ -86,7 +86,7 @@ class SupabaseRiskRepository implements RiskRepository {
 }
 
 final riskRepositoryProvider = Provider<RiskRepository>(
-  (ref) => SupabaseRiskRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseRiskRepository(sessionClient(ref)),
 );
 
 final riskListProvider = FutureProvider<List<RiskEntry>>(

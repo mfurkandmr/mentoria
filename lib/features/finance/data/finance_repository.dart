@@ -1905,7 +1905,7 @@ class SupabaseFinanceRepository implements FinanceRepository {
 }
 
 final financeRepositoryProvider = Provider<FinanceRepository>(
-  (ref) => SupabaseFinanceRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseFinanceRepository(sessionClient(ref)),
 );
 
 final financeFeesProvider = FutureProvider<List<StudentFee>>(

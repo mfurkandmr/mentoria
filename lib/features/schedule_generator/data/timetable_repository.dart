@@ -592,7 +592,7 @@ class SupabaseTimetableRepository implements TimetableRepository {
 }
 
 final timetableRepositoryProvider = Provider<TimetableRepository>(
-  (ref) => SupabaseTimetableRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseTimetableRepository(sessionClient(ref)),
 );
 
 final timetableSetupProvider = FutureProvider<TimetableSetup>(

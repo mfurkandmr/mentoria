@@ -198,7 +198,7 @@ class SupabaseAssignmentRepository implements AssignmentRepository {
 }
 
 final assignmentRepositoryProvider = Provider<AssignmentRepository>(
-  (ref) => SupabaseAssignmentRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseAssignmentRepository(sessionClient(ref)),
 );
 
 final assignmentsProvider = FutureProvider.family<List<Assignment>, String>((

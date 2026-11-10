@@ -34,7 +34,7 @@ class NoopPresenceRepository implements PresenceRepository {
 }
 
 final presenceRepositoryProvider = Provider<PresenceRepository>(
-  (ref) => SupabasePresenceRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabasePresenceRepository(sessionClient(ref)),
 );
 
 /// Giriş yapılınca ve uygulama öne gelince son görülmeyi yazar. Hata

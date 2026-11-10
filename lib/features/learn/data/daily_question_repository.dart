@@ -68,7 +68,7 @@ class SupabaseDailyQuestionRepository implements DailyQuestionRepository {
 }
 
 final dailyQuestionRepositoryProvider = Provider<DailyQuestionRepository>(
-  (ref) => SupabaseDailyQuestionRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseDailyQuestionRepository(sessionClient(ref)),
 );
 
 final dailyQuestionProvider = FutureProvider<DailyQuestionState?>(

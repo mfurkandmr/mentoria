@@ -169,7 +169,7 @@ class SupabaseTenantRepository implements TenantRepository {
 }
 
 final tenantRepositoryProvider = Provider<TenantRepository>(
-  (ref) => SupabaseTenantRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseTenantRepository(sessionClient(ref)),
 );
 
 /// Süper admin paneli listesi.

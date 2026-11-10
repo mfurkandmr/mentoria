@@ -193,7 +193,7 @@ class SupabasePlanRepository implements PlanRepository {
 }
 
 final planRepositoryProvider = Provider<PlanRepository>(
-  (ref) => SupabasePlanRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabasePlanRepository(sessionClient(ref)),
 );
 
 final planWeekProvider =

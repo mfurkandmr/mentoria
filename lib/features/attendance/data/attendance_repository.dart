@@ -218,7 +218,7 @@ class SupabaseAttendanceRepository implements AttendanceRepository {
 }
 
 final attendanceRepositoryProvider = Provider<AttendanceRepository>(
-  (ref) => SupabaseAttendanceRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseAttendanceRepository(sessionClient(ref)),
 );
 
 /// Öğrenci düzenleme penceresinde veli adı / telefonu.

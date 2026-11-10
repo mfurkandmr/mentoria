@@ -168,7 +168,7 @@ class SupabaseAnnouncementRepository implements AnnouncementRepository {
 }
 
 final announcementRepositoryProvider = Provider<AnnouncementRepository>(
-  (ref) => SupabaseAnnouncementRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseAnnouncementRepository(sessionClient(ref)),
 );
 
 /// Ekrandan çıkınca 2 dakika daha tutulur: geri gelince yeniden indirilmez.

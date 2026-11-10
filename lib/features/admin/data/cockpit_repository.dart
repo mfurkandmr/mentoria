@@ -334,7 +334,7 @@ String _ymd(DateTime d) =>
     '${d.day.toString().padLeft(2, '0')}';
 
 final cockpitRepositoryProvider = Provider<CockpitRepository>(
-  (ref) => SupabaseCockpitRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseCockpitRepository(sessionClient(ref)),
 );
 
 final cockpitProvider = FutureProvider.autoDispose<CockpitData>(

@@ -183,7 +183,7 @@ class SupabaseAdminRepository implements AdminRepository {
 }
 
 final adminRepositoryProvider = Provider<AdminRepository>(
-  (ref) => SupabaseAdminRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseAdminRepository(sessionClient(ref)),
 );
 
 final orgProvider = FutureProvider<OrgInfo>(

@@ -316,7 +316,7 @@ class SupabaseMeetingRepository implements MeetingRepository {
 }
 
 final meetingRepositoryProvider = Provider<MeetingRepository>(
-  (ref) => SupabaseMeetingRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseMeetingRepository(sessionClient(ref)),
 );
 
 /// Bir öğrencinin (ya da null: görülebilen tüm öğrencilerin) planları.

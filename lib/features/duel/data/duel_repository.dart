@@ -217,7 +217,7 @@ class SupabaseDuelRepository implements DuelRepository {
 }
 
 final duelRepositoryProvider = Provider<DuelRepository>(
-  (ref) => SupabaseDuelRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseDuelRepository(sessionClient(ref)),
 );
 
 final duelsProvider = FutureProvider<List<Duel>>(

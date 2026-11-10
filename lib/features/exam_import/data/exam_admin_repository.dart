@@ -474,7 +474,7 @@ class SupabaseExamAdminRepository implements ExamAdminRepository {
 }
 
 final examAdminRepositoryProvider = Provider<ExamAdminRepository>(
-  (ref) => SupabaseExamAdminRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseExamAdminRepository(sessionClient(ref)),
 );
 
 final orgExamsProvider = FutureProvider<List<ExamDefinition>>(

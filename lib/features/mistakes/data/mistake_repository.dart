@@ -232,7 +232,7 @@ class SupabaseMistakeRepository implements MistakeRepository {
 }
 
 final mistakeRepositoryProvider = Provider<MistakeRepository>(
-  (ref) => SupabaseMistakeRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseMistakeRepository(sessionClient(ref)),
 );
 
 final mistakeCardsProvider = FutureProvider.family<List<MistakeCard>, String>(

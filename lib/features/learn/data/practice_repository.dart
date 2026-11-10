@@ -158,7 +158,7 @@ class SupabasePracticeRepository implements PracticeRepository {
 }
 
 final practiceRepositoryProvider = Provider<PracticeRepository>(
-  (ref) => SupabasePracticeRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabasePracticeRepository(sessionClient(ref)),
 );
 
 final practiceAnswersProvider =

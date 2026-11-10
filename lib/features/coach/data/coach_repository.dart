@@ -219,7 +219,7 @@ class SupabaseCoachRepository implements CoachRepository {
 }
 
 final coachRepositoryProvider = Provider<CoachRepository>(
-  (ref) => SupabaseCoachRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseCoachRepository(sessionClient(ref)),
 );
 
 /// Koç → kendi öğrencileri, kurum müdürü → kurumdaki tüm öğrenciler.

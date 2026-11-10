@@ -207,7 +207,7 @@ class SupabaseConsentRepository implements ConsentRepository {
 }
 
 final consentRepositoryProvider = Provider<ConsentRepository>(
-  (ref) => SupabaseConsentRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseConsentRepository(sessionClient(ref)),
 );
 
 /// Kendi KVKK durumum (giriş yapan kişi değişince yenilenir).

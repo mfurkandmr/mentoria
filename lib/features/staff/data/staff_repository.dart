@@ -395,7 +395,7 @@ class SupabaseStaffRepository implements StaffRepository {
 }
 
 final staffRepositoryProvider = Provider<StaffRepository>(
-  (ref) => SupabaseStaffRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseStaffRepository(sessionClient(ref)),
 );
 
 final staffMembersProvider = FutureProvider<List<StaffMember>>(

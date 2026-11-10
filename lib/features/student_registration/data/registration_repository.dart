@@ -136,7 +136,7 @@ class SupabaseRegistrationRepository implements RegistrationRepository {
 }
 
 final registrationRepositoryProvider = Provider<RegistrationRepository>(
-  (ref) => SupabaseRegistrationRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseRegistrationRepository(sessionClient(ref)),
 );
 
 final registrationModeProvider = FutureProvider<RegistrationMode>(

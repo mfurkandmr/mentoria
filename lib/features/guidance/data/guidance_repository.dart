@@ -180,7 +180,7 @@ class SupabaseGuidanceRepository implements GuidanceRepository {
 }
 
 final guidanceRepositoryProvider = Provider<GuidanceRepository>(
-  (ref) => SupabaseGuidanceRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseGuidanceRepository(sessionClient(ref)),
 );
 
 final guidanceLogsProvider = FutureProvider.family<List<GuidanceLog>, String>(

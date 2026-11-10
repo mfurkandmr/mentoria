@@ -150,7 +150,7 @@ class SupabaseBulkSmsRepository implements BulkSmsRepository {
 }
 
 final bulkSmsRepositoryProvider = Provider<BulkSmsRepository>(
-  (ref) => SupabaseBulkSmsRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseBulkSmsRepository(sessionClient(ref)),
 );
 
 final examResultSmsProvider = FutureProvider<bool>(

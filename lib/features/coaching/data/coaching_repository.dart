@@ -183,7 +183,7 @@ class SupabaseCoachingRepository implements CoachingRepository {
 }
 
 final coachingRepositoryProvider = Provider<CoachingRepository>(
-  (ref) => SupabaseCoachingRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseCoachingRepository(sessionClient(ref)),
 );
 
 final tasksProvider = FutureProvider.family<List<CoachTask>, String>((

@@ -65,7 +65,7 @@ class SupabaseExamTrendRepository implements ExamTrendRepository {
 }
 
 final examTrendRepositoryProvider = Provider<ExamTrendRepository>(
-  (ref) => SupabaseExamTrendRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseExamTrendRepository(sessionClient(ref)),
 );
 
 final examTrendsProvider = FutureProvider.family<List<ExamTrend>, ExamType>(

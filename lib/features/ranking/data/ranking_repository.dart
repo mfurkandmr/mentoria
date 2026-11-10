@@ -145,7 +145,7 @@ class SupabaseSuccessRankingRepository implements SuccessRankingRepository {
 }
 
 final successRankingRepositoryProvider = Provider<SuccessRankingRepository>(
-  (ref) => SupabaseSuccessRankingRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseSuccessRankingRepository(sessionClient(ref)),
 );
 
 /// Kendi durumum (sıralama açık mı, ödülüm). Oturum değişince yenilenir.

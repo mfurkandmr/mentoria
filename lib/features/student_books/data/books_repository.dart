@@ -686,7 +686,7 @@ class SupabaseBooksRepository implements BooksRepository {
 }
 
 final booksRepositoryProvider = Provider<BooksRepository>(
-  (ref) => SupabaseBooksRepository(ref.watch(supabaseClientProvider)),
+  (ref) => SupabaseBooksRepository(sessionClient(ref)),
 );
 
 final bookPoolProvider = FutureProvider<List<Book>>(
