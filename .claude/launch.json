@@ -130,6 +130,18 @@
         "--serve"
       ],
       "port": 8790
+    },
+    {
+      "name": "motion-profile",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8793",
+        "--directory",
+        "build/web_motion"
+      ],
+      "port": 8793
     }
   ]
 }
