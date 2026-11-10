@@ -9,6 +9,7 @@ import '../../../shared/widgets/effects.dart';
 import '../../../shared/format.dart';
 import '../data/exam.dart';
 import '../../../core/i18n/i18n.dart';
+import '../../../core/design/motion.dart';
 
 /// Toplam net gelişimi: tek seri çizgi grafik (son 12 deneme).
 class NetTrendChart extends StatelessWidget {
@@ -58,6 +59,8 @@ class NetTrendChart extends StatelessWidget {
       ),
       child: RevealIn(
         child: LineChart(
+          duration: AppMotion.of(context, AppMotion.base),
+          curve: AppMotion.enter,
           LineChartData(
             minX: 0,
             maxX: (points.length - 1).toDouble(),

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'effects.dart';
 import 'package:intl/intl.dart';
 import '../../core/i18n/i18n.dart';
+import '../../core/design/motion.dart';
 
 /// Günlük değerler için tek serili çubuk grafik (ör. son 7 gün soru sayısı).
 class DailyBarChart extends StatelessWidget {
@@ -58,6 +59,8 @@ class DailyBarChart extends StatelessWidget {
         child: RevealIn(
           axis: Axis.vertical,
           child: BarChart(
+            duration: AppMotion.of(context, AppMotion.base),
+            curve: AppMotion.enter,
             BarChartData(
               maxY: maxY,
               minY: 0,

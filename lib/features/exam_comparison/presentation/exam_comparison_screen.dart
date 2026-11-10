@@ -20,6 +20,8 @@ import '../../schedule_generator/presentation/schedule_export.dart'
     show jpegPagesToPdf;
 import '../domain/exam_comparator.dart';
 import '../../../shared/widgets/skeleton.dart';
+import '../../../shared/widgets/effects.dart';
+import '../../../core/design/motion.dart';
 
 /// Karşılaştırma sütun renkleri (sabit kategorik palet).
 const _colors = [
@@ -427,48 +429,53 @@ class _SubjectBars extends StatelessWidget {
       child: SizedBox(
         width: width < 320 ? 320 : width,
         height: 220,
-        child: BarChart(
-          BarChartData(
-            gridData: const FlGridData(show: true, drawVerticalLine: false),
-            borderData: FlBorderData(show: false),
-            titlesData: FlTitlesData(
-              topTitles: const AxisTitles(),
-              rightTitles: const AxisTitles(),
-              leftTitles: const AxisTitles(
-                sideTitles: SideTitles(showTitles: true, reservedSize: 32),
-              ),
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  reservedSize: 28,
-                  getTitlesWidget: (v, _) {
-                    final i = v.toInt();
-                    if (i < 0 || i >= rows.length) return const SizedBox();
-                    final name = subjectByCode(rows[i].code).name;
-                    return Text(
-                      name.length > 6 ? name.substring(0, 6) : name,
-                      style: const TextStyle(fontSize: 10),
-                    );
-                  },
+        child: RevealIn(
+          axis: Axis.vertical,
+          child: BarChart(
+            duration: AppMotion.of(context, AppMotion.base),
+            curve: AppMotion.enter,
+            BarChartData(
+              gridData: const FlGridData(show: true, drawVerticalLine: false),
+              borderData: FlBorderData(show: false),
+              titlesData: FlTitlesData(
+                topTitles: const AxisTitles(),
+                rightTitles: const AxisTitles(),
+                leftTitles: const AxisTitles(
+                  sideTitles: SideTitles(showTitles: true, reservedSize: 32),
+                ),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 28,
+                    getTitlesWidget: (v, _) {
+                      final i = v.toInt();
+                      if (i < 0 || i >= rows.length) return const SizedBox();
+                      final name = subjectByCode(rows[i].code).name;
+                      return Text(
+                        name.length > 6 ? name.substring(0, 6) : name,
+                        style: const TextStyle(fontSize: 10),
+                      );
+                    },
+                  ),
                 ),
               ),
+              barGroups: [
+                for (final (i, r) in rows.indexed)
+                  BarChartGroupData(
+                    x: i,
+                    barsSpace: 2,
+                    barRods: [
+                      for (final (j, c) in r.cells.indexed)
+                        BarChartRodData(
+                          toY: c == null || c.net < 0 ? 0 : c.net,
+                          width: 10,
+                          color: _colors[j % 4],
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                    ],
+                  ),
+              ],
             ),
-            barGroups: [
-              for (final (i, r) in rows.indexed)
-                BarChartGroupData(
-                  x: i,
-                  barsSpace: 2,
-                  barRods: [
-                    for (final (j, c) in r.cells.indexed)
-                      BarChartRodData(
-                        toY: c == null || c.net < 0 ? 0 : c.net,
-                        width: 10,
-                        color: _colors[j % 4],
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                  ],
-                ),
-            ],
           ),
         ),
       ),
@@ -486,45 +493,49 @@ class _TotalLine extends StatelessWidget {
     final brand = context.brand;
     return SizedBox(
       height: 200,
-      child: LineChart(
-        LineChartData(
-          gridData: const FlGridData(show: true, drawVerticalLine: false),
-          borderData: FlBorderData(show: false),
-          titlesData: FlTitlesData(
-            topTitles: const AxisTitles(),
-            rightTitles: const AxisTitles(),
-            leftTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: true, reservedSize: 36),
-            ),
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                interval: 1,
-                reservedSize: 24,
-                getTitlesWidget: (v, _) {
-                  final i = v.toInt();
-                  if (i < 0 || i >= exams.length || v != i) {
-                    return const SizedBox();
-                  }
-                  return Text(
-                    _day(exams[i].takenOn),
-                    style: const TextStyle(fontSize: 10),
-                  );
-                },
+      child: RevealIn(
+        child: LineChart(
+          duration: AppMotion.of(context, AppMotion.base),
+          curve: AppMotion.enter,
+          LineChartData(
+            gridData: const FlGridData(show: true, drawVerticalLine: false),
+            borderData: FlBorderData(show: false),
+            titlesData: FlTitlesData(
+              topTitles: const AxisTitles(),
+              rightTitles: const AxisTitles(),
+              leftTitles: const AxisTitles(
+                sideTitles: SideTitles(showTitles: true, reservedSize: 36),
+              ),
+              bottomTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  interval: 1,
+                  reservedSize: 24,
+                  getTitlesWidget: (v, _) {
+                    final i = v.toInt();
+                    if (i < 0 || i >= exams.length || v != i) {
+                      return const SizedBox();
+                    }
+                    return Text(
+                      _day(exams[i].takenOn),
+                      style: const TextStyle(fontSize: 10),
+                    );
+                  },
+                ),
               ),
             ),
+            lineBarsData: [
+              LineChartBarData(
+                spots: [
+                  for (final (i, e) in exams.indexed)
+                    FlSpot(i.toDouble(), e.totalNet),
+                ],
+                color: brand.primary,
+                barWidth: 3,
+                dotData: const FlDotData(show: true),
+              ),
+            ],
           ),
-          lineBarsData: [
-            LineChartBarData(
-              spots: [
-                for (final (i, e) in exams.indexed)
-                  FlSpot(i.toDouble(), e.totalNet),
-              ],
-              color: brand.primary,
-              barWidth: 3,
-              dotData: const FlDotData(show: true),
-            ),
-          ],
         ),
       ),
     );

@@ -11,6 +11,7 @@ import '../../../shared/widgets/effects.dart';
 import '../../../shared/widgets/panel.dart';
 import '../data/exam.dart';
 import '../data/exam_analysis.dart';
+import '../../../core/design/motion.dart';
 
 /// Kaç denemeye bakılsın.
 enum AnalysisWindow {
@@ -544,6 +545,8 @@ class _TrendChart extends StatelessWidget {
       excludeSemantics: true,
       child: RevealIn(
         child: LineChart(
+          duration: AppMotion.of(context, AppMotion.base),
+          curve: AppMotion.enter,
           LineChartData(
             minX: 0,
             maxX: n - 1.0,
