@@ -44,6 +44,7 @@ class QuestionsScreen extends ConsumerWidget {
 Future<void> showAddQuestionSheet(BuildContext context, String studentId) =>
     showModalBottomSheet<void>(
       context: context,
+      sheetAnimationStyle: AppMotion.overlayStyle(context),
       // Alt menünün üstünde açılsın (sekme içi gezgin değil).
       useRootNavigator: true,
       isScrollControlled: true,

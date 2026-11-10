@@ -12,6 +12,7 @@ import '../../student_books/presentation/book_pool_screen.dart'
     show subjectFromText;
 import '../data/exam_admin_repository.dart';
 import '../domain/exam_definition.dart';
+import '../../../core/design/motion.dart';
 
 /// Kazanım Excel'i: Ders ("TYT Matematik"), Konu, Alt konu, Kod sütunları.
 /// İlk satır başlık; sütunlar başlık adından bulunur, bulunamazsa sırayla.
@@ -73,6 +74,7 @@ class _OutcomePoolScreenState extends ConsumerState<OutcomePoolScreen> {
     final c = TextEditingController(text: initial);
     final v = await showDialog<String>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (context) => AlertDialog(
         title: Text(title),
         content: TextField(

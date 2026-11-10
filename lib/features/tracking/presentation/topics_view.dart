@@ -234,6 +234,7 @@ class _SubjectCard extends ConsumerWidget {
   Future<void> _change(BuildContext context, WidgetRef ref, Topic t) async {
     final picked = await showModalBottomSheet<TopicStatus>(
       context: context,
+      sheetAnimationStyle: AppMotion.overlayStyle(context),
       // Alt menünün üstünde açılsın (sekme içi gezgin değil).
       useRootNavigator: true,
       showDragHandle: true,

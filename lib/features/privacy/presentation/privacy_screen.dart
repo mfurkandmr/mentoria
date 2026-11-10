@@ -15,6 +15,7 @@ import '../../auth/data/auth_repository.dart';
 import '../../auth/data/profile.dart';
 import '../data/consent_repository.dart';
 import 'legal_text_screen.dart';
+import '../../../core/design/motion.dart';
 
 /// KVKK başvuruları için adres. Veri sorumlusu bilgileri gelince doldurulacak
 /// (bkz. docs/kvkk/00_README.md); boşken ekranda gösterilmez.
@@ -450,6 +451,7 @@ Future<bool> showBirthYearDialog(
   int? picked = now - 17;
   final ok = await showDialog<bool>(
     context: context,
+    animationStyle: AppMotion.overlayStyle(context),
     builder: (context) => StatefulBuilder(
       builder: (context, setState) => AlertDialog(
         title: Text(tr('Doğum yılın')),

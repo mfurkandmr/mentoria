@@ -11,6 +11,7 @@ import '../../../shared/widgets/effects.dart';
 import '../../../shared/widgets/panel.dart';
 import '../../tracking/data/tracking_models.dart';
 import '../data/meeting_repository.dart';
+import '../../../core/design/motion.dart';
 
 /// Görüşme durumunun görünümü: ikon + etiket + renk (renk tek başına anlam
 /// taşımaz). İşaretlenmemiş görüşme gelecekteyse "Planlı", geçtiyse
@@ -719,6 +720,7 @@ class _CoachMeetingsCard extends StatelessWidget {
 Future<void> showAddMeetingSheet(BuildContext context, String studentId) =>
     showModalBottomSheet<void>(
       context: context,
+      sheetAnimationStyle: AppMotion.overlayStyle(context),
       isScrollControlled: true,
       showDragHandle: true,
       builder: (_) => _AddMeetingSheet(studentId: studentId),

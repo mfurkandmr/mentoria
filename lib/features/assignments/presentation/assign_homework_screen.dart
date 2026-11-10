@@ -67,6 +67,7 @@ class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
   Future<void> _openBasket() async {
     final sent = await showModalBottomSheet<bool>(
       context: context,
+      sheetAnimationStyle: AppMotion.overlayStyle(context),
       isScrollControlled: true,
       showDragHandle: true,
       useSafeArea: true,

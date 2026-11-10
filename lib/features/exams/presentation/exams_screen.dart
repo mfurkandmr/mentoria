@@ -19,6 +19,7 @@ import 'exam_detail_sheet.dart';
 import 'net_trend_chart.dart';
 import '../../../shared/widgets/effects.dart';
 import '../../../core/i18n/i18n.dart';
+import '../../../core/design/motion.dart';
 
 /// Öğrencinin kendi denemeleri (salt okunur; denemeleri koç yükler).
 class ExamsScreen extends ConsumerWidget {
@@ -418,6 +419,7 @@ class _ExamTile extends StatelessWidget {
       child: InkWell(
         onTap: () => showModalBottomSheet<void>(
           context: context,
+          sheetAnimationStyle: AppMotion.overlayStyle(context),
           // Alt menünün üstünde açılsın (sekme içi gezgin değil).
           useRootNavigator: true,
           isScrollControlled: true,

@@ -5,6 +5,7 @@ import 'bizz.dart';
 import 'corporate_look.dart';
 import 'effects.dart';
 import '../../core/i18n/i18n.dart';
+import '../../core/design/motion.dart';
 
 /// Küçük özet kutusu (değer + etiket, isteğe bağlı alt satır).
 class StatTile extends StatelessWidget {
@@ -249,6 +250,7 @@ Future<bool> confirm(
 }) async {
   final ok = await showDialog<bool>(
     context: context,
+    animationStyle: AppMotion.overlayStyle(context),
     builder: (context) => AlertDialog(
       title: Text(title),
       content: Text(message),

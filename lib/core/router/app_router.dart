@@ -7,7 +7,7 @@ import 'dart:async';
 
 import '../../features/avatar/presentation/leaderboard_screen.dart';
 import '../../features/avatar/presentation/avatar_editor_screen.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -574,9 +574,9 @@ GoRoute _managerRoutes(String base, Widget home) => GoRoute(
   ],
 );
 
-/// Koç / müdür alt sayfası: kokpit temasıyla (açık / koyu) ve iOS gibi
-/// sağdan kayarak açılır; kenardan kaydırınca geri döner.
-Page<void> _cockpitPage(GoRouterState state, Widget child) => CupertinoPage(
+/// Koç / müdür alt sayfası: kokpit temasıyla (açık / koyu) açılır; geçiş
+/// uygulamanın ortak sayfa geçişidir (`AppPageTransitionsBuilder`).
+Page<void> _cockpitPage(GoRouterState state, Widget child) => MaterialPage(
   key: state.pageKey,
   child: CockpitThemed(child: child),
 );

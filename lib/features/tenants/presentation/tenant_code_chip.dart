@@ -7,6 +7,7 @@ import '../../../core/i18n/i18n.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/widgets/brand_logo.dart';
 import '../data/tenant_repository.dart';
+import '../../../core/design/motion.dart';
 
 /// Giriş ekranında dershane seçimi: kod (slug) girilince ekran o dershanenin
 /// renkleri, logosu ve adıyla yeniden çizilir.
@@ -82,6 +83,7 @@ Future<void> showTenantCodeDialog(
   final saved = ref.read(savedTenantSlugProvider.notifier);
   await showDialog<void>(
     context: context,
+    animationStyle: AppMotion.overlayStyle(context),
     builder: (context) => _TenantCodeDialog(
       initial: current,
       lookup: repo.fetchBySlug,

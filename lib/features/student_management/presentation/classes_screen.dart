@@ -9,6 +9,7 @@ import '../../schedule_generator/domain/models.dart';
 import '../../schedule_generator/presentation/timetable_format.dart';
 import '../data/student_management_repository.dart';
 import 'students_screen.dart';
+import '../../../core/design/motion.dart';
 
 final _inline = FilledButton.styleFrom(minimumSize: const Size(0, 44));
 
@@ -183,6 +184,7 @@ class ClassesScreen extends ConsumerWidget {
     }
     final ok = await showDialog<bool>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (d) => AlertDialog(
         title: Text(tr('{name} silinsin mi?', {'name': c.classroom.name})),
         content: Text(tr('Programlardaki ilgili dersler de silinir.')),
@@ -283,6 +285,7 @@ Future<void> editClassroom(
   if (!context.mounted) return;
   final result = await showDialog<ClassroomRecord>(
     context: context,
+    animationStyle: AppMotion.overlayStyle(context),
     builder: (_) => _ClassDialog(record: record, rooms: setup.rooms),
   );
   if (result == null || !context.mounted) return;
@@ -484,6 +487,7 @@ Future<String?> pickClassroom(
   bool allowNone = false,
 }) => showDialog<String>(
   context: context,
+  animationStyle: AppMotion.overlayStyle(context),
   builder: (d) => SimpleDialog(
     title: Text(title),
     children: [
@@ -586,6 +590,7 @@ class ClassDetailScreen extends ConsumerWidget {
     ];
     final picked = await showDialog<List<String>>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (_) => _PickStudentsDialog(students: candidates),
     );
     if (picked == null || picked.isEmpty || !context.mounted) return;

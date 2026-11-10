@@ -217,6 +217,7 @@ Future<void> editCoachPhone(
   String? error;
   final result = await showDialog<String>(
     context: context,
+    animationStyle: AppMotion.overlayStyle(context),
     builder: (context) => ControllerScope(
       initial: current == null ? '' : formatPhone(current),
       builder: (context, controller) => StatefulBuilder(

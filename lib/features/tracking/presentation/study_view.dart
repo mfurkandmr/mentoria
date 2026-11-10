@@ -26,6 +26,7 @@ import 'honey_dial.dart';
 import 'questions_view.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../shared/widgets/effects.dart';
+import '../../../core/design/motion.dart';
 
 /// Öğrencinin çalışma süresi sekmesi: zamanlayıcı + istatistikler.
 class StudyScreen extends ConsumerWidget {
@@ -424,6 +425,7 @@ class _StudyTimerCardState extends ConsumerState<StudyTimerCard> {
   Future<void> _pickTone() async {
     final picked = await showModalBottomSheet<AlarmTone>(
       context: context,
+      sheetAnimationStyle: AppMotion.overlayStyle(context),
       // Alt menünün üstünde açılsın (sekme içi gezgin değil).
       useRootNavigator: true,
       showDragHandle: true,

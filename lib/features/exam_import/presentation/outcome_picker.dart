@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/i18n/i18n.dart';
 import '../data/exam_admin_repository.dart';
+import '../../../core/design/motion.dart';
 
 /// Seçilen kazanım; [id] `null` ise kazanım kaldırıldı.
 class PickedOutcome {
@@ -18,6 +19,7 @@ Future<PickedOutcome?> pickOutcome(
   required String subject,
 }) => showModalBottomSheet<PickedOutcome>(
   context: context,
+  sheetAnimationStyle: AppMotion.overlayStyle(context),
   isScrollControlled: true,
   useSafeArea: true,
   builder: (_) => _OutcomePicker(subject: subject),

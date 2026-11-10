@@ -21,6 +21,7 @@ import '../data/optic_excel.dart';
 import '../data/optic_repository.dart';
 import 'answer_key_screens.dart' show shareBlankForm;
 import 'exam_answers_view.dart';
+import '../../../core/design/motion.dart';
 
 /// Ağır iş: ayrı isolate'te çalışır (`compute` üst düzey fonksiyon ister).
 OmrResult _read((Uint8List, String, String) a) =>
@@ -98,6 +99,7 @@ class _OpticKeyScreenState extends ConsumerState<OpticKeyScreen> {
   ) async {
     final again = await showDialog<bool>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (context) => AlertDialog(
         title: Text(tr('Optik okunamadı')),
         content: Text(switch (problem) {
@@ -290,6 +292,7 @@ class _OpticKeyScreenState extends ConsumerState<OpticKeyScreen> {
                         ),
                         onTap: () => showModalBottomSheet<void>(
                           context: context,
+                          sheetAnimationStyle: AppMotion.overlayStyle(context),
                           isScrollControlled: true,
                           showDragHandle: true,
                           builder: (_) => SafeArea(

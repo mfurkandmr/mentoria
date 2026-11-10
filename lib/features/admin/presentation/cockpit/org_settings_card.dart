@@ -13,6 +13,7 @@ import '../../data/admin_repository.dart';
 import 'cockpit_theme.dart';
 import 'section_states.dart';
 import 'success_ranking_tile.dart';
+import '../../../../core/design/motion.dart';
 
 /// Lisans bitişine bu kadar gün kala uyarı bandı çıkar.
 const licenseWarnDays = 14;
@@ -60,6 +61,7 @@ class _RowsState extends ConsumerState<_Rows> {
   Future<void> _rename() async {
     final name = await showDialog<String>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (context) => ControllerScope(
         initial: widget.org.name,
         builder: (context, controller) => AlertDialog(

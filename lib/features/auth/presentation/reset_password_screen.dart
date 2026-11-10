@@ -8,6 +8,7 @@ import '../../../shared/widgets/password_field.dart';
 import '../data/auth_repository.dart';
 import 'auth_error.dart';
 import '../../../core/i18n/i18n.dart';
+import '../../../core/design/motion.dart';
 
 /// E-postadaki sıfırlama bağlantısından gelen kullanıcı burada yeni şifre
 /// belirler. (Bağlantı Supabase oturumu açar; router bu ekrana yönlendirir.)
@@ -136,6 +137,7 @@ Future<void> showForgotPasswordDialog(
   final controller = TextEditingController(text: initialEmail);
   final email = await showDialog<String>(
     context: context,
+    animationStyle: AppMotion.overlayStyle(context),
     builder: (context) => AlertDialog(
       title: Text(tr('Şifremi unuttum')),
       content: Column(

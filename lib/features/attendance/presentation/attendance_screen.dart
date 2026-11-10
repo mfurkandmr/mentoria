@@ -59,6 +59,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     if (_edits.isEmpty) return true;
     final ok = await showDialog<bool>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (c) => AlertDialog(
         title: Text(tr('Kaydedilmemiş yoklama')),
         content: Text(tr('Yaptığın işaretler silinsin mi?')),
@@ -628,6 +629,7 @@ Future<void> showAbsenceSmsDialog(
   };
   final ok = await showDialog<bool>(
     context: context,
+    animationStyle: AppMotion.overlayStyle(context),
     builder: (c) => StatefulBuilder(
       builder: (c, setState) => AlertDialog(
         title: Text(tr('Gelmeyenlerin velisine SMS gönderilsin mi?')),

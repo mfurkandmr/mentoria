@@ -11,6 +11,7 @@ import '../data/exam_report_repository.dart';
 import '../data/report_excel.dart';
 import '../domain/outcome_analysis.dart';
 import 'report_card_screen.dart';
+import '../../../core/design/motion.dart';
 
 /// Sınıf ve kurum raporu: ortalamalar, ders dağılımı, zayıf kazanımlar,
 /// soru zorluğu, sıralama tablosu; Excel ve toplu karne PDF.
@@ -65,6 +66,7 @@ class _ExamReportScreenState extends ConsumerState<ExamReportScreen> {
     if (r.classes.isNotEmpty) {
       final picked = await showDialog<String>(
         context: context,
+        animationStyle: AppMotion.overlayStyle(context),
         builder: (context) => SimpleDialog(
           title: Text(tr('Hangi sınıfın karneleri?')),
           children: [

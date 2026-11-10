@@ -15,6 +15,7 @@ import '../domain/exam_definition.dart';
 import 'exam_package_flow.dart';
 import 'import_wizard_screen.dart';
 import 'outcome_picker.dart';
+import '../../../core/design/motion.dart';
 
 String examKindLabel(ExamKind k) => switch (k) {
   ExamKind.deneme => tr('Deneme'),
@@ -929,6 +930,7 @@ class _OutcomeTabState extends ConsumerState<_OutcomeTab> {
     final to = TextEditingController();
     final ok = await showDialog<bool>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (context) => AlertDialog(
         title: Text(tr('Ardışık soruları seç')),
         content: Row(

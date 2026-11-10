@@ -10,6 +10,7 @@ import '../../schedule_generator/data/timetable_repository.dart';
 import '../../schedule_generator/domain/models.dart';
 import '../data/finance_repository.dart';
 import 'finance_plus_ui.dart';
+import '../../../core/design/motion.dart';
 
 /// Öğretmen başına haftalık ders saati: programdaki her satır bir ders saati.
 Map<String, int> weeklyHoursByTeacher(Iterable<ScheduleEntry> entries) {
@@ -142,6 +143,7 @@ class _TeacherCard extends ConsumerWidget {
   Future<void> _editRate(BuildContext context, WidgetRef ref) async {
     final next = await showDialog<TeacherPayRate>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (_) => _TeacherRateDialog(name: record.teacher.name, rate: rate),
     );
     if (next == null || !context.mounted) return;
@@ -250,6 +252,7 @@ Future<void> showTeacherPaySheet(
   required TeacherPayRate rate,
 }) => showModalBottomSheet<void>(
   context: context,
+  sheetAnimationStyle: AppMotion.overlayStyle(context),
   isScrollControlled: true,
   showDragHandle: true,
   builder: (_) => _TeacherPaySheet(

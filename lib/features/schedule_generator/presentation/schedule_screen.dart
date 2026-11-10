@@ -12,6 +12,7 @@ import '../domain/models.dart';
 import '../domain/schedule_generator.dart';
 import 'schedule_export.dart';
 import 'timetable_format.dart';
+import '../../../core/design/motion.dart';
 
 final _inline = FilledButton.styleFrom(minimumSize: const Size(0, 44));
 
@@ -121,6 +122,7 @@ class TimetableHomeScreen extends ConsumerWidget {
     final name = TextEditingController(text: tr('Haftalık program'));
     final ok = await showDialog<bool>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (c) => AlertDialog(
         title: Text(tr('Yeni program')),
         content: TextField(
@@ -162,6 +164,7 @@ class TimetableHomeScreen extends ConsumerWidget {
   ) async {
     final ok = await showDialog<bool>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (c) => AlertDialog(
         title: Text(tr('{name} silinsin mi?', {'name': s.name})),
         content: s.published
@@ -339,6 +342,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       if (!mounted) return;
       final ok = await showDialog<bool>(
         context: context,
+        animationStyle: AppMotion.overlayStyle(context),
         builder: (c) => AlertDialog(
           title: Text(tr('Program yayınlansın mı?')),
           content: Text(
@@ -532,6 +536,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
         .name;
     final choice = await showModalBottomSheet<String>(
       context: context,
+      sheetAnimationStyle: AppMotion.overlayStyle(context),
       showDragHandle: true,
       builder: (c) => SafeArea(
         child: ListView(
@@ -589,6 +594,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     if (!_dirty) return true;
     final ok = await showDialog<bool>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (c) => AlertDialog(
         title: Text(tr('Kaydedilmemiş değişiklikler')),
         content: Text(tr('Program kaydedilmeden çıkılsın mı?')),

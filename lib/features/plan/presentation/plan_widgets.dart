@@ -13,6 +13,7 @@ import '../../auth/data/auth_repository.dart';
 import '../../learn/data/practice_repository.dart';
 import '../../learn/presentation/learn_screen.dart';
 import '../data/plan_repository.dart';
+import '../../../core/design/motion.dart';
 
 String _subjectLabel(String code) => code.startsWith('TYT_')
     ? 'TYT ${subjectByCode(code).name}'
@@ -565,6 +566,7 @@ Future<bool?> showAddPlanSheet(
   required DateTime day,
 }) => showModalBottomSheet<bool>(
   context: context,
+  sheetAnimationStyle: AppMotion.overlayStyle(context),
   useRootNavigator: true,
   isScrollControlled: true,
   showDragHandle: true,

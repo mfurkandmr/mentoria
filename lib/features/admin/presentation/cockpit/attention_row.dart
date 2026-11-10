@@ -11,6 +11,7 @@ import '../../data/cockpit_repository.dart';
 import 'cockpit_theme.dart';
 import 'section_states.dart';
 import '../../../../core/design/haptics.dart';
+import '../../../../core/design/motion.dart';
 
 /// Satırın sebebi ve anlam rengi.
 ({String reason, Tone tone}) attentionReason(
@@ -144,6 +145,7 @@ Future<void> notifyCoachFlow(
   final messenger = ScaffoldMessenger.of(context);
   final send = await showDialog<String>(
     context: context,
+    animationStyle: AppMotion.overlayStyle(context),
     builder: (context) => ControllerScope(
       initial: reason,
       builder: (context, controller) => AlertDialog(

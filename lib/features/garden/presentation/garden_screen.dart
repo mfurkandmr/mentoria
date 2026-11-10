@@ -10,13 +10,13 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../core/constants/exam_subjects.dart';
 import '../../../core/i18n/i18n.dart';
-import '../../../shared/motion.dart';
 import '../../../shared/widgets/bizz.dart';
 import '../../../shared/widgets/effects.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../tracking/data/tracking_models.dart';
 import '../../tracking/data/tracking_repository.dart';
 import '../data/garden.dart';
+import '../../../core/design/motion.dart';
 
 /// Hangi dönemin bahçesi gösterilsin.
 enum GardenRange {
@@ -197,6 +197,7 @@ class _GardenScreenState extends ConsumerState<GardenScreen> {
 
   void _showLegend(BuildContext context) => showModalBottomSheet<void>(
     context: context,
+    sheetAnimationStyle: AppMotion.overlayStyle(context),
     showDragHandle: true,
     builder: (context) => SafeArea(
       child: ListView(

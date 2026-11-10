@@ -11,6 +11,7 @@ import '../../../core/theme/brand_theme.dart';
 import '../../../shared/format.dart';
 import '../data/coach_repository.dart';
 import '../../../core/i18n/i18n.dart';
+import '../../../core/design/motion.dart';
 
 /// Öğrenci davet kodu oluşturma ve aktif kodlar.
 class InviteSheet extends ConsumerStatefulWidget {
@@ -262,6 +263,7 @@ class _NewCodeCard extends StatelessWidget {
 Future<void> openInviteSheet(BuildContext context) =>
     showModalBottomSheet<void>(
       context: context,
+      sheetAnimationStyle: AppMotion.overlayStyle(context),
       isScrollControlled: true,
       showDragHandle: true,
       builder: (_) => const InviteSheet(),

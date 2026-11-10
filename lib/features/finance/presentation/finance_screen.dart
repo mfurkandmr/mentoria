@@ -17,6 +17,7 @@ import '../data/finance_repository.dart';
 import 'cheques_ui.dart';
 import 'finance_plus_ui.dart';
 import 'teacher_pay_ui.dart';
+import '../../../core/design/motion.dart';
 
 DateTime _today() {
   final n = DateTime.now();
@@ -118,6 +119,7 @@ Future<void> showRemindDialog(
   };
   final ok = await showDialog<bool>(
     context: context,
+    animationStyle: AppMotion.overlayStyle(context),
     builder: (c) => StatefulBuilder(
       builder: (c, setState) => AlertDialog(
         title: Text(tr('Taksit hatırlatması gönderilsin mi?')),
@@ -697,6 +699,7 @@ class _FeeStatus extends StatelessWidget {
 Future<void> showFeeSheet(BuildContext context, String feeId) =>
     showModalBottomSheet<void>(
       context: context,
+      sheetAnimationStyle: AppMotion.overlayStyle(context),
       isScrollControlled: true,
       showDragHandle: true,
       builder: (_) => _FeeSheet(feeId: feeId),
@@ -740,6 +743,7 @@ class _FeeSheet extends ConsumerWidget {
   ) async {
     final payer = await showDialog<FeePayer>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (_) => _PayerDialog(fee: fee),
     );
     if (payer == null || !context.mounted) return;
@@ -922,6 +926,7 @@ class _FeeSheet extends ConsumerWidget {
 
 Future<void> _showAddFee(BuildContext context) => showModalBottomSheet<void>(
   context: context,
+  sheetAnimationStyle: AppMotion.overlayStyle(context),
   isScrollControlled: true,
   showDragHandle: true,
   builder: (_) => const _AddFeeSheet(),
@@ -1073,6 +1078,7 @@ class _AddFeeSheetState extends ConsumerState<_AddFeeSheet> {
                     : () async {
                         final d = await showDialog<FeeDiscount>(
                           context: context,
+                          animationStyle: AppMotion.overlayStyle(context),
                           builder: (_) =>
                               DiscountDialog(base: total, max: total),
                         );
@@ -1297,6 +1303,7 @@ Future<void> showAddExpense(
   String? note,
 }) => showModalBottomSheet<void>(
   context: context,
+  sheetAnimationStyle: AppMotion.overlayStyle(context),
   isScrollControlled: true,
   showDragHandle: true,
   builder: (_) => _AddExpenseSheet(
@@ -1491,6 +1498,7 @@ class _CoachesTab extends ConsumerWidget {
   ) async {
     final next = await showDialog<CoachPayRate>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (_) => _RateDialog(name: coach.fullName, rate: rate),
     );
     if (next == null || !context.mounted) return;
@@ -1776,6 +1784,7 @@ Future<void> showFinanceExportDialog(
   }.toList()..sort((a, b) => b.compareTo(a));
   final period = await showDialog<FinancePeriod>(
     context: context,
+    animationStyle: AppMotion.overlayStyle(context),
     builder: (_) => _ExportDialog(years: years, today: today),
   );
   if (period == null || !context.mounted) return;

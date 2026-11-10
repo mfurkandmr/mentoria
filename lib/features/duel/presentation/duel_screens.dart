@@ -15,6 +15,7 @@ import '../../avatar/presentation/student_avatar.dart';
 import '../../learn/data/practice_repository.dart';
 import '../../learn/presentation/learn_screen.dart';
 import '../data/duel_repository.dart';
+import '../../../core/design/motion.dart';
 
 const _duelColors = [Color(0xFFFF7A45), Color(0xFFC2185B)];
 
@@ -402,6 +403,7 @@ class _RulesCard extends StatelessWidget {
 Future<void> showNewDuelSheet(BuildContext context) =>
     showModalBottomSheet<void>(
       context: context,
+      sheetAnimationStyle: AppMotion.overlayStyle(context),
       useRootNavigator: true,
       isScrollControlled: true,
       showDragHandle: true,

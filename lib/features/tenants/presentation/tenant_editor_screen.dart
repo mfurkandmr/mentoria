@@ -689,6 +689,7 @@ Future<void> showAdminCodeDialog(
   final link = AppLinks.invite(code);
   return showDialog<void>(
     context: context,
+    animationStyle: AppMotion.overlayStyle(context),
     builder: (context) => AlertDialog(
       title: Text(tr('Kurum müdürü daveti')),
       content: Column(

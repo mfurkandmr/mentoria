@@ -9,6 +9,7 @@ import '../../coach/data/coach_repository.dart';
 import '../data/exam_repository.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../optic/presentation/exam_answers_view.dart';
+import '../../../core/design/motion.dart';
 
 /// Deneme detayı: ders bazlı doğru / yanlış / boş / net ve silme.
 class ExamDetailSheet extends ConsumerWidget {
@@ -28,6 +29,7 @@ class ExamDetailSheet extends ConsumerWidget {
   Future<void> _delete(BuildContext context, WidgetRef ref) async {
     final ok = await showDialog<bool>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (context) => AlertDialog(
         title: Text(tr('Deneme silinsin mi?')),
         content: Text(

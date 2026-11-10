@@ -11,6 +11,7 @@ import '../../auth/data/profile.dart';
 import '../../notifications/presentation/notification_widgets.dart';
 import '../../auth/presentation/role_gate_screen.dart';
 import '../data/announcement_repository.dart';
+import '../../../core/design/motion.dart';
 
 /// Ana sayfada gösterilecek "yeni" duyuru süresi.
 const _freshFor = Duration(days: 14);
@@ -203,6 +204,7 @@ class AnnouncementsHomeCard extends ConsumerWidget {
 Future<void> showComposeAnnouncement(BuildContext context, UserRole role) =>
     showModalBottomSheet<void>(
       context: context,
+      sheetAnimationStyle: AppMotion.overlayStyle(context),
       isScrollControlled: true,
       useRootNavigator: true,
       showDragHandle: true,

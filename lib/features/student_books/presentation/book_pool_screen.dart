@@ -14,6 +14,7 @@ import '../../student_management/data/student_management_repository.dart'
     show editDistance;
 import '../data/books_repository.dart';
 import 'books_screens.dart';
+import '../../../core/design/motion.dart';
 
 final _inline = FilledButton.styleFrom(minimumSize: const Size(0, 44));
 
@@ -59,6 +60,7 @@ class BookPoolScreen extends ConsumerWidget {
   Future<void> _add(BuildContext context, WidgetRef ref, [Book? book]) async {
     final draft = await showDialog<Book>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (_) => BookFormDialog(book: book),
     );
     if (draft == null || !context.mounted) return;
@@ -94,6 +96,7 @@ class BookPoolScreen extends ConsumerWidget {
     final similar = similarBooks(request, pool);
     final choice = await showModalBottomSheet<String>(
       context: context,
+      sheetAnimationStyle: AppMotion.overlayStyle(context),
       showDragHandle: true,
       builder: (c) => SafeArea(
         child: ListView(

@@ -17,6 +17,7 @@ import '../../schedule_generator/data/timetable_repository.dart';
 import '../../student_registration/data/registration_repository.dart';
 import '../data/student_management_repository.dart';
 import 'classes_screen.dart';
+import '../../../core/design/motion.dart';
 
 /// Öğrenci yönetimi (müdür: kurum, koç: kendi öğrencileri). Sekmeler:
 /// sınıfı olmayanlar, tümü, şüpheli numaralar (serbest kayıtta ya da
@@ -499,6 +500,7 @@ Future<void> openStudentEditor(
   if (!context.mounted) return;
   final saved = await showModalBottomSheet<bool>(
     context: context,
+    sheetAnimationStyle: AppMotion.overlayStyle(context),
     isScrollControlled: true,
     showDragHandle: true,
     builder: (_) => _StudentEditor(

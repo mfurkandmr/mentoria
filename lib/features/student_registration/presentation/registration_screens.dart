@@ -10,6 +10,7 @@ import '../../import/data/spreadsheet_reader.dart';
 import '../../student_management/data/student_management_repository.dart';
 import '../data/registration_repository.dart';
 import '../domain/roster_import.dart';
+import '../../../core/design/motion.dart';
 
 final _inline = FilledButton.styleFrom(minimumSize: const Size(0, 44));
 
@@ -27,6 +28,7 @@ class RegistrationSettingsScreen extends ConsumerWidget {
     if (next == current) return;
     final ok = await showDialog<bool>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (d) => AlertDialog(
         title: Text(
           next == RegistrationMode.list

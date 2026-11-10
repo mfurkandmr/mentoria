@@ -18,6 +18,7 @@ import '../data/email_check.dart';
 import '../data/profile.dart';
 import 'auth_error.dart';
 import '../../../core/i18n/i18n.dart';
+import '../../../core/design/motion.dart';
 
 /// Üç adımlı kayıt: davet kodu doğrulanır, hesap bilgileri alınır, sonra
 /// e-postaya giden doğrulama koduyla adresin gerçekten kullanıcıya ait olduğu
@@ -144,6 +145,7 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
     if (suggestion != null) {
       final fix = await showDialog<bool>(
         context: context,
+        animationStyle: AppMotion.overlayStyle(context),
         builder: (context) => AlertDialog(
           title: Text(tr('E-posta adresini kontrol et')),
           content: Text(

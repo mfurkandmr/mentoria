@@ -10,6 +10,7 @@ import '../../student_management/data/student_management_repository.dart';
 import '../data/finance_repository.dart';
 import 'receipt_pdf.dart';
 import '../../../core/design/haptics.dart';
+import '../../../core/design/motion.dart';
 
 DateTime _today() {
   final n = DateTime.now();
@@ -184,6 +185,7 @@ Future<void> showPaymentDialog(
 }) async {
   final r = await showDialog<_PaymentInput>(
     context: context,
+    animationStyle: AppMotion.overlayStyle(context),
     builder: (_) => _PaymentDialog(fee: fee, installment: installment),
   );
   if (r == null || !context.mounted) return;
@@ -483,6 +485,7 @@ Future<void> showDiscountDialog(
 ) async {
   final r = await showDialog<FeeDiscount>(
     context: context,
+    animationStyle: AppMotion.overlayStyle(context),
     builder: (_) => DiscountDialog(base: fee.remaining, max: fee.remaining),
   );
   if (r == null || !context.mounted) return;
@@ -626,6 +629,7 @@ Future<void> showCancelFeeDialog(
       fee.refunded;
   final r = await showDialog<_CancelInput>(
     context: context,
+    animationStyle: AppMotion.overlayStyle(context),
     builder: (_) => _CancelDialog(fee: fee, collected: collected),
   );
   if (r == null || !context.mounted) return;
@@ -813,6 +817,7 @@ class _CancelDialogState extends State<_CancelDialog> {
 Future<void> showBulkFeeSheet(BuildContext context) =>
     showModalBottomSheet<void>(
       context: context,
+      sheetAnimationStyle: AppMotion.overlayStyle(context),
       isScrollControlled: true,
       showDragHandle: true,
       builder: (_) => const BulkFeeSheet(),
@@ -1067,6 +1072,7 @@ class _BulkFeeSheetState extends ConsumerState<BulkFeeSheet> {
                     : () async {
                         final d = await showDialog<FeeDiscount>(
                           context: context,
+                          animationStyle: AppMotion.overlayStyle(context),
                           builder: (_) =>
                               DiscountDialog(base: total, max: total),
                         );
@@ -1250,6 +1256,7 @@ class IncomesTab extends ConsumerWidget {
               style: FilledButton.styleFrom(minimumSize: const Size(0, 44)),
               onPressed: () => showModalBottomSheet<void>(
                 context: context,
+                sheetAnimationStyle: AppMotion.overlayStyle(context),
                 isScrollControlled: true,
                 showDragHandle: true,
                 builder: (_) => const _IncomeSheet(),
@@ -1537,6 +1544,7 @@ class AccountsTab extends ConsumerWidget {
   ]) async {
     final r = await showDialog<FinanceAccount>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (_) => _AccountDialog(account: a),
     );
     if (r == null || !context.mounted) return;
@@ -1679,6 +1687,7 @@ class AccountsTab extends ConsumerWidget {
     final note = TextEditingController();
     final ok = await showDialog<bool>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (c) => StatefulBuilder(
         builder: (c, set) => AlertDialog(
           title: Text(tr('Hesaplar arası aktarım')),

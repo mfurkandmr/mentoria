@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +7,7 @@ import 'package:flutter/services.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/brand_theme.dart';
 import '../../../../shared/widgets/corporate_look.dart';
+import '../../../../core/design/page_transitions.dart';
 
 /// Müdür / koç kokpitinin paleti: nötr gri zemin, beyaz (koyuda koyu gri)
 /// kartlar. Açık ve koyu tema için iki takım; widget'lar
@@ -190,16 +190,7 @@ ThemeData cockpitTheme(BrandTheme brand, {bool dark = false}) {
     splashColor: Colors.transparent,
     highlightColor: c.ink.withValues(alpha: dark ? 0.08 : 0.05),
     hoverColor: c.ink.withValues(alpha: 0.03),
-    // iOS kaydırma geçişi (kokpitten Navigator ile açılan sayfalar).
-    pageTransitionsTheme: const PageTransitionsTheme(
-      builders: {
-        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-        TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
-        TargetPlatform.windows: CupertinoPageTransitionsBuilder(),
-        TargetPlatform.linux: CupertinoPageTransitionsBuilder(),
-      },
-    ),
+    pageTransitionsTheme: appPageTransitionsTheme,
     // Kurumun başarı / hata renkleri kokpitte anlam renklerine eşitlenir.
     extensions: [
       brand.copyWith(success: c.good, danger: c.risk),

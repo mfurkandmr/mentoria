@@ -1442,6 +1442,7 @@ void _showAchievement(BuildContext context, Achievement a) {
   HapticFeedback.selectionClick();
   showModalBottomSheet<void>(
     context: context,
+    sheetAnimationStyle: AppMotion.overlayStyle(context),
     // Alt menünün üstünde açılsın (sekme içi gezgin değil).
     useRootNavigator: true,
     showDragHandle: true,

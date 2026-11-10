@@ -497,6 +497,7 @@ Future<void> showMistakeDetail(
   required bool canDelete,
 }) => showModalBottomSheet<void>(
   context: context,
+  sheetAnimationStyle: AppMotion.overlayStyle(context),
   useRootNavigator: true,
   isScrollControlled: true,
   showDragHandle: true,
@@ -569,6 +570,7 @@ Future<void> showMistakeDetail(
 Future<void> showAddMistakeSheet(BuildContext context, String studentId) =>
     showModalBottomSheet<void>(
       context: context,
+      sheetAnimationStyle: AppMotion.overlayStyle(context),
       useRootNavigator: true,
       isScrollControlled: true,
       showDragHandle: true,

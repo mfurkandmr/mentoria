@@ -31,6 +31,7 @@ import 'cockpit/cockpit_tab.dart';
 import 'cockpit/cockpit_theme.dart';
 import 'cockpit/nav_groups.dart';
 import 'cockpit/section_states.dart';
+import '../../../core/design/motion.dart';
 
 /// Kurum müdürü paneli (mobil ve web). "Genel" sekmesi işletme kokpitidir
 /// (NOTLAR §59); tek, açık tema: [cockpitTheme].
@@ -207,6 +208,7 @@ class _StudentsTabState extends ConsumerState<_StudentsTab> {
     String? selected = s.coachId;
     final picked = await showDialog<String>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (context) => StatefulBuilder(
         builder: (context, setLocal) => AlertDialog(
           title: Text(tr('{p0} · koçu', {'p0': s.fullName})),
@@ -705,6 +707,7 @@ Future<void> showInviteCodeDialog(
   String? coachId,
 }) => showDialog<void>(
   context: context,
+  animationStyle: AppMotion.overlayStyle(context),
   builder: (_) => _InviteDialog(role: role, coachId: coachId),
 );
 

@@ -12,6 +12,7 @@ import '../../auth/data/auth_repository.dart';
 import '../../tracking/data/tracking_models.dart';
 import '../../tracking/data/tracking_repository.dart';
 import '../data/books_repository.dart';
+import '../../../core/design/motion.dart';
 
 final _inline = FilledButton.styleFrom(minimumSize: const Size(0, 44));
 
@@ -427,6 +428,7 @@ class _BookPickerScreenState extends ConsumerState<BookPickerScreen> {
     var agreed = widget.viewer == BooksViewer.manager;
     final ok = await showDialog<bool>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (d) => StatefulBuilder(
         builder: (d, setState) => AlertDialog(
           title: Text(b.name),
@@ -489,6 +491,7 @@ class _BookPickerScreenState extends ConsumerState<BookPickerScreen> {
   Future<void> _request() async {
     final draft = await showDialog<Book>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (_) => const BookFormDialog(request: true),
     );
     if (draft == null || !mounted) return;
@@ -803,6 +806,7 @@ class BookDetailScreen extends ConsumerWidget {
   ]) async {
     final result = await showDialog<BookProgress>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (_) => ProgressDialog(studentBook: studentBook, progress: p),
     );
     if (result == null || !context.mounted) return;
@@ -834,6 +838,7 @@ class BookDetailScreen extends ConsumerWidget {
       if (action == 'delete') {
         final ok = await showDialog<bool>(
           context: context,
+          animationStyle: AppMotion.overlayStyle(context),
           builder: (d) => AlertDialog(
             title: Text(tr('Kitap öğrencinin listesinden silinsin mi?')),
             content: Text(

@@ -77,6 +77,7 @@ class _AvatarEditorScreenState extends ConsumerState<AvatarEditorScreen> {
     HapticFeedback.lightImpact();
     showModalBottomSheet<void>(
       context: context,
+      sheetAnimationStyle: AppMotion.overlayStyle(context),
       showDragHandle: true,
       builder: (context) => SafeArea(
         child: Padding(

@@ -10,6 +10,7 @@ import '../../coach/data/coach_repository.dart';
 import '../data/timetable_repository.dart';
 import '../domain/models.dart';
 import 'timetable_format.dart';
+import '../../../core/design/motion.dart';
 
 final _inline = FilledButton.styleFrom(minimumSize: const Size(0, 44));
 
@@ -364,6 +365,7 @@ Future<void> _confirmDelete(
 ) async {
   final ok = await showDialog<bool>(
     context: context,
+    animationStyle: AppMotion.overlayStyle(context),
     builder: (c) => AlertDialog(
       title: Text(tr('{name} silinsin mi?', {'name': name})),
       content: Text(tr('Programlardaki ilgili dersler de silinir.')),
@@ -388,6 +390,7 @@ Future<void> _editRoom(BuildContext context, WidgetRef ref, Room? room) async {
   final cap = TextEditingController(text: room?.capacity?.toString() ?? '');
   final ok = await showDialog<bool>(
     context: context,
+    animationStyle: AppMotion.overlayStyle(context),
     builder: (c) => AlertDialog(
       title: Text(room == null ? tr('Derslik ekle') : room.name),
       content: Column(
@@ -445,6 +448,7 @@ Future<void> _editClassroom(
   if (!context.mounted) return;
   final result = await showDialog<_ClassroomForm>(
     context: context,
+    animationStyle: AppMotion.overlayStyle(context),
     builder: (_) => _ClassroomDialog(
       setup: setup,
       record: record,
@@ -1130,6 +1134,7 @@ Future<void> _editLesson(
   final current = index == null ? null : lessons[index];
   final result = await showDialog<ClassLesson>(
     context: context,
+    animationStyle: AppMotion.overlayStyle(context),
     builder: (_) => _LessonDialog(
       setup: setup,
       classroomId: c.classroom.id,

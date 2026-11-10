@@ -8,6 +8,7 @@ import '../../../shared/widgets/common.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../auth/data/profile.dart';
 import '../data/guidance_repository.dart';
+import '../../../core/design/motion.dart';
 
 /// Öğrencinin rehberlik görüşme geçmişi, zaman çizelgesi olarak (en yeni
 /// üstte). Koç ve müdür görür; öğrenci ve veli görmez.
@@ -254,6 +255,7 @@ class _Tag extends StatelessWidget {
 Future<bool?> showAddGuidanceSheet(BuildContext context, String studentId) =>
     showModalBottomSheet<bool>(
       context: context,
+      sheetAnimationStyle: AppMotion.overlayStyle(context),
       useRootNavigator: true,
       isScrollControlled: true,
       showDragHandle: true,

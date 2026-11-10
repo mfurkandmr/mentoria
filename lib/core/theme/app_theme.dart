@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'brand_theme.dart';
+import '../design/page_transitions.dart';
 
 /// Material teması marka paletinden (dershane renkleri) kurulur.
 class AppTheme {
@@ -95,15 +95,7 @@ class AppTheme {
           textStyle: WidgetStatePropertyAll(font(fontWeight: FontWeight.w800)),
         ),
       ),
-      pageTransitionsTheme: const PageTransitionsTheme(
-        builders: {
-          TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),
-          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
-          TargetPlatform.windows: FadeForwardsPageTransitionsBuilder(),
-          TargetPlatform.linux: FadeForwardsPageTransitionsBuilder(),
-        },
-      ),
+      pageTransitionsTheme: appPageTransitionsTheme,
       navigationBarTheme: NavigationBarThemeData(
         indicatorColor: b.primary.withValues(alpha: 0.35),
         backgroundColor: scheme.surface,

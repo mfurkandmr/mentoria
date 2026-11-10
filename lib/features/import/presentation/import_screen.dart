@@ -13,6 +13,7 @@ import '../../exams/data/exam.dart';
 import '../../exams/data/exam_repository.dart';
 import '../data/exam_file_parser.dart';
 import '../../../core/i18n/i18n.dart';
+import '../../../core/design/motion.dart';
 
 /// Koç / kurum müdürü: yayınevi sonuç dosyasını (.xlsx, .xls, CSV, TXT) yükleyip
 /// öğrencilere okul numarasıyla dağıtır.
@@ -285,6 +286,7 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
     setState(() => _saving = false);
     await showDialog<void>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (context) => AlertDialog(
         title: Text(tr('Yükleme tamamlandı')),
         content: Text(

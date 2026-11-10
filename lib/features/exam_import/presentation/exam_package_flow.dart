@@ -12,6 +12,7 @@ import '../data/exam_admin_repository.dart';
 import '../domain/exam_definition.dart';
 import '../domain/exam_package.dart';
 import 'import_wizard_screen.dart';
+import '../../../core/design/motion.dart';
 
 /// Paket hatası → kullanıcı metni.
 String examPackageProblemText(ExamPackageProblem p) => switch (p.kind) {
@@ -56,6 +57,7 @@ List<String> guessedBookletNotes(OpticImportRows r) => [
 Future<void> _showProblems(BuildContext context, List<String> problems) =>
     showDialog<void>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (_) => AlertDialog(
         title: Text(tr('Dosyalar kullanılamadı')),
         content: SingleChildScrollView(

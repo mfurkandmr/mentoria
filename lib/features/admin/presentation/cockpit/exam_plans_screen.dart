@@ -9,6 +9,7 @@ import '../../data/cockpit_repository.dart';
 import 'cockpit_theme.dart';
 import 'section_states.dart';
 import '../../../../core/design/haptics.dart';
+import '../../../../core/design/motion.dart';
 
 /// Deneme takvimi: kurumun planladığı denemeler. En yakını özet
 /// şeridinde "Yaklaşan deneme" olarak görünür.
@@ -116,6 +117,7 @@ Future<void> addExamPlanFlow(BuildContext context, WidgetRef ref) async {
   final df = DateFormat('d MMMM yyyy', localeTag);
   final title = await showDialog<String>(
     context: context,
+    animationStyle: AppMotion.overlayStyle(context),
     builder: (context) => ControllerScope(
       builder: (context, name) => StatefulBuilder(
         builder: (context, setLocal) => AlertDialog(

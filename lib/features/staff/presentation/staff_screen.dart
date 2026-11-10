@@ -17,6 +17,7 @@ import '../../finance/presentation/finance_screen.dart';
 import '../../finance/presentation/teacher_pay_ui.dart';
 import '../../schedule_generator/data/timetable_repository.dart';
 import '../data/staff_repository.dart';
+import '../../../core/design/motion.dart';
 
 DateTime _today() => DateUtils.dateOnly(DateTime.now());
 
@@ -445,6 +446,7 @@ class _LeavesCard extends ConsumerWidget {
   Future<void> _add(BuildContext context, WidgetRef ref) async {
     final draft = await showDialog<StaffLeave>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (_) => const _LeaveDialog(),
     );
     if (draft == null || !context.mounted) return;
@@ -732,6 +734,7 @@ Future<void> showStaffForm(
   PersonnelEntry? person,
 }) => showModalBottomSheet<void>(
   context: context,
+  sheetAnimationStyle: AppMotion.overlayStyle(context),
   isScrollControlled: true,
   showDragHandle: true,
   builder: (_) => _StaffFormSheet(person: person),

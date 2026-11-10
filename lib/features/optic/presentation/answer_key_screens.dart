@@ -18,6 +18,7 @@ import '../data/answer_key.dart';
 import '../data/omr/optic_form_print.dart';
 import '../data/omr/optic_template.dart';
 import '../data/optic_repository.dart';
+import '../../../core/design/motion.dart';
 
 /// Boş cevap kâğıdını A4 PDF olarak paylaşır (yazdırıp çoğaltmak için).
 /// [template] verilmezse koç listeden seçer. Yazı tipi uygulamanınki
@@ -57,6 +58,7 @@ Future<OpticTemplate?> _pickTemplate(BuildContext context) {
   if (opticTemplates.length == 1) return Future.value(opticTemplates.single);
   return showModalBottomSheet<OpticTemplate>(
     context: context,
+    sheetAnimationStyle: AppMotion.overlayStyle(context),
     showDragHandle: true,
     builder: (context) => SafeArea(
       child: Column(

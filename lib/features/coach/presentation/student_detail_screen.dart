@@ -28,6 +28,7 @@ import '../../tracking/presentation/study_view.dart';
 import '../../tracking/presentation/topics_view.dart';
 import '../data/coach_repository.dart';
 import '../../../core/i18n/i18n.dart';
+import '../../../core/design/motion.dart';
 
 /// Koçun (ya da kurum müdürünün) gözünden bir öğrenci.
 class StudentDetailScreen extends ConsumerStatefulWidget {
@@ -96,6 +97,7 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
   Future<void> _deleteStudent(String? name) async {
     final ok = await showDialog<bool>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (_) => _DeleteStudentDialog(name: name ?? tr('Öğrenci')),
     );
     if (ok != true || !mounted) return;
@@ -430,6 +432,7 @@ class _NumberCard extends ConsumerWidget {
   Future<void> _edit(BuildContext context, WidgetRef ref) async {
     final saved = await showDialog<bool>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (_) => _NumberDialog(studentId: studentId, initial: number),
     );
     if (saved == true) ref.invalidate(studentSummariesProvider);

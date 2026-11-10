@@ -24,6 +24,7 @@ import '../data/account_repository.dart';
 import '../../../shared/widgets/effects.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../ranking/data/ranking_repository.dart';
+import '../../../core/design/motion.dart';
 
 /// Tüm rollerin profil / ayarlar ekranı.
 class ProfileScreen extends ConsumerWidget {
@@ -318,6 +319,7 @@ class _ParentInviteCardState extends ConsumerState<_ParentInviteCard> {
   Future<bool> _askParentViewConsent() async {
     final ok = await showDialog<bool>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (context) => AlertDialog(
         title: Text(tr('Velin çalışmalarını görebilsin mi?')),
         content: Column(
@@ -423,6 +425,7 @@ class _SecurityCard extends ConsumerWidget {
   Future<void> _changePassword(BuildContext context, WidgetRef ref) async {
     final value = await showDialog<String>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (_) => const _ChangePasswordDialog(),
     );
     if (value == null || !context.mounted) return;
@@ -437,6 +440,7 @@ class _SecurityCard extends ConsumerWidget {
   Future<void> _deleteAccount(BuildContext context, WidgetRef ref) async {
     final ok = await showDialog<bool>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (_) => const _DeleteAccountDialog(),
     );
     if (ok != true || !context.mounted) return;

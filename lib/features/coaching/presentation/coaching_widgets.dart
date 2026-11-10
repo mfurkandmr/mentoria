@@ -15,6 +15,7 @@ import '../../tracking/presentation/questions_view.dart';
 import '../../tracking/presentation/study_view.dart';
 import '../data/coaching_repository.dart';
 import '../../../core/i18n/i18n.dart';
+import '../../../core/design/motion.dart';
 
 /// Görevleri kimin gördüğü.
 enum TaskViewer { student, coach, readOnly }
@@ -194,6 +195,7 @@ class _TaskTile extends ConsumerWidget {
 Future<void> showAddTaskSheet(BuildContext context, String studentId) =>
     showModalBottomSheet<void>(
       context: context,
+      sheetAnimationStyle: AppMotion.overlayStyle(context),
       isScrollControlled: true,
       showDragHandle: true,
       builder: (_) => _AddTaskSheet(studentId: studentId),
@@ -511,6 +513,7 @@ class GoalsCard extends ConsumerWidget {
           ? TextButton(
               onPressed: () => showDialog<void>(
                 context: context,
+                animationStyle: AppMotion.overlayStyle(context),
                 builder: (_) => _GoalsDialog(
                   studentId: studentId,
                   initial: goals.value ?? const Goals(),

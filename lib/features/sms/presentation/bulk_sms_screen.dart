@@ -15,6 +15,7 @@ import '../../schedule_generator/data/timetable_repository.dart';
 import '../../student_management/data/student_management_repository.dart';
 import '../data/bulk_sms_repository.dart';
 import '../../../core/design/haptics.dart';
+import '../../../core/design/motion.dart';
 
 final _inline = FilledButton.styleFrom(minimumSize: const Size(0, 44));
 
@@ -84,6 +85,7 @@ class _BulkSmsScreenState extends ConsumerState<BulkSmsScreen> {
     if (!mounted) return;
     final picked = await showDialog<Set<String>>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (_) => _StudentPicker(students: all, initial: _students),
     );
     if (picked == null) return;
@@ -106,6 +108,7 @@ class _BulkSmsScreenState extends ConsumerState<BulkSmsScreen> {
     if (text.isEmpty || reach == null || reach.recipients == 0) return;
     final ok = await showDialog<bool>(
       context: context,
+      animationStyle: AppMotion.overlayStyle(context),
       builder: (d) => AlertDialog(
         title: Text(
           tr('{n} veliye SMS gönderilsin mi?', {'n': reach.recipients}),

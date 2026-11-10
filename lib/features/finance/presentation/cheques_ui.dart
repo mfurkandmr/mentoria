@@ -9,6 +9,7 @@ import '../../../shared/widgets/common.dart';
 import '../../coach/data/coach_repository.dart';
 import '../data/finance_repository.dart';
 import 'finance_plus_ui.dart';
+import '../../../core/design/motion.dart';
 
 DateTime _today() => DateUtils.dateOnly(DateTime.now());
 
@@ -118,6 +119,7 @@ class _ChequesTabState extends ConsumerState<ChequesTab> {
                 style: FilledButton.styleFrom(minimumSize: const Size(0, 44)),
                 onPressed: () => showModalBottomSheet<void>(
                   context: context,
+                  sheetAnimationStyle: AppMotion.overlayStyle(context),
                   isScrollControlled: true,
                   showDragHandle: true,
                   builder: (_) => _AddChequeSheet(direction: _direction),
@@ -161,6 +163,7 @@ class _ChequeCard extends ConsumerWidget {
         key: ValueKey('cheque-${c.id}'),
         onTap: () => showModalBottomSheet<void>(
           context: context,
+          sheetAnimationStyle: AppMotion.overlayStyle(context),
           isScrollControlled: true,
           showDragHandle: true,
           builder: (_) => _ChequeActionsSheet(cheque: c),
@@ -263,6 +266,7 @@ class _ChequeActionsSheetState extends ConsumerState<_ChequeActionsSheet> {
         next == ChequeStatus.endorsed) {
       final r = await showDialog<_StatusInput>(
         context: context,
+        animationStyle: AppMotion.overlayStyle(context),
         builder: (_) => _StatusDialog(status: next),
       );
       if (r == null || !mounted) return;

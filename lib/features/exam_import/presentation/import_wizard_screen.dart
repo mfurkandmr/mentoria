@@ -15,6 +15,7 @@ import '../domain/exam_definition.dart';
 import '../domain/exam_package.dart';
 import '../domain/import_plan.dart';
 import '../domain/optic_result_parser.dart';
+import '../../../core/design/motion.dart';
 
 String warningText(RowWarning w) {
   final col = w.column == null ? '' : '${w.column}: ';
@@ -873,6 +874,7 @@ class _ManualMatch extends StatelessWidget {
       onPressed: () async {
         final picked = await showModalBottomSheet<RosterStudent?>(
           context: context,
+          sheetAnimationStyle: AppMotion.overlayStyle(context),
           isScrollControlled: true,
           useSafeArea: true,
           builder: (_) => _StudentPicker(

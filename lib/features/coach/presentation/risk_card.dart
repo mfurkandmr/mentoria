@@ -7,6 +7,7 @@ import '../../../core/i18n/i18n.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/widgets/common.dart';
 import '../data/risk_repository.dart';
+import '../../../core/design/motion.dart';
 
 /// Koç ve müdür ana sayfası: "bu hafta konuşulacaklar". Devam, net düşüşü
 /// ve ödeve göre en riskli 7 öğrenci; dokununca öğrenci detayı açılır.
@@ -28,6 +29,7 @@ class RiskCard extends ConsumerWidget {
         icon: const Icon(Icons.info_outline_rounded),
         onPressed: () => showDialog<void>(
           context: context,
+          animationStyle: AppMotion.overlayStyle(context),
           builder: (context) => AlertDialog(
             title: Text(tr('Risk skoru')),
             content: Text(
