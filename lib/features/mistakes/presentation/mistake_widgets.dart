@@ -15,6 +15,7 @@ import '../../tracking/data/tracking_models.dart';
 import '../../tracking/data/tracking_repository.dart';
 import '../data/mistake_repository.dart';
 import '../../../core/design/motion.dart';
+import '../../../shared/widgets/skeleton.dart';
 
 /// Kartın tekrar merdiveni: 1 → 3 → 7 → 21 gün, sonra öğrenildi.
 class StageLadder extends StatelessWidget {
@@ -146,10 +147,8 @@ class MistakePhoto extends ConsumerWidget {
                   : null,
               semanticLabel: tr('Soru fotoğrafı'),
             ),
-      loading: () => SizedBox(
-        height: height,
-        child: const Center(child: CircularProgressIndicator()),
-      ),
+      loading: () =>
+          SizedBox(height: height, child: const SkeletonList(rows: 3)),
       error: (_, _) => placeholder(Icons.broken_image_outlined),
     );
   }

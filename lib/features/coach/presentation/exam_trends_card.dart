@@ -7,6 +7,7 @@ import '../../../core/i18n/i18n.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/widgets/common.dart';
 import '../data/exam_trends.dart';
+import '../../../shared/widgets/skeleton.dart';
 
 String _net(double v) =>
     v.toStringAsFixed(v == v.roundToDouble() ? 0 : 2).replaceAll('.', ',');
@@ -44,10 +45,7 @@ class _ExamTrendsCardState extends ConsumerState<ExamTrendsCard> {
         onSelectionChanged: (s) => setState(() => _type = s.first),
       ),
       child: trends.when(
-        loading: () => const Padding(
-          padding: EdgeInsets.all(16),
-          child: Center(child: CircularProgressIndicator()),
-        ),
+        loading: () => const SkeletonList(rows: 2),
         error: (_, _) => TextButton(
           onPressed: () => ref.invalidate(examTrendsProvider(_type)),
           child: Text(tr('Tekrar dene')),

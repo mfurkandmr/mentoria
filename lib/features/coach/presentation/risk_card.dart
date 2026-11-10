@@ -8,6 +8,7 @@ import '../../../core/theme/brand_theme.dart';
 import '../../../shared/widgets/common.dart';
 import '../data/risk_repository.dart';
 import '../../../core/design/motion.dart';
+import '../../../shared/widgets/skeleton.dart';
 
 /// Koç ve müdür ana sayfası: "bu hafta konuşulacaklar". Devam, net düşüşü
 /// ve ödeve göre en riskli 7 öğrenci; dokununca öğrenci detayı açılır.
@@ -47,10 +48,7 @@ class RiskCard extends ConsumerWidget {
         ),
       ),
       child: risks.when(
-        loading: () => const Padding(
-          padding: EdgeInsets.all(16),
-          child: Center(child: CircularProgressIndicator()),
-        ),
+        loading: () => const SkeletonList(rows: 2),
         error: (_, _) => TextButton(
           onPressed: () => ref.invalidate(riskListProvider),
           child: Text(tr('Tekrar dene')),

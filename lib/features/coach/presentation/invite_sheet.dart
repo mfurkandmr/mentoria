@@ -12,6 +12,7 @@ import '../../../shared/format.dart';
 import '../data/coach_repository.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../core/design/motion.dart';
+import '../../../shared/widgets/skeleton.dart';
 
 /// Öğrenci davet kodu oluşturma ve aktif kodlar.
 class InviteSheet extends ConsumerStatefulWidget {
@@ -135,10 +136,7 @@ class _InviteSheetState extends ConsumerState<InviteSheet> {
             ),
             const SizedBox(height: 8),
             invites.when(
-              loading: () => const Padding(
-                padding: EdgeInsets.all(12),
-                child: Center(child: CircularProgressIndicator()),
-              ),
+              loading: () => const SkeletonList(rows: 2),
               error: (_, _) => Text(tr('Kodlar yüklenemedi.')),
               data: (list) => list.isEmpty
                   ? Text(tr('Aktif davet kodun yok.'), style: text.bodySmall)

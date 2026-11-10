@@ -13,6 +13,7 @@ import '../../tracking/data/tracking_models.dart';
 import '../../tracking/data/tracking_repository.dart';
 import '../data/books_repository.dart';
 import '../../../core/design/motion.dart';
+import '../../../shared/widgets/skeleton.dart';
 
 final _inline = FilledButton.styleFrom(minimumSize: const Size(0, 44));
 
@@ -53,7 +54,7 @@ class MyBooksScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(tr('Kitaplarım'))),
       body: me == null
-          ? const Center(child: CircularProgressIndicator())
+          ? const SkeletonList()
           : StudentBooksView(studentId: me.id, viewer: BooksViewer.student),
     );
   }

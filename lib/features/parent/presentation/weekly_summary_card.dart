@@ -7,6 +7,7 @@ import '../../../core/theme/brand_theme.dart';
 import '../../../shared/format.dart';
 import '../../tracking/presentation/study_view.dart' show formatMinutes;
 import '../data/weekly_summary_repository.dart';
+import '../../../shared/widgets/skeleton.dart';
 
 /// Velinin haftalık özeti, tek kart: devam (çalıştığı gün, kaçırılan
 /// görüşme), net trendi ve ödev oranı. Veli ana sayfasında ve koçun öğrenci
@@ -76,10 +77,7 @@ class WeeklySummaryCard extends ConsumerWidget {
                 child: Text(tr('Özet yüklenemedi. Tekrar dene.')),
               )
             else if (s == null)
-              const Padding(
-                padding: EdgeInsets.all(12),
-                child: Center(child: CircularProgressIndicator()),
-              )
+              const SkeletonList(rows: 2)
             else ...[
               _Line(
                 icon: Icons.event_available_rounded,

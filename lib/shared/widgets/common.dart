@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'bizz.dart';
 import 'corporate_look.dart';
 import 'effects.dart';
+import 'skeleton.dart';
 import '../../core/i18n/i18n.dart';
 import '../../core/design/motion.dart';
 
@@ -209,16 +210,32 @@ class AsyncView<T> extends StatelessWidget {
     required this.value,
     required this.builder,
     this.onRetry,
+    this.skeleton,
   });
 
   final AsyncValue<T> value;
   final Widget Function(T data) builder;
   final VoidCallback? onRetry;
 
+  /// Yüklenirken içeriğin yerini tutan iskelet (varsayılan: liste biçimi).
+  final Widget? skeleton;
+
   @override
-  Widget build(BuildContext context) => value.when(
+  Widget build(BuildContext context) {
+    // Yenilemede eski veri ekranda kalır (iskelete dönülmez).
+    final loading = value.isLoading && !value.hasValue && !value.hasError;
+    return LoadSwitcher(
+      loading: loading,
+      skeleton: skeleton ?? const SkeletonList(),
+      stateKey: value.hasError && !value.hasValue ? 'error' : 'data',
+      builder: _settled,
+    );
+  }
+
+  Widget _settled(BuildContext context) => value.when(
     skipLoadingOnRefresh: true,
-    loading: () => const BizzLoader(),
+    skipLoadingOnReload: true,
+    loading: () => skeleton ?? const SkeletonList(),
     error: (_, _) => Center(
       child: Padding(
         padding: const EdgeInsets.all(24),

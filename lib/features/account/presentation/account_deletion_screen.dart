@@ -10,6 +10,7 @@ import '../../auth/data/profile.dart';
 import '../../auth/presentation/auth_error.dart';
 import '../../privacy/presentation/privacy_screen.dart';
 import '../data/account_repository.dart';
+import '../../../shared/widgets/skeleton.dart';
 
 /// Uygulamayı kurmadan hesap silme (`/hesap-sil`; Google Play zorunluluğu).
 ///
@@ -154,7 +155,7 @@ class _AccountDeletionScreenState extends ConsumerState<AccountDeletionScreen> {
       body = ref
           .watch(currentProfileProvider)
           .when(
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => const SkeletonList(),
             error: (_, _) =>
                 Text(tr('Bir şeyler ters gitti. Lütfen tekrar dene.')),
             data: (profile) => _Confirm(

@@ -8,6 +8,7 @@ import '../../core/theme/brand_theme.dart';
 import '../../core/design/motion.dart';
 import 'bizz.dart';
 import 'corporate_look.dart';
+import 'skeleton.dart';
 import '../../core/i18n/i18n.dart';
 
 /// Altıgen yolu (sivri tepe yukarıda).
@@ -339,25 +340,25 @@ class AnimatedLinearProgress extends StatelessWidget {
   );
 }
 
-/// Yükleniyor göstergesi: süzülen küçük Bızz.
+/// Yükleniyor göstergesi: öğrenci tarafında süzülen küçük Bızz (bilinçli
+/// sabit), kurum panelinde içerik biçiminde iskelet.
 class BizzLoader extends StatelessWidget {
   const BizzLoader({super.key, this.size = 64});
 
   final double size;
 
   @override
-  Widget build(BuildContext context) => Center(
-    child: Padding(
-      padding: const EdgeInsets.all(24),
-      child: Semantics(
-        label: tr('Yükleniyor'),
-        // Kurum panelinde maskot yerine sade gösterge.
-        child: isCorporate(context)
-            ? const CircularProgressIndicator.adaptive()
-            : Bizz(size: size, headOnly: true, interactive: false),
-      ),
-    ),
-  );
+  Widget build(BuildContext context) => isCorporate(context)
+      ? const SkeletonList(rows: 3)
+      : Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Semantics(
+              label: tr('Yükleniyor'),
+              child: Bizz(size: size, headOnly: true, interactive: false),
+            ),
+          ),
+        );
 }
 
 /// Sürekli dönen 0→1 zaman değeriyle çizim (dalga, alev, parıltı).

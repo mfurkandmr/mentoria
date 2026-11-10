@@ -19,6 +19,7 @@ import '../../optic/data/optic_repository.dart';
 import '../../schedule_generator/presentation/schedule_export.dart'
     show jpegPagesToPdf;
 import '../domain/exam_comparator.dart';
+import '../../../shared/widgets/skeleton.dart';
 
 /// Karşılaştırma sütun renkleri (sabit kategorik palet).
 const _colors = [
@@ -611,7 +612,7 @@ class _OutcomesView extends ConsumerWidget {
       if (v.isLoading) loading = true;
       answers[e.id] = v.value ?? const [];
     }
-    if (loading) return const Center(child: CircularProgressIndicator());
+    if (loading) return const SkeletonList();
     final rows = ExamComparator.outcomes(exams, answers);
     if (rows.isEmpty) {
       return _Hint(

@@ -13,6 +13,7 @@ import '../domain/schedule_generator.dart';
 import 'schedule_export.dart';
 import 'timetable_format.dart';
 import '../../../core/design/motion.dart';
+import '../../../shared/widgets/skeleton.dart';
 
 final _inline = FilledButton.styleFrom(minimumSize: const Size(0, 44));
 
@@ -716,7 +717,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                   ),
                 )
               : setup == null || entries == null
-              ? const Center(child: CircularProgressIndicator())
+              ? const SkeletonList()
               : Stack(
                   children: [
                     TabBarView(

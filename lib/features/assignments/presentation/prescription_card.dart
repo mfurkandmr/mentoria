@@ -10,6 +10,7 @@ import '../../../shared/widgets/common.dart';
 import '../../learn/data/practice_repository.dart';
 import '../data/assignment_repository.dart';
 import '../data/prescription_repository.dart';
+import '../../../shared/widgets/skeleton.dart';
 
 String _subjectLabel(String code) => code.startsWith('TYT_')
     ? 'TYT ${subjectByCode(code).name}'
@@ -89,10 +90,7 @@ class _PrescriptionCardState extends ConsumerState<PrescriptionCard> {
       title: tr('Konu reçetesi'),
       subtitle: tr('Son 3 denemenin eksik konularından haftalık ödev taslağı'),
       child: rx.when(
-        loading: () => const Padding(
-          padding: EdgeInsets.all(16),
-          child: Center(child: CircularProgressIndicator()),
-        ),
+        loading: () => const SkeletonList(rows: 2),
         error: (_, _) => TextButton(
           onPressed: () =>
               ref.invalidate(prescriptionProvider(widget.studentId)),

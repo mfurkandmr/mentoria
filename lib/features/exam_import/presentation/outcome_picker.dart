@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/i18n/i18n.dart';
 import '../data/exam_admin_repository.dart';
 import '../../../core/design/motion.dart';
+import '../../../shared/widgets/skeleton.dart';
 
 /// Seçilen kazanım; [id] `null` ise kazanım kaldırıldı.
 class PickedOutcome {
@@ -84,7 +85,7 @@ class _OutcomePickerState extends ConsumerState<_OutcomePicker> {
             ),
             Expanded(
               child: tree.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
+                loading: () => const SkeletonList(),
                 error: (_, _) =>
                     Center(child: Text(tr('Kazanımlar yüklenemedi.'))),
                 data: (t) {

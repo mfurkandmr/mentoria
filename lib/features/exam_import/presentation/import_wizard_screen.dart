@@ -16,6 +16,7 @@ import '../domain/exam_package.dart';
 import '../domain/import_plan.dart';
 import '../domain/optic_result_parser.dart';
 import '../../../core/design/motion.dart';
+import '../../../shared/widgets/skeleton.dart';
 
 String warningText(RowWarning w) {
   final col = w.column == null ? '' : '${w.column}: ';
@@ -345,7 +346,7 @@ class _ImportWizardState extends ConsumerState<ImportWizardScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(title)),
       body: _exam == null
-          ? const Center(child: CircularProgressIndicator())
+          ? const SkeletonList()
           : switch (_step) {
               _Step.file => _fileStep(),
               _Step.mapping => _mappingStep(),
