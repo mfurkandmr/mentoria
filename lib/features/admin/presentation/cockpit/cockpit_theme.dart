@@ -343,6 +343,7 @@ ThemeData cockpitTheme(BrandTheme brand, {bool dark = false}) {
         minimumSize: const Size(0, 44),
         shape: RoundedRectangleBorder(borderRadius: r12),
         textStyle: text.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+        foregroundBuilder: pressScaleLayer,
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(

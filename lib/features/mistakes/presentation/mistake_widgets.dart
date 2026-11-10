@@ -16,6 +16,7 @@ import '../../tracking/data/tracking_repository.dart';
 import '../data/mistake_repository.dart';
 import '../../../core/design/motion.dart';
 import '../../../shared/widgets/skeleton.dart';
+import '../../../core/design/haptics.dart';
 
 /// Kartın tekrar merdiveni: 1 → 3 → 7 → 21 gün, sonra öğrenildi.
 class StageLadder extends StatelessWidget {
@@ -644,7 +645,7 @@ class _AddMistakeSheetState extends ConsumerState<_AddMistakeSheet> {
       ref.invalidate(mistakeCardsProvider(widget.studentId));
       ref.invalidate(shortcutCountsProvider(widget.studentId));
       if (!mounted) return;
-      HapticFeedback.mediumImpact();
+      AppHaptics.confirm();
       Navigator.of(context).pop();
       showMessage(
         context,
@@ -861,7 +862,7 @@ class _MistakeReviewScreenState extends ConsumerState<MistakeReviewScreen> {
           .read(mistakeRepositoryProvider)
           .review(card, solved: solved);
       if (!mounted) return;
-      solved ? HapticFeedback.mediumImpact() : HapticFeedback.heavyImpact();
+      solved ? AppHaptics.confirm() : AppHaptics.warn();
       setState(() {
         if (solved) _solved++;
         if (next.mastered) _mastered++;

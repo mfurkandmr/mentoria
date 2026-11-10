@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../core/i18n/i18n.dart';
 import '../../core/theme/brand_theme.dart';
 import 'effects.dart';
+import '../../core/design/haptics.dart';
 
 /// Panellerin ortak görsel dili: renkli özet kutuları, bölüm başlıkları,
 /// uyarı şeritleri, bilgi hapları, baş harf rozetleri ve sırayla süzülen
@@ -248,7 +248,7 @@ class QuickActionTile extends StatelessWidget {
         elevation: 0,
         child: InkWell(
           onTap: () {
-            HapticFeedback.selectionClick();
+            AppHaptics.select();
             onTap();
           },
           child: Container(

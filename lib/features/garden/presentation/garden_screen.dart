@@ -3,7 +3,6 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
@@ -17,6 +16,7 @@ import '../../tracking/data/tracking_models.dart';
 import '../../tracking/data/tracking_repository.dart';
 import '../data/garden.dart';
 import '../../../core/design/motion.dart';
+import '../../../core/design/haptics.dart';
 
 /// Hangi dönemin bahçesi gösterilsin.
 enum GardenRange {
@@ -87,7 +87,7 @@ class _GardenScreenState extends ConsumerState<GardenScreen> {
   }
 
   void _showFlower(GardenFlower f) {
-    HapticFeedback.selectionClick();
+    AppHaptics.select();
     final s = f.session;
     String? subject;
     try {

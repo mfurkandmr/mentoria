@@ -2,10 +2,10 @@ import '../../core/sound/app_sounds.dart';
 import 'dart:math' as math;
 
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 
 import '../motion.dart';
+import '../../core/design/haptics.dart';
 
 /// Bızz'ın duygusu.
 enum BizzMood {
@@ -196,7 +196,7 @@ class _BizzState extends State<Bizz> with SingleTickerProviderStateMixin {
 
   void _onTap() {
     if (!widget.interactive) return;
-    HapticFeedback.lightImpact();
+    AppHaptics.confirm();
     AppSounds.play(AppSound.bizzTap);
     _celebrate();
   }

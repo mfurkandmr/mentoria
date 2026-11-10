@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/i18n/i18n.dart';
@@ -7,6 +6,7 @@ import '../../core/settings/app_settings.dart';
 import '../../core/sound/app_sounds.dart';
 import 'common.dart';
 import '../../core/design/motion.dart';
+import '../../core/design/haptics.dart';
 
 /// Profildeki "Görünüm, dil ve ses" kartı.
 class AppearanceCard extends ConsumerWidget {
@@ -46,7 +46,7 @@ class AppearanceCard extends ConsumerWidget {
             ],
             selected: {settings.themeMode},
             onSelectionChanged: (s) {
-              HapticFeedback.selectionClick();
+              AppHaptics.select();
               notifier.setThemeMode(s.first);
             },
           ),
@@ -66,7 +66,7 @@ class AppearanceCard extends ConsumerWidget {
             ],
             selected: {settings.language},
             onSelectionChanged: (s) {
-              HapticFeedback.selectionClick();
+              AppHaptics.select();
               notifier.setLanguage(s.first);
             },
           ),
@@ -84,7 +84,7 @@ class AppearanceCard extends ConsumerWidget {
             ),
             value: settings.sounds,
             onChanged: (v) {
-              HapticFeedback.selectionClick();
+              AppHaptics.select();
               notifier.setSounds(v);
               // Açınca örnek olarak bir kez çalsın.
               if (v) AppSounds.play(AppSound.bizzTap);
@@ -119,7 +119,7 @@ class QuickSettingsBar extends ConsumerWidget {
       children: [
         TextButton(
           onPressed: () {
-            HapticFeedback.selectionClick();
+            AppHaptics.select();
             notifier.setLanguage(other);
           },
           child: Text(other == AppLanguage.en ? tr('🇬🇧 EN') : tr('🇹🇷 TR')),
@@ -127,7 +127,7 @@ class QuickSettingsBar extends ConsumerWidget {
         IconButton(
           tooltip: isDark ? tr('Açık tema') : tr('Koyu tema'),
           onPressed: () {
-            HapticFeedback.selectionClick();
+            AppHaptics.select();
             notifier.setThemeMode(isDark ? ThemeMode.light : ThemeMode.dark);
           },
           icon: AnimatedSwitcher(

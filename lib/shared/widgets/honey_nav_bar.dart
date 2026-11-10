@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../core/theme/brand_theme.dart';
 import 'effects.dart';
 import '../../core/design/motion.dart';
+import '../../core/design/haptics.dart';
 
 class HoneyNavItem {
   const HoneyNavItem({
@@ -76,7 +76,7 @@ class HoneyNavBar extends StatelessWidget {
                       item: item,
                       selected: i == selectedIndex,
                       onTap: () {
-                        HapticFeedback.selectionClick();
+                        AppHaptics.select();
                         onSelected(i);
                       },
                     ),

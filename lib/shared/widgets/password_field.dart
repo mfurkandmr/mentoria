@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../core/i18n/i18n.dart';
 import '../../core/design/motion.dart';
+import '../../core/design/haptics.dart';
 
 /// Göster / gizle düğmeli şifre alanı.
 class PasswordField extends StatefulWidget {
@@ -50,7 +50,7 @@ class _PasswordFieldState extends State<PasswordField> {
         suffixIcon: IconButton(
           tooltip: _visible ? tr('Şifreyi gizle') : tr('Şifreyi göster'),
           onPressed: () {
-            HapticFeedback.selectionClick();
+            AppHaptics.select();
             setState(() => _visible = !_visible);
             widget.onVisibilityChanged?.call(_visible);
           },

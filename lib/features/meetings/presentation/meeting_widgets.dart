@@ -1,6 +1,5 @@
 import '../../admin/presentation/cockpit/cockpit_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -12,6 +11,7 @@ import '../../../shared/widgets/panel.dart';
 import '../../tracking/data/tracking_models.dart';
 import '../data/meeting_repository.dart';
 import '../../../core/design/motion.dart';
+import '../../../core/design/haptics.dart';
 
 /// Görüşme durumunun görünümü: ikon + etiket + renk (renk tek başına anlam
 /// taşımaz). İşaretlenmemiş görüşme gelecekteyse "Planlı", geçtiyse
@@ -138,7 +138,7 @@ Future<void> showMeetingStatusSheet(
     await ref
         .read(meetingRepositoryProvider)
         .setStatus(m.schedule.id, m.day, picked.$1);
-    HapticFeedback.selectionClick();
+    AppHaptics.select();
     invalidateMeetings(ref);
   } catch (_) {
     if (context.mounted) {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -14,6 +13,7 @@ import '../../tracking/data/tracking_models.dart';
 import '../../tracking/data/tracking_repository.dart';
 import '../data/assignment_repository.dart';
 import '../../../core/design/motion.dart';
+import '../../../core/design/haptics.dart';
 
 /// Türkçe büyük/küçük harf duyarsız arama için.
 String _fold(String s) =>
@@ -55,10 +55,10 @@ class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
     final i = list.indexWhere((x) => x.key == d.key);
     if (i >= 0) {
       list.removeAt(i);
-      HapticFeedback.selectionClick();
+      AppHaptics.select();
     } else {
       list.add(d);
-      HapticFeedback.lightImpact();
+      AppHaptics.confirm();
       _bump++;
     }
     _basket.value = list;
@@ -120,7 +120,7 @@ class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
                 builder: (list) => _StudentPicker(
                   students: list,
                   onPick: (s) {
-                    HapticFeedback.selectionClick();
+                    AppHaptics.select();
                     setState(() => _student = s);
                   },
                 ),

@@ -2964,3 +2964,36 @@ karakter, UTF-8, sondaki 120 karakter cevap, öncesi kitapçık), anahtar metni 
 - Örnekte: Elif 72 D / 38 Y / 10 B = 62,5 net; en yüksek Vildan 104,75; Can Öztürk boş;
   Gökhan'ın numarası 0045127 (kurum kaydında 45127 ise eşleşir). Canlı kurumda denenmedi;
   numaralar kurum listesinde yoksa raporda "eşleşmedi" çıkar.
+
+## 84. Ortak hareket ve geri bildirim dili (10 Kasım 2026)
+
+His: kurumsal, sakin. Bütün süre / eğri / mesafe `lib/core/design/motion.dart`
+(`AppMotion`): instant 100, fast 180, base 240, slow 320 ms; enter easeOutCubic, exit
+easeInCubic, move easeInOutCubic; kayma 8–24 px. Hareketi azalt ve testler tek yerden
+(`Motion.of`, `AppMotion.of`). Titreşim `core/design/haptics.dart` (`AppHaptics.select /
+confirm / warn`); `CockpitMotion` ve `CockpitHaptics` kalktı.
+
+- **Giriş:** `FadeSlideIn` tek uygulama (12 px, 240 ms, öğe başına 30 ms, ilk 8 öğe);
+  yalnızca ilk kurulduğunda oynar, sayfa kaydırılmışsa anında. `Reveal` ve `staggered`
+  bunu sarar. `Pressable` = `PressScale` (0,97, kaydırınca bırakır).
+- **Sayfa geçişi:** `core/design/page_transitions.dart` `AppPageTransitionsBuilder`
+  (iOS Cupertino + kenardan geri; ötekilerde belirme + 16 px). `_cockpitPage` artık
+  `MaterialPage`; Android'de kokpit sağdan kaymaz. Alt sayfa ve pencereler
+  `AppMotion.overlayStyle(context)` ile açılır (yeni çağrıya da eklenmeli).
+- **Yükleniyor:** `shared/widgets/skeleton.dart` `LoadSwitcher` (iskelet en az 300 ms,
+  240 ms çapraz geçiş, üstten hizalı) ve `SkeletonList`. `AsyncView` bunu kullanır.
+  Kurum panelinde `BizzLoader` iskelet çizer; öğrenci tarafında maskot kalır.
+- **Grafik:** fl_chart'lara `duration: AppMotion.base, curve: AppMotion.enter`; ilk
+  görünüşte `RevealIn`.
+- **Kaydırma:** kokpitin Android'deki zorunlu bounce'u kalktı (platform varsayılanı).
+  Tek döngülü listeler `ListView.builder`; üç seçim penceresi `prototypeItem` ile
+  (başlık ve alt satır tek satır).
+- **Bilinçli istisnalar** (`test/motion_tokens_test.dart` listeler; yeni sabit süre ya
+  da eğri bu testi düşürür): açılış, haftalık özet, bahçe, gökyüzü başlığı, alev /
+  kavanoz / rozet, bal kadranı, maskot, konfeti. Düğme içi ve açılış kapısındaki
+  dönen göstergeler ile "daha fazla yükle" göstergeleri de kaldı.
+- **Yapılmadı:** SnackBar'a aşağıdan kayma eklenmedi (yüzen SnackBar çatıda yalnızca
+  belirir; süre zaten 4 sn); öğrenci temasında SnackBar yüzen değil. Düğmelerde yalnızca
+  dolu düğmenin içeriği küçülür (tema ile bütün düğme ölçeklenemiyor). Karışık içerikli
+  uzun listeler (`ListView(children)`) dönüştürülmedi. Tarih seçici çatının süresiyle
+  açılır. Alt sayfa eğrisi çatıda sabit, yalnızca süresi ayarlanır.

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -16,6 +15,7 @@ import '../../../shared/widgets/effects.dart';
 import '../../auth/data/auth_repository.dart';
 import '../data/notification_repository.dart';
 import '../../../core/design/motion.dart';
+import '../../../core/design/haptics.dart';
 
 /// Bildirimin gösterdiği yere gider. Ödev listesi üstüne açılır (geri
 /// tuşuyla dönülebilsin); deneme ve görevler panelin sekmesine geçer.
@@ -285,7 +285,7 @@ class _InAppNotifierState extends ConsumerState<InAppNotifier> {
     _entry?.remove();
     final overlay = Overlay.maybeOf(context, rootOverlay: true);
     if (overlay == null) return;
-    HapticFeedback.mediumImpact();
+    AppHaptics.confirm();
     // Telefon bildirimiyle aynı, Mentoria'ya özel ses (ayarlardan kapatılabilir).
     unawaited(AppSounds.play(AppSound.notification));
     late OverlayEntry entry;

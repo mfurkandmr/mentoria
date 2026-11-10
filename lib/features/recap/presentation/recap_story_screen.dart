@@ -14,6 +14,7 @@ import '../../../shared/motion.dart';
 import '../../../shared/widgets/bizz.dart';
 import '../../../shared/widgets/effects.dart';
 import '../data/week_recap.dart';
+import '../../../core/design/haptics.dart';
 
 /// Hikayeyi tam ekran açar (alt menünün de üstünde).
 Future<void> openRecapStory(
@@ -21,7 +22,7 @@ Future<void> openRecapStory(
   required WeekRecap recap,
   required String firstName,
 }) {
-  HapticFeedback.mediumImpact();
+  AppHaptics.confirm();
   return Navigator.of(context, rootNavigator: true).push(
     PageRouteBuilder<void>(
       opaque: true,
@@ -126,7 +127,7 @@ class _RecapStoryScreenState extends State<RecapStoryScreen>
       _timer.stop();
       return;
     }
-    if (i != _index) HapticFeedback.selectionClick();
+    if (i != _index) AppHaptics.select();
     setState(() => _index = i);
     _pages[i].onShow?.call();
     if (Motion.of(context) && i < _pages.length - 1) {
@@ -158,7 +159,7 @@ class _RecapStoryScreenState extends State<RecapStoryScreen>
         _gold,
         (c) => _PersonaPage(persona: r.persona),
         onShow: () {
-          HapticFeedback.heavyImpact();
+          AppHaptics.warn();
           AppSounds.play(AppSound.bizzTap);
         },
       ),

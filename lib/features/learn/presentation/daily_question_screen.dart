@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -14,6 +13,7 @@ import '../data/daily_question_repository.dart';
 import '../data/practice_repository.dart';
 import 'learn_screen.dart';
 import 'notebook_button.dart';
+import '../../../core/design/haptics.dart';
 
 /// Ana sayfadaki Günün Sorusu kartı.
 class DailyQuestionCard extends ConsumerWidget {
@@ -145,7 +145,7 @@ class _DailyQuestionScreenState extends ConsumerState<DailyQuestionScreen> {
       _picked = option;
       _saving = true;
     });
-    right ? HapticFeedback.mediumImpact() : HapticFeedback.heavyImpact();
+    right ? AppHaptics.confirm() : AppHaptics.warn();
     try {
       await ref
           .read(dailyQuestionRepositoryProvider)

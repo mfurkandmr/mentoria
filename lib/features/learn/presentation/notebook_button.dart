@@ -1,12 +1,12 @@
 import '../../student/data/home_providers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/i18n/i18n.dart';
 import '../../../shared/widgets/common.dart';
 import '../../mistakes/data/mistake_repository.dart';
 import '../data/practice_repository.dart';
+import '../../../core/design/haptics.dart';
 
 /// Hata defteri kartının notu: soru, doğru cevap ve kısa çözüm (en çok 500
 /// karakter; sunucudaki sınır).
@@ -54,7 +54,7 @@ class _AddToNotebookButtonState extends ConsumerState<AddToNotebookButton> {
       ref.invalidate(mistakeCardsProvider(widget.studentId));
       ref.invalidate(shortcutCountsProvider(widget.studentId));
       if (!mounted) return;
-      HapticFeedback.mediumImpact();
+      AppHaptics.confirm();
       setState(() => _added = true);
     } catch (_) {
       if (mounted) showMessage(context, tr('Kaydedilemedi. Tekrar dene.'));

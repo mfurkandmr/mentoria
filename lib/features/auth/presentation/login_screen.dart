@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -17,6 +16,7 @@ import 'auth_error.dart';
 import 'reset_password_screen.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../core/design/motion.dart';
+import '../../../core/design/haptics.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -92,7 +92,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       await _checkTenant(auth, tenants, chosenSlug, savedSlug, messenger);
     } catch (e) {
       if (!mounted) return;
-      HapticFeedback.heavyImpact();
+      AppHaptics.warn();
       _bizz
         ..mood = BizzMood.sad
         ..shake();

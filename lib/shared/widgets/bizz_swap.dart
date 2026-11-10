@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../core/sound/app_sounds.dart';
 import '../motion.dart';
 import 'bizz.dart';
+import '../../core/design/haptics.dart';
 
 /// [BizzSwap]'ı dışarıdan yönetir (gökyüzü başlığı).
 class BizzSwapController {
@@ -91,7 +91,7 @@ class _BizzSwapState extends State<BizzSwap>
     final comer = _incoming;
     // Hareket kapalıysa (erişilebilirlik): yeni arı doğrudan yerinde güler.
     if (!Motion.of(context)) {
-      HapticFeedback.mediumImpact();
+      AppHaptics.confirm();
       setState(() => _activeIndex = 1 - _activeIndex);
       _smile(comer);
       return;
@@ -126,7 +126,7 @@ class _BizzSwapState extends State<BizzSwap>
     final comer = _incoming;
     if (!_impacted && t >= BizzSwap.impactAt) {
       _impacted = true;
-      HapticFeedback.heavyImpact();
+      AppHaptics.warn();
       leaver
         ..mood = BizzMood.sad
         ..flying = true

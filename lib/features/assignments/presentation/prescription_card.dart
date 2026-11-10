@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -11,6 +10,7 @@ import '../../learn/data/practice_repository.dart';
 import '../data/assignment_repository.dart';
 import '../data/prescription_repository.dart';
 import '../../../shared/widgets/skeleton.dart';
+import '../../../core/design/haptics.dart';
 
 String _subjectLabel(String code) => code.startsWith('TYT_')
     ? 'TYT ${subjectByCode(code).name}'
@@ -184,7 +184,7 @@ class _PrescriptionTile extends StatelessWidget {
           Checkbox(
             value: selected,
             onChanged: (v) {
-              HapticFeedback.selectionClick();
+              AppHaptics.select();
               onSelected(v ?? false);
             },
           ),

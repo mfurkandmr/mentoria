@@ -11,6 +11,7 @@ import '../../../shared/widgets/bizz_swap.dart';
 import '../../../shared/widgets/corporate_look.dart';
 import '../../../shared/widgets/effects.dart';
 import '../data/bizz_shake.dart';
+import '../../../core/design/haptics.dart';
 
 /// Açık gökyüzünde okunur koyu yazı (gökyüzü markadan bağımsız bir
 /// illüstrasyondur).
@@ -135,7 +136,7 @@ class _SkyHeaderState extends State<SkyHeader> {
   }
 
   void _next() {
-    HapticFeedback.selectionClick();
+    AppHaptics.select();
     AppSounds.play(AppSound.bizzTap);
     _bizz.celebrate();
     setState(() {
@@ -162,7 +163,7 @@ class _SkyHeaderState extends State<SkyHeader> {
     }
     final wait = limit.waitTime();
     if (wait != null) {
-      HapticFeedback.lightImpact();
+      AppHaptics.confirm();
       _bizz.shakeHead();
       setState(
         () => _say = tr('Arılar dinleniyor 😴 {n} dk sonra yine salla.', {

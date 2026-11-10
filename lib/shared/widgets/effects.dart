@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/gestures.dart' show kTouchSlop;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../core/theme/brand_theme.dart';
 import '../../core/design/motion.dart';
@@ -10,6 +9,7 @@ import 'bizz.dart';
 import 'corporate_look.dart';
 import 'skeleton.dart';
 import '../../core/i18n/i18n.dart';
+import '../../core/design/haptics.dart';
 
 /// Altıgen yolu (sivri tepe yukarıda).
 Path hexPath(Offset c, double r) {
@@ -210,7 +210,7 @@ class CountUp extends StatelessWidget {
 
 /// Bal rengi altıgen konfeti patlaması (görev tamamlandı, hedefe ulaşıldı).
 void celebrate(BuildContext context, {Offset? origin}) {
-  HapticFeedback.mediumImpact();
+  AppHaptics.confirm();
   if (!Motion.of(context)) return;
   final overlay = Overlay.maybeOf(context, rootOverlay: true);
   if (overlay == null) return;

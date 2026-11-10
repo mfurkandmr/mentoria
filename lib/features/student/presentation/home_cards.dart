@@ -12,6 +12,7 @@ import '../../../shared/widgets/common.dart';
 import '../../../shared/widgets/effects.dart';
 import '../data/daily_quotes.dart';
 import '../../../core/design/motion.dart';
+import '../../../core/design/haptics.dart';
 
 // ───────────────────────────── YKS geri sayım ─────────────────────────────
 
@@ -444,7 +445,7 @@ class DailyQuoteCard extends StatelessWidget {
 
   void _copy(BuildContext context, Quote q) {
     Clipboard.setData(ClipboardData(text: '"${q.text}" — ${q.by}'));
-    HapticFeedback.lightImpact();
+    AppHaptics.confirm();
     showMessage(context, tr('Söz kopyalandı'));
   }
 
@@ -602,7 +603,7 @@ class _HoneyJarCardState extends State<HoneyJarCard> {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
-          HapticFeedback.lightImpact();
+          AppHaptics.confirm();
           setState(() => _slosh++);
         },
         child: Padding(
@@ -1439,7 +1440,7 @@ class _BadgePainter extends CustomPainter {
 }
 
 void _showAchievement(BuildContext context, Achievement a) {
-  HapticFeedback.selectionClick();
+  AppHaptics.select();
   showModalBottomSheet<void>(
     context: context,
     sheetAnimationStyle: AppMotion.overlayStyle(context),

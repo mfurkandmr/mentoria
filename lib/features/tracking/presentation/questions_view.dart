@@ -17,6 +17,7 @@ import '../data/tracking_repository.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../shared/widgets/effects.dart';
 import '../../../core/design/motion.dart';
+import '../../../core/design/haptics.dart';
 
 /// Öğrencinin soru takibi sekmesi.
 class QuestionsScreen extends ConsumerWidget {
@@ -557,7 +558,7 @@ class _AddQuestionSheetState extends ConsumerState<_AddQuestionSheet> {
                           label: Text('+$n'),
                           visualDensity: VisualDensity.compact,
                           onPressed: () {
-                            HapticFeedback.selectionClick();
+                            AppHaptics.select();
                             _correct.text =
                                 '${(_v(_correct) + n).clamp(0, 500)}';
                             setState(() {});

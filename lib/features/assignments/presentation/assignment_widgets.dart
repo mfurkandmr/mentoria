@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/i18n/i18n.dart';
@@ -9,6 +8,7 @@ import '../../../shared/widgets/common.dart';
 import '../../../shared/widgets/effects.dart';
 import '../data/assignment_repository.dart';
 import '../../../core/design/motion.dart';
+import '../../../core/design/haptics.dart';
 
 enum AssignmentViewer {
   /// Maddeleri işaretler.
@@ -99,7 +99,7 @@ class _AssignmentCardState extends ConsumerState<AssignmentCard> {
   bool _doneOf(AssignmentItem i) => _pending[i.id] ?? i.done;
 
   Future<void> _tick(AssignmentItem item, bool done) async {
-    HapticFeedback.selectionClick();
+    AppHaptics.select();
     setState(() => _pending[item.id] = done);
     final a = widget.assignment;
     final willComplete =

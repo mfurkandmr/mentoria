@@ -3,7 +3,6 @@ import '../../student_books/presentation/books_screens.dart';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/exam_subjects.dart';
@@ -20,6 +19,7 @@ import '../data/practice_repository.dart';
 import '../../duel/presentation/duel_screens.dart';
 import 'notebook_button.dart';
 import '../../../core/design/motion.dart';
+import '../../../core/design/haptics.dart';
 
 /// Derslerin rengi ve simgesi (AYT dersleri TYT karşılığının rengini alır).
 ({Color color, IconData icon}) subjectLook(String code) => switch (code) {
@@ -501,7 +501,7 @@ class _CardsViewState extends State<_CardsView> {
                   controller: _pages,
                   itemCount: cards.length,
                   onPageChanged: (i) {
-                    HapticFeedback.selectionClick();
+                    AppHaptics.select();
                     setState(() => _page = i);
                   },
                   itemBuilder: (_, i) => AnimatedBuilder(
@@ -602,7 +602,7 @@ class _FlipCardState extends State<_FlipCard> {
       excludeSemantics: true,
       child: GestureDetector(
         onTap: () {
-          HapticFeedback.lightImpact();
+          AppHaptics.confirm();
           setState(() => _back = !_back);
         },
         child: TweenAnimationBuilder<double>(
@@ -802,7 +802,7 @@ class _QuizViewState extends ConsumerState<_QuizView> {
         _streak = 0;
       }
     });
-    right ? HapticFeedback.mediumImpact() : HapticFeedback.heavyImpact();
+    right ? AppHaptics.confirm() : AppHaptics.warn();
     if (right && _streak > 0 && _streak % 5 == 0) {
       AppSounds.play(AppSound.bizzTap);
       celebrate(context);

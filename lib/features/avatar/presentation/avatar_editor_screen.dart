@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/i18n/i18n.dart';
@@ -13,6 +12,7 @@ import 'avatar_rule_text.dart';
 import 'student_avatar.dart';
 import '../../ranking/data/ranking_repository.dart';
 import '../../../core/design/motion.dart';
+import '../../../core/design/haptics.dart';
 
 /// Avatar editörü: kategori sekmeleri, anlık önizleme, kilitli parçalar.
 /// Fotoğraf ya da yüz verisi kullanılmaz; avatar yalnızca parça seçimidir.
@@ -32,7 +32,7 @@ class _AvatarEditorScreenState extends ConsumerState<AvatarEditorScreen> {
   bool get _dirty => _draft != null && _draft != _saved;
 
   void _pick(AvatarCategory c, int? id) {
-    HapticFeedback.selectionClick();
+    AppHaptics.select();
     setState(() {
       _draft = _draft!.withPart(c, id);
       _bounce++;
@@ -74,7 +74,7 @@ class _AvatarEditorScreenState extends ConsumerState<AvatarEditorScreen> {
   }
 
   void _showLocked(AvatarItem item) {
-    HapticFeedback.lightImpact();
+    AppHaptics.confirm();
     showModalBottomSheet<void>(
       context: context,
       sheetAnimationStyle: AppMotion.overlayStyle(context),

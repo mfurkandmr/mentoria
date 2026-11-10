@@ -101,3 +101,18 @@ const appPageTransitionsTheme = PageTransitionsTheme(
     TargetPlatform.fuchsia: AppPageTransitionsBuilder(),
   },
 );
+
+/// Düğme basılıyken içeriği hafifçe küçültür (`ButtonStyle.foregroundBuilder`).
+/// Dalga (ripple) temadan gelir; ikisi birlikte "basıldı" hissini verir.
+Widget pressScaleLayer(
+  BuildContext context,
+  Set<WidgetState> states,
+  Widget? child,
+) => AnimatedScale(
+  scale: states.contains(WidgetState.pressed) && Motion.of(context)
+      ? AppMotion.pressScale
+      : 1,
+  duration: AppMotion.fast,
+  curve: AppMotion.enter,
+  child: child,
+);

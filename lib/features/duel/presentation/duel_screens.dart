@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -16,6 +15,7 @@ import '../../learn/data/practice_repository.dart';
 import '../../learn/presentation/learn_screen.dart';
 import '../data/duel_repository.dart';
 import '../../../core/design/motion.dart';
+import '../../../core/design/haptics.dart';
 
 const _duelColors = [Color(0xFFFF7A45), Color(0xFFC2185B)];
 
@@ -767,7 +767,7 @@ class _DuelPlayScreenState extends ConsumerState<DuelPlayScreen> {
 
   Future<void> _answer(int option) async {
     if (_sending) return;
-    HapticFeedback.selectionClick();
+    AppHaptics.select();
     setState(() => _answers.add(option));
     if (_answers.length < widget.questions.length) return;
     _watch.stop();

@@ -14,6 +14,7 @@ import '../../learn/data/practice_repository.dart';
 import '../../learn/presentation/learn_screen.dart';
 import '../data/plan_repository.dart';
 import '../../../core/design/motion.dart';
+import '../../../core/design/haptics.dart';
 
 String _subjectLabel(String code) => code.startsWith('TYT_')
     ? 'TYT ${subjectByCode(code).name}'
@@ -188,7 +189,7 @@ class _WeeklyPlanViewState extends ConsumerState<WeeklyPlanView> {
   (String, DateTime) get _key => (widget.studentId, _week);
 
   Future<void> _toggle(PlanItem i) async {
-    HapticFeedback.selectionClick();
+    AppHaptics.select();
     try {
       await ref.read(planRepositoryProvider).setDone(i.id, !i.done);
       if (!i.done && mounted) {

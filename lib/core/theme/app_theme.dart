@@ -66,6 +66,7 @@ class AppTheme {
           minimumSize: const Size.fromHeight(52),
           shape: RoundedRectangleBorder(borderRadius: radius),
           textStyle: font(fontWeight: FontWeight.w800, fontSize: 16),
+          foregroundBuilder: pressScaleLayer,
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
