@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/i18n/i18n.dart';
+import '../../core/design/motion.dart';
 
 /// Göster / gizle düğmeli şifre alanı.
 class PasswordField extends StatefulWidget {
@@ -54,7 +55,7 @@ class _PasswordFieldState extends State<PasswordField> {
             widget.onVisibilityChanged?.call(_visible);
           },
           icon: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 220),
+            duration: AppMotion.base,
             transitionBuilder: (child, anim) =>
                 ScaleTransition(scale: anim, child: child),
             child: Icon(

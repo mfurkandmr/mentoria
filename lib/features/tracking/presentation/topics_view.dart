@@ -11,6 +11,7 @@ import '../data/tracking_models.dart';
 import '../data/tracking_repository.dart';
 import '../../../shared/widgets/effects.dart';
 import '../../../core/i18n/i18n.dart';
+import '../../../core/design/motion.dart';
 
 /// Öğrencinin konu takibi sekmesi.
 class TopicsScreen extends ConsumerWidget {
@@ -313,8 +314,8 @@ class _SubjectCard extends ConsumerWidget {
                 const SizedBox(width: 6),
                 TweenAnimationBuilder<double>(
                   tween: Tween(begin: 0, end: 1),
-                  duration: const Duration(milliseconds: 700),
-                  curve: Curves.elasticOut,
+                  duration: AppMotion.base,
+                  curve: AppMotion.enter,
                   builder: (_, s, child) =>
                       Transform.scale(scale: s, child: child),
                   child: Tooltip(

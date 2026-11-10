@@ -8,9 +8,9 @@ import '../../../../shared/format.dart';
 import '../../../../shared/widgets/common.dart';
 import '../../../finance/data/finance_repository.dart' show formatMoney;
 import '../../data/cockpit_repository.dart';
-import 'cockpit_motion.dart';
 import 'cockpit_theme.dart';
 import 'section_states.dart';
+import '../../../../core/design/haptics.dart';
 
 /// Satırın sebebi ve anlam rengi.
 ({String reason, Tone tone}) attentionReason(
@@ -191,7 +191,7 @@ Future<void> notifyCoachFlow(
   messenger.hideCurrentSnackBar();
   try {
     await ref.read(cockpitRepositoryProvider).notifyCoach(s.studentId, send);
-    CockpitHaptics.commit();
+    AppHaptics.confirm();
     messenger.showSnackBar(
       SnackBar(
         content: Text(

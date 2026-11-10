@@ -61,7 +61,7 @@ class AnnouncementsScreen extends ConsumerWidget {
               itemCount: items.length,
               separatorBuilder: (_, _) => const SizedBox(height: 10),
               itemBuilder: (_, i) => FadeSlideIn(
-                delay: FadeSlideIn.stagger(i.clamp(0, 8), 40),
+                delay: FadeSlideIn.stagger(i),
                 child: AnnouncementTile(announcement: items[i]),
               ),
             );

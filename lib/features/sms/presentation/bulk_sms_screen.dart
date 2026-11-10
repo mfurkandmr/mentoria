@@ -14,6 +14,7 @@ import '../../admin/data/admin_repository.dart';
 import '../../schedule_generator/data/timetable_repository.dart';
 import '../../student_management/data/student_management_repository.dart';
 import '../data/bulk_sms_repository.dart';
+import '../../../core/design/haptics.dart';
 
 final _inline = FilledButton.styleFrom(minimumSize: const Size(0, 44));
 
@@ -158,7 +159,7 @@ class _BulkSmsScreenState extends ConsumerState<BulkSmsScreen> {
       if (!mounted) return;
       _body.clear();
       setState(() => _busy = false);
-      CockpitHaptics.commit();
+      AppHaptics.confirm();
       _toast(tr('{n} veliye SMS sırasına alındı.', {'n': r.recipients}));
     } catch (e) {
       if (!mounted) return;

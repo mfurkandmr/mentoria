@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 
 import '../../core/i18n/i18n.dart';
 import '../../core/theme/brand_theme.dart';
-import '../motion.dart';
 import 'effects.dart';
 
 /// Panellerin ortak görsel dili: renkli özet kutuları, bölüm başlıkları,
@@ -441,11 +440,5 @@ class InfoPill extends StatelessWidget {
 }
 
 /// Kartların sırayla süzülerek gelmesi (hareket azaltılmışsa anında).
-Widget staggered(int index, Widget child) => Builder(
-  builder: (context) => Motion.of(context)
-      ? FadeSlideIn(
-          delay: FadeSlideIn.stagger(index.clamp(0, 12), 55),
-          child: child,
-        )
-      : child,
-);
+Widget staggered(int index, Widget child) =>
+    FadeSlideIn(delay: FadeSlideIn.stagger(index), child: child);

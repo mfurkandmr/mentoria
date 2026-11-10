@@ -13,6 +13,8 @@ import '../../admin/presentation/cockpit/cockpit_theme.dart';
 import '../../finance/data/finance_repository.dart'
     show formatPhone, normalizePhone;
 import '../data/attendance_repository.dart';
+import '../../../core/design/motion.dart';
+import '../../../core/design/haptics.dart';
 
 DateTime _today() {
   final n = DateTime.now();
@@ -111,7 +113,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
         for (final r in fresh)
           if (r.status == AttendanceStatus.absent && r.smsAt == null) r,
       ];
-      CockpitHaptics.commit();
+      AppHaptics.confirm();
       if (absent.isEmpty) {
         showMessage(context, tr('Yoklama kaydedildi.'));
       } else {
@@ -125,14 +127,14 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
   }
 
   void _markAllPresent(List<AttendanceRow> rows) => setState(() {
-    CockpitHaptics.commit();
+    AppHaptics.confirm();
     for (final r in rows) {
       if (_statusOf(r) == null) _edits[r.studentId] = AttendanceStatus.present;
     }
   });
 
   void _mark(AttendanceRow r, AttendanceStatus s) => setState(() {
-    CockpitHaptics.select();
+    AppHaptics.select();
     final next = _statusOf(r) == s ? null : s;
     if (next == r.status) {
       _edits.remove(r.studentId);
@@ -482,8 +484,8 @@ class _StatusOption extends StatelessWidget {
             onTap: onTap,
             borderRadius: BorderRadius.circular(12),
             child: AnimatedContainer(
-              duration: CockpitMotion.of(context, CockpitMotion.short),
-              curve: CockpitMotion.curve,
+              duration: AppMotion.of(context, AppMotion.fast),
+              curve: AppMotion.enter,
               constraints: const BoxConstraints(minHeight: 52),
               padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 2),
               decoration: BoxDecoration(

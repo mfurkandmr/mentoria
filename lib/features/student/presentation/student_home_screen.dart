@@ -46,6 +46,7 @@ import '../../garden/presentation/garden_screen.dart';
 import '../../exam_analysis/presentation/report_card_screen.dart';
 import 'home_sky.dart';
 import '../../ranking/data/ranking_repository.dart';
+import '../../../core/design/motion.dart';
 
 const _headerHeight = 270.0;
 
@@ -287,7 +288,7 @@ class StudentHomeScreen extends ConsumerWidget {
                         firstName: profile.firstName,
                         lines: lines,
                         phase: phase,
-                        contentOpacity: Curves.easeIn.transform(open),
+                        contentOpacity: AppMotion.exit.transform(open),
                         // Telefonu salla: yeni Bızz gelir (saatte 2 kez).
                         swapLimit: switch (ref.read(
                           sharedPreferencesProvider,
@@ -336,10 +337,8 @@ class StudentHomeScreen extends ConsumerWidget {
               sliver: SliverList.separated(
                 itemCount: cards.length,
                 separatorBuilder: (_, _) => const SizedBox(height: 12),
-                itemBuilder: (_, i) => FadeSlideIn(
-                  delay: FadeSlideIn.stagger(i, 70),
-                  child: cards[i],
-                ),
+                itemBuilder: (_, i) =>
+                    FadeSlideIn(delay: FadeSlideIn.stagger(i), child: cards[i]),
               ),
             ),
           ],
@@ -473,7 +472,7 @@ class _Ring extends StatelessWidget {
       child: Column(
         children: [
           AnimatedContainer(
-            duration: const Duration(milliseconds: 600),
+            duration: AppMotion.base,
             width: 104,
             height: 104,
             decoration: BoxDecoration(
@@ -492,8 +491,8 @@ class _Ring extends StatelessWidget {
               children: [
                 TweenAnimationBuilder<double>(
                   tween: Tween(end: ratio),
-                  duration: const Duration(milliseconds: 1100),
-                  curve: Curves.easeOutCubic,
+                  duration: AppMotion.base,
+                  curve: AppMotion.enter,
                   builder: (_, v, _) => CircularProgressIndicator(
                     value: v,
                     strokeWidth: 10,
@@ -504,7 +503,7 @@ class _Ring extends StatelessWidget {
                     color: Color.lerp(
                       context.brand.primaryDeep,
                       context.brand.success,
-                      Curves.easeIn.transform(v),
+                      AppMotion.exit.transform(v),
                     ),
                   ),
                 ),

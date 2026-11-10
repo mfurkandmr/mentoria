@@ -183,7 +183,7 @@ class _SuccessRankingScreenState extends ConsumerState<SuccessRankingScreen> {
           for (final (i, e) in rest.indexed)
             FadeSlideIn(
               key: ValueKey('${_type.db}-${e.studentId}'),
-              delay: FadeSlideIn.stagger(i.clamp(0, 10), 30),
+              delay: FadeSlideIn.stagger(i),
               offset: 12,
               child: _Row(entry: e),
             ),
@@ -337,7 +337,7 @@ class _Podium extends StatelessWidget {
         for (final e in order)
           Expanded(
             child: FadeSlideIn(
-              delay: FadeSlideIn.stagger(e.rank, 90),
+              delay: FadeSlideIn.stagger(e.rank),
               child: _PodiumStep(entry: e, first: identical(e, entries[0])),
             ),
           ),

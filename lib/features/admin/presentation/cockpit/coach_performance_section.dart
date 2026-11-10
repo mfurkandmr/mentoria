@@ -8,9 +8,10 @@ import '../../../finance/data/finance_repository.dart'
     show formatPhone, normalizePhone;
 import '../../data/cockpit_repository.dart';
 import 'attention_row.dart' show callPhone;
-import 'cockpit_motion.dart';
 import 'cockpit_theme.dart';
 import 'section_states.dart';
+import '../../../../core/design/motion.dart';
+import '../../../../core/design/haptics.dart';
 
 /// Koç performansı: koç başına öğrenci sayısı, bu haftaki görüşmeler ve
 /// öğrencilerinin bu haftaki aktifliği.
@@ -187,8 +188,8 @@ class _Stat extends StatelessWidget {
                 borderRadius: BorderRadius.circular(3),
                 child: TweenAnimationBuilder<double>(
                   tween: Tween(begin: 0, end: ratio!),
-                  duration: CockpitMotion.of(context, CockpitMotion.long),
-                  curve: CockpitMotion.curve,
+                  duration: AppMotion.of(context, AppMotion.base),
+                  curve: AppMotion.enter,
                   builder: (_, v, _) => LinearProgressIndicator(
                     value: v,
                     minHeight: 6,
@@ -263,7 +264,7 @@ Future<void> editCoachPhone(
         .read(cockpitRepositoryProvider)
         .setCoachPhone(coachId, result.isEmpty ? null : result);
     ref.invalidate(cockpitProvider);
-    CockpitHaptics.commit();
+    AppHaptics.confirm();
     if (context.mounted) {
       showMessage(
         context,

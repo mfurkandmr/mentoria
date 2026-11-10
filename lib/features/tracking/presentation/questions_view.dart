@@ -16,6 +16,7 @@ import '../data/tracking_models.dart';
 import '../data/tracking_repository.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../shared/widgets/effects.dart';
+import '../../../core/design/motion.dart';
 
 /// Öğrencinin soru takibi sekmesi.
 class QuestionsScreen extends ConsumerWidget {
@@ -566,7 +567,7 @@ class _AddQuestionSheetState extends ConsumerState<_AddQuestionSheet> {
                 ),
                 const SizedBox(width: 8),
                 AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 250),
+                  duration: AppMotion.base,
                   transitionBuilder: (child, a) =>
                       ScaleTransition(scale: a, child: child),
                   child: Text(

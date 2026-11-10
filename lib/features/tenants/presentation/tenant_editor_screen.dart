@@ -17,6 +17,7 @@ import '../../../shared/widgets/brand_logo.dart';
 import '../../../shared/widgets/common.dart';
 import '../../../shared/widgets/effects.dart';
 import '../data/tenant_repository.dart';
+import '../../../core/design/motion.dart';
 
 /// Hazır renk paleti (seçmeyi kolaylaştırır; ayrıca HEX girilebilir).
 const _presets = <int>[
@@ -622,7 +623,7 @@ class _ColorFieldState extends State<_ColorField> {
                 child: GestureDetector(
                   onTap: () => widget.onChanged(Color(v)),
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
+                    duration: AppMotion.fast,
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(

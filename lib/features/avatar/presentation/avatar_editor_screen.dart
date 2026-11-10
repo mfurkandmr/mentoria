@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/i18n/i18n.dart';
 import '../../../core/theme/brand_theme.dart';
-import '../../../shared/motion.dart';
 import '../../../shared/widgets/common.dart';
 import '../../../shared/widgets/effects.dart';
 import '../../auth/data/auth_repository.dart';
@@ -13,6 +12,7 @@ import '../data/avatar_repository.dart';
 import 'avatar_rule_text.dart';
 import 'student_avatar.dart';
 import '../../ranking/data/ranking_repository.dart';
+import '../../../core/design/motion.dart';
 
 /// Avatar editörü: kategori sekmeleri, anlık önizleme, kilitli parçalar.
 /// Fotoğraf ya da yüz verisi kullanılmaz; avatar yalnızca parça seçimidir.
@@ -243,8 +243,8 @@ class _Preview extends ConsumerWidget {
     return TweenAnimationBuilder<double>(
       key: ValueKey(bounce),
       tween: Tween(begin: bounce == 0 ? 1 : 0.92, end: 1),
-      duration: const Duration(milliseconds: 420),
-      curve: Curves.elasticOut,
+      duration: AppMotion.base,
+      curve: AppMotion.enter,
       builder: (_, s, child) => Transform.scale(scale: s, child: child),
       child: avatar,
     );

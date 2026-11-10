@@ -8,10 +8,10 @@ import 'package:intl/intl.dart';
 import '../../../core/constants/yks_dates.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../core/theme/brand_theme.dart';
-import '../../../shared/motion.dart';
 import '../../../shared/widgets/common.dart';
 import '../../../shared/widgets/effects.dart';
 import '../data/daily_quotes.dart';
+import '../../../core/design/motion.dart';
 
 // ───────────────────────────── YKS geri sayım ─────────────────────────────
 
@@ -265,8 +265,8 @@ class _RollingDays extends StatelessWidget {
     if (!Motion.of(context)) return tiles(days);
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: days + 60.0, end: days.toDouble()),
-      duration: const Duration(milliseconds: 1600),
-      curve: Curves.easeOutQuart,
+      duration: AppMotion.slow,
+      curve: AppMotion.enter,
       builder: (_, v, _) => tiles(v.round()),
     );
   }
@@ -304,7 +304,7 @@ class _DigitTile extends StatelessWidget {
         children: [
           ClipRect(
             child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 180),
+              duration: AppMotion.fast,
               transitionBuilder: (child, a) => SlideTransition(
                 position: Tween(
                   begin: const Offset(0, -0.6),
@@ -347,12 +347,12 @@ class _Clock extends StatelessWidget {
         Text('${two(h)} ${tr('sa')} ${two(m)} ${tr('dk')} ', style: s),
         ClipRect(
           child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
+            duration: AppMotion.base,
             transitionBuilder: (child, a) => SlideTransition(
               position: Tween(
                 begin: const Offset(0, -0.8),
                 end: Offset.zero,
-              ).animate(CurvedAnimation(parent: a, curve: Curves.easeOutBack)),
+              ).animate(CurvedAnimation(parent: a, curve: AppMotion.enter)),
               child: child,
             ),
             child: Text(two(sec), key: ValueKey(sec), style: s),
@@ -388,8 +388,8 @@ class _Journey extends StatelessWidget {
         LayoutBuilder(
           builder: (context, c) => TweenAnimationBuilder<double>(
             tween: Tween(begin: 0, end: value),
-            duration: Duration(milliseconds: Motion.of(context) ? 1400 : 0),
-            curve: Curves.easeOutCubic,
+            duration: AppMotion.of(context, AppMotion.base),
+            curve: AppMotion.enter,
             builder: (_, v, _) => Stack(
               clipBehavior: Clip.none,
               children: [
@@ -464,8 +464,8 @@ class DailyQuoteCard extends StatelessWidget {
     if (Motion.of(context)) {
       body = TweenAnimationBuilder<double>(
         tween: Tween(begin: 0, end: 1),
-        duration: const Duration(milliseconds: 1800),
-        curve: Curves.easeInOutCubic,
+        duration: AppMotion.slow,
+        curve: AppMotion.move,
         child: body,
         builder: (_, v, child) => ShaderMask(
           blendMode: BlendMode.dstIn,

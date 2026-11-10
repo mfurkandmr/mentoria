@@ -1,10 +1,11 @@
 import 'dart:math' as math;
 
+import 'package:flutter/gestures.dart' show kTouchSlop;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/theme/brand_theme.dart';
-import '../motion.dart';
+import '../../core/design/motion.dart';
 import 'bizz.dart';
 import 'corporate_look.dart';
 import '../../core/i18n/i18n.dart';
@@ -60,25 +61,25 @@ class HoneycombPainter extends CustomPainter {
       old.progress != progress || old.color != color;
 }
 
-/// Gecikmeli "aşağıdan süzülerek belirme" girişi.
+/// İçeriğin ilk görünüşü: [AppMotion.slide] kadar aşağıdan süzülerek belirir.
+///
+/// Yalnızca ilk kurulduğunda oynar; yeniden çizimde tekrarlamaz. Tembel
+/// listede öğe kaydırınca yeniden kurulursa (sayfa kaydırılmışsa) ve
+/// hareketi azaltta anında görünür.
 class FadeSlideIn extends StatefulWidget {
   const FadeSlideIn({
     super.key,
     required this.child,
     this.delay = Duration.zero,
-    this.duration = const Duration(milliseconds: 520),
-    this.offset = 24,
+    this.offset = AppMotion.slide,
   });
 
   final Widget child;
   final Duration delay;
-  final Duration duration;
   final double offset;
 
-  /// Listelerde sıra numarasına göre gecikme. Üst sınırlı: uzun listede alttaki
-  /// kartlar kaydırınca bir saniyeden uzun boş beklemesin.
-  static Duration stagger(int index, [int stepMs = 60]) =>
-      Duration(milliseconds: 80 + (index > 6 ? 6 : index) * stepMs);
+  /// Listelerde sıra numarasına göre gecikme: ilk 8 öğe 30'ar ms arayla.
+  static Duration stagger(int index) => AppMotion.stagger(index);
 
   @override
   State<FadeSlideIn> createState() => _FadeSlideInState();
@@ -86,8 +87,8 @@ class FadeSlideIn extends StatefulWidget {
 
 class _FadeSlideInState extends State<FadeSlideIn>
     with SingleTickerProviderStateMixin {
-  late final _c = AnimationController(vsync: this, duration: widget.duration);
-  late final _curve = CurvedAnimation(parent: _c, curve: Curves.easeOutCubic);
+  late final _c = AnimationController(vsync: this, duration: AppMotion.base);
+  late final _curve = CurvedAnimation(parent: _c, curve: AppMotion.enter);
   bool _started = false;
 
   @override
@@ -95,8 +96,15 @@ class _FadeSlideInState extends State<FadeSlideIn>
     super.didChangeDependencies();
     if (_started) return;
     _started = true;
-    if (!Motion.of(context)) {
+    // Tembel listede öğe, kaydırılınca (ilk kez ya da geri dönüşte) yeniden
+    // kurulur. O anda animasyon ve gecikme boşluk gibi görünür: anında göster.
+    final position = Scrollable.maybeOf(context)?.position;
+    final scrolled =
+        position != null && position.hasPixels && position.pixels > 0;
+    if (!Motion.of(context) || scrolled) {
       _c.value = 1;
+    } else if (widget.delay == Duration.zero) {
+      _c.forward();
     } else {
       Future.delayed(widget.delay, () {
         if (mounted) _c.forward();
@@ -106,6 +114,7 @@ class _FadeSlideInState extends State<FadeSlideIn>
 
   @override
   void dispose() {
+    _curve.dispose();
     _c.dispose();
     super.dispose();
   }
@@ -124,9 +133,14 @@ class _FadeSlideInState extends State<FadeSlideIn>
   );
 }
 
-/// Basılınca hafifçe küçülen sarmalayıcı (kartlar, butonlar).
+/// Basılınca hafifçe küçülen sarmalayıcı (kartlar, düğmeler). Dokunmayı
+/// kendisi almaz; içindeki InkWell / düğme alır.
 class PressScale extends StatefulWidget {
-  const PressScale({super.key, required this.child, this.scale = 0.97});
+  const PressScale({
+    super.key,
+    required this.child,
+    this.scale = AppMotion.pressScale,
+  });
 
   final Widget child;
   final double scale;
@@ -137,29 +151,43 @@ class PressScale extends StatefulWidget {
 
 class _PressScaleState extends State<PressScale> {
   bool _down = false;
+  Offset _start = Offset.zero;
+
+  void _set(bool v) {
+    if (_down != v) setState(() => _down = v);
+  }
 
   @override
   Widget build(BuildContext context) => Listener(
-    onPointerDown: (_) => setState(() => _down = true),
-    onPointerUp: (_) => setState(() => _down = false),
-    onPointerCancel: (_) => setState(() => _down = false),
+    onPointerDown: (e) {
+      _start = e.position;
+      _set(true);
+    },
+    // Parmak kayıyorsa bu dokunma değil kaydırmadır: kart hemen eski boyuna
+    // döner (Listener, kaydırma başlayınca iptal almaz).
+    onPointerMove: (e) {
+      if (_down && (e.position - _start).distance > kTouchSlop) _set(false);
+    },
+    onPointerUp: (_) => _set(false),
+    onPointerCancel: (_) => _set(false),
     child: AnimatedScale(
-      scale: _down ? widget.scale : 1,
-      duration: const Duration(milliseconds: 120),
-      curve: Curves.easeOut,
+      scale: _down && Motion.of(context) ? widget.scale : 1,
+      duration: AppMotion.fast,
+      curve: AppMotion.enter,
       child: widget.child,
     ),
   );
 }
 
-/// Sayının 0'dan hedefe sayarak gelmesi. [format] son biçimi üretir.
+/// Sayının sayarak gelmesi: ilk görünüşte 0'dan, değer değişince eski
+/// değerden yeniye. [format] son biçimi üretir.
 class CountUp extends StatelessWidget {
   const CountUp({
     super.key,
     required this.value,
     required this.format,
     this.style,
-    this.duration = const Duration(milliseconds: 900),
+    this.duration = AppMotion.slow,
   });
 
   final double value;
@@ -173,7 +201,7 @@ class CountUp extends StatelessWidget {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0, end: value),
       duration: duration,
-      curve: Curves.easeOutCubic,
+      curve: AppMotion.enter,
       builder: (_, v, _) => Text(format(v), style: style),
     );
   }
@@ -214,6 +242,7 @@ class _ConfettiState extends State<_Confetti>
     with SingleTickerProviderStateMixin {
   late final _c = AnimationController(
     vsync: this,
+    // Bilinçli istisna: konfeti patlaması.
     duration: const Duration(milliseconds: 1300),
   )..forward().whenComplete(widget.onDone);
   late final _pieces = List.generate(26, (i) {
@@ -261,7 +290,7 @@ class _ConfettiPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final ease = Curves.easeOutCubic.transform(t);
+    final ease = AppMotion.enter.transform(t);
     for (final p in pieces) {
       final d = p.speed * ease;
       final pos =
@@ -299,10 +328,8 @@ class AnimatedLinearProgress extends StatelessWidget {
   @override
   Widget build(BuildContext context) => TweenAnimationBuilder<double>(
     tween: Tween(end: value.clamp(0.0, 1.0)),
-    duration: Motion.of(context)
-        ? const Duration(milliseconds: 800)
-        : Duration.zero,
-    curve: Curves.easeOutCubic,
+    duration: AppMotion.of(context, AppMotion.base),
+    curve: AppMotion.enter,
     builder: (_, v, _) => LinearProgressIndicator(
       value: v,
       minHeight: minHeight,
@@ -384,24 +411,18 @@ class _LoopBuilderState extends State<LoopBuilder>
 /// Grafiklerin ilk görünüşte açılması: çizgi soldan sağa çizilir,
 /// çubuklar alttan yükselir.
 class RevealIn extends StatelessWidget {
-  const RevealIn({
-    super.key,
-    required this.child,
-    this.axis = Axis.horizontal,
-    this.duration = const Duration(milliseconds: 1100),
-  });
+  const RevealIn({super.key, required this.child, this.axis = Axis.horizontal});
 
   final Widget child;
   final Axis axis;
-  final Duration duration;
 
   @override
   Widget build(BuildContext context) {
     if (!Motion.of(context)) return child;
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0, end: 1),
-      duration: duration,
-      curve: Curves.easeOutCubic,
+      duration: AppMotion.base,
+      curve: AppMotion.enter,
       child: child,
       builder: (_, v, child) => v >= 1
           ? child!

@@ -40,7 +40,7 @@ class StudentHomeworkScreen extends ConsumerWidget {
             final active = all.where((a) => !a.isComplete).toList();
             final done = all.where((a) => a.isComplete).toList();
             Widget card(int i, Assignment a) => FadeSlideIn(
-              delay: FadeSlideIn.stagger(i.clamp(0, 8), 60),
+              delay: FadeSlideIn.stagger(i),
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 10),
                 child: AssignmentCard(

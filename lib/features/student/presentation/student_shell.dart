@@ -3,10 +3,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/i18n.dart';
 import '../../../core/theme/brand_theme.dart';
-import '../../../shared/motion.dart';
 import '../../../shared/widgets/exit_guard.dart';
 import '../../../shared/widgets/honey_nav_bar.dart';
 import '../../notifications/presentation/notification_widgets.dart';
+import '../../../core/design/motion.dart';
 
 /// Öğrenci alt menüsü: Ana Sayfa · Eğitim · Denemeler · Soru · Konular · Süre
 class StudentShell extends StatelessWidget {
@@ -154,10 +154,10 @@ class _BranchTransitionState extends State<_BranchTransition>
     with SingleTickerProviderStateMixin {
   late final _c = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 340),
+    duration: AppMotion.base,
     value: 1,
   );
-  late final _curve = CurvedAnimation(parent: _c, curve: Curves.easeOutCubic);
+  late final _curve = CurvedAnimation(parent: _c, curve: AppMotion.enter);
 
   @override
   void didUpdateWidget(_BranchTransition old) {

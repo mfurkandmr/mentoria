@@ -15,6 +15,7 @@ import 'features/auth/data/presence_repository.dart';
 import 'features/notifications/push/push_service.dart';
 import 'features/notifications/push/web_push_prompt.dart';
 import 'shared/widgets/update_required_screen.dart';
+import 'core/design/motion.dart';
 
 /// Tema yalnızca marka değişince kurulur. Her seferinde yeni tema nesnesi
 /// üretmek, kök her yenilendiğinde 400 ms'lik tema geçişini baştan başlatırdı.
@@ -53,8 +54,8 @@ class MentoriaApp extends ConsumerWidget {
       theme: themes.light,
       darkTheme: themes.dark,
       themeMode: settings.themeMode,
-      themeAnimationDuration: const Duration(milliseconds: 400),
-      themeAnimationCurve: Curves.easeInOut,
+      themeAnimationDuration: AppMotion.base,
+      themeAnimationCurve: AppMotion.move,
       locale: settings.language == AppLanguage.en
           ? const Locale('en', 'US')
           : const Locale('tr', 'TR'),

@@ -5,11 +5,11 @@ import '../../../core/i18n/i18n.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/format.dart';
 import '../../../shared/widgets/common.dart';
-import '../../admin/presentation/cockpit/cockpit_motion.dart';
 import '../../admin/data/admin_repository.dart';
 import '../../student_management/data/student_management_repository.dart';
 import '../data/finance_repository.dart';
 import 'receipt_pdf.dart';
+import '../../../core/design/haptics.dart';
 
 DateTime _today() {
   final n = DateTime.now();
@@ -200,7 +200,7 @@ Future<void> showPaymentDialog(
           installmentId: installment?.id,
         );
     _invalidate(ref);
-    CockpitHaptics.commit();
+    AppHaptics.confirm();
     if (!context.mounted) return;
     final fresh = await ref.read(financeFeesProvider.future);
     final f = fresh.where((x) => x.id == fee.id).firstOrNull;

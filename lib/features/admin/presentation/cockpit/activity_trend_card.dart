@@ -7,6 +7,7 @@ import '../../data/cockpit_repository.dart';
 import 'cockpit_motion.dart';
 import 'cockpit_theme.dart';
 import 'section_states.dart';
+import '../../../../core/design/motion.dart';
 
 enum TrendSeries { active, questions }
 
@@ -147,11 +148,8 @@ class _Bars extends StatelessWidget {
                           ? 2
                           : (_value(w) / scale * _height).clamp(2, _height),
                     ),
-                    duration: CockpitMotion.of(
-                      context,
-                      Duration(milliseconds: 520 + i * 60),
-                    ),
-                    curve: CockpitMotion.curve,
+                    duration: AppMotion.of(context, AppMotion.base),
+                    curve: AppMotion.enter,
                     builder: (_, h, _) => Container(
                       height: h,
                       decoration: BoxDecoration(

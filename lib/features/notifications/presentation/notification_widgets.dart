@@ -10,12 +10,12 @@ import 'package:intl/intl.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../core/sound/app_sounds.dart';
 import '../../../core/theme/brand_theme.dart';
-import '../../../shared/motion.dart';
 import '../../../shared/widgets/bizz.dart';
 import '../../../shared/widgets/common.dart';
 import '../../../shared/widgets/effects.dart';
 import '../../auth/data/auth_repository.dart';
 import '../data/notification_repository.dart';
+import '../../../core/design/motion.dart';
 
 /// Bildirimin gösterdiği yere gider. Ödev listesi üstüne açılır (geri
 /// tuşuyla dönülebilsin); deneme ve görevler panelin sekmesine geçer.
@@ -57,7 +57,7 @@ class NotificationBell extends ConsumerWidget {
       icon: TweenAnimationBuilder<double>(
         key: ValueKey(unread),
         tween: Tween(begin: unread > 0 && Motion.of(context) ? 1 : 0, end: 0),
-        duration: const Duration(milliseconds: 900),
+        duration: AppMotion.base,
         builder: (_, v, child) => Transform.rotate(
           // Sönümlenen sallanma.
           angle: 0.4 * v * math.sin(v * 6 * math.pi),
@@ -126,7 +126,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
             itemCount: items.length,
             separatorBuilder: (_, _) => const SizedBox(height: 8),
             itemBuilder: (context, i) => FadeSlideIn(
-              delay: FadeSlideIn.stagger(i.clamp(0, 10), 40),
+              delay: FadeSlideIn.stagger(i),
               child: NotificationTile(
                 notification: items[i],
                 highlight: _freshIds?.contains(items[i].id) ?? false,
@@ -352,8 +352,8 @@ class _Banner extends StatelessWidget {
       top: top + 8,
       child: TweenAnimationBuilder<double>(
         tween: Tween(begin: 0, end: 1),
-        duration: Duration(milliseconds: Motion.of(context) ? 520 : 0),
-        curve: Curves.easeOutBack,
+        duration: AppMotion.of(context, AppMotion.base),
+        curve: AppMotion.enter,
         builder: (_, v, child) => Transform.translate(
           offset: Offset(0, -120 * (1 - v)),
           child: Opacity(opacity: v.clamp(0.0, 1.0), child: child),

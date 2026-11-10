@@ -6,6 +6,7 @@ import '../../core/i18n/i18n.dart';
 import '../../core/settings/app_settings.dart';
 import '../../core/sound/app_sounds.dart';
 import 'common.dart';
+import '../../core/design/motion.dart';
 
 /// Profildeki "Görünüm, dil ve ses" kartı.
 class AppearanceCard extends ConsumerWidget {
@@ -130,7 +131,7 @@ class QuickSettingsBar extends ConsumerWidget {
             notifier.setThemeMode(isDark ? ThemeMode.light : ThemeMode.dark);
           },
           icon: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 400),
+            duration: AppMotion.base,
             transitionBuilder: (child, anim) => RotationTransition(
               turns: Tween(begin: 0.5, end: 1.0).animate(anim),
               child: FadeTransition(opacity: anim, child: child),

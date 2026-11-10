@@ -6,9 +6,9 @@ import '../../../../core/constants/exam_subjects.dart';
 import '../../../../core/i18n/i18n.dart';
 import '../../../../shared/widgets/common.dart';
 import '../../data/cockpit_repository.dart';
-import 'cockpit_motion.dart';
 import 'cockpit_theme.dart';
 import 'section_states.dart';
+import '../../../../core/design/haptics.dart';
 
 /// Deneme takvimi: kurumun planladığı denemeler. En yakını özet
 /// şeridinde "Yaklaşan deneme" olarak görünür.
@@ -189,7 +189,7 @@ Future<void> addExamPlanFlow(BuildContext context, WidgetRef ref) async {
   try {
     await ref.read(cockpitRepositoryProvider).addExamPlan(title, type, date);
     ref.invalidate(cockpitProvider);
-    CockpitHaptics.commit();
+    AppHaptics.confirm();
     if (context.mounted) showMessage(context, tr('Deneme takvime eklendi.'));
   } catch (_) {
     if (context.mounted) {

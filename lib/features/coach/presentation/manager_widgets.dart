@@ -11,6 +11,7 @@ import '../../student/presentation/home_sky.dart';
 import '../../tracking/presentation/study_view.dart';
 import '../../admin/presentation/cockpit/cockpit_theme.dart';
 import '../data/coach_repository.dart';
+import '../../../core/design/motion.dart';
 
 export '../../../shared/widgets/panel.dart';
 
@@ -65,7 +66,7 @@ class ManagerSkyAppBar extends StatelessWidget {
                 firstName: firstName,
                 lines: lines.isEmpty ? [''] : lines,
                 phase: phase,
-                contentOpacity: Curves.easeIn.transform(open),
+                contentOpacity: AppMotion.exit.transform(open),
               ),
               Positioned(
                 left: 16,

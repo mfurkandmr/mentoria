@@ -16,6 +16,7 @@ import '../data/auth_repository.dart';
 import 'auth_error.dart';
 import 'reset_password_screen.dart';
 import '../../../core/i18n/i18n.dart';
+import '../../../core/design/motion.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -137,7 +138,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     Widget step(int i, Widget child) =>
-        FadeSlideIn(delay: FadeSlideIn.stagger(i, 70), child: child);
+        FadeSlideIn(delay: FadeSlideIn.stagger(i), child: child);
 
     return Scaffold(
       body: Stack(
@@ -239,7 +240,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               child: FilledButton(
                                 onPressed: _loading ? null : _submit,
                                 child: AnimatedSwitcher(
-                                  duration: const Duration(milliseconds: 250),
+                                  duration: AppMotion.base,
                                   child: _loading
                                       ? const SizedBox.square(
                                           key: ValueKey('loading'),

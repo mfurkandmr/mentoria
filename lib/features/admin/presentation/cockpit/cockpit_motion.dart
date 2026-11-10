@@ -1,162 +1,40 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart' show kTouchSlop;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-import '../../../../shared/motion.dart';
+import '../../../../core/design/haptics.dart';
+import '../../../../core/design/motion.dart';
+import '../../../../shared/widgets/effects.dart';
 import 'cockpit_theme.dart';
 
-/// Kokpitin hareket dili (iOS'a yakın: sade ama akıcı).
+/// Kokpitin hareket parçaları. Süre, eğri ve titreşimler uygulamanın ortak
+/// dilinden gelir (`AppMotion`, `AppHaptics`).
 ///
-/// Anlar (motion-and-haptics):
 /// | An | Tetik | Değişen | Süre | Titreşim | Hareketi azalt |
 /// |----|-------|---------|------|----------|----------------|
-/// | Basma | parmak iner | kart %97'ye küçülür | kısa | yok | anında, küçülme yok |
-/// | Seçim | segment değişir | kayan seçici, liste çapraz geçiş | orta | selectionClick | anında |
-/// | Açılış | bölüm ilk kez görünür | aşağıdan süzülerek belirir, sırayla | orta | yok | anında görünür |
-/// | Sayı | veri gelir | sayarak gelir | uzun | yok | son değer |
-/// | Onay | bildirim/telefon/plan kaydedildi | mesaj | — | lightImpact | aynı |
-///
-/// Süreler rol olarak burada; yeni hareketler bunları kullanır.
-abstract final class CockpitMotion {
-  static const short = Duration(milliseconds: 160);
-  static const medium = Duration(milliseconds: 320);
-  static const long = Duration(milliseconds: 700);
+/// | Basma | parmak iner | kart %97'ye küçülür | fast | yok | anında, küçülme yok |
+/// | Seçim | segment değişir | kayan seçici, liste çapraz geçiş | base | select | anında |
+/// | Açılış | bölüm ilk kez görünür | aşağıdan süzülerek belirir, sırayla | base | yok | anında görünür |
+/// | Sayı | veri gelir | sayarak gelir | slow | yok | son değer |
+/// | Onay | bildirim/telefon/plan kaydedildi | mesaj | — | confirm | aynı |
 
-  /// iOS'taki "ease-out" eğrisine yakın: hızlı başlar, yumuşak durur.
-  static const curve = Cubic(0.22, 1, 0.36, 1);
-
-  /// Hareketi azalt açıksa (ya da testlerde) sıfır.
-  static Duration of(BuildContext context, Duration d) =>
-      Motion.of(context) ? d : Duration.zero;
-}
-
-/// Titreşim haritası: olay → en çok bir fiil. Tek merkezden kapatılır.
-abstract final class CockpitHaptics {
-  /// Uygulama genelindeki tek anahtar (testlerde kapatılabilir).
-  static bool enabled = true;
-
-  /// Segment / sekme seçimi.
-  static void select() {
-    if (enabled) HapticFeedback.selectionClick();
-  }
-
-  /// Bir işlem kaydedildi (bildirim gönderildi, telefon, deneme planı).
-  static void commit() {
-    if (enabled) HapticFeedback.lightImpact();
-  }
-}
-
-/// Bölümün ilk görünüşü: aşağıdan 16 px süzülerek ve hafifçe büyüyerek
-/// belirir. [index] sıralı gecikme verir. Hareketi azaltta ve sayfa
-/// kaydırılmışken anında görünür.
-class Reveal extends StatefulWidget {
+/// Bölümün ilk görünüşü: aşağıdan süzülerek belirir. [index] sıralı gecikme
+/// verir (ilk 8 bölüm). Hareketi azaltta ve sayfa kaydırılmışken anında.
+class Reveal extends StatelessWidget {
   const Reveal({super.key, required this.child, this.index = 0});
 
   final Widget child;
   final int index;
 
   @override
-  State<Reveal> createState() => _RevealState();
+  Widget build(BuildContext context) =>
+      FadeSlideIn(delay: AppMotion.stagger(index), child: child);
 }
 
-class _RevealState extends State<Reveal> with SingleTickerProviderStateMixin {
-  late final _c = AnimationController(
-    vsync: this,
-    duration: CockpitMotion.long,
-  );
-  late final _a = CurvedAnimation(parent: _c, curve: CockpitMotion.curve);
-  bool _started = false;
+/// Basınca hafifçe küçülen yüzey. Dokunmayı kendisi almaz; içindeki
+/// InkWell / düğme alır.
+typedef Pressable = PressScale;
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_started) return;
-    _started = true;
-    // Tembel listede bölüm, kaydırılınca (ilk kez ya da geri dönüşte) yeniden
-    // kurulur. O anda animasyon ve gecikme boşluk gibi görünür: anında göster.
-    final position = Scrollable.maybeOf(context)?.position;
-    final scrolled =
-        position != null && position.hasPixels && position.pixels > 0;
-    if (!Motion.of(context) || scrolled) {
-      _c.value = 1;
-      return;
-    }
-    Future.delayed(Duration(milliseconds: 40 + widget.index * 70), () {
-      if (mounted) _c.forward();
-    });
-  }
-
-  @override
-  void dispose() {
-    _c.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => AnimatedBuilder(
-    animation: _a,
-    child: widget.child,
-    builder: (context, child) {
-      final t = _a.value;
-      return Opacity(
-        opacity: t.clamp(0, 1),
-        child: Transform.translate(
-          offset: Offset(0, 16 * (1 - t)),
-          child: Transform.scale(
-            scale: 0.98 + 0.02 * t,
-            alignment: Alignment.topCenter,
-            child: child,
-          ),
-        ),
-      );
-    },
-  );
-}
-
-/// Basınca hafifçe küçülen yüzey (iOS dokunma hissi). Dokunmayı kendisi
-/// almaz; içindeki InkWell / düğme alır.
-class Pressable extends StatefulWidget {
-  const Pressable({super.key, required this.child, this.scale = 0.97});
-
-  final Widget child;
-  final double scale;
-
-  @override
-  State<Pressable> createState() => _PressableState();
-}
-
-class _PressableState extends State<Pressable> {
-  bool _down = false;
-  Offset _start = Offset.zero;
-
-  void _set(bool v) {
-    if (_down != v) setState(() => _down = v);
-  }
-
-  @override
-  Widget build(BuildContext context) => Listener(
-    onPointerDown: (e) {
-      _start = e.position;
-      _set(true);
-    },
-    // Parmak kayıyorsa bu dokunma değil kaydırmadır: kart hemen eski boyuna
-    // döner (Listener, kaydırma başlayınca iptal almaz).
-    onPointerMove: (e) {
-      if (_down && (e.position - _start).distance > kTouchSlop) _set(false);
-    },
-    onPointerUp: (_) => _set(false),
-    onPointerCancel: (_) => _set(false),
-    child: AnimatedScale(
-      scale: _down && Motion.of(context) ? widget.scale : 1,
-      duration: CockpitMotion.short,
-      curve: CockpitMotion.curve,
-      child: widget.child,
-    ),
-  );
-}
-
-/// Tam sayının sayarak gelmesi (yalnızca ilk yüklemede ve değer değişince).
+/// Tam sayının sayarak gelmesi (ilk yüklemede ve değer değişince).
 class AnimatedCount extends StatelessWidget {
   const AnimatedCount({
     super.key,
@@ -170,15 +48,11 @@ class AnimatedCount extends StatelessWidget {
   final TextStyle? style;
 
   @override
-  Widget build(BuildContext context) {
-    if (!Motion.of(context)) return Text(format(value), style: style);
-    return TweenAnimationBuilder<double>(
-      tween: Tween(end: value.toDouble()),
-      duration: CockpitMotion.long,
-      curve: CockpitMotion.curve,
-      builder: (_, v, _) => Text(format(v.round()), style: style),
-    );
-  }
+  Widget build(BuildContext context) => CountUp(
+    value: value.toDouble(),
+    format: (v) => format(v.round()),
+    style: style,
+  );
 }
 
 /// iOS'un kayan seçim kontrolü: seçici bir segmentten ötekine kayar.
@@ -211,7 +85,7 @@ class SlidingSegments<T extends Object> extends StatelessWidget {
         padding: const EdgeInsets.all(3),
         onValueChanged: (v) {
           if (v == null || v == value) return;
-          CockpitHaptics.select();
+          AppHaptics.select();
           onChanged(v);
         },
         children: {
@@ -270,15 +144,15 @@ class SmoothSwitch extends StatelessWidget {
     // Hareketi azaltta doğrudan son hal (sıfır süreli AnimatedSize düzen
     // sırasında kendini yeniden kirletir).
     if (!Motion.of(context)) return child;
-    const d = CockpitMotion.medium;
+    const d = AppMotion.base;
     return AnimatedSize(
       duration: d,
-      curve: CockpitMotion.curve,
+      curve: AppMotion.move,
       alignment: Alignment.topCenter,
       child: AnimatedSwitcher(
         duration: d,
-        switchInCurve: CockpitMotion.curve,
-        switchOutCurve: Curves.easeIn,
+        switchInCurve: AppMotion.enter,
+        switchOutCurve: AppMotion.exit,
         layoutBuilder: (current, previous) => Stack(
           alignment: Alignment.topCenter,
           children: [...previous, ?current],

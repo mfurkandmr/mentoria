@@ -2,8 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../../../shared/motion.dart';
 import '../../../shared/widgets/effects.dart';
+import '../../../core/design/motion.dart';
 
 /// Bal rengi markadan bağımsız bir illüstrasyondur (Bızz gibi sabit).
 const _honeyLight = Color(0xFFFFD45C);
@@ -75,8 +75,8 @@ class HoneyDial extends StatelessWidget {
               child: motion
                   ? TweenAnimationBuilder<double>(
                       tween: Tween(end: level),
-                      duration: const Duration(milliseconds: 900),
-                      curve: Curves.easeOutCubic,
+                      duration: AppMotion.base,
+                      curve: AppMotion.enter,
                       builder: (_, v, _) => dial(v),
                     )
                   : dial(level),

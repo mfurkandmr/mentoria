@@ -53,7 +53,7 @@ class PlatformScreen extends ConsumerWidget {
                   itemCount: list.length,
                   separatorBuilder: (_, _) => const SizedBox(height: 10),
                   itemBuilder: (context, i) => FadeSlideIn(
-                    delay: FadeSlideIn.stagger(i.clamp(0, 10), 40),
+                    delay: FadeSlideIn.stagger(i),
                     child: _TenantTile(tenant: list[i]),
                   ),
                 ),

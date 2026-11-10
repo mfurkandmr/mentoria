@@ -5,9 +5,9 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/i18n/i18n.dart';
 import '../../../../core/theme/brand_theme.dart';
-import '../../../../shared/motion.dart';
 import 'cockpit_motion.dart';
 import 'metric_card.dart';
+import '../../../../core/design/motion.dart';
 
 /// Özet şeridinin baş kartı: "Bu hafta aktif" (iOS Fitness halkası gibi).
 /// Koyu kurum renginde; halka katılım yüzdesini dolarak gösterir, sayı
@@ -241,8 +241,8 @@ class _Ring extends StatelessWidget {
       child: Motion.of(context)
           ? TweenAnimationBuilder<double>(
               tween: Tween(begin: 0, end: ratio),
-              duration: const Duration(milliseconds: 1100),
-              curve: CockpitMotion.curve,
+              duration: AppMotion.base,
+              curve: AppMotion.enter,
               builder: (_, v, _) => ring(v),
             )
           : ring(ratio),

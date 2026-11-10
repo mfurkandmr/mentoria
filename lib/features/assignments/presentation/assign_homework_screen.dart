@@ -7,13 +7,13 @@ import '../../../core/constants/exam_subjects.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/format.dart';
-import '../../../shared/motion.dart';
 import '../../../shared/widgets/common.dart';
 import '../../../shared/widgets/effects.dart';
 import '../../coach/data/coach_repository.dart';
 import '../../tracking/data/tracking_models.dart';
 import '../../tracking/data/tracking_repository.dart';
 import '../data/assignment_repository.dart';
+import '../../../core/design/motion.dart';
 
 /// Türkçe büyük/küçük harf duyarsız arama için.
 String _fold(String s) =>
@@ -99,8 +99,8 @@ class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(tr('Ödev ver'))),
       body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 320),
-        switchInCurve: Curves.easeOutCubic,
+        duration: AppMotion.base,
+        switchInCurve: AppMotion.enter,
         transitionBuilder: (child, a) => FadeTransition(
           opacity: a,
           child: SlideTransition(
@@ -232,9 +232,7 @@ class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
                   for (final (i, t) in topics.indexed)
                     FadeSlideIn(
                       key: ValueKey('${t.id}'),
-                      delay: Duration(milliseconds: 20 * i.clamp(0, 12)),
-                      offset: 10,
-                      duration: const Duration(milliseconds: 320),
+                      delay: FadeSlideIn.stagger(i),
                       child: _TopicTile(
                         title: t.name,
                         inBasket: keys.contains('$_subject/${t.id}'),
@@ -337,8 +335,7 @@ class _StudentPickerState extends State<_StudentPicker> {
                     final s = list[i];
                     return FadeSlideIn(
                       key: ValueKey(s.id),
-                      delay: FadeSlideIn.stagger(i.clamp(0, 10), 30),
-                      offset: 12,
+                      delay: FadeSlideIn.stagger(i),
                       child: ListTile(
                         leading: _Initials(name: s.fullName),
                         title: Text(
@@ -452,7 +449,7 @@ class _TopicTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 220),
+      duration: AppMotion.base,
       margin: const EdgeInsets.symmetric(vertical: 2),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
@@ -477,9 +474,9 @@ class _TopicTile extends StatelessWidget {
           ),
           subtitle: subtitle == null ? null : Text(subtitle!),
           trailing: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 260),
+            duration: AppMotion.base,
             transitionBuilder: (child, a) => ScaleTransition(
-              scale: CurvedAnimation(parent: a, curve: Curves.easeOutBack),
+              scale: CurvedAnimation(parent: a, curve: AppMotion.enter),
               child: child,
             ),
             child: inBasket
@@ -522,8 +519,8 @@ class _BasketBar extends StatelessWidget {
     return SafeArea(
       top: false,
       child: AnimatedSize(
-        duration: const Duration(milliseconds: 260),
-        curve: Curves.easeOutCubic,
+        duration: AppMotion.base,
+        curve: AppMotion.enter,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(12, 6, 12, 10),
           child: Material(
@@ -540,11 +537,9 @@ class _BasketBar extends StatelessWidget {
                   children: [
                     TweenAnimationBuilder<double>(
                       key: ValueKey(bump),
-                      tween: Tween(begin: bump == 0 ? 1 : 1.35, end: 1),
-                      duration: Duration(
-                        milliseconds: Motion.of(context) ? 520 : 0,
-                      ),
-                      curve: Curves.elasticOut,
+                      tween: Tween(begin: bump == 0 ? 1 : 1.15, end: 1),
+                      duration: AppMotion.of(context, AppMotion.base),
+                      curve: AppMotion.enter,
                       builder: (_, s, child) =>
                           Transform.scale(scale: s, child: child),
                       child: Badge(
@@ -834,7 +829,7 @@ class _BasketItem extends StatelessWidget {
           SizedBox(
             width: 56,
             child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 180),
+              duration: AppMotion.fast,
               transitionBuilder: (child, a) =>
                   ScaleTransition(scale: a, child: child),
               child: Text(

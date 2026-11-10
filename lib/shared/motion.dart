@@ -1,14 +1,2 @@
-import 'package:flutter/widgets.dart';
-
-/// Sürekli (sonsuz) animasyonların genel anahtarı.
-///
-/// Testlerde `pumpAndSettle` takılmasın diye kapatılır; ayrıca cihazda
-/// "hareketi azalt" açıksa animasyonlar durur.
-class Motion {
-  Motion._();
-
-  static bool enabled = true;
-
-  static bool of(BuildContext context) =>
-      enabled && !(MediaQuery.maybeDisableAnimationsOf(context) ?? false);
-}
+// Eski yol: hareket anahtarı artık `core/design/motion.dart` içinde.
+export '../core/design/motion.dart' show Motion;

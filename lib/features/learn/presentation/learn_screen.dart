@@ -10,7 +10,6 @@ import '../../../core/constants/exam_subjects.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../core/sound/app_sounds.dart';
 import '../../../core/theme/brand_theme.dart';
-import '../../../shared/motion.dart';
 import '../../../shared/widgets/bizz.dart';
 import '../../../shared/widgets/common.dart';
 import '../../../shared/widgets/effects.dart';
@@ -20,6 +19,7 @@ import '../data/learn_cards.dart';
 import '../data/practice_repository.dart';
 import '../../duel/presentation/duel_screens.dart';
 import 'notebook_button.dart';
+import '../../../core/design/motion.dart';
 
 /// Derslerin rengi ve simgesi (AYT dersleri TYT karşılığının rengini alır).
 ({Color color, IconData icon}) subjectLook(String code) => switch (code) {
@@ -471,8 +471,8 @@ class _CardsViewState extends State<_CardsView> {
       if (Motion.of(context)) {
         _pages.animateToPage(
           i,
-          duration: const Duration(milliseconds: 320),
-          curve: Curves.easeOutCubic,
+          duration: AppMotion.base,
+          curve: AppMotion.enter,
         );
       } else {
         _pages.jumpToPage(i);
@@ -543,7 +543,7 @@ class _CardsViewState extends State<_CardsView> {
               const SizedBox(width: 10),
               for (var i = 0; i < cards.length; i++)
                 AnimatedContainer(
-                  duration: const Duration(milliseconds: 220),
+                  duration: AppMotion.base,
                   margin: const EdgeInsets.symmetric(horizontal: 3),
                   width: i == _page ? 18 : 7,
                   height: 7,
@@ -607,8 +607,8 @@ class _FlipCardState extends State<_FlipCard> {
         },
         child: TweenAnimationBuilder<double>(
           tween: Tween(end: _back ? 1 : 0),
-          duration: Duration(milliseconds: animate ? 520 : 0),
-          curve: Curves.easeInOutBack,
+          duration: animate ? AppMotion.base : Duration.zero,
+          curve: AppMotion.move,
           builder: (_, v, _) {
             final showBack = v > 0.5;
             return Transform(

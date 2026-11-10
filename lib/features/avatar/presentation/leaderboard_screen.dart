@@ -147,7 +147,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                   final e = _entries[i - 1];
                   return FadeSlideIn(
                     key: ValueKey(e.studentId),
-                    delay: FadeSlideIn.stagger((i - 1).clamp(0, 10), 30),
+                    delay: FadeSlideIn.stagger((i - 1)),
                     offset: 12,
                     child: _Row(entry: e),
                   );

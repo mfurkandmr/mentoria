@@ -8,6 +8,7 @@ import '../../../shared/format.dart';
 import '../../../shared/widgets/common.dart';
 import '../../../shared/widgets/effects.dart';
 import '../data/assignment_repository.dart';
+import '../../../core/design/motion.dart';
 
 enum AssignmentViewer {
   /// Maddeleri işaretler.
@@ -154,7 +155,7 @@ class _AssignmentCardState extends ConsumerState<AssignmentCard> {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 400),
+        duration: AppMotion.base,
         decoration: BoxDecoration(
           border: Border(
             left: BorderSide(
@@ -218,7 +219,7 @@ class _AssignmentCardState extends ConsumerState<AssignmentCard> {
                       ),
                     AnimatedRotation(
                       turns: _open ? 0.5 : 0,
-                      duration: const Duration(milliseconds: 250),
+                      duration: AppMotion.base,
                       child: const Icon(Icons.expand_more),
                     ),
                   ],
@@ -226,8 +227,8 @@ class _AssignmentCardState extends ConsumerState<AssignmentCard> {
               ),
             ),
             AnimatedCrossFade(
-              duration: const Duration(milliseconds: 280),
-              sizeCurve: Curves.easeOutCubic,
+              duration: AppMotion.base,
+              sizeCurve: AppMotion.enter,
               crossFadeState: _open
                   ? CrossFadeState.showSecond
                   : CrossFadeState.showFirst,
@@ -343,8 +344,8 @@ class _ProgressHex extends StatelessWidget {
     ).colorScheme.onSurface.withValues(alpha: 0.08);
     return TweenAnimationBuilder<double>(
       tween: Tween(end: progress),
-      duration: const Duration(milliseconds: 600),
-      curve: Curves.easeOutCubic,
+      duration: AppMotion.base,
+      curve: AppMotion.enter,
       builder: (_, v, _) => CustomPaint(
         size: const Size.square(40),
         painter: _HexFill(
@@ -357,7 +358,7 @@ class _ProgressHex extends StatelessWidget {
           dimension: 40,
           child: Center(
             child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
+              duration: AppMotion.base,
               transitionBuilder: (c, a) => ScaleTransition(scale: a, child: c),
               child: complete
                   ? const Icon(

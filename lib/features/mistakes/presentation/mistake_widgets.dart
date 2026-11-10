@@ -8,13 +8,13 @@ import 'package:intl/intl.dart';
 import '../../../core/constants/exam_subjects.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../core/theme/brand_theme.dart';
-import '../../../shared/motion.dart';
 import '../../../shared/widgets/bizz.dart';
 import '../../../shared/widgets/common.dart';
 import '../../../shared/widgets/effects.dart';
 import '../../tracking/data/tracking_models.dart';
 import '../../tracking/data/tracking_repository.dart';
 import '../data/mistake_repository.dart';
+import '../../../core/design/motion.dart';
 
 /// Kartın tekrar merdiveni: 1 → 3 → 7 → 21 gün, sonra öğrenildi.
 class StageLadder extends StatelessWidget {
@@ -900,9 +900,7 @@ class _MistakeReviewScreenState extends ConsumerState<MistakeReviewScreen> {
       ),
       body: SafeArea(
         child: AnimatedSwitcher(
-          duration: Motion.of(context)
-              ? const Duration(milliseconds: 320)
-              : Duration.zero,
+          duration: AppMotion.of(context, AppMotion.base),
           transitionBuilder: (child, anim) => SlideTransition(
             position: Tween(
               begin: const Offset(0.3, 0),

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/theme/brand_theme.dart';
-import '../motion.dart';
 import 'effects.dart';
+import '../../core/design/motion.dart';
 
 class HoneyNavItem {
   const HoneyNavItem({
@@ -131,8 +131,8 @@ class _NavButton extends StatelessWidget {
       icon = TweenAnimationBuilder<double>(
         key: ValueKey(item.label),
         tween: Tween(begin: 0.55, end: 1),
-        duration: const Duration(milliseconds: 520),
-        curve: Curves.elasticOut,
+        duration: AppMotion.base,
+        curve: AppMotion.enter,
         builder: (_, s, child) => Transform.scale(scale: s, child: child),
         child: icon,
       );

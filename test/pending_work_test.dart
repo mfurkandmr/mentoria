@@ -8,7 +8,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:mentoria/dev/demo_mode.dart';
-import 'package:mentoria/features/admin/presentation/cockpit/cockpit_motion.dart';
 import 'package:mentoria/features/admin/presentation/cockpit/cockpit_theme.dart';
 import 'package:mentoria/features/attendance/data/attendance_repository.dart';
 import 'package:mentoria/features/coach/data/coach_repository.dart';
@@ -19,6 +18,7 @@ import 'package:mentoria/features/pending_work/presentation/pending_work_screen.
 import 'package:mentoria/features/student_books/data/books_repository.dart';
 import 'package:mentoria/features/student_management/data/student_management_repository.dart';
 import 'package:mentoria/shared/motion.dart';
+import 'package:mentoria/core/design/haptics.dart';
 
 final _now = DateTime(2026, 11, 6, 10);
 
@@ -95,7 +95,7 @@ Future<void> _pump(
 void main() {
   setUpAll(() async {
     Motion.enabled = false;
-    CockpitHaptics.enabled = false;
+    AppHaptics.enabled = false;
     await initializeDateFormatting('tr_TR');
   });
 
