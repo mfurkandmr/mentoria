@@ -110,7 +110,9 @@ class AssignmentItemDraft {
 
 abstract interface class AssignmentRepository {
   Future<List<Assignment>> fetchAssignments(String studentId);
-  Future<void> sendAssignment({
+
+  /// Yeni ödevin kimliğini döndürür (veliye PDF için).
+  Future<String> sendAssignment({
     required String studentId,
     required String title,
     required List<AssignmentItemDraft> items,
@@ -171,13 +173,13 @@ class SupabaseAssignmentRepository implements AssignmentRepository {
   }
 
   @override
-  Future<void> sendAssignment({
+  Future<String> sendAssignment({
     required String studentId,
     required String title,
     required List<AssignmentItemDraft> items,
     DateTime? dueOn,
     String? note,
-  }) => _client.rpc(
+  }) => _client.rpc<String>(
     'send_assignment',
     params: {
       'p_student': studentId,

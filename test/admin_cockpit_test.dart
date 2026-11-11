@@ -435,7 +435,7 @@ void main() {
         ('Kurum sınavları', '/admin/org-exams'),
         ('Deneme trendleri', '/admin/trends'),
         ('Kitap havuzu', '/admin/books'),
-        ('Velilere SMS', '/admin/sms'),
+        ('Velilere WhatsApp', '/admin/sms'),
       ]) {
         // Kompakt ızgaradaki kutu.
         final f = find.descendant(

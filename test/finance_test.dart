@@ -270,7 +270,10 @@ void main() {
       await t.tap(find.text('Gönder (1)'));
       await t.pumpAndSettle();
       expect(repo.sentSms, [('+905321234567', 'today')]);
-      expect(find.text('1 hatırlatma SMS sırasına alındı.'), findsOneWidget);
+      expect(
+        find.text('1 hatırlatma WhatsApp sırasına alındı.'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('telefonsuz ücrete veli telefonu eklenir, sonra SMS gider', (

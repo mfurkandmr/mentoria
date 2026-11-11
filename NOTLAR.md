@@ -3086,3 +3086,72 @@ Ad notu: `study_sessions` pomodoro tablosu olduğu için yeni tablolar `tutoring
 - `merge_teachers` oturumları da taşır (aksi hâlde silinen satırla giderdi).
 - **Açık:** talep kayıtları için saklama süresi yok (KVKK listesinde); geçmiş talepler
   ekranda görünmüyor (yalnızca bugün ve sonrası); öğretmen gelen/gelmeyen işaretlemiyor.
+
+## 88. Velilere WhatsApp, SMS kapandı (11 Kasım 2026)
+
+Kurum velilerle yalnızca WhatsApp'tan konuşuyor (docs/OGRETMEN_WHATSAPP_PLANI.md §C, F).
+Migration `20261111130000_whatsapp`, Edge Function `send-whatsapp` ve `whatsapp-webhook`.
+Kurulum: `docs/WHATSAPP_KURULUM.md`.
+
+- **Kuyruk aynı:** `sms_outbox` (adı korunuyor; yoklama, taksit, toplu mesaj, deneme sonucu
+  fonksiyonları adla yazıyor). Yeni sütunlar `channel` (varsayılan `whatsapp`), `template`,
+  `params`, `media_path` (ödev PDF'i için hazır), `wa_message_id`, `delivered_at`, `read_at`.
+  Sıradaki eski SMS'ler de `whatsapp` yapıldı.
+- **Bağlantı `org_whatsapp`:** kurum başına `phone_number_id`, `waba_id`, görünen numara,
+  kalıcı erişim anahtarı, şablon adı. Politika yok, istemci hiç okuyamaz; müdür
+  `org_whatsapp_status()` ile durumu ve son 30 gün sayılarını görür (anahtar dönmez),
+  `set_org_whatsapp` (anahtar boşsa eskisi kalır) / `disconnect_org_whatsapp`.
+  Embedded Signup yok: bilgiler Meta panelinden elle girilir.
+- **Gönderim:** `kick_sms()` artık `send-whatsapp`'ı dürter (adı korunuyor, 5 dakikalık
+  zamanlayıcı aynı). `claim_messages()` kilitli alır (çift gönderim yok, 15 dk'dan uzun
+  'sending' → 'failed'); yalnızca bağlı kurumların mesajları. Satırda şablon yoksa kurumun
+  genel şablonu `kurum_bilgilendirme`: {{1}} metin, {{2}} kurum adı. Değişkende satır sonu
+  olamaz (` · ` olur), en çok 1024 karakter.
+- **Webhook:** Meta imzası (`X-Hub-Signature-256`, `WHATSAPP_APP_SECRET`) doğrulanır;
+  `whatsapp_mark` teslim / okundu / hata yazar. Veli cevapları alınmaz (coexistence: müdürün
+  WhatsApp Business uygulamasında kalır).
+- **SMS:** `claim_sms` yalnızca `channel = 'sms'` alır; `send-sms` repoda duruyor ama
+  `SMS_PROVIDER` boş, hiçbir şey göndermez. Panodan silinebilir. Ekranlarda "SMS" yazıları
+  WhatsApp oldu; toplu mesajdaki SMS sayacı kaldırıldı.
+- **Uygulama:** `/admin/whatsapp` (`WhatsAppConnectScreen`), toplu mesaj ekranının başında
+  `WhatsAppStatusCard` (bağlı değilse kırmızı, sıradaki mesaj sayısı). Demo: bağlı.
+- **Açık:** ödev PDF'i (4. aşama), koçun veliye mesajı için şablon, veli WhatsApp rızası
+  (`whatsapp_guardian`) ve yurt dışına aktarım (KVKK listesinde).
+
+## 89. Ödev PDF'i ve koçun mesajı veliye WhatsApp'tan (11 Kasım 2026)
+
+Migration `20261111140000_homework_whatsapp`, `send-whatsapp` v2. Şablonlar:
+`docs/WHATSAPP_KURULUM.md`.
+
+- **Ödev:** koç / müdür "Öğrenciye gönder" deyince ödev kaydedilir (`send_assignment` artık
+  kimliği döndürür), sayfa kapanır ve arkada veliye gönderim başlar:
+  `queue_homework_whatsapp` önce denenir; `no_phone` / `already` ise PDF hiç üretilmez.
+  `HW_NO_PDF` gelirse uygulama PDF'i çizer (`renderHomeworkPdf`: tek A4, kurum şeridi marka
+  renginde, başlık, öğrenci, ödevi veren, tarihler, maddeler, not), `homework` kovasına
+  `<kurum>/<ödev>.pdf` olarak yükler ve yeniden çağırır. Yolu sunucu kurar; yükleme politikası
+  yalnızca o ödevi yönetebilene (`can_manage_assignment`) ve kendi kurum klasörüne izin verir.
+  Mesaj `odev_bildirimi` şablonu, belge başlığında `Odev.pdf` (7 günlük imzalı adres);
+  değişkenler: veren, öğrenci, başlık, son tarih, kurum. Her ödev bir kez (tekil index).
+  Sonuç koça alttaki bildirimle söylenir (gönderiliyor / veli telefonu yok / gönderilemedi).
+- **Koç → veli:** öğrenci sayfasının üst çubuğunda sohbet simgesi ("Veliye WhatsApp") →
+  `GuardianMessageSheet`: metin (1-900), `send_guardian_message` (`koc_mesaji` şablonu:
+  öğrenci, koç, metin, kurum), öğrenci başına 24 saatte en çok 5 (`GUARDIAN_MSG_LIMIT`).
+  Altında son 30 mesaj ve durumu (`guardian_messages`: sırada / gönderildi / teslim /
+  okundu / gitmedi + hata).
+- `sms_outbox.student_id` (öğrenci silinince satır da silinir), `assignment_id`.
+- **Saklama:** PDF 80 gün (`purge_homework_pdfs`, pg_cron `homework-pdf-retention` →
+  `storage_cleanup`), mesaj kaydı 90 gün (mevcut).
+- **Açık:** öğretmen rolü ödev veremiyor (`can_manage_student` yalnızca koç / müdür);
+  kuruma logo PDF'e basılmıyor (yalnızca ad ve renk); sınıfa toplu ödev yok (her öğrenci ayrı).
+
+## 90. Kurum sınavı: cevap anahtarı dosyası isteğe bağlı (11 Kasım 2026)
+
+Kurumun kazanım tablosu (`soru_no;bolum;kazanim;zorluk;a_cevap;b_sorusunun_yeri`) her sorunun
+A cevabını ve B kitapçığındaki yerini zaten içeriyor. "Dosyalardan sınav kur" artık yalnızca
+kazanım tablosu (+ isteğe bağlı optik çıktısı) ile çalışır: `answerKeyFromTable` A anahtarını
+`a_cevap`'tan, B anahtarını yerlerden kurar (iptal: `-` / `X` / `İPTAL`). Ad ve tarih küçük bir
+pencerede sorulur (ad, tablonun dosya adından önerilir; tür addan ya da soru sayısından).
+Anahtar dosyası da seçilirse eskisi gibi o kullanılır ve tabloyla çelişki denetlenir. Tabloda
+bir sorunun cevabı eksikse anahtar dosyası istenir. Test: TYT07 örneğinde tablodan kurulan
+anahtar dosyadakiyle bire bir aynı, öğrenci satırları da aynı.
+

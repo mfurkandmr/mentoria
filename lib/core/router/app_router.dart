@@ -33,6 +33,7 @@ import '../../features/schedule_generator/presentation/my_timetable.dart';
 import '../../features/schedule_generator/presentation/schedule_screen.dart';
 import '../../features/schedule_generator/presentation/setup_wizard_screen.dart';
 import '../../features/sms/presentation/bulk_sms_screen.dart';
+import '../../features/whatsapp/presentation/whatsapp_connect_screen.dart';
 import '../../features/student_books/presentation/book_pool_screen.dart';
 import '../../features/student_books/presentation/books_screens.dart';
 import '../../features/student_management/presentation/classes_screen.dart';
@@ -429,6 +430,13 @@ GoRoute _managerRoutes(String base, Widget home) => GoRoute(
       GoRoute(
         path: 'sms',
         pageBuilder: (_, state) => _cockpitPage(state, const BulkSmsScreen()),
+      ),
+    // Kurumun WhatsApp Business bağlantısı: yalnızca müdür.
+    if (base == '/admin')
+      GoRoute(
+        path: 'whatsapp',
+        pageBuilder: (_, state) =>
+            _cockpitPage(state, const WhatsAppConnectScreen()),
       ),
     // Müdür kokpitinin alt sayfaları (NOTLAR §59).
     if (base == '/admin') ...[

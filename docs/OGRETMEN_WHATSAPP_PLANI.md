@@ -150,7 +150,7 @@ numarasından gider ama kimin yazdığı metinde açıkça görünür.
 
 Durum (11 Kasım 2026): 1. aşama (NOTLAR §86) ve 2. aşama (NOTLAR §87; tablolar
 `tutoring_sessions` / `tutoring_requests`, onay yalnızca öğretmende) tamam ve canlıda.
-Sırada 3. aşama (WhatsApp).
+3. aşamanın altyapısı (NOTLAR §88) da canlıda; kurumun Meta hesabı bağlanınca çalışır. 4. aşama (ödev PDF'i ve koç mesajı, NOTLAR §89) da canlıda.
 
 | Aşama | İş | Kurumdan beklenen |
 |---|---|---|

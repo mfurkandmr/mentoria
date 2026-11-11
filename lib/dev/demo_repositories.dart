@@ -626,7 +626,7 @@ class InMemoryAssignmentRepository implements AssignmentRepository {
         ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
   @override
-  Future<void> sendAssignment({
+  Future<String> sendAssignment({
     required String studentId,
     required String title,
     required List<AssignmentItemDraft> items,
@@ -665,6 +665,7 @@ class InMemoryAssignmentRepository implements AssignmentRepository {
       refId: id,
       at: at,
     );
+    return id;
   }
 
   @override

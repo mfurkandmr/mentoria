@@ -92,7 +92,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
       // Finans tek başına: ekranın kendisi (kendi üst çubuğu ve sekmeleri).
       const FinanceScreen(),
       ToolGroupTab(
-        description: tr('Velilere SMS ve toplu duyurular'),
+        description: tr('Velilere WhatsApp ve toplu duyurular'),
         tools: messageTools('/admin'),
       ),
     ];

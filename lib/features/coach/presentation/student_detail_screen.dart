@@ -29,6 +29,7 @@ import '../../tracking/presentation/topics_view.dart';
 import '../data/coach_repository.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../core/design/motion.dart';
+import '../../whatsapp/presentation/guardian_message_sheet.dart';
 
 /// Koçun (ya da kurum müdürünün) gözünden bir öğrenci.
 class StudentDetailScreen extends ConsumerStatefulWidget {
@@ -165,6 +166,17 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
       appBar: SkyAppBar(
         title: Text(student?.fullName ?? tr('Öğrenci')),
         actions: [
+          if (canManage)
+            IconButton(
+              key: const ValueKey('student-guardian-wa'),
+              tooltip: tr('Veliye WhatsApp'),
+              icon: const Icon(Icons.chat_outlined),
+              onPressed: () => showGuardianMessageSheet(
+                context,
+                studentId: id,
+                studentName: student?.fullName ?? tr('Öğrenci'),
+              ),
+            ),
           if (canManage)
             IconButton(
               key: const ValueKey('student-edit-info'),

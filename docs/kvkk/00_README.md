@@ -126,6 +126,17 @@
       kurum duyuruları için de kullanılıyor; aydınlatma metnindeki amaçlara
       "kurum bilgilendirme SMS'leri" eklenmeli. Ticari/kampanya SMS'i için
       İYS kaydı ve onay gerekir (uygulama yalnızca uyarıyor, içeriği denetlemiyor).
+- [ ] Velilere WhatsApp (11 Kasım 2026, NOTLAR.md §88): SMS kapandı; veli telefonu, veli
+      adı, öğrenci adı, devamsızlık, taksit, deneme sonucu ve duyuru metni artık Meta
+      (WhatsApp Cloud API) üzerinden gidiyor, yani **yurt dışına aktarım** (KVKK md. 9).
+      Aydınlatma metninde SMS sağlayıcısı yerine Meta yazılmalı; veliden WhatsApp için
+      açık rıza alınmalı (`consents` türü `whatsapp_guardian`, henüz yok, gönderim rızayı
+      denetlemiyor). Meta ile veri işleme şartları, mesaj kayıtları 90 gün (mevcut).
+- [ ] Ödev PDF'i ve koç mesajı veliye (11 Kasım 2026, NOTLAR.md §89): ödev PDF'i
+      (öğrenci adı, ödevi veren, ders/konu, not) `homework` kovasında 80 gün tutulup Meta'ya
+      imzalı adresle veriliyor; koçun serbest metinli mesajı da Meta'dan geçiyor. Koç
+      metne öğrenci hakkında hassas bilgi yazabilir (uygulama denetlemiyor). Aydınlatma
+      metnine ve veri envanterine eklenmeli.
 - [ ] Öğretmen ödemeleri (9 Kasım 2026, NOTLAR.md §78): `teacher_pay_rates` ve
       `finance_expenses` öğretmenin ücretini, ödemelerini ve müdürün notunu tutar;
       öğretmenin uygulama hesabı olmayabilir. Veri envanterine, veri işleme

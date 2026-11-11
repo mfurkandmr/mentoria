@@ -2417,14 +2417,15 @@ const enStrings = <String, String>{
   'Cep telefonunu 05XX XXX XX XX biçiminde yaz.':
       'Enter the mobile number as 05XX XXX XX XX.',
   'Gönder ({n})': 'Send ({n})',
-  'Hatırlatma SMS\'i gönderilsin mi?': 'Send a reminder SMS?',
+  'Hatırlatma WhatsApp\'tan gönderilsin mi?': 'Send the reminder on WhatsApp?',
   'Hatırlatma gönderilmedi: telefon yok ya da bugün gönderildi.':
       'No reminder sent: no phone number, or already sent today.',
   'Hatırlatıldı: {d}': 'Reminded: {d}',
   'Her ayın {d}. günü': 'Day {d} of each month',
-  'Seçilen velilere SMS gider.': 'An SMS goes to the selected parents.',
-  'Taksit hatırlatma SMS\'i bu numaraya gider.':
-      'Instalment reminder SMS messages go to this number.',
+  'Seçilen velilere WhatsApp mesajı gider.':
+      'A WhatsApp message goes to the selected parents.',
+  'Taksit hatırlatması bu WhatsApp numarasına gider.':
+      'Instalment reminders go to this WhatsApp number.',
   'Taksit hatırlatması gönderilsin mi?': 'Send instalment reminders?',
   'Toplam {v}. Velilere hatırlatma gönderilsin mi?':
       'Total {v}. Send reminders to parents?',
@@ -2432,7 +2433,8 @@ const enStrings = <String, String>{
   'Veli cep telefonu': 'Parent mobile number',
   'Veli telefonu yok': 'No parent phone number',
   'Veliye hatırlat': 'Remind parent',
-  '{n} hatırlatma SMS sırasına alındı.': '{n} reminder SMS queued.',
+  '{n} hatırlatma WhatsApp sırasına alındı.':
+      '{n} reminders queued on WhatsApp.',
   '{who} · {phone}\n{v} · vade {d}': '{who} · {phone}\n{v} · due {d}',
   'Ödeme günü': 'Payment day',
   'Ödeme günü ve veli': 'Payment day and parent',
@@ -2520,7 +2522,7 @@ const enStrings = <String, String>{
   'Yaptığın işaretler silinsin mi?': 'Discard the marks you made?',
   'Yoklama kaydedildi.': 'Attendance saved.',
   'Yoklama': 'Attendance',
-  'Gelmeyenlerin velisine SMS': 'SMS parents of absent students',
+  'Gelmeyenlerin velisine WhatsApp': 'WhatsApp parents of absent students',
   'Önceki gün': 'Previous day',
   'Bugün · {d}': 'Today · {d}',
   'Sonraki gün': 'Next day',
@@ -2531,27 +2533,27 @@ const enStrings = <String, String>{
   'Yoklamayı kaydet ({n})': 'Save attendance ({n})',
   'Veli telefonu kaydedildi.': 'Parent\'s phone saved.',
   'No {n}': 'No. {n}',
-  'Veliye SMS gönderildi': 'SMS sent to parent',
+  'Veliye WhatsApp gönderildi': 'WhatsApp sent to parent',
   'Kaydedilmedi': 'Not saved',
   'Veli telefonu': 'Parent\'s phone',
   'Veli telefonu ekle': 'Add parent\'s phone',
   'Şu an kurum finansındaki veli numarası kullanılıyor. Buraya yazarsan bu numara kullanılır.':
       'The parent number from the institution\'s finance records is used now. If you enter one here, this number is used instead.',
-  '"Gelmedi" SMS\'i bu numaraya gider.':
-      'The "absent" SMS goes to this number.',
-  'SMS gönderilecek gelmeyen öğrenci yok.':
-      'There are no absent students to send an SMS for.',
-  'Gelmeyenlerin velisine SMS gönderilsin mi?':
-      'Send an SMS to the parents of absent students?',
-  'Seçilen velilere "öğrenciniz bugün kuruma gelmedi" SMS\'i gider.':
-      'Selected parents get a "your child did not come to the institution" SMS.',
+  '"Gelmedi" mesajı bu WhatsApp numarasına gider.':
+      'The "absent" message goes to this WhatsApp number.',
+  'Mesaj gönderilecek gelmeyen öğrenci yok.':
+      'There are no absent students to message.',
+  'Gelmeyenlerin velisine WhatsApp mesajı gönderilsin mi?':
+      'Send a WhatsApp message to the parents of absent students?',
+  'Seçilen velilere "öğrenciniz bugün kuruma gelmedi" mesajı WhatsApp\'tan gider.':
+      'Selected parents get a "your child did not come to the institution" message on WhatsApp.',
   'Kurumdaki veli numarası': 'Parent number on file',
   'Gönderme': 'Don\'t send',
-  'SMS gönderilmedi: telefon yok ya da bugün gönderildi.':
-      'No SMS sent: no phone, or already sent today.',
-  '{n} veliye SMS sırasına alındı.': 'SMS queued for {n} parents.',
-  'Günlük yoklama ve gelmeyenin velisine SMS':
-      'Daily attendance and SMS to parents of absent students',
+  'Mesaj gönderilmedi: telefon yok ya da bugün gönderildi.':
+      'No message sent: no phone, or already sent today.',
+  '{n} veliye WhatsApp sırasına alındı.': 'WhatsApp queued for {n} parents.',
+  'Günlük yoklama ve gelmeyenin velisine WhatsApp':
+      'Daily attendance and WhatsApp to parents of absent students',
   'Bugünkü yoklama alınmadı': 'Today\'s attendance hasn\'t been taken',
   'Bugün {p} geldi · {a} gelmedi': 'Today {p} present · {a} absent',
   '{n} işaretsiz': '{n} unmarked',
@@ -2942,11 +2944,12 @@ const enStrings = <String, String>{
   'Sıradaki: {time} {branch}': 'Next: {time} {branch}',
   'Bugünkü dersler bitti': 'Today\'s lessons are over',
   // Velilere toplu SMS
-  '{n} veliye SMS gönderilsin mi?': 'Send an SMS to {n} parents?',
+  '{n} veliye WhatsApp mesajı gönderilsin mi?':
+      'Send a WhatsApp message to {n} parents?',
   '{n} öğrencinin veli telefonu kayıtlı değil; onlara gitmez.':
       '{n} students have no parent phone on file; they won\'t get it.',
-  'Son gönderimin üzerinden 10 dakika geçmeden yeni SMS gönderilemez.':
-      'A new SMS can\'t be sent until 10 minutes after the last one.',
+  'Son gönderimin üzerinden 10 dakika geçmeden yeni toplu mesaj gönderilemez.':
+      'A new bulk message can\'t be sent until 10 minutes after the last one.',
   'Seçilenlerin hiçbirinde veli telefonu yok.':
       'None of the selected students has a parent phone.',
   'Resmi tatil': 'Public holiday',
@@ -2958,11 +2961,11 @@ const enStrings = <String, String>{
   'Veli toplantısı': 'Parent meeting',
   '{gün} saat {saat}\'te veli toplantımız yapılacaktır. Katılımınızı bekleriz.':
       'Our parent meeting will be held on {gün} at {saat}. We look forward to seeing you.',
-  'Velilere SMS': 'SMS to parents',
+  'Velilere WhatsApp': 'WhatsApp to parents',
   'Mesaj': 'Message',
   'Velilere gidecek metni yaz': 'Write the text for parents',
-  'Başına "{org}:" eklenir. {n} karakter · yaklaşık {k} SMS':
-      '"{org}:" is added at the start. {n} characters · about {k} SMS',
+  'Başına "{org}:" eklenir. {n} karakter':
+      '"{org}:" is added at the start. {n} characters',
   'Kime': 'To',
   'Tüm veliler': 'All parents',
   'Henüz sınıf yok.': 'No classes yet.',
@@ -2971,14 +2974,14 @@ const enStrings = <String, String>{
   '{n} veliye gidecek': 'Goes to {n} parents',
   '{n} öğrencinin veli telefonu yok': '{n} students have no parent phone',
   'Telefon ekle': 'Add phone',
-  'Yalnızca bilgilendirme gönder: reklam ya da kampanya içerikli SMS için velinin ticari ileti izni (İYS) gerekir.':
-      'Send information only: advertising or campaign SMS needs the parent\'s commercial message consent (İYS).',
+  'Yalnızca bilgilendirme gönder: reklam ya da kampanya içerikli mesaj WhatsApp kurallarına aykırıdır, kurumun numarası kapatılabilir.':
+      'Send information only: advertising or campaign messages break WhatsApp rules and the institution\'s number may be blocked.',
   'Gönderilenler': 'Sent',
-  'Otomatik SMS': 'Automatic SMS',
+  'Otomatik mesajlar': 'Automatic messages',
   'Deneme sonuçları velilere gitsin': 'Send exam results to parents',
-  'Kurum sınavı yayınlanınca her öğrencinin velisine toplam net, kurum sırası ve ders ders doğru, yanlış, net SMS ile gider; sonradan yüklenen optikler de. Her öğrenci için bir kez. Ders sayısına göre mesaj birkaç SMS tutar.':
-      "When an institution exam is published, each student's parent gets the total net, institution rank and correct, wrong and net per subject by SMS, including sheets uploaded later. Once per student. Depending on the number of subjects, a message may take several SMS.",
-  'Henüz SMS gönderilmedi.': 'No SMS sent yet.',
+  'Kurum sınavı yayınlanınca her öğrencinin velisine toplam net, kurum sırası ve ders ders doğru, yanlış, net WhatsApp\'tan gider; sonradan yüklenen optikler de. Her öğrenci için bir kez.':
+      "When an institution exam is published, each student's parent gets the total net, institution rank and correct, wrong and net per subject on WhatsApp, including sheets uploaded later. Once per student.",
+  'Henüz mesaj gönderilmedi.': 'No messages sent yet.',
   '{n} veli': '{n} parents',
   '{n} gitti': '{n} delivered',
   '{n} sırada': '{n} queued',
@@ -3727,8 +3730,8 @@ const enStrings = <String, String>{
       'students have no attendance taken today',
   'öğrenci bugünkü yoklamada işaretsiz':
       'students are unmarked in today’s attendance',
-  'Gelmeyenlerin velisine SMS ancak yoklama kaydedilince gider.':
-      'Parents of absent students get an SMS only after attendance is saved.',
+  'Gelmeyenlerin velisine WhatsApp mesajı ancak yoklama kaydedilince gider.':
+      'Parents of absent students get a WhatsApp message only after attendance is saved.',
   'kurum sınavının sonucu yayın bekliyor':
       'institution exams are waiting to be published',
   'Optikler yüklendi; yayınlanana kadar öğrenci ve veliler sonucu göremez.':
@@ -3776,7 +3779,8 @@ const enStrings = <String, String>{
       'Exam results, institution exams, answer sheet scanning and exam plan',
   'Deneme sonuçları, kurum sınavları, optik okuma ve trendler':
       'Exam results, institution exams, answer sheet scanning and trends',
-  'Velilere SMS ve toplu duyurular': 'SMS to parents and bulk announcements',
+  'Velilere WhatsApp ve toplu duyurular':
+      'WhatsApp to parents and bulk announcements',
   'Duyurular ve öğrenci daveti': 'Announcements and student invites',
   'Deneme sonuç dosyasını yükle, öğrencilere dağıt':
       'Upload an exam results file and share it with students',
@@ -3990,8 +3994,8 @@ const enStrings = <String, String>{
   'Optik okuyucu çıktısını yükle': 'Upload the optic reader output',
   'Cevabı ya da kazanımı eksik soru var; önce tamamla.':
       'Some questions have no answer or outcome; complete them first.',
-  'Cevap anahtarı, kazanım ve optik çıktısını yükle':
-      'Upload the answer key, outcomes and optic output',
+  'Kazanım tablosunu ve optik çıktısını yükle':
+      'Upload the outcome table and optic output',
   'Yanlış ve boşlar ({n})': 'Wrong and blank ({n})',
   'Bütün sorular ({n})': 'All questions ({n})',
   'Bu sınavda yanlış ya da boş soru yok.':
@@ -4043,10 +4047,96 @@ const enStrings = <String, String>{
   '{n} ({no}): kitapçık boştu. {b} sayıldı; {b} anahtarıyla {c} doğru, öbürüyle {o} doğru.':
       '{n} ({no}): booklet was blank. Counted as {b}; {c} correct with the {b} key, {o} with the other.',
   'Dosyalar kullanılamadı': 'The files could not be used',
+  'Sınavın adı ve tarihi': 'Exam name and date',
+  'Cevaplar kazanım tablosundan alındı; ayrı cevap anahtarı dosyası gerekmez.':
+      'The answers were taken from the outcome table; no separate answer key file is needed.',
+  'TYT, AYT ya da YDT geçerse türü addan anlaşılır.':
+      'If it contains TYT, AYT or YDT, the type is taken from the name.',
+  'Kazanım tablosunda her sorunun cevabı yok ("a_cevap" sütunu). Cevap anahtarı dosyasını da seç.':
+      'The outcome table does not have an answer for every question ("a_cevap" column). Select the answer key file too.',
   'Cevap anahtarı dosyası bulunamadı ("A KITAPÇIĞI" satırı olmalı).':
       'No answer key file found (it needs an "A KITAPÇIĞI" line).',
   'Kazanım tablosu bulunamadı ("soru_no" başlığı olmalı).':
       'No outcome table found (it needs a "soru_no" header).',
   'Sınav kaydedilemedi. Tekrar dene.':
       'The exam could not be saved. Try again.',
+  // WhatsApp bağlantısı (NOTLAR §88)
+  'Ayarlar': 'Settings',
+  'Bağla': 'Connect',
+  'Bağlantı güncellendi': 'Connection updated',
+  'Bağlantı kaldırıldı': 'Connection removed',
+  'Bağlantıyı kaldır': 'Remove connection',
+  'Bu işlem için yetkin yok.': 'You are not allowed to do this.',
+  'Erişim anahtarı': 'Access token',
+  'Erişim anahtarı geçersiz.': 'The access token is not valid.',
+  'Erişim anahtarı silinir. Velilere giden mesajlar yeniden bağlanana kadar sırada bekler.':
+      'The access token is deleted. Messages to parents wait in the queue until you connect again.',
+  'Kayıtlı. Değiştirmek istemiyorsan boş bırak.':
+      'Saved. Leave it empty if you don\'t want to change it.',
+  'Mesaj şablonu': 'Message template',
+  'Meta Business panelinde WhatsApp → API Setup sayfasından kopyala. Erişim anahtarı için kalıcı bir "System User" anahtarı kullan.':
+      'Copy these from WhatsApp → API Setup in Meta Business. Use a permanent "System User" token as the access token.',
+  'Numara (görünen)': 'Number (shown)',
+  'Numara bilgileri': 'Number details',
+  'Numara kimliği ve hesap kimliği yalnızca rakamdan oluşur.':
+      'The phone number ID and account ID contain digits only.',
+  'Son 30 gün: {s} gönderildi · {r} okundu · {f} gitmedi':
+      'Last 30 days: {s} sent · {r} read · {f} not delivered',
+  'Telefon numarası kimliği': 'Phone number ID',
+  'Velilere giden bütün mesajlar (yoklama, taksit hatırlatma, toplu mesaj, deneme sonucu) kurumun WhatsApp Business numarasından gider. Veli cevap yazarsa cevap kurumun WhatsApp Business uygulamasına düşer.':
+      'All messages to parents (attendance, instalment reminders, bulk messages, exam results) go from the institution\'s WhatsApp Business number. If a parent replies, the reply arrives in the institution\'s WhatsApp Business app.',
+  'Velilere mesaj gitmesi için kurumun numarasını bağla.':
+      'Connect the institution\'s number so messages reach parents.',
+  'WhatsApp Business hesap kimliği': 'WhatsApp Business account ID',
+  'WhatsApp bağlandı': 'WhatsApp connected',
+  'WhatsApp bağlantısı': 'WhatsApp connection',
+  'WhatsApp bağlantısı kaldırılsın mı?': 'Remove the WhatsApp connection?',
+  'WhatsApp bağlı değil': 'WhatsApp is not connected',
+  'WhatsApp bağlı · {p}': 'WhatsApp connected · {p}',
+  'WhatsApp, velinin son 24 saatte yazmadığı mesajlar için Meta onaylı şablon ister. Aşağıdaki metni Meta panelinde "Utility" kategorisinde, Türkçe olarak bu adla bir kez onaylat.':
+      'WhatsApp needs a Meta-approved template for messages to parents who haven\'t written in the last 24 hours. Get the text below approved once in Meta, in the "Utility" category, in Turkish, under this name.',
+  '{d} tarihinde bağlandı': 'Connected on {d}',
+  '{n} mesaj sırada': '{n} messages in the queue',
+  '{n} mesaj sırada bekliyor; WhatsApp bağlanınca gider.':
+      '{n} messages are waiting; they go once WhatsApp is connected.',
+  'İlk bağlantıda erişim anahtarı gerekli.':
+      'An access token is needed for the first connection.',
+  'Şablon adı küçük harf, rakam ve _ içerebilir.':
+      'The template name may contain lowercase letters, digits and _.',
+  'Şablon metni kopyalandı': 'Template text copied',
+  // Veliye WhatsApp: ödev PDF'i ve koç mesajı (NOTLAR §89)
+  'Belirtilmedi': 'Not set',
+  'Bu belge {org} tarafından hazırlanmıştır.':
+      'This document was prepared by {org}.',
+  'Bu veliye 24 saatte en çok 5 mesaj gönderilebilir.':
+      'You can send this parent at most 5 messages in 24 hours.',
+  'Gitmedi': 'Not delivered',
+  'Gönderildi': 'Sent',
+  'Henüz veliye mesaj gitmedi.': 'No messages sent to the parent yet.',
+  'Mesaj 1-900 karakter olmalı.': 'The message must be 1-900 characters.',
+  'Mesaj veliye WhatsApp\'tan gönderiliyor.':
+      'The message is being sent to the parent on WhatsApp.',
+  'Okundu': 'Read',
+  'Son tarih': 'Due date',
+  'Sırada': 'Queued',
+  'Teslim edildi': 'Delivered',
+  'Veli telefonu kayıtlı olmadığı için ödev veliye gitmedi.':
+      'The homework was not sent to the parent because no parent phone is saved.',
+  'Veliye WhatsApp': 'WhatsApp the parent',
+  'Veliye giden son mesajlar': 'Recent messages to the parent',
+  'Veliye ne yazmak istersin?': 'What would you like to tell the parent?',
+  'Verildiği gün': 'Assigned on',
+  '{name} öğrencisinin velisine kurumun WhatsApp numarasından, senin adınla gider. Veli cevap yazarsa cevap kurumun WhatsApp Business uygulamasına düşer.':
+      'Goes to {name}\'s parent from the institution\'s WhatsApp number, in your name. If the parent replies, the reply arrives in the institution\'s WhatsApp Business app.',
+  '{n} madde': '{n} items',
+  '{n} madde · toplam {q} soru': '{n} items · {q} questions in total',
+  'Ödev PDF\'i': 'Homework PDF',
+  'Ödev PDF\'i veliye WhatsApp\'tan gönderiliyor.':
+      'The homework PDF is being sent to the parent on WhatsApp.',
+  'Ödev bildirimi': 'Homework notice',
+  'Ödev veliye gönderilemedi.': 'The homework could not be sent to the parent.',
+  'Ödevi veren': 'Assigned by',
+  'Öğrencinin veli telefonu kayıtlı değil.':
+      'No parent phone is saved for this student.',
+  '… ve {n} madde daha (uygulamada).': '… and {n} more items (in the app).',
 };

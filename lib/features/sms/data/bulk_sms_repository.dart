@@ -76,17 +76,6 @@ class SmsBroadcast {
   final int failed;
 }
 
-/// Metnin yaklaşık SMS sayısı (Türkçe karakterli tek SMS 155, Türkçe dışı
-/// özel karakter ya da emoji varsa 67 karakter).
-int smsSegments(String text) {
-  if (text.isEmpty) return 0;
-  final unicode = RegExp(
-    r"[^A-Za-z0-9 \n\r.,;:!?'\x22()\-+*/=%&@#$_<>çÇğĞıİöÖşŞüÜâÂîÎûÛ€£]",
-  ).hasMatch(text);
-  final per = unicode ? 67 : 155;
-  return (text.length + per - 1) ~/ per;
-}
-
 abstract interface class BulkSmsRepository {
   /// [dryRun]: yalnızca kaç numaraya gideceğini sayar.
   Future<SmsReach> send({

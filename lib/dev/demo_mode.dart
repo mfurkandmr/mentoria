@@ -61,6 +61,10 @@ import '../features/client_errors/data/client_error_repository.dart';
 import 'demo_repositories.dart';
 import 'demo_teacher.dart';
 import 'demo_tutoring.dart';
+import 'demo_whatsapp.dart';
+import 'demo_guardian_messaging.dart';
+import '../features/whatsapp/data/guardian_messaging_repository.dart';
+import '../features/whatsapp/data/whatsapp_repository.dart';
 import '../features/tutoring/data/tutoring_repository.dart';
 import '../features/teacher/data/teacher_repository.dart';
 
@@ -105,6 +109,12 @@ Future<List<Override>> buildDemoOverrides([
 
   /// Testler kendi soru çözümü deposunu verebilir (yoksa demo verisi).
   TutoringRepository? tutoring,
+
+  /// Testler kendi WhatsApp bağlantı deposunu verebilir (yoksa demo: bağlı).
+  WhatsAppRepository? whatsapp,
+
+  /// Testler kendi veliye WhatsApp (ödev PDF'i, koç mesajı) deposunu verebilir.
+  GuardianMessagingRepository? guardian,
 ]) async {
   role ??= Env.activeDemoRole;
   final exams = InMemoryExamRepository.demo();
@@ -464,6 +474,22 @@ Future<List<Override>> buildDemoOverrides([
             classOf: demoTimetable.classOf,
             children: const {'demo-student'},
           ),
+    ),
+    guardianMessagingRepositoryProvider.overrideWithValue(
+      guardian ??
+          (InMemoryGuardianMessagingRepository(
+            phoneOf: {
+              for (final id in demoStudents().keys) id: '+905321112233',
+            },
+            senderName: profile.fullName,
+          )..seedRead(
+            'demo-student',
+            'Elif bu hafta deneme netini 6 artırdı, tebrik ederim.',
+          )),
+    ),
+    whatsAppRepositoryProvider.overrideWithValue(
+      whatsapp ??
+          InMemoryWhatsAppRepository(isAdmin: role == 'admin', connected: true),
     ),
     bulkSmsRepositoryProvider.overrideWithValue(
       bulkSms ??

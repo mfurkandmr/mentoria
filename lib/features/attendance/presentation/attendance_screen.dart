@@ -164,7 +164,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
           title: Text(tr('Yoklama')),
           actions: [
             IconButton(
-              tooltip: tr('Gelmeyenlerin velisine SMS'),
+              tooltip: tr('Gelmeyenlerin velisine WhatsApp'),
               icon: const Icon(Icons.sms_outlined),
               onPressed: () {
                 final list = rows.value;
@@ -377,7 +377,7 @@ class _StudentTile extends StatelessWidget {
     final note = [
       if (row.studentNumber != null) tr('No {n}', {'n': row.studentNumber!}),
       if (row.smsAt != null)
-        tr('Veliye SMS gönderildi')
+        tr('Veliye WhatsApp gönderildi')
       else if (edited)
         tr('Kaydedilmedi'),
     ].join(' · ');
@@ -588,7 +588,7 @@ class _GuardianPhoneDialogState extends State<_GuardianPhoneDialog> {
                     ? tr(
                         'Şu an kurum finansındaki veli numarası kullanılıyor. Buraya yazarsan bu numara kullanılır.',
                       )
-                    : tr('"Gelmedi" SMS\'i bu numaraya gider.'),
+                    : tr('"Gelmedi" mesajı bu WhatsApp numarasına gider.'),
                 helperMaxLines: 3,
               ),
             ),
@@ -620,7 +620,7 @@ Future<void> showAbsenceSmsDialog(
   bool afterSave = false,
 }) async {
   if (absent.isEmpty) {
-    showMessage(context, tr('SMS gönderilecek gelmeyen öğrenci yok.'));
+    showMessage(context, tr('Mesaj gönderilecek gelmeyen öğrenci yok.'));
     return;
   }
   final selected = {
@@ -632,7 +632,9 @@ Future<void> showAbsenceSmsDialog(
     animationStyle: AppMotion.overlayStyle(context),
     builder: (c) => StatefulBuilder(
       builder: (c, setState) => AlertDialog(
-        title: Text(tr('Gelmeyenlerin velisine SMS gönderilsin mi?')),
+        title: Text(
+          tr('Gelmeyenlerin velisine WhatsApp mesajı gönderilsin mi?'),
+        ),
         content: SizedBox(
           width: 420,
           child: ListView(
@@ -640,7 +642,7 @@ Future<void> showAbsenceSmsDialog(
             children: [
               Text(
                 tr(
-                  'Seçilen velilere "öğrenciniz bugün kuruma gelmedi" SMS\'i gider.',
+                  'Seçilen velilere "öğrenciniz bugün kuruma gelmedi" mesajı WhatsApp\'tan gider.',
                 ),
                 style: Theme.of(c).textTheme.bodySmall,
               ),
@@ -697,8 +699,8 @@ Future<void> showAbsenceSmsDialog(
     showMessage(
       context,
       r.queued == 0
-          ? tr('SMS gönderilmedi: telefon yok ya da bugün gönderildi.')
-          : tr('{n} veliye SMS sırasına alındı.', {'n': r.queued}),
+          ? tr('Mesaj gönderilmedi: telefon yok ya da bugün gönderildi.')
+          : tr('{n} veliye WhatsApp sırasına alındı.', {'n': r.queued}),
     );
   } catch (_) {
     if (context.mounted) {
@@ -715,7 +717,7 @@ ToolInfo attendanceTool(WidgetRef ref, String basePath) {
   final String status;
   var needsAction = false;
   if (c == null || c.total == 0) {
-    status = tr('Günlük yoklama ve gelmeyenin velisine SMS');
+    status = tr('Günlük yoklama ve gelmeyenin velisine WhatsApp');
   } else if (c.marked == 0) {
     status = tr('Bugünkü yoklama alınmadı');
     needsAction = true;
