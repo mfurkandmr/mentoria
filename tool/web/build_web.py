@@ -57,6 +57,7 @@ APP_ROUTES = [
     "coach",
     "admin",
     "parent",
+    "teacher",
 ]
 
 # Yasal metinler: assets/legal (uygulamadakiyle aynı metin) -> /<yol>/

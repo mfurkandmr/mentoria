@@ -28,6 +28,7 @@ List<FaqSection> faqFor(UserRole role, {bool superAdmin = false}) => [
     UserRole.coach => _coach(),
     UserRole.admin => _admin(),
     UserRole.parent => _parent(),
+    UserRole.teacher => _teacher(),
   },
   if (superAdmin) ..._platform(),
   ..._common(),
@@ -326,6 +327,55 @@ List<FaqSection> _parent() => [
       tr('Koçla nasıl iletişime geçerim?'),
       tr(
         'Uygulamada mesajlaşma yoktur. Koçla dershane üzerinden iletişime geçebilirsin.',
+      ),
+    ),
+  ]),
+];
+
+List<FaqSection> _teacher() => [
+  FaqSection(tr('Başlarken'), Icons.rocket_launch_rounded, [
+    FaqItem(
+      tr('Nasıl kayıt olurum?'),
+      tr(
+        'Kurum müdürünün verdiği öğretmen davet koduyla kayıt olursun. Kayıt olunca kurumun öğretmen listesine kendiliğinden eklenirsin; müdürün seni ayrıca yazmasına gerek kalmaz.',
+      ),
+    ),
+    FaqItem(
+      tr('Branşımı nasıl değiştiririm?'),
+      tr(
+        'Ana sayfadaki "Branşlarım" kartına dokun, derslerini seç ve kaydet. Ders programı bu branşlara göre hazırlanır.',
+      ),
+    ),
+  ]),
+  FaqSection(tr('Program'), Icons.calendar_view_week_rounded, [
+    FaqItem(
+      tr('Ders programımı nereden görürüm?'),
+      tr(
+        'Kurum programı yayınlayınca ana sayfanda bugünkü derslerin ve haftalık programın görünür. Program yayınlanmadıysa boş görünür.',
+      ),
+    ),
+    FaqItem(
+      tr('Müsait olmadığım saatleri nasıl bildiririm?'),
+      tr(
+        'Kurum müdürüne söyle; ders programı ayarlarında müsait olduğun saatleri girer. Program bu saatlere göre hazırlanır.',
+      ),
+    ),
+    FaqItem(
+      tr('Programdaki değişiklikleri nasıl görürüm?'),
+      tr(
+        'Ana sayfada ve haftalık programda her zaman yayındaki son hâli görünür. Ekranı aşağı çekerek yenileyebilirsin.',
+      ),
+    ),
+    FaqItem(
+      tr('Öğrencilerin verilerini görebilir miyim?'),
+      tr(
+        'Hayır. Öğretmen paneli yalnızca kendi derslerini gösterir; öğrenci takibini koçlar yapar.',
+      ),
+    ),
+    FaqItem(
+      tr('Birden fazla kurumda çalışıyorum, ne yapmalıyım?'),
+      tr(
+        'Her kurum için ayrı hesap gerekir: her kurumun öğretmen davet koduyla farklı bir e-posta adresiyle kayıt olursun.',
       ),
     ),
   ]),

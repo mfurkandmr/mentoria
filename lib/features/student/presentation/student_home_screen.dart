@@ -1,5 +1,7 @@
 import '../../student_schedule/data/student_schedule.dart';
 import '../../student_schedule/presentation/student_schedule_screen.dart';
+import '../../tutoring/data/tutoring_repository.dart';
+import '../../tutoring/presentation/student_tutoring_screen.dart';
 import '../../privacy/presentation/privacy_screen.dart';
 import 'package:flutter/material.dart';
 import '../../announcements/presentation/announcement_widgets.dart';
@@ -133,6 +135,8 @@ class StudentHomeScreen extends ConsumerWidget {
       ref.invalidate(mistakeCardsProvider(id));
       ref.invalidate(allSessionsProvider(id));
       ref.invalidate(shortcutCountsProvider(id));
+      ref.invalidate(openTutoringSlotsProvider);
+      ref.invalidate(myTutoringRequestsProvider);
       await Future.wait([
         ref.read(questionLogsProvider(id).future),
         ref.read(studySessionsProvider(id).future),
@@ -150,6 +154,8 @@ class StudentHomeScreen extends ConsumerWidget {
       _TodayCard(studentId: id),
       // Son 14 günde duyuru geldiyse.
       const StudentScheduleCard(),
+      // Soru çözümü / birebir (kurumda oturum yoksa görünmez).
+      const TutoringHomeCard(),
       const AnnouncementsHomeCard(),
       Row(
         children: [

@@ -118,8 +118,8 @@ ADMIN = [
          '"Koç davet et" ile koça, "Öğrenci davet et" ile öğrenciye kod oluştur. Öğrenci davetinde öğrencinin bağlanacağı koçu seçersin.',
          'Create a code with "Invite coach" for coaches and "Invite student" for students. For student invites you choose which coach they’ll be linked to.'),
         ('Lisans ve koltuk sayısı ne demek?', 'What are the licence and seat count?',
-         'Kurumunun kaç öğrenciye kadar ve hangi tarihe kadar kullanabileceğini belirler. Koltuklar dolduysa ya da lisans süresi bittiyse yeni öğrenci kayıt olamaz.',
-         'They set how many students your school can have and until when. If seats are full or the licence has expired, new students can’t sign up.'),
+         'Kurumunun kaç öğrenciye kadar ve hangi tarihe kadar kullanabileceğini belirler. Koltuklar dolduysa yeni öğrenci kayıt olamaz. Lisans süresi bitince öğrenci, koç ve veliler uygulamaya giremez; lisans uzatılınca erişim kendiliğinden geri gelir.',
+         'They set how many students your school can have and until when. If seats are full, new students can’t sign up. When the licence expires, students, coaches and parents can’t use the app; access returns automatically once it is renewed.'),
         ('Öğrencinin koçunu değiştirebilir miyim?', 'Can I change a student’s coach?',
          'Evet. Öğrenciler listesinde öğrencinin seçeneklerinden "Koçunu değiştir"i kullan.',
          'Yes. Use "Change coach" in the student’s options on the Students list.'),
@@ -173,6 +173,34 @@ PARENT = [
         ('Koçla nasıl iletişime geçerim?', 'How do I contact the coach?',
          'Uygulamada mesajlaşma yoktur. Koçla dershane üzerinden iletişime geçebilirsin.',
          'There’s no messaging in the app. You can reach the coach through the school.'),
+    ]),
+]
+
+TEACHER = [
+    (('Başlarken', 'Getting started'), 'rocket_launch_rounded', [
+        ('Nasıl kayıt olurum?', 'How do I sign up?',
+         'Kurum müdürünün verdiği öğretmen davet koduyla kayıt olursun. Kayıt olunca kurumun öğretmen listesine kendiliğinden eklenirsin; müdürün seni ayrıca yazmasına gerek kalmaz.',
+         'You sign up with the teacher invite code from your school manager. Once you sign up you’re added to the school’s teacher list automatically; the manager doesn’t need to enter you separately.'),
+        ('Branşımı nasıl değiştiririm?', 'How do I change my subjects?',
+         'Ana sayfadaki "Branşlarım" kartına dokun, derslerini seç ve kaydet. Ders programı bu branşlara göre hazırlanır.',
+         'Tap the "My subjects" card on your home screen, pick your subjects and save. The timetable is built from these subjects.'),
+    ]),
+    (('Program', 'Timetable'), 'calendar_view_week_rounded', [
+        ('Ders programımı nereden görürüm?', 'Where do I see my timetable?',
+         'Kurum programı yayınlayınca ana sayfanda bugünkü derslerin ve haftalık programın görünür. Program yayınlanmadıysa boş görünür.',
+         'Once the school publishes the timetable, today’s lessons and your weekly timetable appear on your home screen. It stays empty until it’s published.'),
+        ('Müsait olmadığım saatleri nasıl bildiririm?', 'How do I tell the school when I’m not available?',
+         'Kurum müdürüne söyle; ders programı ayarlarında müsait olduğun saatleri girer. Program bu saatlere göre hazırlanır.',
+         'Tell your school manager; they enter your available hours in the timetable settings. The timetable is built around them.'),
+        ('Programdaki değişiklikleri nasıl görürüm?', 'How do I see changes to the timetable?',
+         'Ana sayfada ve haftalık programda her zaman yayındaki son hâli görünür. Ekranı aşağı çekerek yenileyebilirsin.',
+         'Your home screen and weekly timetable always show the latest published version. Pull down to refresh.'),
+        ('Öğrencilerin verilerini görebilir miyim?', 'Can I see students’ data?',
+         'Hayır. Öğretmen paneli yalnızca kendi derslerini gösterir; öğrenci takibini koçlar yapar.',
+         'No. The teacher panel only shows your own lessons; coaches follow students’ progress.'),
+        ('Birden fazla kurumda çalışıyorum, ne yapmalıyım?', 'I work at more than one school. What should I do?',
+         'Her kurum için ayrı hesap gerekir: her kurumun öğretmen davet koduyla farklı bir e-posta adresiyle kayıt olursun.',
+         'You need a separate account for each school: sign up with each school’s teacher invite code using a different email address.'),
     ]),
 ]
 

@@ -49,6 +49,15 @@ List<ToolInfo> messageTools(String basePath) => [
       status: tr('Davet kodu oluştur ve öğrencine gönder'),
       open: openInviteSheet,
     ),
+  // Öğrencilerin soru çözümü / birebir talepleri (salt okunur; NOTLAR §87).
+  if (basePath == '/coach')
+    ToolInfo(
+      id: 'tool-tutoring',
+      icon: Icons.quiz_outlined,
+      title: tr('Soru çözümü talepleri'),
+      status: tr('Öğrencilerinin öğretmenlerden istediği saatler'),
+      open: (c) => c.push('/coach/tutoring'),
+    ),
 ];
 
 /// Yalnızca araçlardan oluşan sekme (Sınavlar, İletişim): kısa açıklama ve

@@ -2960,7 +2960,13 @@ karakter, UTF-8, sondaki 120 karakter cevap, öncesi kitapçık), anahtar metni 
   sihirbaz "Dosyalardan sınav kur"u önerir. Tek kitapçıkta .txt sihirbazda doğrudan okunur.
 - Kitapçığı boş satır: iki anahtarla puanlanır, fark ≥10 doğruysa o kitapçık seçilir ve raporda
   not düşülür (örnekte 2026040 B: 65'e 23); değilse A kalır.
-- Şimdilik yalnızca TYT dosyadan kurulur (ders sınırları TYT'ye göre). `*` boş sayılır.
+- TYT, AYT ve YDT dosyadan kurulur (10 Kasım): tür sınav adından, yoksa anahtar uzunluğundan
+  (120 / 160 / 80). AYT'de genel soru numarası kitapçık sırasını izler (`bookletSubjects`:
+  Edebiyat-Sosyal-1, Sosyal-2, Matematik, Fen); .txt her zaman bu sırayla bölünür, sınavdaki
+  ders sırası farklı olsa da (`subjectsInBookletOrder`). Excel başlık tahmini AYT'yi tanır
+  ("Sosyal-1/2", "Tarih-1/2", "TDE"). AYT / YDT gerçek makine dosyasıyla denenmedi; testler
+  TYT07 biçiminde üretilen dosyalarla (`exam_package_ayt_ydt_test.dart`,
+  `exam_import_ayt_ydt_test.mjs`). `*` boş sayılır.
 - Örnekte: Elif 72 D / 38 Y / 10 B = 62,5 net; en yüksek Vildan 104,75; Can Öztürk boş;
   Gökhan'ın numarası 0045127 (kurum kaydında 45127 ise eşleşir). Canlı kurumda denenmedi;
   numaralar kurum listesinde yoksa raporda "eşleşmedi" çıkar.
@@ -3016,3 +3022,67 @@ confirm / warn`); `CockpitMotion` ve `CockpitHaptics` kalktı.
   JSON; yanıt `code: "00"`). Biçim resmi dokümandan değil, Netgsm Go istemcisinin
   (`mobinova/netgsm-go`) kaynağından doğrulandı; sağlayıcı bağlanınca ilk mesajla deneyin.
 - **Demo + env.json:** router'daki oturum dinleyicisi demo modunda Supabase'e dokunmaz.
+
+## 86. Öğretmen rolü ve öğretmen paneli (11 Kasım 2026)
+
+Plan: `docs/OGRETMEN_WHATSAPP_PLANI.md` (A aşaması; B soru çözümü ve C WhatsApp
+henüz yok). Migration'lar `20261111100000_teacher_role_enum` (enum değeri ayrı dosyada:
+PostgreSQL yeni değeri aynı işlemde kullandırmaz) ve `20261111110000_teacher_role`
+(rollback'leri var; ikisi de **canlıda**). Test: `supabase/tests/teacher_role_test.mjs`,
+`test/teacher_test.dart`, `test/auth/invite_signup_test.dart` (öğretmen kaydı).
+
+- **Rol:** `user_role` = `teacher`, ana sayfa `/teacher`. Öğretmen öğrenci verisi
+  görmez (koç değil); `teachers` tablosunu da doğrudan okuyamaz, kendi satırı
+  `my_teacher()` ile gelir. Programı mevcut `my_timetable()` (`teachers.profile_id`).
+- **Davet:** müdür → `create_invite('teacher')` (kredi harcamaz). Müdür panelinde
+  Koçlar sekmesi şeridinde "Öğretmenler" (`/admin/teachers`): liste, "Hesabı var /
+  Hesap yok", "Öğretmen davet et". Kayıt ekranında öğretmen davetinde branş seçimi
+  zorunlu (`teacher_branches`); sunucu boş gelirse `Genel` yazar.
+- **Kendiliğinden liste:** `apply_signup_invite` öğretmen profilini açınca `teachers`
+  satırını da açar. `guard_timetable_row` (20261105140000 sürümü üzerine) yalnızca
+  SECURITY DEFINER fonksiyonların işlem içinde açtığı `mentoria.timetable_trusted`
+  bayrağıyla müdür denetimini atlar; `teachers.profile_id` artık `teacher` rolünü de
+  kabul eder.
+- **Branş:** öğretmen panelindeki "Branşlarım" → `set_my_teacher_branches`.
+- **Birleştirme:** müdür daha önce elle eklediği hesapsız öğretmenle aynı adlı hesaplı
+  satır görünce "Birleştir" → `merge_teachers(keep, from)`: program, ders ihtiyacı,
+  müsaitlik (elle girilen kalır), ücret, gider, personel bağlantısı korunur; aynı saatte
+  iki satırın dersi varsa `TEACHER_MERGE_CONFLICT`. Otomatik birleştirme yok (yanlış
+  eşleşme riski).
+- **Demo:** `DEMO_ROLE=teacher` (Mehmet Arslan, demo programındaki Fizik öğretmeni);
+  web `/demo` için `tool/web/build_web.py` APP_ROUTES'a `teacher` eklendi.
+- **SSS:** `tool/faq/faq_content.py` TEACHER. Oluşturucu, elle güncellenmiş lisans
+  sorusunu eski metne döndürüyordu; kaynak güncellendi, SSS bloğu içindeki iki lisans
+  çevirisi bloğun dışına taşındı.
+- **Açık:** öğretmene bildirim yok (program yayınlanınca yalnızca öğrenciye gidiyor);
+  öğretmen müsaitliğini kendisi giremiyor; KVKK aydınlatma metninde öğretmen rolü yok.
+
+## 87. Soru çözümü, birebir ders ve etüt talepleri (11 Kasım 2026)
+
+Plan B aşaması (`docs/OGRETMEN_WHATSAPP_PLANI.md`). Migration
+`20261111120000_tutoring_sessions` (rollback'i var; **canlıda**), `send-push` v17.
+Testler: `supabase/tests/tutoring_sessions_test.mjs` (48 adım), `test/tutoring_test.dart`.
+Ad notu: `study_sessions` pomodoro tablosu olduğu için yeni tablolar `tutoring_*`.
+
+- **Kullanıcı kararı:** talebi yalnızca öğretmen onaylar / reddeder; koç ve müdür
+  yalnızca görür.
+- **Oturum (`tutoring_sessions`):** müdür açar (`/admin/tutoring`, Koçlar şeridinde
+  "Soru çözümü ve birebir"): öğretmen, tür (soru çözümü / birebir / etüt), gün, saat,
+  kontenjan (birebirde 1), ders (boşsa öğretmenin ilk branşı), açık/kapalı. Haftalık
+  tekrarlar. Öğretmenin aynı gün çakışan oturumu (`TUTOR_SESSION_OVERLAP`) ya da
+  yayındaki programda o saatte dersi (`TUTOR_TEACHER_BUSY`) varsa reddedilir. Program
+  üreticisi bu oturumları henüz görmüyor (ters yönde koruma yok).
+- **Talep (`tutoring_requests`, yalnızca RPC):** öğrenci `/student/study` (ana sayfada
+  `TutoringHomeCard`, kurumda oturum yoksa görünmez): 7 günlük liste, "Talep et" + konu.
+  Kurallar: 14 gün, başlamış oturum yok, aynı oturuma aynı gün tek etkin talep, günde 3
+  etkin talep, onaylı sayısı kontenjana ulaşınca `TUTOR_SESSION_FULL`. Öğrenci iptal
+  edebilir. Saatler Türkiye saatiyle (`tr_now()`).
+- **Öğretmen:** ana sayfada "Soru çözümü ve birebir" bölümü: bekleyenler (onayla /
+  gerekçeli reddet), yaklaşan onaylılar, haftalık oturumları.
+- **Koç:** İletişim sekmesinde "Soru çözümü talepleri" (`/coach/tutoring`, kendi
+  öğrencileri); müdür aynı listeyi oturum ekranının Talepler sekmesinde görür.
+- **Bildirim `tutoring_request`:** yeni talep → öğretmene (hesabı varsa, rota
+  `/teacher`); karar → öğrenciye (`/student/study`).
+- `merge_teachers` oturumları da taşır (aksi hâlde silinen satırla giderdi).
+- **Açık:** talep kayıtları için saklama süresi yok (KVKK listesinde); geçmiş talepler
+  ekranda görünmüyor (yalnızca bugün ve sonrası); öğretmen gelen/gelmeyen işaretlemiyor.

@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:mentoria/core/constants/yks_dates.dart';
 import 'package:mentoria/features/student/data/daily_quotes.dart';
 import 'package:mentoria/features/student/presentation/home_cards.dart';
@@ -36,6 +38,28 @@ void main() {
       ]),
       3,
     );
+  });
+
+  testWidgets('geri sayım kartı genişlik 0 iken hata fırlatmaz', (
+    tester,
+  ) async {
+    // Web'de ilk karede kart bir an sıfır genişlikle çiziliyordu; arının
+    // konumu clamp(0, eksi) olunca "Invalid argument" atıyordu.
+    await initializeDateFormatting('tr');
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Center(
+          child: SizedBox(
+            width: 0,
+            child: YksCountdownCard(now: DateTime(2026, 11, 10, 12)),
+          ),
+        ),
+      ),
+    );
+    expect(tester.takeException(), isNull);
+    // Kartta sürekli dönen animasyon var; pumpAndSettle bitmez.
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(tester.takeException(), isNull);
   });
 
   test('günün saatine göre gökyüzü', () {

@@ -5,7 +5,8 @@ enum UserRole {
   admin('Kurum Müdürü'),
   coach('Koç'),
   student('Öğrenci'),
-  parent('Veli');
+  parent('Veli'),
+  teacher('Öğretmen');
 
   const UserRole(this.trLabel);
   final String trLabel;

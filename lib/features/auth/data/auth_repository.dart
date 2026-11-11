@@ -62,6 +62,9 @@ class AuthRepository {
     required String inviteCode,
     int? birthYear,
     String? studentNumber,
+
+    /// Öğretmen daveti: branşlar (sunucu teachers satırına yazar).
+    List<String>? teacherBranches,
     bool rankingConsent = false,
     bool guardianApproval = false,
     bool childRanking = false,
@@ -79,6 +82,7 @@ class AuthRepository {
         'privacy_version': legalVersion,
         'birth_year': ?birthYear,
         'student_number': ?studentNumber,
+        'teacher_branches': ?teacherBranches,
         'consents': {'ranking': rankingConsent},
         if (guardianApproval) 'guardian_approval': true,
         if (childRanking) 'child_ranking': true,

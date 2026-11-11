@@ -296,8 +296,12 @@ class InMemoryAdminRepository implements AdminRepository {
   Future<List<OrgMember>> fetchMembers() async => [..._members];
 
   String _add(UserRole role, int maxUses, [String? coachId]) {
-    final code =
-        '${role == UserRole.coach ? 'KOC' : 'OGR'}${1000 + _invites.length}';
+    final prefix = switch (role) {
+      UserRole.coach => 'KOC',
+      UserRole.teacher => 'OGT',
+      _ => 'OGR',
+    };
+    final code = '$prefix${1000 + _invites.length}';
     _invites.insert(
       0,
       OrgInvite(
@@ -315,6 +319,10 @@ class InMemoryAdminRepository implements AdminRepository {
   @override
   Future<String> createCoachInvite({int maxUses = 1}) async =>
       _add(UserRole.coach, maxUses);
+
+  @override
+  Future<String> createTeacherInvite({int maxUses = 1}) async =>
+      _add(UserRole.teacher, maxUses);
 
   @override
   Future<String> createStudentInvite({

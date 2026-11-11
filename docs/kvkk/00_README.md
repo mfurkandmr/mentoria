@@ -136,3 +136,9 @@
       sorulsun. Veri envanteri, çalışan aydınlatma metni ve saklama süresi eklenmeli.
 - [ ] Çek / senet (9 Kasım 2026, NOTLAR.md §80): keşideci / lehtar adı, öğrenci bağlantısı ve
       banka bilgisi tutuluyor. Mali kayıt saklama süresi ve envantere ekleme avukata sorulsun.
+- [ ] Öğretmen rolü (11 Kasım 2026, NOTLAR.md §86): öğretmen hesabı (ad, e-posta, branş)
+      yeni bir ilgili kişi grubu; aydınlatma metninde öğretmen yok. Öğretmen yalnızca kendi
+      programını ve talep eden öğrencinin adını + sınıfını görür.
+- [ ] Soru çözümü talepleri (11 Kasım 2026, NOTLAR.md §87): `tutoring_requests` öğrencinin
+      hangi gün hangi öğretmenden ne konuda destek istediğini, ret gerekçesini tutar; öğretmen,
+      koç ve müdür görür. Saklama süresi belirlenmedi (öneri: dönem sonu ya da 1 yıl).

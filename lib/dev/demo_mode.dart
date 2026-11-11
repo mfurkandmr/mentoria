@@ -59,9 +59,14 @@ import 'demo_staff.dart';
 import '../features/staff/data/staff_repository.dart';
 import '../features/client_errors/data/client_error_repository.dart';
 import 'demo_repositories.dart';
+import 'demo_teacher.dart';
+import 'demo_tutoring.dart';
+import '../features/tutoring/data/tutoring_repository.dart';
+import '../features/teacher/data/teacher_repository.dart';
 
 /// Demo modunda Supabase yerine kullanılan sahte veriler.
-/// `DEMO_ROLE` = `student` (varsayılan) | `coach` | `admin` | `parent`.
+/// `DEMO_ROLE` = `student` (varsayılan) | `coach` | `admin` | `parent` |
+/// `teacher`.
 /// [successRanking]: kurumda başarı sıralaması açık mı (testler için).
 Future<List<Override>> buildDemoOverrides([
   String? role,
@@ -97,6 +102,9 @@ Future<List<Override>> buildDemoOverrides([
 
   /// Testler kendi müdür kokpiti deposunu verebilir (yoksa demo verisi).
   CockpitRepository? cockpit,
+
+  /// Testler kendi soru çözümü deposunu verebilir (yoksa demo verisi).
+  TutoringRepository? tutoring,
 ]) async {
   role ??= Env.activeDemoRole;
   final exams = InMemoryExamRepository.demo();
@@ -151,11 +159,13 @@ Future<List<Override>> buildDemoOverrides([
       'coach' => 'demo-coach',
       'admin' => 'demo-admin',
       'parent' => 'demo-parent',
+      'teacher' => 'demo-teacher',
       _ => 'demo-student',
     },
     canView: switch (role) {
       'coach' => (s) => meetingCoaches[s] == 'demo-coach',
       'admin' => (_) => true,
+      'teacher' => (_) => false,
       _ => (s) => s == 'demo-student',
     },
     names: {
@@ -205,6 +215,11 @@ Future<List<Override>> buildDemoOverrides([
       id: 'demo-parent',
       fullName: 'Selin Yılmaz',
       role: UserRole.parent,
+    ),
+    'teacher' => const Profile(
+      id: 'demo-teacher',
+      fullName: 'Mehmet Arslan',
+      role: UserRole.teacher,
     ),
     _ => const Profile(
       id: 'demo-student',
@@ -305,6 +320,12 @@ Future<List<Override>> buildDemoOverrides([
         role: UserRole.parent,
         createdAt: now,
       ),
+      OrgMember(
+        id: 'demo-teacher',
+        fullName: 'Mehmet Arslan',
+        role: UserRole.teacher,
+        createdAt: now,
+      ),
     ],
     onReassign: coach.reassign,
   );
@@ -395,6 +416,25 @@ Future<List<Override>> buildDemoOverrides([
           ),
     ),
     timetableRepositoryProvider.overrideWithValue(timetable ?? demoTimetable),
+    teacherRepositoryProvider.overrideWithValue(
+      InMemoryTeacherRepository(
+        demoTimetable,
+        viewerId: profile.id,
+        orgName: 'Bal Akademi',
+      ),
+    ),
+    tutoringRepositoryProvider.overrideWithValue(
+      tutoring ??
+          InMemoryTutoringRepository.demo(
+            viewerId: profile.id,
+            viewerRole: role,
+            teacherNames: demoTimetable.teacherNames,
+            studentNames: {
+              for (final e in demoStudents().entries) e.key: e.value.$1,
+            },
+            coachOf: demoRichEnabled ? demoCoachOf() : const {},
+          ),
+    ),
     studentManagementRepositoryProvider.overrideWithValue(
       students ??
           InMemoryStudentManagementRepository(

@@ -30,7 +30,7 @@ class Env {
     defaultValue: 'student',
   );
 
-  static const _demoRoles = {'student', 'coach', 'admin', 'parent'};
+  static const _demoRoles = {'student', 'coach', 'admin', 'parent', 'teacher'};
 
   /// Demo modunda açılan rol. Web demosunda (`/demo`) rol adresten okunur:
   /// önce `?rol=coach`, yoksa yoldaki rol bölümü (`/demo/panel/coach/...`;

@@ -421,7 +421,12 @@ class _Journey extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  left: (c.maxWidth * v - 9).clamp(0.0, c.maxWidth - 18),
+                  // Kart bir an çok dar çizilirse (ilk kare, genişlik 0)
+                  // üst sınır eksiye düşmesin: clamp hata fırlatır.
+                  left: (c.maxWidth * v - 9).clamp(
+                    0.0,
+                    math.max(0.0, c.maxWidth - 18),
+                  ),
                   top: -5,
                   child: const Text('🐝', style: TextStyle(fontSize: 14)),
                 ),

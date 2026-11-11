@@ -1748,6 +1748,56 @@ const enStrings = <String, String>{
   'Örn. Cumartesi TYT denemesi': 'E.g. TYT mock exam on Saturday',
   'Duyuru metni': 'Announcement text',
 
+  'Lisans süresi doldu ({expiry}). Öğrenci, koç ve veliler giriş yapamıyor.':
+      'License expired ({expiry}). Students, coaches and parents can’t sign in.',
+  'Kurumunun lisans süresi doldu. Kurum yöneticinle iletişime geç.':
+      'Your school’s licence has expired. Contact your school administrator.',
+
+  // Öğretmen paneli (NOTLAR §86)
+  'Öğretmen davet et; kayıt olanlar listeye düşer':
+      'Invite teachers; those who sign up join the list',
+  'Öğretmen davet et': 'Invite teacher',
+  'Öğretmen bu kodla kayıt olunca öğretmen listene kendiliğinden eklenir.':
+      'When the teacher signs up with this code, they are added to your teacher list automatically.',
+  'En az bir branş seç.': 'Pick at least one subject.',
+  'Branşların': 'Your subjects',
+  'Öğretmen paneli hakkında': 'About the teacher panel',
+  'Ders programı ayarları': 'Timetable settings',
+  'Öğretmen davet koduyla kayıt olan öğretmen buraya kendiliğinden eklenir ve kendi panelinden programını görür. Elle eklediğin öğretmenlerin hesabı yoktur.':
+      'Teachers who sign up with a teacher invite code are added here automatically and see their timetable in their own panel. Teachers you added by hand have no account.',
+  'Henüz öğretmen yok. Davet kodu oluştur ve gönder.':
+      'No teachers yet. Create an invite code and send it.',
+  '{name} adında iki kayıt var: biri senin eklediğin, biri kendi kaydı. Aynı kişiyse birleştir; program ve ödeme kayıtları korunur.':
+      'There are two records named {name}: one you added and one from their own sign-up. If they are the same person, merge them; timetable and payment records are kept.',
+  'Birleştir': 'Merge',
+  '{n} öğretmen · {a} hesaplı': '{n} teachers · {a} with an account',
+  'Hesabı var': 'Has account',
+  'Hesap yok': 'No account',
+  'Kayıtlar birleştirilsin mi?': 'Merge the records?',
+  'Senin eklediğin kayıt öğretmenin hesabına bağlanır; kayıt olurken açılan ikinci satır silinir.':
+      'The record you added is linked to the teacher’s account; the second record created at sign-up is deleted.',
+  'Birleştirildi': 'Merged',
+  'İki kaydın aynı saatte dersi var. Önce programda birini taşı.':
+      'Both records have a lesson at the same time. Move one of them in the timetable first.',
+  'Birleştirilemedi. Tekrar dene.': 'Couldn’t merge. Please try again.',
+  'Öğretmen kaydın bulunamadı': 'Your teacher record wasn’t found',
+  'Kurumdaki öğretmen kaydın silinmiş olabilir. Kurum müdürüne ulaş.':
+      'Your teacher record at the school may have been deleted. Contact your school manager.',
+  'Merhaba, {name}': 'Hello, {name}',
+  'Bugünkü ders': 'Lessons today',
+  'Şimdi: {b} · {c}': 'Now: {b} · {c}',
+  'Sıradaki {t}: {b}': 'Next at {t}: {b}',
+  'Bugün dersin bitti ya da yok': 'No more lessons today',
+  'Haftalık programı açar': 'Opens the weekly timetable',
+  'Yayında program yok': 'No published timetable',
+  '{n} sınıf': '{n} classes',
+  'Kurum ders programını yayınlayınca derslerin burada görünür.':
+      'Your lessons appear here once the school publishes the timetable.',
+  'Bugün dersin yok.': 'No lessons today.',
+  'Branşlarım': 'My subjects',
+  'Branşını seç; ders programı buna göre hazırlanır.':
+      'Pick your subjects; the timetable is built from them.',
+  'Başka bir branş': 'Another subject',
   // SSS (üretildi: python tool/faq/make_faq.py; elle düzenleme)
   'Başlarken': 'Getting started',
   'Nasıl kayıt olurum?': 'How do I sign up?',
@@ -1852,10 +1902,6 @@ const enStrings = <String, String>{
   'Lisans ve koltuk sayısı ne demek?': 'What are the licence and seat count?',
   'Kurumunun kaç öğrenciye kadar ve hangi tarihe kadar kullanabileceğini belirler. Koltuklar dolduysa yeni öğrenci kayıt olamaz. Lisans süresi bitince öğrenci, koç ve veliler uygulamaya giremez; lisans uzatılınca erişim kendiliğinden geri gelir.':
       'They set how many students your school can have and until when. If seats are full, new students can’t sign up. When the licence expires, students, coaches and parents can’t use the app; access returns automatically once it is renewed.',
-  'Lisans süresi doldu ({expiry}). Öğrenci, koç ve veliler giriş yapamıyor.':
-      'License expired ({expiry}). Students, coaches and parents can’t sign in.',
-  'Kurumunun lisans süresi doldu. Kurum yöneticinle iletişime geç.':
-      'Your school’s licence has expired. Contact your school administrator.',
   'Öğrencinin koçunu değiştirebilir miyim?': 'Can I change a student’s coach?',
   'Evet. Öğrenciler listesinde öğrencinin seçeneklerinden "Koçunu değiştir"i kullan.':
       'Yes. Use "Change coach" in the student’s options on the Students list.',
@@ -1906,6 +1952,30 @@ const enStrings = <String, String>{
   'Koçla nasıl iletişime geçerim?': 'How do I contact the coach?',
   'Uygulamada mesajlaşma yoktur. Koçla dershane üzerinden iletişime geçebilirsin.':
       'There’s no messaging in the app. You can reach the coach through the school.',
+  'Kurum müdürünün verdiği öğretmen davet koduyla kayıt olursun. Kayıt olunca kurumun öğretmen listesine kendiliğinden eklenirsin; müdürün seni ayrıca yazmasına gerek kalmaz.':
+      'You sign up with the teacher invite code from your school manager. Once you sign up you’re added to the school’s teacher list automatically; the manager doesn’t need to enter you separately.',
+  'Branşımı nasıl değiştiririm?': 'How do I change my subjects?',
+  'Ana sayfadaki "Branşlarım" kartına dokun, derslerini seç ve kaydet. Ders programı bu branşlara göre hazırlanır.':
+      'Tap the "My subjects" card on your home screen, pick your subjects and save. The timetable is built from these subjects.',
+  'Program': 'Timetable',
+  'Ders programımı nereden görürüm?': 'Where do I see my timetable?',
+  'Kurum programı yayınlayınca ana sayfanda bugünkü derslerin ve haftalık programın görünür. Program yayınlanmadıysa boş görünür.':
+      'Once the school publishes the timetable, today’s lessons and your weekly timetable appear on your home screen. It stays empty until it’s published.',
+  'Müsait olmadığım saatleri nasıl bildiririm?':
+      'How do I tell the school when I’m not available?',
+  'Kurum müdürüne söyle; ders programı ayarlarında müsait olduğun saatleri girer. Program bu saatlere göre hazırlanır.':
+      'Tell your school manager; they enter your available hours in the timetable settings. The timetable is built around them.',
+  'Programdaki değişiklikleri nasıl görürüm?':
+      'How do I see changes to the timetable?',
+  'Ana sayfada ve haftalık programda her zaman yayındaki son hâli görünür. Ekranı aşağı çekerek yenileyebilirsin.':
+      'Your home screen and weekly timetable always show the latest published version. Pull down to refresh.',
+  'Öğrencilerin verilerini görebilir miyim?': 'Can I see students’ data?',
+  'Hayır. Öğretmen paneli yalnızca kendi derslerini gösterir; öğrenci takibini koçlar yapar.':
+      'No. The teacher panel only shows your own lessons; coaches follow students’ progress.',
+  'Birden fazla kurumda çalışıyorum, ne yapmalıyım?':
+      'I work at more than one school. What should I do?',
+  'Her kurum için ayrı hesap gerekir: her kurumun öğretmen davet koduyla farklı bir e-posta adresiyle kayıt olursun.':
+      'You need a separate account for each school: sign up with each school’s teacher invite code using a different email address.',
   'Uygulama': 'The app',
   'Bildirimler gelmiyor, ne yapmalıyım?':
       'I’m not getting notifications. What should I do?',
@@ -1928,6 +1998,89 @@ const enStrings = <String, String>{
       'Add a school from Profile > "School management" and edit its logo, colours and font. Users arriving through the school’s link see that look.',
   // SSS sonu
 
+  // Soru çözümü / birebir (NOTLAR §87)
+  'Soru çözümü': 'Question solving',
+  'Birebir ders': 'One-to-one lesson',
+  'Etüt': 'Study hall',
+  'Onay bekliyor': 'Awaiting approval',
+  'Onaylandı': 'Approved',
+  'Reddedildi': 'Rejected',
+  'Bu oturumun kontenjanı dolu.': 'This session is full.',
+  'Bu oturuma zaten talebin var.':
+      'You already have a request for this session.',
+  'Bir güne en çok 3 talep verebilirsin.':
+      'You can make at most 3 requests per day.',
+  'Bu oturum için talep süresi geçti.':
+      'It’s too late to request this session.',
+  'Öğretmenin bu saatte başka bir oturumu var.':
+      'The teacher has another session at this time.',
+  'Öğretmenin bu saatte programda dersi var.':
+      'The teacher has a timetabled lesson at this time.',
+  'Bu talep için zaten karar verilmiş.':
+      'This request has already been decided.',
+  'Konu: {t}': 'Topic: {t}',
+  'Gerekçe: {t}': 'Reason: {t}',
+  'Soru çözümü ve birebir': 'Question solving & one-to-one',
+  'Onaylı: {d} {t} · {b}': 'Approved: {d} {t} · {b}',
+  '{n} talebin onay bekliyor': '{n} of your requests are awaiting approval',
+  'Öğretmenlerden soru çözümü ya da birebir ders iste':
+      'Ask teachers for question solving or a one-to-one lesson',
+  'Talebin öğretmene gönderildi': 'Your request was sent to the teacher',
+  'Talep iptal edilsin mi?': 'Cancel the request?',
+  'Öğretmen bu saatte seni beklemeyecek.':
+      'The teacher won’t expect you at this time.',
+  'Talep iptal edildi': 'Request cancelled',
+  'Taleplerim': 'My requests',
+  'Açık oturum yok': 'No open sessions',
+  'Kurumun önümüzdeki günler için soru çözümü ya da birebir ders saati açmadı.':
+      'Your school hasn’t opened any question-solving or one-to-one hours for the coming days.',
+  'Açık oturumlar': 'Open sessions',
+  'Talebini öğretmen onaylar. Bir güne en çok 3 talep verebilirsin; koçun taleplerini görür.':
+      'The teacher approves your request. You can make at most 3 requests a day; your coach sees your requests.',
+  'Dolu': 'Full',
+  '{t}/{c} dolu': '{t}/{c} taken',
+  'Konu ya da soru (isteğe bağlı)': 'Topic or question (optional)',
+  'Bekleyen talep yok': 'No pending requests',
+  '{n} talep onayını bekliyor': '{n} requests awaiting your approval',
+  'Onayla': 'Approve',
+  'Yaklaşan onaylılar': 'Upcoming approved',
+  'Haftalık oturumlarım': 'My weekly sessions',
+  'Talep onaylandı': 'Request approved',
+  'Talep reddedildi': 'Request rejected',
+  'Talep reddedilsin mi?': 'Reject the request?',
+  'Gerekçe (isteğe bağlı, öğrenciye gider)':
+      'Reason (optional, sent to the student)',
+  'Talepler': 'Requests',
+  'Oturum ekle': 'Add session',
+  'Soru çözümü talepleri': 'Question-solving requests',
+  'Haftalık saatler her hafta tekrarlanır. Öğrenci önümüzdeki 14 gün için talep eder, öğretmen onaylar. Öğretmenin programda dersi olan saate oturum açılamaz.':
+      'Weekly hours repeat every week. Students request for the next 14 days and the teacher approves. You can’t open a session when the teacher has a timetabled lesson.',
+  'Henüz oturum yok. Öğretmenlere soru çözümü ya da birebir ders saati aç.':
+      'No sessions yet. Open question-solving or one-to-one hours for teachers.',
+  '{n} kişilik': 'for {n}',
+  'Kapalı': 'Closed',
+  'Bu saate gelmiş bütün talepler de silinir.':
+      'All requests for this slot are deleted too.',
+  'Önümüzdeki 14 günün talepleri. Onayı öğretmen verir; buradan yalnızca izlenir.':
+      'Requests for the next 14 days. The teacher approves them; here you can only follow them.',
+  'Talep yok.': 'No requests.',
+  'Öğretmeni seç.': 'Pick the teacher.',
+  'Bitiş saati başlangıçtan sonra olmalı.':
+      'The end time must be after the start time.',
+  'Oturumu düzenle': 'Edit session',
+  'Başlangıç {t}': 'Start {t}',
+  'Bitiş {t}': 'End {t}',
+  'Kontenjan (kişi)': 'Capacity (people)',
+  'Ders (boşsa öğretmenin branşı)': 'Subject (blank: the teacher’s subject)',
+  'Talebe açık': 'Open for requests',
+  'Talebin onaylandı': 'Your request was approved',
+  'Talebin onaylanmadı': 'Your request wasn’t approved',
+  '{name} soru çözümü istedi': '{name} asked for question solving',
+  'Onayını bekliyor': 'Awaiting your approval',
+  'Öğrencilerinin öğretmenlerden istediği saatler':
+      'Hours your students requested from teachers',
+  'Öğretmenlere saat aç; talepleri izle':
+      'Open hours for teachers; follow requests',
   // Bildirim kanalı
   'Mentoria bildirimleri': 'Mentoria notifications',
   'Ödev, görüşme, mesaj ve deneme bildirimleri':
@@ -3873,8 +4026,8 @@ const enStrings = <String, String>{
       'The optic output lines could not be read.',
   'Optik okuyucunun verdiği dosyayı seç: Excel, CSV ya da makinenin sabit sütunlu .txt çıktısı. Her satır bir öğrenci.':
       'Pick the optic reader\'s file: Excel, CSV or the machine\'s fixed-width .txt output. One student per row.',
-  'Sınav türü anlaşılmadı: "{d}". Şimdilik yalnızca TYT dosyadan kurulur.':
-      'Exam type not recognised: "{d}". Only TYT can be created from files for now.',
+  'Sınav türü anlaşılmadı: "{d}". Sınav adında TYT, AYT ya da YDT geçmeli.':
+      'Exam type not recognised: "{d}". The exam name must contain TYT, AYT or YDT.',
   'Bölüm listesi ders sırasıyla uyuşmuyor: {d}':
       'The section list does not match the subject order: {d}',
   'Cevap anahtarı soru sayısını tutmuyor: {d}':

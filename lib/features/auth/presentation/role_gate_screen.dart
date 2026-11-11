@@ -21,6 +21,7 @@ class RoleGateScreen extends ConsumerWidget {
     UserRole.coach => '/coach',
     UserRole.parent => '/parent',
     UserRole.admin => '/admin',
+    UserRole.teacher => '/teacher',
   };
 
   @override

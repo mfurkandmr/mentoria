@@ -19,6 +19,7 @@ import '../data/profile.dart';
 import 'auth_error.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../core/design/motion.dart';
+import '../../schedule_generator/domain/models.dart' show commonBranches;
 
 /// Üç adımlı kayıt: davet kodu doğrulanır, hesap bilgileri alınır, sonra
 /// e-postaya giden doğrulama koduyla adresin gerçekten kullanıcıya ait olduğu
@@ -52,6 +53,9 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
   bool _guardian = false;
   bool _childRanking = false;
   bool _loading = false;
+
+  /// Öğretmen davetinde seçilen branşlar.
+  final _branches = <String>{};
 
   /// Doğrulama kodunun gönderildiği adres; doluysa kod adımındayız.
   String? _codeSentTo;
@@ -171,6 +175,10 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
       _showError(tr('Doğum yılını seç.'));
       return;
     }
+    if (invite?.role == UserRole.teacher && _branches.isEmpty) {
+      _showError(tr('En az bir branş seç.'));
+      return;
+    }
     if (!_kvkk) {
       _showError(tr('Devam etmek için Aydınlatma Metni\'ni okuduğunu onayla.'));
       return;
@@ -201,6 +209,9 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
             birthYear: invite?.role == UserRole.student ? _birthYear : null,
             studentNumber: invite?.role == UserRole.student
                 ? _number.text.trim()
+                : null,
+            teacherBranches: invite?.role == UserRole.teacher
+                ? _branches.toList()
                 : null,
             rankingConsent: invite?.role == UserRole.student && _ranking,
             guardianApproval: guardianNeeded && _guardian,
@@ -476,6 +487,31 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
                                 RegExp(r'^\d{1,20}$').hasMatch(v?.trim() ?? '')
                                 ? null
                                 : tr('Öğrenci numaranı gir'),
+                          ),
+                        ],
+                        if (invite.role == UserRole.teacher) ...[
+                          const SizedBox(height: 14),
+                          Text(
+                            tr('Branşların'),
+                            style: Theme.of(context).textTheme.labelLarge,
+                          ),
+                          const SizedBox(height: 6),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 6,
+                            children: [
+                              for (final b in commonBranches)
+                                FilterChip(
+                                  key: ValueKey('signup-branch-$b'),
+                                  label: Text(b),
+                                  selected: _branches.contains(b),
+                                  onSelected: (on) => setState(
+                                    () => on && _branches.length < 8
+                                        ? _branches.add(b)
+                                        : _branches.remove(b),
+                                  ),
+                                ),
+                            ],
                           ),
                         ],
                         const SizedBox(height: 12),
