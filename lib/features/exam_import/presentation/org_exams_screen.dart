@@ -1352,7 +1352,7 @@ ToolInfo orgExamsTool(WidgetRef ref, String basePath) {
     title: tr('Kurum sınavları'),
     status: drafts > 0
         ? tr('{n} sınavın sonuçları yayın bekliyor', {'n': drafts})
-        : tr('Cevap anahtarı, kazanım ve optik çıktısını yükle'),
+        : tr('Kazanım tablosunu ve optik çıktısını yükle'),
     needsAction: drafts > 0,
     open: (context) => context.push('$basePath/org-exams'),
   );

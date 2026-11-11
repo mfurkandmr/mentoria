@@ -160,4 +160,81 @@ void main() {
       ),
     );
   });
+
+  group('cevap anahtarı dosyası olmadan (cevaplar kazanım tablosunda)', () {
+    test('tablodan kurulan anahtar dosyadakiyle aynı', () {
+      final fromTable = answerKeyFromTable(
+        table,
+        name: key.name,
+        takenOn: key.takenOn,
+      )!;
+      expect(fromTable.booklets['A'], key.booklets['A']);
+      expect(fromTable.booklets['B'], key.booklets['B']);
+      expect(outcomeTableHasAnswers(table), isTrue);
+    });
+
+    test('sınav ve puanlar dosyalı kurulumla aynı', () {
+      final p2 = buildExamPackage(
+        answerKeyFromTable(
+          table,
+          name: 'TYT 7',
+          takenOn: DateTime(2026, 11, 8),
+        )!,
+        table,
+      );
+      expect(p2.exam.examType, exam.examType);
+      expect(p2.exam.keyGaps.isComplete, isTrue);
+      expect(
+        [
+          for (final q in p2.exam.questions)
+            (q.subject, q.number, q.correct, q.outcome),
+        ],
+        [
+          for (final q in exam.questions)
+            (q.subject, q.number, q.correct, q.outcome),
+        ],
+      );
+      expect(p2.bookletOrders, package.bookletOrders);
+      final a = opticRowsFor(lines, exam, package.bookletOrders).rows;
+      final b = opticRowsFor(lines, p2.exam, p2.bookletOrders).rows;
+      expect(b.length, a.length);
+      for (var i = 0; i < a.length; i++) {
+        expect(b[i], a[i]);
+      }
+    });
+
+    test('ad yoksa tür soru sayısından çıkar', () {
+      final k = answerKeyFromTable(table, name: 'Kasım denemesi')!;
+      expect(buildExamPackage(k, table).exam.examType.name, 'tyt');
+    });
+
+    test('bir sorunun cevabı eksikse anahtar kurulmaz', () {
+      final missing = [
+        for (final r in table)
+          r.number == 50 ? OutcomeTableRow(number: 50, outcome: r.outcome) : r,
+      ];
+      expect(answerKeyFromTable(missing, name: 'x'), isNull);
+      expect(outcomeTableHasAnswers(missing), isFalse);
+    });
+
+    test('iptal edilen soru "-" ile yazılır', () {
+      final cancelled = [
+        for (final r in table)
+          r.number == 7
+              ? OutcomeTableRow(
+                  number: 7,
+                  outcome: r.outcome,
+                  answer: '-',
+                  bookletBNumber: r.bookletBNumber,
+                )
+              : r,
+      ];
+      final p3 = buildExamPackage(
+        answerKeyFromTable(cancelled, name: 'TYT 7')!,
+        cancelled,
+      );
+      final q = p3.exam.question('TYT_TUR', 7)!;
+      expect((q.cancelled, q.correct), (true, null));
+    });
+  });
 }

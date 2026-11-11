@@ -202,6 +202,61 @@ List<OutcomeTableRow> parseOutcomeTable(List<List<String>> rows) {
   ];
 }
 
+/// Kazanım tablosunda iptal edilen soru böyle yazılabilir (cevap boş değil).
+const _cancelMarks = {'-', 'X', 'IPTAL', 'İPTAL'};
+
+/// Kazanım tablosu her sorunun A cevabını (ve B kitapçığındaki yerini)
+/// içeriyorsa cevap anahtarı dosyasına gerek yoktur: anahtar tablodan kurulur.
+/// Numaralar 1'den kesintisiz gitmeli ve her satırda cevap (A-E ya da iptal
+/// için "-") olmalı; değilse null. B anahtarı, her satırda B yeri varsa
+/// kurulur. Sınav türü soru sayısından (120 / 160 / 80) ya da addan çıkar.
+ParsedAnswerKey? answerKeyFromTable(
+  List<OutcomeTableRow> table, {
+  required String name,
+  DateTime? takenOn,
+}) {
+  if (table.isEmpty) return null;
+  final byNumber = {for (final r in table) r.number: r};
+  final total = byNumber.length;
+  if (byNumber.keys.any((n) => n < 1 || n > total)) return null;
+  final a = StringBuffer();
+  for (var g = 1; g <= total; g++) {
+    final mark = byNumber[g]!.answer?.trim().toUpperCase();
+    if (mark == null || mark.isEmpty) return null;
+    if (mark.length == 1 && 'ABCDE'.contains(mark)) {
+      a.write(mark);
+    } else if (_cancelMarks.contains(mark)) {
+      a.write(' ');
+    } else {
+      return null;
+    }
+  }
+  final keyA = a.toString();
+  final booklets = {'A': keyA};
+  final positions = [
+    for (var g = 1; g <= total; g++) byNumber[g]!.bookletBNumber,
+  ];
+  if (positions.every((p) => p != null)) {
+    final b = List.filled(total, ' ');
+    for (var g = 1; g <= total; g++) {
+      final p = positions[g - 1]!;
+      // Geçersiz / tekrarlı yerleri buildExamPackage bildirir (bookletMap).
+      if (p >= 1 && p <= total) b[p - 1] = keyA[g - 1];
+    }
+    booklets['B'] = b.join();
+  }
+  return ParsedAnswerKey(
+    name: name,
+    takenOn: takenOn,
+    sections: const [],
+    booklets: booklets,
+  );
+}
+
+/// Kazanım tablosunda her sorunun cevabı var mı (anahtar dosyası gerekmez).
+bool outcomeTableHasAnswers(List<OutcomeTableRow> table) =>
+    answerKeyFromTable(table, name: '') != null;
+
 /// Pakete göre kurulan sınav ve kitapçıkların fiziksel sırası.
 class ExamPackage {
   const ExamPackage({required this.exam, required this.bookletOrders});
@@ -317,6 +372,7 @@ ExamPackage buildExamPackage(
   final conflicts = [
     for (final r in table)
       if (r.answer != null &&
+          !_cancelMarks.contains(r.answer) &&
           r.number >= 1 &&
           r.number <= layout.total &&
           r.answer != keyA[r.number - 1])
