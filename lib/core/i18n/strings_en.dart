@@ -4148,4 +4148,10 @@ const enStrings = <String, String>{
       'Grade saved as {grade}. Topics are listed accordingly.',
   'Bu sınıf için konu listesi henüz eklenmedi.':
       'No topics have been added for this grade yet.',
+  'Kaynak takibi': 'Resource tracking',
+  'Hangi kitaptan hangi konu bitti, tabloda işaretle.':
+      'Tick which topic is finished in which book.',
+  'Bu bölümde kitabın yok': 'No books in this section',
+  'Kitap eklediğinde konuları burada kitap kitap işaretleyebilirsin.':
+      'Once you add a book, you can tick off its topics here.',
 };

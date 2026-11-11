@@ -3180,3 +3180,23 @@ Konu listeleri buna göre süzülür.
   yeni ünitelerine göre bir öğretmenle gözden geçirilmeli. Deneme, YKS sayacı,
   hedef ve net hesabı sınıfa göre değişmiyor. Yeni öğretim yılında sınıflar kendi
   kendine artmıyor.
+
+## 92. Kaynak takibi: kitap × konu işaretleri (12 Kasım 2026)
+
+Rakip uygulamadaki "Kaynak Takibi" tablosunun karşılığı. Kitaplarım ekranındaki
+"Kaynak takibi" kartından açılır (öğrenci, koç / müdürün öğrenci sayfasındaki
+Kitaplar sekmesi, veli).
+
+- **Ekran:** ders başına bir tablo; satırlar konular, sütunlar öğrencinin o
+  dersteki kitapları (karma kitap her derste), hücre işaret kutusu. Başlıkta
+  "biten / toplam". Kitabı olmayan ders gösterilmez; bırakılan kitap sütun
+  olmaz. 12 / mezunda TYT / AYT sekmesi, 9-11'de yalnızca o sınıfın konuları
+  (§91). `resource_tracking_screen.dart`.
+- **Sunucu:** `book_topic_marks (student_book_id, topic_id)`; satır varsa
+  bitti. Okuma: öğrenciyi görebilen herkes. Yazma yalnızca
+  `set_book_topic_mark(kitap, konu, bitti)`: öğrenci kendisi ya da koçu /
+  müdürü; veli işaretleyemez. Konu kitabın dersinden olmalı (`BAD_TOPIC`).
+  Migration `20261112100000_book_topic_marks` (rollback'i var).
+- **Açık:** işaret, Konular ekranındaki konu durumunu (`topic_progress`)
+  değiştirmez; ikisi ayrı. Koç için sınıf / kurum geneli kaynak takibi raporu
+  yok. Tablo dönemlik: yeni dönemde kitap yeniden eklenince işaretler boş başlar.

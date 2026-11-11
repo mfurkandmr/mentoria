@@ -395,6 +395,13 @@ abstract interface class BooksRepository {
   Future<Map<String, BookUsage>> usage({String? classroomId});
   Future<List<TopicGap>> topicGaps(String studentId);
 
+  /// Kaynak takibi: öğrencinin kitaplarında bitti işaretli konular
+  /// (öğrenci kitabı kimliği, konu kimliği). NOTLAR §92.
+  Future<Set<(String, int)>> fetchTopicMarks(String studentId);
+
+  /// Öğrenci kendisi ya da koçu / müdürü işaretler (`set_book_topic_mark`).
+  Future<void> setTopicMark(String studentBookId, int topicId, bool done);
+
   /// Hangi öğrenci hangi kitaptan kaç soru çözdü (koç: kendi öğrencileri,
   /// müdür: kurum). [term] boşsa bu dönem.
   Future<List<BookReportRow>> questionReport({String? term});
@@ -532,6 +539,29 @@ class SupabaseBooksRepository implements BooksRepository {
     );
     return (r['inserted'] as int? ?? 0, r['skipped'] as int? ?? 0);
   }
+
+  @override
+  Future<Set<(String, int)>> fetchTopicMarks(String studentId) async {
+    final rows = await _client
+        .from('book_topic_marks')
+        .select('student_book_id, topic_id')
+        .eq('student_id', studentId);
+    return {
+      for (final r in rows)
+        (r['student_book_id'] as String, (r['topic_id'] as num).toInt()),
+    };
+  }
+
+  @override
+  Future<void> setTopicMark(String studentBookId, int topicId, bool done) =>
+      _client.rpc(
+        'set_book_topic_mark',
+        params: {
+          'p_student_book': studentBookId,
+          'p_topic': topicId,
+          'p_done': done,
+        },
+      );
 
   @override
   Future<BooksOverview> overview(String studentId, {String? term}) async {
@@ -697,6 +727,12 @@ final bookPoolProvider = FutureProvider<List<Book>>(
 final booksOverviewProvider =
     FutureProvider.family<BooksOverview, (String, String?)>(
       (ref, k) => ref.watch(booksRepositoryProvider).overview(k.$1, term: k.$2),
+    );
+
+/// Kaynak takibi işaretleri (öğrenci kitabı, konu).
+final bookTopicMarksProvider =
+    FutureProvider.family<Set<(String, int)>, String>(
+      (ref, id) => ref.watch(booksRepositoryProvider).fetchTopicMarks(id),
     );
 
 final bookProgressProvider = FutureProvider.family<List<BookProgress>, String>(
