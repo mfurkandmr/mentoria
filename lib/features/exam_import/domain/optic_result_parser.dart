@@ -340,64 +340,117 @@ class OpticResultParser {
     final cls = find((h) => has(h, ['sinif', 'sube']));
     final booklet = find((h) => has(h, ['kitapcik', 'kitap', 'grup']));
 
+    // Uzun adlar kelime başında, üç harfli kısaltmalar tam kelime olarak
+    // (sonunda rakam olabilir: "SOS1") aranır; "Kimlik No" Kimya sayılmaz.
     const keywords = <String, List<String>>{
-      'TUR': ['turkce', 'tur'],
+      'TUR': ['turkce', 'turk', 'tur'],
       'MAT': ['matematik', 'mat'],
       'FEN': ['fen'],
       'SOS': ['sosyal', 'sos'],
       'FIZ': ['fizik', 'fiz'],
       'KIM': ['kimya', 'kim'],
       'BIY': ['biyoloji', 'biy'],
-      'EDB': ['edebiyat', 'edb'],
+      'EDB': ['edebiyat', 'edb', 'tde'],
       'TAR': ['tarih', 'tar'],
       'COG': ['cografya', 'cog'],
       'FEL': ['felsefe', 'fel'],
       'DIN': ['din'],
-      'YD': ['ingilizce', 'yabanci', 'dil', 'ydt'],
+      'YD': ['ingilizce', 'yabanci', 'dil', 'ydt', 'ing'],
     };
-    List<String> groupOf(String key) => switch (key) {
-      'FEN' => [
+    const groups = {'FEN', 'SOS'};
+
+    /// [digit]: başlıktaki test numarası ("Tarih-2", "Sosyal 1"); yalnızca
+    /// numaralı dersi olan sınavda (AYT) ayırt eder.
+    List<String> groupOf(String key, String? digit) {
+      bool ends(String s, List<String> xs) => xs.any((x) => s.endsWith('_$x'));
+      final all = [
         for (final s in subjects)
-          if (const ['FIZ', 'KIM', 'BIY'].any((x) => s.endsWith('_$x'))) s,
-      ],
-      'SOS' => [
-        for (final s in subjects)
-          if (const [
-            'TAR',
-            'COG',
-            'FEL',
-            'DIN',
-            'TAR1',
-            'COG1',
-            'TAR2',
-            'COG2',
-            'FELG',
-          ].any((x) => s.endsWith('_$x')))
+          if (switch (key) {
+            'FEN' => ends(s, const ['FIZ', 'KIM', 'BIY']),
+            'SOS' => ends(s, const [
+              'TAR',
+              'COG',
+              'FEL',
+              'DIN',
+              'TAR1',
+              'COG1',
+              'TAR2',
+              'COG2',
+              'FELG',
+            ]),
+            _ => s.split('_').last.startsWith(key),
+          })
             s,
-      ],
-      _ => [
-        for (final s in subjects)
-          if (s.split('_').last.startsWith(key)) s,
-      ],
-    };
+      ];
+      if (digit == null || !all.any((s) => RegExp(r'\d$').hasMatch(s))) {
+        return all;
+      }
+      // AYT: Sosyal-1 = Tarih-1 + Coğrafya-1; Sosyal-2 = geri kalanı.
+      if (key == 'SOS') {
+        return [
+          for (final s in all)
+            if (s.endsWith('1') == (digit == '1')) s,
+        ];
+      }
+      final narrowed = [
+        for (final s in all)
+          if (s.endsWith(digit)) s,
+      ];
+      return narrowed.isEmpty ? all : narrowed;
+    }
 
     final used = <String>{number, ?name, ?cls, ?booklet};
     final columns = <AnswerColumn>[];
     final taken = <String>{};
+    int? social1;
     for (final h in headers) {
       if (used.contains(h)) continue;
       final f = foldTr(h).replaceAll(RegExp(r'[^a-z0-9]'), ' ');
+      // Başlıkta geçen dersler, geçtikleri sırayla ("Edebiyat-Sosyal 1").
+      final hits = <(int, String)>[];
       for (final e in keywords.entries) {
-        if (!e.value.any((w) => RegExp('(^| )$w').hasMatch(f))) continue;
-        final group = [
-          for (final s in groupOf(e.key))
-            if (!taken.contains(s)) s,
-        ];
-        if (group.isEmpty) continue;
-        columns.add(AnswerColumn(column: h, subjects: group));
-        taken.addAll(group);
-        break;
+        int? at;
+        for (final w in e.value) {
+          final m = RegExp(
+            w.length <= 3 ? '(^| )$w[0-9]*( |\$)' : '(^| )$w',
+          ).firstMatch(f);
+          if (m != null && (at == null || m.start < at)) at = m.start;
+        }
+        if (at != null) hits.add((at, e.key));
       }
+      hits.sort((a, b) => a.$1 - b.$1);
+      final group = <String>[];
+      for (final (i, hit) in hits.indexed) {
+        final end = i + 1 < hits.length ? hits[i + 1].$1 : f.length;
+        final digit = RegExp(
+          r'(?<![0-9])[12](?![0-9])',
+        ).firstMatch(f.substring(hit.$1, end))?.group(0);
+        final found = [
+          for (final s in groupOf(hit.$2, digit))
+            if (!taken.contains(s) && !group.contains(s)) s,
+        ];
+        // Tek ders başlığı tek derse gider ("Tarih" → önce Tarih-1).
+        group.addAll(groups.contains(hit.$2) ? found : found.take(1));
+        if (hit.$2 == 'SOS' && digit == '1' && found.isNotEmpty) {
+          social1 = columns.length;
+        }
+      }
+      if (group.isEmpty) continue;
+      columns.add(AnswerColumn(column: h, subjects: group));
+      taken.addAll(group);
+    }
+    // AYT'nin ilk testi Türk Dili ve Edebiyatı-Sosyal Bilimler-1'dir: yalnızca
+    // "Sosyal 1" yazan sütunun başında Edebiyat vardır.
+    final literature = [
+      for (final s in subjects)
+        if (s.endsWith('_EDB') && !taken.contains(s)) s,
+    ];
+    if (social1 != null && literature.isNotEmpty) {
+      final c = columns[social1];
+      columns[social1] = AnswerColumn(
+        column: c.column,
+        subjects: [...literature, ...c.subjects],
+      );
     }
     return ImportTemplate(
       studentNo: number,

@@ -17,7 +17,7 @@ class ExamPackageException implements Exception {
 }
 
 enum ExamPackageProblemKind {
-  /// Sınav türü anlaşılmadı ya da desteklenmiyor (şimdilik TYT).
+  /// Sınav türü (TYT / AYT / YDT) addan da anahtar uzunluğundan da çıkmadı.
   unsupportedType,
 
   /// Anahtarda bölüm listesi ders sınırlarıyla uyuşmuyor.
@@ -233,6 +233,35 @@ class _Layout {
   late final int total;
 }
 
+/// Sınavın dersleri kitapçıktaki sırayla (sabit sütunlu optik çıktısı bu
+/// sırayla gelir; sınavdaki ders sırası farklı olabilir).
+List<ExamSubjectDef> subjectsInBookletOrder(ExamDefinition exam) {
+  final order = [for (final s in bookletSubjects(exam.examType)) s.code];
+  int rank(String code) {
+    final i = order.indexOf(code);
+    return i < 0 ? order.length : i;
+  }
+
+  return [...exam.subjects]..sort((a, b) => rank(a.code) - rank(b.code));
+}
+
+/// Sınav türü: adında TYT / AYT / YDT geçiyorsa o; yoksa anahtar uzunluğundan
+/// (120 / 160 / 80 soru).
+ExamType? examTypeOfKey(ParsedAnswerKey key) {
+  final named = RegExp(
+    r'(^|[^A-Z])(TYT|AYT|YDT)([^A-Z]|$)',
+  ).firstMatch(_ascii(key.name).toUpperCase())?.group(2);
+  if (named != null) return ExamType.fromDb(named);
+  final length = key.booklets['A']?.length;
+  for (final t in ExamType.values) {
+    final total = bookletSubjects(
+      t,
+    ).fold<int>(0, (s, x) => s + x.questionCount);
+    if (total == length) return t;
+  }
+  return null;
+}
+
 /// Anahtar ve kazanım tablosundan sınav kurar; çelişki varsa hepsini birden
 /// [ExamPackageException] ile bildirir.
 ExamPackage buildExamPackage(
@@ -240,13 +269,15 @@ ExamPackage buildExamPackage(
   List<OutcomeTableRow> table, {
   DateTime? fallbackDate,
 }) {
-  final type = RegExp(r'\b(TYT|AYT|YDT)\b').firstMatch(key.name)?.group(1);
-  if (type != 'TYT') {
+  final type = examTypeOfKey(key);
+  if (type == null) {
     throw ExamPackageException([
       ExamPackageProblem(ExamPackageProblemKind.unsupportedType, key.name),
     ]);
   }
-  final layout = _Layout(subjectsFor(ExamType.tyt));
+  // AYT'de dersler kitapçık sırasıyla (Edebiyat-Sosyal-1, Sosyal-2, Matematik,
+  // Fen): genel soru numarası ve optik çıktısı bu sırayı izler.
+  final layout = _Layout(bookletSubjects(type));
   final problems = <ExamPackageProblem>[];
 
   // Her ders tek bir bölümün içinde kalmalı.
@@ -359,7 +390,7 @@ ExamPackage buildExamPackage(
   return ExamPackage(
     exam: ExamDefinition(
       name: key.name,
-      examType: ExamType.tyt,
+      examType: type,
       takenOn: key.takenOn ?? fallbackDate ?? DateTime.now(),
       subjects: [
         for (final s in layout.subjects)
@@ -399,7 +430,7 @@ Map<String, List<int>> bookletOrdersFromTable(
   List<OutcomeTableRow> table,
 ) {
   final layout = _Layout([
-    for (final s in exam.subjects) subjectByCode(s.code),
+    for (final s in subjectsInBookletOrder(exam)) subjectByCode(s.code),
   ]);
   final byNumber = {for (final r in table) r.number: r.bookletBNumber};
   final positions = [for (var g = 1; g <= layout.total; g++) byNumber[g]];
@@ -518,7 +549,7 @@ String _ordered(String answers, List<int>? order) =>
 Map<String, List<String?>> _bySubject(String ordered, ExamDefinition exam) {
   final out = <String, List<String?>>{};
   var i = 0;
-  for (final s in exam.subjects) {
+  for (final s in subjectsInBookletOrder(exam)) {
     out[s.code] = [
       for (var k = 0; k < s.questionCount; k++)
         'ABCDE'.contains(ordered[i + k]) && ordered[i + k] != ' '
@@ -610,7 +641,7 @@ OpticImportRows opticRowsFor(
       columns: [
         AnswerColumn(
           column: answers,
-          subjects: [for (final s in exam.subjects) s.code],
+          subjects: [for (final s in subjectsInBookletOrder(exam)) s.code],
         ),
       ],
     ),

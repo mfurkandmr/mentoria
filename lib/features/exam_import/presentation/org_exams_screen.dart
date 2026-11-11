@@ -181,9 +181,9 @@ class _OrgExamScreenState extends ConsumerState<OrgExamScreen> {
   }
 
   static List<ExamSubjectDef> _defaultSubjects(ExamType t) => [
-    for (final s in examSubjects)
-      if (s.examType == t)
-        ExamSubjectDef(code: s.code, questionCount: s.questionCount),
+    // Kitapçık sırası: AYT'de Edebiyat-Sosyal-1, Sosyal-2, Matematik, Fen.
+    for (final s in bookletSubjects(t))
+      ExamSubjectDef(code: s.code, questionCount: s.questionCount),
   ];
 
   void _update(ExamDefinition e) => setState(() {

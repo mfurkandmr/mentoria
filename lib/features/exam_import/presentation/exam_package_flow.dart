@@ -17,7 +17,7 @@ import '../../../core/design/motion.dart';
 /// Paket hatası → kullanıcı metni.
 String examPackageProblemText(ExamPackageProblem p) => switch (p.kind) {
   ExamPackageProblemKind.unsupportedType => tr(
-    'Sınav türü anlaşılmadı: "{d}". Şimdilik yalnızca TYT dosyadan kurulur.',
+    'Sınav türü anlaşılmadı: "{d}". Sınav adında TYT, AYT ya da YDT geçmeli.',
     {'d': p.detail},
   ),
   ExamPackageProblemKind.sections => tr(

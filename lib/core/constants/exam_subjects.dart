@@ -130,6 +130,27 @@ List<ExamSubject> subjectsFor(ExamType type, [FieldType? field]) {
   }
 }
 
+/// AYT kitapçığındaki test sırası: Türk Dili ve Edebiyatı-Sosyal Bilimler-1,
+/// Sosyal Bilimler-2, Matematik, Fen Bilimleri (`examSubjects` sırası değil).
+const _aytBookletOrder = [
+  'AYT_EDB',
+  'AYT_TAR1',
+  'AYT_COG1',
+  'AYT_TAR2',
+  'AYT_COG2',
+  'AYT_FELG',
+  'AYT_DIN',
+  'AYT_MAT',
+  'AYT_FIZ',
+  'AYT_KIM',
+  'AYT_BIY',
+];
+
+/// Sınav türünün bütün dersleri, kitapçıktaki (optik formdaki) sırayla.
+List<ExamSubject> bookletSubjects(ExamType type) => type == ExamType.ayt
+    ? _aytBookletOrder.map(subjectByCode).toList()
+    : examSubjects.where((s) => s.examType == type).toList();
+
 /// AYT'de seçilebilen alanlar.
 const aytFields = [FieldType.say, FieldType.ea, FieldType.soz];
 
