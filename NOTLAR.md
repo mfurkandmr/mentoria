@@ -3220,3 +3220,16 @@ WhatsApp numarasından bilgi mesajı gider.
   "gelmedi" veliye mesaj gönderir ve geri alınamaz. Yalnızca öğrencinin koçu
   işaretler (müdür işaretleyemez). Planlanmış görüşmesi olmayan öğrenci için
   işaret yok: önce görüşme eklenmeli.
+
+## 94. Deneme kartı: Detaylar ve Konu analizi düğmeleri (12 Kasım 2026)
+
+Denemeler listesinde her deneme artık rakip uygulamadaki gibi bir kart
+(`_ExamTile`, `exams_screen.dart`): tür etiketi, ad, toplam net, tarih ve
+kurum sıralaması (kurum sınavında), toplam doğru / yanlış / boş ve iki düğme.
+
+- **Detaylar:** derslere göre net, D / Y / B tablosu kartın içinde açılır.
+- **Konu analizi:** kurum sınavında karnenin "Konu analizi" sekmesi
+  (`ReportCardScreen`, sekme 1). Elle girilen denemede konu verisi olmadığı
+  için düğme nedenini söyleyen bir bildirim gösterir.
+- Kart başlığına dokununca eski ayrıntı sayfası açılır (yanlışlar, silme).
+- Sunucu değişikliği yok.

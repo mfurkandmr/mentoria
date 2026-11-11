@@ -4163,4 +4163,10 @@ const enStrings = <String, String>{
       'No parent phone on file, so no message was sent.',
   'Görüşme saati gelince "yapıldı" ya da "gelmedi" olarak işaretleyebilirsin.':
       'Once the meeting time arrives you can mark it "held" or "absent".',
+  'Sıralama {n}': 'Rank {n}',
+  'Detayları gizle': 'Hide details',
+  'Detaylar': 'Details',
+  'Derslere göre netler': 'Nets by subject',
+  'Konu analizi yalnızca optikten okunan kurum sınavlarında var; bu deneme elle girildi.':
+      'Topic analysis is only available for scanned institution exams; this one was entered by hand.',
 };

@@ -146,6 +146,32 @@ void main() {
     expect(saved.single.results.first.blank, 2);
     expect(find.text('Türkiye Geneli 1'), findsOneWidget);
     expect(find.text('47 net'), findsOneWidget);
+
+    // Kartta iki düğme: Detaylar ders ders netleri kartın içinde açar.
+    expect(find.text('Derslere göre netler'), findsNothing);
+    tester
+        .widget<ButtonStyleButton>(
+          find.ancestor(
+            of: find.text('Detaylar'),
+            matching: find.bySubtype<ButtonStyleButton>(),
+          ),
+        )
+        .onPressed!();
+    await tester.pumpAndSettle();
+    expect(find.text('Derslere göre netler'), findsOneWidget);
+    expect(find.text('Detayları gizle'), findsOneWidget);
+    // Elle girilen denemede konu analizi yok; nedeni söylenir.
+    tester
+        .widget<ButtonStyleButton>(
+          find.ancestor(
+            of: find.text('Konu analizi'),
+            matching: find.bySubtype<ButtonStyleButton>(),
+          ),
+        )
+        .onPressed!();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.textContaining('bu deneme elle girildi'), findsOneWidget);
   });
 
   testWidgets('soru sayısını aşan ders kaydedilmez', (tester) async {
