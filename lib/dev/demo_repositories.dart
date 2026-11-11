@@ -47,6 +47,7 @@ class InMemoryTrackingRepository implements TrackingRepository {
   final _progress = <String, Map<int, TopicStatus>>{};
   final _sessions = <String, List<StudySession>>{};
   final _goals = <String, Goals>{};
+  final _grades = <String, int>{};
   int _id = 1;
 
   List<QuestionLog> logsOf(String s) => _logs[s] ?? const [];
@@ -90,6 +91,15 @@ class InMemoryTrackingRepository implements TrackingRepository {
 
   @override
   Future<List<Topic>> fetchTopics() async => [..._topics];
+
+  @override
+  Future<int?> fetchGradeLevel(String studentId) async => _grades[studentId];
+
+  @override
+  Future<void> setGradeLevel(String studentId, int grade) async {
+    if (grade < 9 || grade > 12) throw ArgumentError('BAD_GRADE');
+    _grades[studentId] = grade;
+  }
 
   @override
   Future<Map<int, TopicStatus>> fetchTopicProgress(String studentId) async => {

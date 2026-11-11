@@ -3155,3 +3155,28 @@ Anahtar dosyası da seçilirse eskisi gibi o kullanılır ve tabloyla çelişki 
 bir sorunun cevabı eksikse anahtar dosyası istenir. Test: TYT07 örneğinde tablodan kurulan
 anahtar dosyadakiyle bire bir aynı, öğrenci satırları da aynı.
 
+
+## 91. Öğrencinin sınıf seviyesi (11 Kasım 2026)
+
+Öğrenci kaydolurken sınıfını seçer: 9, 10, 11, 12 / mezun (12 ile mezun aynı).
+Konu listeleri buna göre süzülür.
+
+- **Sunucu:** `profiles.grade_level` (9-12, boş = bilinmiyor). Kayıt verisindeki
+  `grade_level` `apply_signup_invite` ile yazılır. `set_grade_level(öğrenci,
+  seviye)` ile öğrencinin kendisi ya da onu yöneten koç / müdür değiştirir;
+  doğrudan güncelleme kapalı. Migration `20261111150000_grade_level`.
+- **Eşleme uygulamada:** `lib/core/constants/grade_levels.dart`. Mevcut YKS
+  konularının her biri işlendiği sınıfa (9 / 10 / 11) bağlandı. 9-11 yalnızca
+  kendi sınıfının konularını görür; 12 / mezun ve sınıfı seçilmemiş eski hesaplar
+  hepsini. TYT ile AYT'de aynı olan konu alt sınıflara bir kez gösterilir.
+  `test/grade_level_test.dart`, eşlemedeki her adın seed'de olduğunu denetler
+  (seed'de konu adı değişirse eşleme de değişmeli).
+- **Ekranlar:** kayıt ekranında "Sınıf" seçimi zorunlu. Konular ekranında 9-11
+  için TYT / AYT sekmesi yok; konular ders ders tek listede (TYT ve AYT
+  Matematik tek "Matematik"). Soru ekleme, yanlış defteri ve ödev verme
+  ekranındaki konu seçimi de süzülür; ödev verme ekranında konusu olmayan dersler
+  gizlenir. Profilde ("Sınıfın") ve koçun öğrenci sayfasında ("Sınıfı") değişir.
+- **Açık:** eşleme eski MEB müfredatının ünite sırasına göre. Maarif Modeli'nin
+  yeni ünitelerine göre bir öğretmenle gözden geçirilmeli. Deneme, YKS sayacı,
+  hedef ve net hesabı sınıfa göre değişmiyor. Yeni öğretim yılında sınıflar kendi
+  kendine artmıyor.

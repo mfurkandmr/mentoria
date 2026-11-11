@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/exam_subjects.dart';
+import '../../../core/constants/grade_levels.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/format.dart';
@@ -53,8 +54,17 @@ class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
     super.dispose();
   }
 
-  List<ExamSubject> get _subjects =>
-      examSubjects.where((s) => s.examType == _type).toList();
+  /// 9-11. sınıf öğrencisinde yalnızca o sınıfta konusu olan dersler
+  /// (null: süzme yok, 12 / mezun).
+  Set<String>? _gradeCodes;
+
+  List<ExamSubject> get _subjects {
+    final all = examSubjects.where((s) => s.examType == _type).toList();
+    final codes = _gradeCodes;
+    if (codes == null) return all;
+    final some = all.where((s) => codes.contains(s.code)).toList();
+    return some.isEmpty ? all : some;
+  }
 
   void _toggle(AssignmentItemDraft d) {
     final list = [..._basket.value];
@@ -145,8 +155,17 @@ class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
 
   Widget _buildPicker(BuildContext context) {
     final text = Theme.of(context).textTheme;
+    final gradeTopics =
+        ref.watch(studentTopicsProvider(_student!.id)).value ?? const <Topic>[];
+    final grade = ref.watch(studentGradeProvider(_student!.id)).value;
+    _gradeCodes = effectiveGrade(grade) < 12
+        ? {for (final t in gradeTopics) t.subjectCode}
+        : null;
+    if (!_subjects.any((s) => s.code == _subject)) {
+      _subject = _subjects.first.code;
+    }
     final topics =
-        (ref.watch(topicsProvider).value ?? const <Topic>[])
+        gradeTopics
             .where((t) => t.subjectCode == _subject)
             .where((t) => _fold(t.name).contains(_fold(_topicQuery)))
             .toList()

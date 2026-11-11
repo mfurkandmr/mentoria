@@ -4139,4 +4139,13 @@ const enStrings = <String, String>{
   'Öğrencinin veli telefonu kayıtlı değil.':
       'No parent phone is saved for this student.',
   '… ve {n} madde daha (uygulamada).': '… and {n} more items (in the app).',
+  '12. sınıf / mezun': '12th grade / graduate',
+  'Sınıfını seç.': 'Choose your grade.',
+  'Sınıfın': 'Your grade',
+  'Sınıfı': 'Grade',
+  'Seçilmedi · bütün konular görünür': 'Not set · all topics are shown',
+  'Sınıf {grade} olarak kaydedildi. Konular buna göre listelenir.':
+      'Grade saved as {grade}. Topics are listed accordingly.',
+  'Bu sınıf için konu listesi henüz eklenmedi.':
+      'No topics have been added for this grade yet.',
 };

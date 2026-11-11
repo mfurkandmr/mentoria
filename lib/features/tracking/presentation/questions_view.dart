@@ -475,9 +475,10 @@ class _AddQuestionSheetState extends ConsumerState<_AddQuestionSheet> {
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
-    final topics = (ref.watch(topicsProvider).value ?? const [])
-        .where((t) => t.subjectCode == _subject)
-        .toList();
+    final topics =
+        (ref.watch(studentTopicsProvider(widget.studentId)).value ?? const [])
+            .where((t) => t.subjectCode == _subject)
+            .toList();
     final total = _v(_correct) + _v(_wrong) + _v(_blank);
 
     return SafeArea(

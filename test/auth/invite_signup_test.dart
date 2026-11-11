@@ -30,6 +30,7 @@ class _FakeAuth implements AuthRepository {
   String? studentNumber;
   List<String>? teacherBranches;
   int? birthYear;
+  int? gradeLevel;
   bool? ranking;
 
   @override
@@ -49,6 +50,7 @@ class _FakeAuth implements AuthRepository {
     required String fullName,
     required String inviteCode,
     int? birthYear,
+    int? gradeLevel,
     String? studentNumber,
     List<String>? teacherBranches,
     bool rankingConsent = false,
@@ -60,6 +62,7 @@ class _FakeAuth implements AuthRepository {
     this.teacherBranches = teacherBranches;
     this.studentNumber = studentNumber;
     this.birthYear = birthYear;
+    this.gradeLevel = gradeLevel;
     ranking = rankingConsent;
     return true;
   }
@@ -142,6 +145,10 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('$year').last);
       await tester.pumpAndSettle();
+      await tester.tap(find.text('Sınıf'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('11. sınıf').last);
+      await tester.pumpAndSettle();
       await tester.tap(
         find.text(
           "Kullanım Koşulları'nı kabul ediyorum; Aydınlatma Metni'ni okudum.",
@@ -176,6 +183,7 @@ void main() {
       expect(auth.studentNumber, '1042');
       expect(auth.calls.first, 'match:1042');
       expect(auth.birthYear, DateTime.now().year - 17);
+      expect(auth.gradeLevel, 11);
       expect(auth.ranking, isTrue);
 
       // 3. adım: doğrulama kodu.
@@ -306,6 +314,10 @@ void main() {
     await tester.tap(find.text('Doğum yılı'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('$year').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Sınıf'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('12. sınıf / mezun').last);
     await tester.pumpAndSettle();
     await tester.tap(
       find.text(

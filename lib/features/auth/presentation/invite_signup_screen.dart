@@ -1,3 +1,4 @@
+import '../../../core/constants/grade_levels.dart';
 import '../../privacy/presentation/legal_text_screen.dart';
 import '../../privacy/data/consent_repository.dart';
 import 'dart:async';
@@ -49,6 +50,7 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
 
   // KVKK: öğrencinin doğum yılı; isteğe bağlı rızalar; veli onayı.
   int? _birthYear;
+  int? _grade;
   bool _ranking = false;
   bool _guardian = false;
   bool _childRanking = false;
@@ -175,6 +177,10 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
       _showError(tr('Doğum yılını seç.'));
       return;
     }
+    if (invite?.role == UserRole.student && _grade == null) {
+      _showError(tr('Sınıfını seç.'));
+      return;
+    }
     if (invite?.role == UserRole.teacher && _branches.isEmpty) {
       _showError(tr('En az bir branş seç.'));
       return;
@@ -207,6 +213,7 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
             fullName: _name.text,
             inviteCode: _code.text,
             birthYear: invite?.role == UserRole.student ? _birthYear : null,
+            gradeLevel: invite?.role == UserRole.student ? _grade : null,
             studentNumber: invite?.role == UserRole.student
                 ? _number.text.trim()
                 : null,
@@ -551,6 +558,11 @@ class _InviteSignupScreenState extends ConsumerState<InviteSignupScreen> {
                             value: _birthYear,
                             onChanged: (v) => setState(() => _birthYear = v),
                           ),
+                          const SizedBox(height: 12),
+                          GradeLevelField(
+                            value: _grade,
+                            onChanged: (v) => setState(() => _grade = v),
+                          ),
                         ],
                         const SizedBox(height: 8),
                         _ConsentSection(
@@ -816,6 +828,37 @@ class _ConsentSection extends StatelessWidget {
           linkRow(LegalDoc.explicitConsent, tr('Açık rıza metnini oku')),
         ],
       ],
+    );
+  }
+}
+
+/// Öğrencinin sınıfı: 9, 10, 11, 12 / mezun (konu listesi buna göre).
+class GradeLevelField extends StatelessWidget {
+  const GradeLevelField({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final int? value;
+  final ValueChanged<int?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField<int>(
+      key: const ValueKey('signup-grade'),
+      initialValue: value,
+      isExpanded: true,
+      decoration: InputDecoration(
+        labelText: tr('Sınıf'),
+        prefixIcon: const Icon(Icons.school_outlined),
+      ),
+      items: [
+        for (final g in gradeLevels)
+          DropdownMenuItem(value: g, child: Text(gradeLabel(g))),
+      ],
+      onChanged: onChanged,
+      validator: (v) => v == null ? tr('Sınıfını seç.') : null,
     );
   }
 }

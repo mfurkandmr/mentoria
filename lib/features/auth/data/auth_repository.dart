@@ -61,6 +61,7 @@ class AuthRepository {
     required String fullName,
     required String inviteCode,
     int? birthYear,
+    int? gradeLevel,
     String? studentNumber,
 
     /// Öğretmen daveti: branşlar (sunucu teachers satırına yazar).
@@ -81,6 +82,7 @@ class AuthRepository {
         'kvkk_consent': true,
         'privacy_version': legalVersion,
         'birth_year': ?birthYear,
+        'grade_level': ?gradeLevel,
         'student_number': ?studentNumber,
         'teacher_branches': ?teacherBranches,
         'consents': {'ranking': rankingConsent},
