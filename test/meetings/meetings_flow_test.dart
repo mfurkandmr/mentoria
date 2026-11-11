@@ -177,7 +177,7 @@ void main() {
     await tester.tap(find.byTooltip('Önceki hafta'));
     await tester.pumpAndSettle();
     expect(
-      find.descendant(of: report, matching: find.text('Yapılmadı')),
+      find.descendant(of: report, matching: find.text('Gelmedi')),
       findsOneWidget,
     );
     expect(

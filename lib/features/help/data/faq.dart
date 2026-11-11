@@ -174,7 +174,7 @@ List<FaqSection> _coach() => [
     FaqItem(
       tr('Görüşmeleri nasıl planlarım?'),
       tr(
-        '"Görüşme ekle" ile tek seferlik ya da her hafta tekrarlanan görüşme planla. Öğrenciye görüşmeden 24 saat önce hatırlatma gider; görüşme sonrasında yapıldı ya da yapılmadı diye işaretleyebilirsin.',
+        '"Görüşme ekle" ile tek seferlik ya da her hafta tekrarlanan görüşme planla. Öğrenciye görüşmeden 24 saat önce hatırlatma gider; görüşme sonrasında yapıldı ya da gelmedi diye işaretleyebilirsin. "Gelmedi" işaretinde veliye WhatsApp\'tan bilgi mesajı gider.',
       ),
     ),
     FaqItem(

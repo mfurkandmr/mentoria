@@ -9,7 +9,7 @@ import '../../tracking/data/tracking_models.dart';
 /// Bir günün görüşmesinin koç tarafından işaretlenen durumu.
 enum MeetingStatus {
   held('held', 'Yapıldı'),
-  missed('missed', 'Yapılmadı'),
+  missed('missed', 'Gelmedi'),
   cancelled('cancelled', 'İptal');
 
   const MeetingStatus(this.db, this.trLabel);
@@ -192,8 +192,10 @@ abstract interface class MeetingRepository {
   /// tamamen siler, yoksa bugünden sonrasını kapatır (geçmiş kayıtlar kalır).
   Future<void> endSchedule(String scheduleId);
 
-  /// Bir günün görüşmesini işaretler (null: işareti kaldır).
-  Future<void> setStatus(
+  /// Bir günün görüşmesini işaretler (null: işareti kaldır). "Gelmedi"
+  /// işaretinde veliye WhatsApp mesajı gider (aynı görüşme için bir kez):
+  /// dönüş 'notified' | 'no_phone' | null (mesaj yok). NOTLAR §93.
+  Future<String?> setStatus(
     String scheduleId,
     DateTime day,
     MeetingStatus? status,
@@ -301,18 +303,20 @@ class SupabaseMeetingRepository implements MeetingRepository {
   }
 
   @override
-  Future<void> setStatus(
+  Future<String?> setStatus(
     String scheduleId,
     DateTime day,
     MeetingStatus? status,
-  ) => _client.rpc(
-    'set_meeting_status',
-    params: {
-      'p_schedule': scheduleId,
-      'p_day': isoDate(day),
-      'p_status': status?.db,
-    },
-  );
+  ) async =>
+      await _client.rpc(
+            'set_meeting_status',
+            params: {
+              'p_schedule': scheduleId,
+              'p_day': isoDate(day),
+              'p_status': status?.db,
+            },
+          )
+          as String?;
 }
 
 final meetingRepositoryProvider = Provider<MeetingRepository>(

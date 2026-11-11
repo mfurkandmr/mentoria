@@ -1869,8 +1869,8 @@ const enStrings = <String, String>{
   'Görev tek maddelik kısa bir hatırlatmadır. Ödev birden çok maddeden (konu, soru sayısı) oluşur ve öğrenci her maddeyi işaretleyerek bitirir. İkisinde de öğrenciye bildirim gider.':
       'A task is a short single-item reminder. Homework has several items (topics, question counts) that the student ticks off. Both send the student a notification.',
   'Görüşmeleri nasıl planlarım?': 'How do I schedule meetings?',
-  '"Görüşme ekle" ile tek seferlik ya da her hafta tekrarlanan görüşme planla. Öğrenciye görüşmeden 24 saat önce hatırlatma gider; görüşme sonrasında yapıldı ya da yapılmadı diye işaretleyebilirsin.':
-      'Use "Add meeting" to schedule a one-off or weekly recurring meeting. The student gets a reminder 24 hours before, and afterwards you can mark it as held or missed.',
+  '"Görüşme ekle" ile tek seferlik ya da her hafta tekrarlanan görüşme planla. Öğrenciye görüşmeden 24 saat önce hatırlatma gider; görüşme sonrasında yapıldı ya da gelmedi diye işaretleyebilirsin. "Gelmedi" işaretinde veliye WhatsApp\'tan bilgi mesajı gider.':
+      'Use "Add meeting" to schedule a one-off or weekly recurring meeting. The student gets a reminder 24 hours before, and afterwards you can mark it as held or missed. Marking "absent" sends the parent a WhatsApp message.',
   'Notlarımı öğrenci görür mü?': 'Can the student see my notes?',
   'Evet, öğrenciye yazdığın notlar öğrencinin ana sayfasında görünür ve bildirim olarak gider.':
       'Yes. Notes you write to a student appear on their home screen and are sent as a notification.',
@@ -4154,4 +4154,13 @@ const enStrings = <String, String>{
   'Bu bölümde kitabın yok': 'No books in this section',
   'Kitap eklediğinde konuları burada kitap kitap işaretleyebilirsin.':
       'Once you add a book, you can tick off its topics here.',
+  'Öğrenci gelmedi': 'Student did not attend',
+  'Veliye WhatsApp\'tan bilgi mesajı gider.':
+      'The parent gets a WhatsApp message.',
+  'Veliye WhatsApp\'tan bilgi mesajı gönderiliyor.':
+      'Sending the parent a WhatsApp message.',
+  'Veli telefonu kayıtlı olmadığı için veliye mesaj gitmedi.':
+      'No parent phone on file, so no message was sent.',
+  'Görüşme saati gelince "yapıldı" ya da "gelmedi" olarak işaretleyebilirsin.':
+      'Once the meeting time arrives you can mark it "held" or "absent".',
 };

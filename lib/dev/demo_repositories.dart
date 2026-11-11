@@ -1290,8 +1290,14 @@ class InMemoryMeetingRepository implements MeetingRepository {
     );
   }
 
+  /// Veli telefonu kayıtlı olmayan öğrenciler (testler için).
+  final noGuardianPhone = <String>{};
+
+  /// "Gelmedi" mesajı giden görüşmeler (plan, gün).
+  final guardianNotified = <(String, DateTime)>{};
+
   @override
-  Future<void> setStatus(
+  Future<String?> setStatus(
     String scheduleId,
     DateTime day,
     MeetingStatus? status,
@@ -1308,6 +1314,13 @@ class InMemoryMeetingRepository implements MeetingRepository {
     } else {
       _statuses[(scheduleId, d)] = status;
     }
+    if (status != MeetingStatus.missed ||
+        guardianNotified.contains((scheduleId, d))) {
+      return null;
+    }
+    if (noGuardianPhone.contains(s.studentId)) return 'no_phone';
+    guardianNotified.add((scheduleId, d));
+    return 'notified';
   }
 }
 

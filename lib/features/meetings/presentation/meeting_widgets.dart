@@ -83,14 +83,30 @@ Future<void> showMeetingStatusSheet(
   Meeting m,
 ) async {
   final future = m.start.isAfter(DateTime.now());
-  final options = <(MeetingStatus?, IconData, String)>[
+  final options = <(MeetingStatus?, IconData, String, String?)>[
     if (!future) ...[
-      (MeetingStatus.held, Icons.check_circle_rounded, tr('Görüşme yapıldı')),
-      (MeetingStatus.missed, Icons.cancel_rounded, tr('Görüşme yapılmadı')),
+      (
+        MeetingStatus.held,
+        Icons.check_circle_rounded,
+        tr('Görüşme yapıldı'),
+        null,
+      ),
+      (
+        MeetingStatus.missed,
+        Icons.cancel_rounded,
+        tr('Öğrenci gelmedi'),
+        tr("Veliye WhatsApp'tan bilgi mesajı gider."),
+      ),
     ],
     if (m.status != MeetingStatus.cancelled)
-      (MeetingStatus.cancelled, Icons.block_rounded, tr('Bu haftalık iptal')),
-    if (m.status != null) (null, Icons.undo_rounded, tr('İşareti kaldır')),
+      (
+        MeetingStatus.cancelled,
+        Icons.block_rounded,
+        tr('Bu haftalık iptal'),
+        null,
+      ),
+    if (m.status != null)
+      (null, Icons.undo_rounded, tr('İşareti kaldır'), null),
   ];
   final picked = await showModalBottomSheet<(MeetingStatus?,)>(
     context: context,
@@ -118,15 +134,16 @@ Future<void> showMeetingStatusSheet(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
               child: Text(
                 tr(
-                  'Görüşme saati gelince "yapıldı" ya da "yapılmadı" olarak işaretleyebilirsin.',
+                  'Görüşme saati gelince "yapıldı" ya da "gelmedi" olarak işaretleyebilirsin.',
                 ),
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
-          for (final (status, icon, label) in options)
+          for (final (status, icon, label, hint) in options)
             ListTile(
               leading: Icon(icon),
               title: Text(label),
+              subtitle: hint == null ? null : Text(hint),
               onTap: () => Navigator.pop(context, (status,)),
             ),
         ],
@@ -135,11 +152,19 @@ Future<void> showMeetingStatusSheet(
   );
   if (picked == null) return;
   try {
-    await ref
+    final result = await ref
         .read(meetingRepositoryProvider)
         .setStatus(m.schedule.id, m.day, picked.$1);
     AppHaptics.select();
     invalidateMeetings(ref);
+    if (context.mounted && result != null) {
+      showMessage(
+        context,
+        result == 'notified'
+            ? tr("Veliye WhatsApp'tan bilgi mesajı gönderiliyor.")
+            : tr('Veli telefonu kayıtlı olmadığı için veliye mesaj gitmedi.'),
+      );
+    }
   } catch (_) {
     if (context.mounted) {
       showMessage(context, tr('Kaydedilemedi. Tekrar dene.'));

@@ -3200,3 +3200,23 @@ Kitaplar sekmesi, veli).
 - **Açık:** işaret, Konular ekranındaki konu durumunu (`topic_progress`)
   değiştirmez; ikisi ayrı. Koç için sınıf / kurum geneli kaynak takibi raporu
   yok. Tablo dönemlik: yeni dönemde kitap yeniden eklenince işaretler boş başlar.
+
+## 93. Görüşmeye (ödevlendirmeye) gelmeyen öğrenci: veliye WhatsApp (12 Kasım 2026)
+
+Koç haftalık görüşmeyi (§9) "Öğrenci gelmedi" diye işaretleyince veliye kurumun
+WhatsApp numarasından bilgi mesajı gider.
+
+- **Sunucu:** `set_meeting_status` 'missed' işaretinde veli telefonuna mesajı
+  `sms_outbox`'a yazar (kurumun genel şablonu; Meta'da yeni şablon gerekmez).
+  Aynı görüşme için bir kez (`meeting_occurrences.guardian_notified_at`; işaret
+  kaldırılıp yeniden konsa da ikinci mesaj gitmez). Dönüş: 'notified' |
+  'no_phone' | null. Migration `20261112110000_meeting_missed_whatsapp`.
+- **Metin:** "Sayın {veli}, {kurum}: öğrenciniz {ad}, {gün} günü saat {saat}
+  için planlanan koç görüşmesine (ödevlendirme) gelmedi. Koçu: {koç}."
+- **Uygulama:** seçenek "Görüşme yapılmadı" yerine "Öğrenci gelmedi" (altında
+  "Veliye WhatsApp'tan bilgi mesajı gider"); durum etiketi "Gelmedi". Koç
+  sonucu görür: gönderiliyor / veli telefonu yok.
+- **Dikkat:** görüşme koç yüzünden yapılmadıysa "Bu haftalık iptal" seçilmeli;
+  "gelmedi" veliye mesaj gönderir ve geri alınamaz. Yalnızca öğrencinin koçu
+  işaretler (müdür işaretleyemez). Planlanmış görüşmesi olmayan öğrenci için
+  işaret yok: önce görüşme eklenmeli.
