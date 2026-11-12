@@ -8,8 +8,8 @@ import '../../../shared/widgets/panel.dart';
 import '../data/tutoring_repository.dart';
 import 'tutoring_widgets.dart';
 
-/// Öğrenci ana sayfası: soru çözümü / birebir girişi. Kurumda oturum ve
-/// talep yoksa görünmez.
+/// Öğrenci ana sayfası ve Eğitim sekmesi: soru çözümü / birebir girişi.
+/// Her zaman görünür; kurum henüz saat açmadıysa bunu söyler.
 class TutoringHomeCard extends ConsumerWidget {
   const TutoringHomeCard({super.key});
 
@@ -17,7 +17,6 @@ class TutoringHomeCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final slots = ref.watch(openTutoringSlotsProvider).value ?? const [];
     final mine = ref.watch(myTutoringRequestsProvider).value ?? const [];
-    if (slots.isEmpty && mine.isEmpty) return const SizedBox.shrink();
     final next = mine
         .where((r) => r.status == TutoringStatus.approved)
         .firstOrNull;
@@ -38,6 +37,8 @@ class TutoringHomeCard extends ConsumerWidget {
                 })
               : pending > 0
               ? tr('{n} talebin onay bekliyor', {'n': pending})
+              : slots.isEmpty
+              ? tr('Kurumun henüz açık saat girmedi')
               : tr('Öğretmenlerden soru çözümü ya da birebir ders iste'),
         ),
         trailing: const Icon(Icons.chevron_right),
@@ -160,7 +161,7 @@ class _StudentTutoringScreenState extends ConsumerState<StudentTutoringScreen> {
                   EmptyState(
                     title: tr('Açık oturum yok'),
                     message: tr(
-                      'Kurumun önümüzdeki günler için soru çözümü ya da birebir ders saati açmadı.',
+                      'Kurumun önümüzdeki günler için soru çözümü ya da birebir ders saati açmadı. Açtığında burada görünür; buradan talep edersin.',
                     ),
                   )
                 else ...[
@@ -188,7 +189,7 @@ class _StudentTutoringScreenState extends ConsumerState<StudentTutoringScreen> {
                   const SizedBox(height: 8),
                   Text(
                     tr(
-                      'Talebini öğretmen onaylar. Bir güne en çok 3 talep verebilirsin; koçun taleplerini görür.',
+                      'Talebini öğretmen onaylar. Bir güne en çok 3 talep verebilirsin.',
                     ),
                     style: Theme.of(context).textTheme.bodySmall,
                   ),

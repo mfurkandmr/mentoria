@@ -44,6 +44,7 @@ List<HardViolation> validateHard(
   final out = <HardViolation>[];
   final slots = {for (final s in input.slots) s.id: s};
   final teachers = {for (final t in input.teachers) t.id: t};
+  final rooms = {for (final r in input.rooms) r.id: r};
   final seenTeacher = <String>{};
   final seenClass = <String>{};
   final seenRoom = <String>{};
@@ -60,8 +61,13 @@ List<HardViolation> validateHard(
       out.add(HardViolation(HardRule.roomClash, e.toString()));
     }
     final s = slots[e.timeSlotId];
+    // Derslikte o saatte soru çözümü / birebir oturumu var.
+    final r = rooms[e.roomId];
+    if (s != null && r != null && !r.freeAt(s)) {
+      out.add(HardViolation(HardRule.roomClash, e.toString()));
+    }
     final t = teachers[e.teacherId];
-    if (s == null || t == null || !t.availableAt(s)) {
+    if (s == null || t == null || !t.freeAt(s)) {
       out.add(HardViolation(HardRule.teacherUnavailable, e.toString()));
     }
     load.update(e.teacherId, (v) => v + 1, ifAbsent: () => 1);
@@ -134,8 +140,12 @@ List<HardRule> moveProblems(
     if (room != null && o.roomId == room) problems.add(HardRule.roomClash);
   }
   final slot = input.slots.where((s) => s.id == slotId).firstOrNull;
+  final r = input.rooms.where((x) => x.id == room).firstOrNull;
+  if (slot != null && r != null && !r.freeAt(slot)) {
+    problems.add(HardRule.roomClash);
+  }
   final teacher = input.teachers.where((t) => t.id == e.teacherId).firstOrNull;
-  if (slot == null || teacher == null || !teacher.availableAt(slot)) {
+  if (slot == null || teacher == null || !teacher.freeAt(slot)) {
     problems.add(HardRule.teacherUnavailable);
   }
   return problems.toList();
@@ -146,6 +156,17 @@ const gapPenalty = 3; // öğretmenin günündeki her boş saat (pencere)
 const stackPenalty = 5; // aynı dersin günlük sınırı aşan her saati
 const afternoonPenalty = 2; // sayısal ders 12.00'den sonra
 const classSwitchPenalty = 1; // öğretmenin bir gündeki her ek sınıfı
+
+/// 2'li blok (NOTLAR §96): bir sınıfın bir dersi günlere 2 saatlik bloklar
+/// hâlinde dağılır (4 → 2+2, 3 → 2+1, 5 → 2+2+1, 6 → 2+2+2). Fazladan her
+/// tek saatlik gün ve aynı gündeki iki saatin arasının açılması cezalı.
+/// Günde en çok 1 saat seçilmiş derste uygulanmaz.
+const splitPenalty = 4;
+
+/// Haftalık saatin günlere planlanan bölünüşü: 5 → [2, 2, 1].
+List<int> blockPlan(int weeklyHours) => [
+  for (var h = weeklyHours; h > 0; h -= 2) h >= 2 ? 2 : 1,
+];
 
 /// Puanı dizinler üzerinden hızlı hesaplar (üretici her adımda çağırır).
 class ScoreModel {
@@ -167,6 +188,10 @@ class ScoreModel {
         for (final l in input.lessons)
           '${l.classroomId}|${l.branch}': l.maxPerDay,
       },
+      _weekly = {
+        for (final l in input.lessons)
+          '${l.classroomId}|${l.branch}': l.weeklyHours,
+      },
       _classIds = [for (final c in input.classrooms) c.id];
 
   final Map<String, int> slotIndex;
@@ -178,6 +203,7 @@ class ScoreModel {
   /// Saatin kendi günündeki sırası (0'dan; şablonda boşluk olsa da ardışık).
   final List<int> _pos;
   final Map<String, int> _maxPerDay;
+  final Map<String, int> _weekly;
   final List<String> _classIds;
 
   int dayOf(int slot) => _day[slot];
@@ -212,6 +238,7 @@ class ScoreModel {
     final tDay = <int, List<int>>{};
     final tDayClasses = <int, Set<int>>{};
     final lessonDay = <String, int>{};
+    final lessonPos = <String, List<int>>{};
     for (var i = 0; i < slot.length; i++) {
       final s = slot[i];
       final d = _day[s];
@@ -220,6 +247,7 @@ class ScoreModel {
       tDayClasses.putIfAbsent(key, () => {}).add(klass[i]);
       final lk = '${klass[i]}|${branch[i]}|$d';
       lessonDay[lk] = (lessonDay[lk] ?? 0) + 1;
+      lessonPos.putIfAbsent(lk, () => []).add(_pos[s]);
       if (_afternoon[s] && numericBranches.contains(branch[i])) {
         total += afternoonPenalty;
       }
@@ -236,10 +264,31 @@ class ScoreModel {
     for (final c in tDayClasses.values) {
       total += (c.length - 1) * classSwitchPenalty;
     }
+    final singles = <String, int>{};
     for (final e in lessonDay.entries) {
       final parts = e.key.split('|');
       final max = maxPerDay(int.parse(parts[0]), parts[1]);
       if (e.value > max) total += (e.value - max) * stackPenalty;
+      if (max < 2) continue;
+      final lesson = '${parts[0]}|${parts[1]}';
+      if (e.value == 1) {
+        singles[lesson] = (singles[lesson] ?? 0) + 1;
+      } else {
+        // Aynı gündeki saatler bitişik olsun (blok).
+        final p = lessonPos[e.key]!;
+        var lo = p.first, hi = p.first;
+        for (final x in p) {
+          if (x < lo) lo = x;
+          if (x > hi) hi = x;
+        }
+        total += (hi - lo + 1 - p.length) * splitPenalty;
+      }
+    }
+    for (final e in singles.entries) {
+      final parts = e.key.split('|');
+      final weekly = _weekly['${_classIds[int.parse(parts[0])]}|${parts[1]}'];
+      final allowed = (weekly ?? 1).isOdd ? 1 : 0;
+      if (e.value > allowed) total += (e.value - allowed) * splitPenalty;
     }
     return total;
   }

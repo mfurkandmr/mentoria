@@ -8,6 +8,7 @@ import '../../admin/data/admin_repository.dart';
 import '../../auth/data/profile.dart';
 import '../../coach/data/coach_repository.dart';
 import '../data/timetable_repository.dart';
+import '../domain/constraints.dart' show blockPlan;
 import '../domain/models.dart';
 import 'timetable_format.dart';
 import '../../../core/design/motion.dart';
@@ -1250,6 +1251,18 @@ class _LessonDialogState extends State<_LessonDialog> {
               1,
               10,
               (v) => _maxPerDay = v,
+            ),
+            // 2'li blok dağılımı (NOTLAR §96).
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(
+                _maxPerDay >= 2
+                    ? tr('Dağılım: {plan} (2 saatlik bitişik bloklar)', {
+                        'plan': blockPlan(_hours).join(' + '),
+                      })
+                    : tr('Her gün en çok 1 saat; bloklanmaz.'),
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
             ),
             DropdownButtonFormField<String?>(
               initialValue: teachers.any((t) => t.id == _teacher)

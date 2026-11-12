@@ -17,6 +17,7 @@ import '../../student/presentation/home_sky.dart';
 import '../data/learn_cards.dart';
 import '../data/practice_repository.dart';
 import '../../duel/presentation/duel_screens.dart';
+import '../../tutoring/presentation/student_tutoring_screen.dart';
 import 'notebook_button.dart';
 import '../../../core/design/motion.dart';
 import '../../../core/design/haptics.dart';
@@ -112,6 +113,9 @@ class _LearnHomeState extends ConsumerState<_LearnHome> {
               const DuelEntryCard(),
               const SizedBox(height: 8),
               const MyBooksEntryCard(),
+              const SizedBox(height: 8),
+              // Soru çözümü / birebir talebi (NOTLAR §87).
+              const TutoringHomeCard(),
               const SizedBox(height: 12),
               SegmentedButton<bool>(
                 segments: [

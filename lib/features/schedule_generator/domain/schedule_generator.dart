@@ -46,6 +46,8 @@ class ScheduleGenerator {
   late final List<Int32List> _tBusy;
   late final List<Int32List> _cBusy;
   late final List<Int32List> _rBusy;
+  // Derslik o saatte oturuma ayrılmış mı (soru çözümü / birebir, NOTLAR §95).
+  late final List<Uint8List> _rFree;
   late final Int32List _tLoad;
   late final Int32List _tMax;
   late final Int32List _homeRoom;
@@ -59,6 +61,7 @@ class ScheduleGenerator {
   late final List<String> _lBranch;
   late final Int32List _need;
   late final List<Int32List> _lDay; // ders → gün → saat sayısı
+  late final List<Uint8List> _lAt; // ders → saat → yerleşti mi (blok için)
 
   // Yerleşen dersler (kilitliler başta).
   final _eT = <int>[];
@@ -140,13 +143,15 @@ class ScheduleGenerator {
   void _index() {
     _avail = [
       for (final t in input.teachers)
-        Uint8List.fromList([
-          for (final s in input.slots) t.availableAt(s) ? 1 : 0,
-        ]),
+        Uint8List.fromList([for (final s in input.slots) t.freeAt(s) ? 1 : 0]),
     ];
     _tBusy = [for (var i = 0; i < _nT; i++) Int32List(_nS)];
     _cBusy = [for (var i = 0; i < _nC; i++) Int32List(_nS)];
     _rBusy = [for (var i = 0; i < _nR; i++) Int32List(_nS)];
+    _rFree = [
+      for (final r in input.rooms)
+        Uint8List.fromList([for (final s in input.slots) r.freeAt(s) ? 1 : 0]),
+    ];
     _tLoad = Int32List(_nT);
     _tMax = Int32List.fromList([
       for (final t in input.teachers) t.maxWeeklyHours,
@@ -180,6 +185,7 @@ class ScheduleGenerator {
     _lBranch = [for (final l in input.lessons) l.branch];
     _need = Int32List(nL);
     _lDay = [for (var l = 0; l < nL; l++) Int32List(8)];
+    _lAt = [for (var l = 0; l < nL; l++) Uint8List(_nS)];
     for (var l = 0; l < nL; l++) {
       final lesson = input.lessons[l];
       _lClass[l] = _model.classIndex[lesson.classroomId] ?? -1;
@@ -230,6 +236,7 @@ class ScheduleGenerator {
       if (l >= 0) {
         _need[l]--;
         _lDay[l][input.slots[s].day]++;
+        _lAt[l][s]++;
         if (_lTeacher[l] < 0) _lTeacher[l] = t;
       }
     }
@@ -362,6 +369,7 @@ class ScheduleGenerator {
     _cBusy[c][s]++;
     if (r >= 0) _rBusy[r][s]++;
     _tLoad[t]++;
+    if (l >= 0) _lAt[l][s]++;
   }
 
   void _pop() {
@@ -375,6 +383,7 @@ class ScheduleGenerator {
     if (l >= 0) {
       _need[l]++;
       _lDay[l][input.slots[s].day]--;
+      _lAt[l][s]--;
     }
   }
 
@@ -388,11 +397,15 @@ class ScheduleGenerator {
   /// -2 = olmaz), yoksa boş bir ortak derslik, o da yoksa -1 (dersliksiz).
   int _roomFor(int c, int s) {
     final home = _homeRoom[c];
-    if (home >= 0) return _rBusy[home][s] == 0 ? home : -2;
+    if (home >= 0) {
+      return _rBusy[home][s] == 0 && _rFree[home][s] == 1 ? home : -2;
+    }
     final size = input.classrooms[c].size;
     for (final r in _floatingRooms) {
       final cap = input.rooms[r].capacity;
-      if (_rBusy[r][s] == 0 && (cap == null || size == 0 || cap >= size)) {
+      if (_rBusy[r][s] == 0 &&
+          _rFree[r][s] == 1 &&
+          (cap == null || size == 0 || cap >= size)) {
         return r;
       }
     }
@@ -420,8 +433,27 @@ class ScheduleGenerator {
   double _cost(int l, int s) {
     final t = _lTeacher[l];
     final d = input.slots[s].day;
-    var cost = _lDay[l][d] * 2.0;
-    if (_lDay[l][d] >= input.lessons[l].maxPerDay) cost += 10;
+    final lesson = input.lessons[l];
+    final here = _lDay[l][d];
+    var cost = 0.0;
+    if (lesson.maxPerDay >= 2) {
+      // 2'li blok: 4 → 2+2, 3 → 2+1, 5 → 2+2+1 (NOTLAR §96).
+      if (here == 0) {
+        var used = 0;
+        for (var x = 1; x <= 7; x++) {
+          if (_lDay[l][x] > 0) used++;
+        }
+        // Gereken gün sayısı dolduysa yeni gün açma.
+        if (used >= (lesson.weeklyHours + 1) ~/ 2) cost += 6;
+      } else if (here == 1) {
+        final p = _prevSlot[s], n = _nextSlot[s];
+        final pairs = (p >= 0 && _lAt[l][p] > 0) || (n >= 0 && _lAt[l][n] > 0);
+        cost += pairs ? -6 : 4;
+      }
+    } else {
+      cost += here * 2.0;
+    }
+    if (here >= lesson.maxPerDay) cost += 10;
     if (input.slots[s].start >= 12 * 60 &&
         numericBranches.contains(_lBranch[l])) {
       cost += afternoonPenalty;

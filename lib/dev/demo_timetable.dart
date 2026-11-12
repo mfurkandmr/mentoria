@@ -1,6 +1,7 @@
 import '../features/schedule_generator/data/timetable_repository.dart';
 import '../features/schedule_generator/domain/models.dart';
 import '../features/schedule_generator/domain/schedule_generator.dart';
+import '../features/tutoring/data/tutoring_repository.dart';
 import 'demo_rich.dart';
 
 class _Schedule {
@@ -29,6 +30,9 @@ class InMemoryTimetableRepository implements TimetableRepository {
   final String viewerId;
   final String viewerRole;
   final List<String> children;
+
+  /// Soru çözümü oturumları (demo'da bellekteki oturum deposundan).
+  List<TutoringSession> Function()? tutoringSource;
 
   List<TimeSlot> _slots;
   final List<TeacherRecord> _teachers;
@@ -218,6 +222,7 @@ class InMemoryTimetableRepository implements TimetableRepository {
     rooms: [..._rooms],
     classrooms: [..._classrooms],
     lessons: [..._lessons],
+    tutoring: [...?tutoringSource?.call()],
   );
 
   @override

@@ -9,6 +9,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:mentoria/dev/demo_mode.dart';
 import 'package:mentoria/dev/demo_tutoring.dart';
 import 'package:mentoria/features/notifications/data/notification_repository.dart';
+import 'package:mentoria/features/schedule_generator/presentation/my_timetable.dart';
+import 'package:mentoria/features/student_schedule/presentation/student_schedule_screen.dart';
 import 'package:mentoria/features/teacher/presentation/teacher_home_screen.dart';
 import 'package:mentoria/features/tutoring/data/tutoring_repository.dart';
 import 'package:mentoria/features/tutoring/presentation/admin_tutoring_screen.dart';
@@ -203,6 +205,22 @@ void main() {
     );
   });
 
+  testWidgets('kurumda oturum yokken de giriş kartı görünür', (t) async {
+    final empty = InMemoryTutoringRepository(
+      viewerId: 'demo-student',
+      viewerRole: 'student',
+      teacherNames: names,
+    );
+    await pump(
+      t,
+      const Scaffold(body: TutoringHomeCard()),
+      role: 'student',
+      tutoring: empty,
+    );
+    expect(find.byKey(const ValueKey('tutoring-home-card')), findsOneWidget);
+    expect(find.text('Kurumun henüz açık saat girmedi'), findsOneWidget);
+  });
+
   testWidgets('öğretmen bekleyen talebi onaylar', (t) async {
     final tutoring = repo('demo-teacher', 'teacher');
     final pending = (await tutoring.teacherRequests(
@@ -288,17 +306,40 @@ void main() {
     expect(find.byIcon(Icons.check_rounded), findsNothing);
   });
 
-  testWidgets('koç öğrencilerinin taleplerini yalnızca görür', (t) async {
-    final tutoring = repo('demo-coach', 'coach');
+  test('koç talepleri görmez (soru çözümü öğretmen ve müdür işi)', () async {
+    final coach = repo('demo-coach', 'coach');
+    expect(await coach.managedRequests(DateTime.now()), isEmpty);
+  });
+
+  testWidgets('öğretmen oturumlarını kendi ders programında görür', (t) async {
     await pump(
       t,
-      const CoachTutoringScreen(),
-      role: 'coach',
-      tutoring: tutoring,
+      const MyTimetableScreen(),
+      role: 'teacher',
+      tutoring: repo('demo-teacher', 'teacher'),
     );
-    expect(find.text('Soru çözümü talepleri'), findsOneWidget);
-    expect(find.textContaining('Elif Yılmaz'), findsWidgets);
-    expect(find.byIcon(Icons.check_rounded), findsNothing);
+    expect(
+      find.byKey(const ValueKey('my-tutoring-ts-fizik-1')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('öğrenci talebini ders programının haftasında görür', (t) async {
+    await pump(
+      t,
+      const StudentScheduleScreen(),
+      role: 'student',
+      tutoring: repo('demo-student', 'student'),
+    );
+    await t.tap(find.text('Hafta'));
+    await t.pumpAndSettle();
+    final cards = find.byWidgetPredicate(
+      (w) =>
+          w.key is ValueKey &&
+          '${(w.key! as ValueKey).value}'.startsWith('schedule-tutoring-'),
+    );
+    expect(cards, findsWidgets);
+    expect(find.text('Onaylandı'), findsWidgets);
   });
 
   test('bildirim metinleri', () {

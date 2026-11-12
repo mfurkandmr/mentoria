@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/data/paged_fetch.dart';
 import '../../auth/data/auth_repository.dart';
+import '../../tutoring/data/tutoring_repository.dart';
 import '../domain/models.dart';
 
 /// Öğretmen + uygulama hesabı bağlantısı (profile_id doluysa o koç
@@ -49,6 +50,7 @@ class TimetableSetup {
     this.rooms = const [],
     this.classrooms = const [],
     this.lessons = const [],
+    this.tutoring = const [],
   });
 
   final List<TimeSlot> slots;
@@ -56,6 +58,32 @@ class TimetableSetup {
   final List<Room> rooms;
   final List<ClassroomRecord> classrooms;
   final List<ClassLesson> lessons;
+
+  /// Açık soru çözümü / birebir / etüt oturumları (NOTLAR §95). Programda
+  /// gösterilir; üretici o saatlere o öğretmene ve dersliğe ders koymaz.
+  final List<TutoringSession> tutoring;
+
+  /// Öğretmenin ya da dersliğin bu ders saatiyle kesişen oturumları.
+  List<TutoringSession> tutoringAt(
+    TimeSlot slot, {
+    String? teacherId,
+    String? roomId,
+  }) => [
+    for (final t in tutoring)
+      if (t.active &&
+          t.day == slot.day &&
+          t.start < slot.end &&
+          slot.start < t.end &&
+          (teacherId == null || t.teacherId == teacherId) &&
+          (roomId == null || t.roomId == roomId))
+        t,
+  ];
+
+  List<AvailabilityRange> _blocks(bool Function(TutoringSession) where) => [
+    for (final t in tutoring)
+      if (t.active && where(t))
+        AvailabilityRange(day: t.day, start: t.start, end: t.end),
+  ];
 
   bool get isEmpty =>
       slots.isEmpty ||
@@ -70,8 +98,26 @@ class TimetableSetup {
     int seed = 1,
   }) => GenerationInput(
     slots: slots,
-    teachers: [for (final t in teachers) t.teacher],
-    rooms: rooms,
+    teachers: [
+      for (final r in teachers)
+        Teacher(
+          id: r.teacher.id,
+          name: r.teacher.name,
+          branches: r.teacher.branches,
+          maxWeeklyHours: r.teacher.maxWeeklyHours,
+          availability: r.teacher.availability,
+          blocked: _blocks((t) => t.teacherId == r.teacher.id),
+        ),
+    ],
+    rooms: [
+      for (final r in rooms)
+        Room(
+          id: r.id,
+          name: r.name,
+          capacity: r.capacity,
+          blocked: _blocks((t) => t.roomId == r.id),
+        ),
+    ],
     classrooms: [
       for (final c in classrooms)
         Classroom(
@@ -244,6 +290,14 @@ class SupabaseTimetableRepository implements TimetableRepository {
           .select('*, classroom_students(student_id)')
           .order('name'),
       _client.from('class_lessons').select().order('branch'),
+      // Oturumlar (yalnızca müdür okur; başkasına boş gelir).
+      _client
+          .from('tutoring_sessions')
+          .select(
+            'id, teacher_id, kind, day, start_time, end_time, capacity, '
+            'branch, room_id, active',
+          )
+          .eq('active', true),
     ]);
     List<Map<String, dynamic>> rows(int i) => [
       for (final r in results[i] as List) Map<String, dynamic>.from(r as Map),
@@ -314,6 +368,20 @@ class SupabaseTimetableRepository implements TimetableRepository {
             weeklyHours: r['weekly_hours'] as int,
             teacherId: r['teacher_id'] as String?,
             maxPerDay: r['max_per_day'] as int,
+          ),
+      ],
+      tutoring: [
+        for (final r in rows(5))
+          TutoringSession(
+            id: r['id'] as String,
+            teacherId: r['teacher_id'] as String,
+            kind: TutoringKind.fromDb(r['kind'] as String?),
+            day: r['day'] as int,
+            start: parseHm(r['start_time'] as String),
+            end: parseHm(r['end_time'] as String),
+            capacity: r['capacity'] as int,
+            branch: r['branch'] as String?,
+            roomId: r['room_id'] as String?,
           ),
       ],
     );

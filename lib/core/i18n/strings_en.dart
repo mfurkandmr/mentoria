@@ -2032,11 +2032,10 @@ const enStrings = <String, String>{
   'Talep iptal edildi': 'Request cancelled',
   'Taleplerim': 'My requests',
   'Açık oturum yok': 'No open sessions',
-  'Kurumun önümüzdeki günler için soru çözümü ya da birebir ders saati açmadı.':
-      'Your school hasn’t opened any question-solving or one-to-one hours for the coming days.',
+  'Kurumun önümüzdeki günler için soru çözümü ya da birebir ders saati açmadı. Açtığında burada görünür; buradan talep edersin.':
+      'Your institution has not opened question-solving or one-to-one slots for the coming days. When it does, they appear here and you can request one.',
+
   'Açık oturumlar': 'Open sessions',
-  'Talebini öğretmen onaylar. Bir güne en çok 3 talep verebilirsin; koçun taleplerini görür.':
-      'The teacher approves your request. You can make at most 3 requests a day; your coach sees your requests.',
   'Dolu': 'Full',
   '{t}/{c} dolu': '{t}/{c} taken',
   'Konu ya da soru (isteğe bağlı)': 'Topic or question (optional)',
@@ -2052,7 +2051,6 @@ const enStrings = <String, String>{
       'Reason (optional, sent to the student)',
   'Talepler': 'Requests',
   'Oturum ekle': 'Add session',
-  'Soru çözümü talepleri': 'Question-solving requests',
   'Haftalık saatler her hafta tekrarlanır. Öğrenci önümüzdeki 14 gün için talep eder, öğretmen onaylar. Öğretmenin programda dersi olan saate oturum açılamaz.':
       'Weekly hours repeat every week. Students request for the next 14 days and the teacher approves. You can’t open a session when the teacher has a timetabled lesson.',
   'Henüz oturum yok. Öğretmenlere soru çözümü ya da birebir ders saati aç.':
@@ -2077,8 +2075,6 @@ const enStrings = <String, String>{
   'Talebin onaylanmadı': 'Your request wasn’t approved',
   '{name} soru çözümü istedi': '{name} asked for question solving',
   'Onayını bekliyor': 'Awaiting your approval',
-  'Öğrencilerinin öğretmenlerden istediği saatler':
-      'Hours your students requested from teachers',
   'Öğretmenlere saat aç; talepleri izle':
       'Open hours for teachers; follow requests',
   // Bildirim kanalı
@@ -4169,4 +4165,40 @@ const enStrings = <String, String>{
   'Derslere göre netler': 'Nets by subject',
   'Konu analizi yalnızca optikten okunan kurum sınavlarında var; bu deneme elle girildi.':
       'Topic analysis is only available for scanned institution exams; this one was entered by hand.',
+  'Kurumun henüz açık saat girmedi':
+      'Your institution has not opened any slots yet',
+  'Derslik yok': 'No room',
+  'Derslik bu saatte dolu (ders ya da başka oturum).':
+      'The room is busy at this time (a lesson or another session).',
+  'Soru çözümü, birebir ve etüt': 'Question solving, one-to-one and study hall',
+  'Oturum yok. Öğrenciler açılan saatlere talep gönderir, öğretmen onaylar.':
+      'No sessions. Students request the opened hours and the teacher approves.',
+  'Derse dokun: kilitle ya da taşı. Boş saate dokun: soru çözümü, birebir ya da etüt aç.':
+      'Tap a lesson to lock or move it. Tap an empty hour to open question solving, one-to-one or study hall.',
+  'Talebini öğretmen onaylar. Bir güne en çok 3 talep verebilirsin.':
+      'The teacher approves your request. You can make at most 3 requests per day.',
+  '{n} talep onay bekliyor': '{n} requests awaiting approval',
+  '{n} açık saat var': '{n} open slots',
+  'Bugün {n} açık saat var': '{n} open slots today',
+  'Öğretmenden soru çözümü ya da birebir iste':
+      'Ask a teacher for question solving or a one-to-one lesson',
+  'En az bir saat seç.': 'Pick at least one hour.',
+  '{n} oturum açıldı': '{n} sessions opened',
+  '{n} oturum açıldı, {m} saat açılamadı (çakışma)':
+      '{n} sessions opened, {m} hours could not be opened (conflict)',
+  'Boş saatleri aç': 'Open free hours',
+  '{name} için programda boş olan ders saatleri. Seçtiklerine her hafta oturum açılır.':
+      'Free lesson hours for {name} in the timetable. A weekly session is opened for each one you pick.',
+  'Ders (boşsa branşı)': 'Subject (empty: their branch)',
+  'Programda boş saati yok.': 'No free hours in the timetable.',
+  '{n} saati aç': 'Open {n} hours',
+  'Boş saatleri toplu aç': 'Open free hours in bulk',
+  'Dağılım: {plan} (2 saatlik bitişik bloklar)':
+      'Split: {plan} (back-to-back 2-hour blocks)',
+  'Her gün en çok 1 saat; bloklanmaz.': 'At most 1 hour a day; no blocks.',
+  'Öğretmen uygulamaya davet koduyla kaydolur; kendi panelinde ders programını ve soru çözümü taleplerini görür. "Personel ekle" yalnızca izin ve ödeme kartı açar.':
+      'Teachers join the app with an invite code and see their timetable and question-solving requests in their own panel. "Add staff" only opens a leave and pay card.',
+  'Koç uygulamaya davet koduyla kaydolur. "Personel ekle" yalnızca izin ve ödeme kartı açar.':
+      'Coaches join the app with an invite code. "Add staff" only opens a leave and pay card.',
+  'Öğretmen hesapları': 'Teacher accounts',
 };

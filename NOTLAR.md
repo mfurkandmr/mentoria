@@ -3233,3 +3233,68 @@ kurum sıralaması (kurum sınavında), toplam doğru / yanlış / boş ve iki d
   için düğme nedenini söyleyen bir bildirim gösterir.
 - Kart başlığına dokununca eski ayrıntı sayfası açılır (yanlışlar, silme).
 - Sunucu değişikliği yok.
+
+## 95. Soru çözümü ders programında; koçla ilgisi yok (12 Kasım 2026)
+
+Kullanıcı kararı: soru çözümü / birebir / etüt öğretmen rolünün işi, koçla
+ilgisi yok; oturumlar ders programının içinde olmalı. Planın dört adımı da
+yapıldı (tek tablo, iki yönlü çakışma, toplu açma, herkes kendi programında).
+
+- **Koç çıkarıldı:** koç panelindeki "Soru çözümü talepleri" aracı ve
+  `/coach/tutoring` rotası kaldırıldı; `managed_tutoring_requests` yalnızca
+  müdüre döner (`is_org_admin`). Öğrenci ekranındaki "koçun görür" cümlesi
+  çıktı. Demo deposunda `coachOf` yok.
+- **Ders programı tablosu (`schedule_screen.dart`):** Öğretmen ve Derslik
+  görünümünde oturumlar ayrı renkte hücre olarak çıkar (`tutoring-cell-*`),
+  boş saate dokununca oturum formu öğretmen / derslik, gün ve saatle dolu
+  açılır (`add-tutoring-*`). Tablonun altında öğretmenin / dersliğin bütün
+  oturumları liste olarak durur (ders saatleri dışında kalanlar, ör. 15.00
+  sonrası, tabloda görünmediği için). Sınıf görünümünde oturum yok.
+- **Oturum formu:** derslik seçimi eklendi; kaydedince program da tazelenir.
+  `showTutoringSessionDialog` artık `teacherId/roomId/day/start/end` alır.
+- **Üretici iki yönlü:** `TimetableSetup.tutoring` (açık oturumlar,
+  `fetchSetup` okur; müdür dışına boş) → `toInput` öğretmene ve dersliğe
+  `blocked` blok olarak verir. `Teacher.freeAt` / `Room.freeAt` üretici,
+  `validateHard` ve elle taşımada (`moveProblems`) kullanılır. Müsaitlik
+  (`availableAt`) ayrı kalır: kurulum sihirbazı oturumları müsaitsizlik diye
+  kaydetmesin.
+- **Sunucu:** `guard_tutoring_session` dersliği de denetler: aynı saatte
+  başka açık oturum ya da yayındaki programda ders varsa `TUTOR_ROOM_BUSY`.
+  Migration `20261112120000_tutoring_timetable` (rollback var).
+- **Açık:** yayınlama sunucuda oturum çakışmasına bakmaz (istemci üretici ve
+  doğrulayıcı bakar). Oturum talebe kapatılınca (`active=false`) programdan
+  da düşer.
+- Testler: `test/schedule_generator/tutoring_blocks_test.dart`,
+  `schedule_screen_test` ("boş saate soru çözümü açılır"),
+  `supabase/tests/tutoring_timetable_test.mjs`.
+- **Toplu açma:** ders programı → Öğretmen görünümü → "Boş saatleri toplu
+  aç": öğretmenin bu programda dersi ve oturumu olmayan, müsait ders
+  saatleri çip olarak listelenir; seçilenlere aynı tür / kontenjan / ders ile
+  haftalık oturum açılır (`showBulkTutoringDialog`). Açılamayanlar (yayındaki
+  programla çakışma) sayıyla bildirilir. Her ders saati ayrı oturum.
+- **Kendi programında:** öğretmenin "Ders programı" ekranında (`MyTimetableScreen`)
+  oturumları gün gün, bekleyen talep sayısıyla (`teacherTutoringForDay`);
+  öğrencinin "Ders programım"ında Bugün sekmesinde o günün, Hafta sekmesinde
+  önümüzdeki günlerin onaylı / bekleyen talepleri ve açık saat sayısı
+  (`StudentTutoringSchedule`, `tutoring_timetable_widgets.dart`). Öğrencinin
+  sınıfı / yayında programı yoksa bu ekran boş durumda kalır; giriş ana
+  sayfadaki karttan.
+
+## 96. Ders programı: 2'li blok dağılımı (12 Kasım 2026)
+
+Kullanıcı isteği: üretici bir sınıfın dersini 1+1+1 / 2+1+1 diye ayrı
+günlere dağıtıyordu; artık 2 saatlik bitişik bloklar: 3 → 2+1, 4 → 2+2,
+5 → 2+2+1, 6 → 2+2+2.
+
+- **Puan (`constraints.dart`, `splitPenalty` = 4):** her ders için tek
+  saatlik gün sayısı (tek haftalık saatte 1'e izin) ve aynı gündeki
+  saatlerin arası açılması cezalı. Üretici iyileştirmesi (annealing) bu
+  puanı düşürür. Günde 3 ve üstü zaten `maxPerDay` (varsayılan 2) cezası.
+- **Yerleştirme (`_cost`):** gün içinde 1 saati olan derse bitişik saat
+  güçlü öncelik (-6), bitişik olmayan aynı gün +4; gereken gün sayısı
+  (`ceil(saat/2)`) dolmuşsa yeni gün açmak +6. Ders → saat izleme `_lAt`.
+- **"Günde en çok 1"** seçilen derste blok kuralı yok (eski davranış).
+- Sihirbazın ders penceresinde planlanan bölünüş yazar (`blockPlan`).
+- Kesin kural değil (yumuşak): öğretmen müsaitliği ya da sınıf doluluğu
+  izin vermezse 2+1+1 kalabilir; puan ekranında görünür.
+- Test: `test/schedule_generator/block_distribution_test.dart`.

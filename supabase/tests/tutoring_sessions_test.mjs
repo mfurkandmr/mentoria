@@ -139,7 +139,7 @@ const note = await one(`select * from public.notifications where user_id = $1 an
 check(note?.data?.event === 'new' && note.data.student === 'Bal Akademi Ali' && note.data.route === '/teacher',
   'öğretmene bildirim gitti', note?.data);
 
-console.log('Öğretmen görür ve karar verir; koç yalnızca görür');
+console.log('Öğretmen görür ve karar verir; koç görmez');
 await asUser(A.s2);
 const r2 = (await one(`select public.request_tutoring_session($1, $2) id`, [sess.id, D])).id;
 await asUser(A.s3);
@@ -155,7 +155,8 @@ await asUser(A.coach);
 await expectError('koç karar veremez',
   () => db.query(`select public.decide_tutoring_request($1, true)`, [r1]), 'NOT_ALLOWED');
 const cq = await rows(`select * from public.managed_tutoring_requests($1, 7)`, [D]);
-check(cq.length === 2 && cq.every((c) => c.student_name !== 'Bal Akademi Can'), 'koç yalnızca kendi öğrencilerinin taleplerini görür', cq.map((c) => c.student_name));
+// 20261112120000 sonrası koç talepleri görmez (soru çözümü öğretmen ve müdür işi).
+check(cq.length === 0, 'koç talepleri görmez', cq.map((c) => c.student_name));
 await asUser(A.admin);
 await expectError('müdür karar veremez',
   () => db.query(`select public.decide_tutoring_request($1, true)`, [r1]), 'NOT_ALLOWED');

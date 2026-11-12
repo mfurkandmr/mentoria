@@ -141,6 +141,54 @@ void main() {
     expect(await repo.fetchEntries('sch-demo'), before);
   });
 
+  testWidgets('öğretmen görünümünde boş saate soru çözümü açılır', (t) async {
+    await pump(t, const ScheduleScreen(scheduleId: 'sch-demo'));
+    await t.tap(find.text('Öğretmen'));
+    await t.pumpAndSettle();
+    expect(find.text('Soru çözümü, birebir ve etüt'), findsOneWidget);
+
+    bool keyStarts(Widget w, String p) =>
+        w.key is ValueKey && '${(w.key! as ValueKey).value}'.startsWith(p);
+    final empty = find.byWidgetPredicate((w) => keyStarts(w, 'add-tutoring-'));
+    expect(empty, findsWidgets);
+    final slotId = '${(t.widget(empty.first).key! as ValueKey).value}'
+        .substring('add-tutoring-'.length);
+    await t.ensureVisible(empty.first);
+    await t.tap(empty.first);
+    await t.pumpAndSettle();
+    // Öğretmen, gün ve saat tablodan dolu gelir; yalnızca kaydet.
+    expect(find.text('Oturum ekle'), findsWidgets);
+    await t.tap(find.byKey(const ValueKey('tutoring-save')));
+    await t.pumpAndSettle();
+    expect(find.byKey(ValueKey('tutoring-cell-$slotId')), findsOneWidget);
+  });
+
+  testWidgets('boş saatler toplu açılır', (t) async {
+    await pump(t, const ScheduleScreen(scheduleId: 'sch-demo'));
+    await t.tap(find.text('Öğretmen'));
+    await t.pumpAndSettle();
+    final bulk = find.byKey(const ValueKey('timetable-bulk-tutoring'));
+    await t.ensureVisible(bulk);
+    await t.tap(bulk);
+    await t.pumpAndSettle();
+    expect(find.text('Boş saatleri aç'), findsOneWidget);
+    final chips = find.byType(FilterChip);
+    expect(chips, findsWidgets);
+    await t.tap(chips.at(0));
+    await t.pump();
+    await t.tap(chips.at(1));
+    await t.pump();
+    await t.tap(find.byKey(const ValueKey('bulk-tutoring-save')));
+    await t.pumpAndSettle();
+    expect(find.text('2 oturum açıldı'), findsOneWidget);
+    final cells = find.byWidgetPredicate(
+      (w) =>
+          w.key is ValueKey &&
+          '${(w.key! as ValueKey).value}'.startsWith('tutoring-cell-'),
+    );
+    expect(cells, findsNWidgets(2));
+  });
+
   testWidgets('kurulum: ders saati şablonu kaydedilir', (t) async {
     await pump(t, const TimetableSetupScreen());
     expect(find.text('Ders saatleri'), findsOneWidget);

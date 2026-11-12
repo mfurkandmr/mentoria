@@ -245,6 +245,20 @@ Future<List<Override>> buildDemoOverrides([
           viewerId: profile.id,
           viewerRole: role,
         );
+  final TutoringRepository demoTutoring =
+      tutoring ??
+      InMemoryTutoringRepository.demo(
+        viewerId: profile.id,
+        viewerRole: role,
+        teacherNames: demoTimetable.teacherNames,
+        studentNames: {
+          for (final e in demoStudents().entries) e.key: e.value.$1,
+        },
+      );
+  // Ders programı soru çözümü oturumlarını görsün (NOTLAR §95).
+  if (demoTutoring is InMemoryTutoringRepository) {
+    demoTimetable.tutoringSource = () => demoTutoring.sessions;
+  }
   final center =
       examCenter ??
       InMemoryExamCenter.demo(
@@ -433,18 +447,7 @@ Future<List<Override>> buildDemoOverrides([
         orgName: 'Bal Akademi',
       ),
     ),
-    tutoringRepositoryProvider.overrideWithValue(
-      tutoring ??
-          InMemoryTutoringRepository.demo(
-            viewerId: profile.id,
-            viewerRole: role,
-            teacherNames: demoTimetable.teacherNames,
-            studentNames: {
-              for (final e in demoStudents().entries) e.key: e.value.$1,
-            },
-            coachOf: demoRichEnabled ? demoCoachOf() : const {},
-          ),
-    ),
+    tutoringRepositoryProvider.overrideWithValue(demoTutoring),
     studentManagementRepositoryProvider.overrideWithValue(
       students ??
           InMemoryStudentManagementRepository(

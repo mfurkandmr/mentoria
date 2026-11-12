@@ -28,7 +28,6 @@ class InMemoryTutoringRepository implements TutoringRepository {
     required this.teacherNames,
     this.teacherProfiles = const {},
     this.studentNames = const {},
-    this.coachOf = const {},
     this.now,
   });
 
@@ -40,8 +39,6 @@ class InMemoryTutoringRepository implements TutoringRepository {
   final Map<String, String> teacherProfiles;
   final Map<String, String> studentNames;
 
-  /// Öğrenci → koç (koç görünümü için).
-  final Map<String, String> coachOf;
   final DateTime Function()? now;
 
   final _sessions = <TutoringSession>[];
@@ -58,7 +55,6 @@ class InMemoryTutoringRepository implements TutoringRepository {
     required Map<String, String> teacherNames,
     Map<String, String> teacherProfiles = const {'t-mehmet': 'demo-teacher'},
     Map<String, String> studentNames = const {},
-    Map<String, String> coachOf = const {},
   }) {
     final repo = InMemoryTutoringRepository(
       viewerId: viewerId,
@@ -66,7 +62,6 @@ class InMemoryTutoringRepository implements TutoringRepository {
       teacherNames: teacherNames,
       teacherProfiles: teacherProfiles,
       studentNames: studentNames,
-      coachOf: coachOf,
     );
     for (var d = 1; d <= 6; d++) {
       repo._sessions.add(
@@ -123,6 +118,9 @@ class InMemoryTutoringRepository implements TutoringRepository {
     }
     return repo;
   }
+
+  /// Ders programının gördüğü oturumlar (demo; NOTLAR §95).
+  List<TutoringSession> get sessions => List.unmodifiable(_sessions);
 
   /// Testler için: kurallara bakmadan oturum ekler.
   void seedSession(TutoringSession s) => _sessions.add(s);
@@ -403,15 +401,11 @@ class InMemoryTutoringRepository implements TutoringRepository {
     DateTime from, {
     int days = 14,
   }) async {
-    bool visible(String student) => switch (viewerRole) {
-      'admin' => true,
-      'coach' => coachOf.isEmpty || coachOf[student] == viewerId,
-      _ => false,
-    };
+    // Yalnızca müdür; koçla ilgisi yok (NOTLAR §95).
+    if (viewerRole != 'admin') return const [];
     return [
       for (final r in _requests)
-        if (visible(r.studentId) &&
-            _inRange(r.date, from, days) &&
+        if (_inRange(r.date, from, days) &&
             r.status != TutoringStatus.cancelled)
           _view(r),
     ]..sort(_order);

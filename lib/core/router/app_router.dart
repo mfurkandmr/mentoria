@@ -514,16 +514,14 @@ GoRoute _managerRoutes(String base, Widget home) => GoRoute(
           ),
         ],
       ),
-    // Soru çözümü / birebir: müdür oturum açar, koç talepleri izler.
-    GoRoute(
-      path: 'tutoring',
-      pageBuilder: (_, state) => _cockpitPage(
-        state,
-        base == '/admin'
-            ? const TutoringAdminScreen()
-            : const CoachTutoringScreen(),
+    // Soru çözümü / birebir: müdür oturum açar, öğretmen onaylar. Koçla
+    // ilgisi yok (NOTLAR §95).
+    if (base == '/admin')
+      GoRoute(
+        path: 'tutoring',
+        pageBuilder: (_, state) =>
+            _cockpitPage(state, const TutoringAdminScreen()),
       ),
-    ),
     // Öğretmenler (hesaplı / hesapsız, davet, birleştirme): yalnızca müdür.
     if (base == '/admin')
       GoRoute(

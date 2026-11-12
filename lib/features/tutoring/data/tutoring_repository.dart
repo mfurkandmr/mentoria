@@ -6,7 +6,7 @@ import '../../auth/data/auth_repository.dart';
 
 /// Soru çözümü / birebir ders / etüt (NOTLAR §87). Müdür haftalık oturumu
 /// açar, öğrenci belirli bir güne talep eder, yalnızca öğretmen onaylar;
-/// koç ve müdür talepleri görür.
+/// müdür talepleri görür. Koçla ilgisi yoktur (NOTLAR §95).
 enum TutoringKind {
   questionSolving('question_solving', 'Soru çözümü'),
   privateLesson('private_lesson', 'Birebir ders'),
@@ -230,6 +230,9 @@ String tutoringErrorMessage(Object e) {
   if (s.contains('TUTOR_TEACHER_BUSY')) {
     return tr('Öğretmenin bu saatte programda dersi var.');
   }
+  if (s.contains('TUTOR_ROOM_BUSY')) {
+    return tr('Derslik bu saatte dolu (ders ya da başka oturum).');
+  }
   if (s.contains('TUTOR_ALREADY_DECIDED')) {
     return tr('Bu talep için zaten karar verilmiş.');
   }
@@ -257,7 +260,7 @@ abstract interface class TutoringRepository {
     String? reason,
   });
 
-  // Koç (kendi öğrencileri) ve müdür (kurum): salt okunur
+  // Müdür (kurum): salt okunur
   Future<List<TutoringRequest>> managedRequests(DateTime from, {int days = 14});
 }
 
@@ -441,7 +444,7 @@ final teacherTutoringRequestsProvider = FutureProvider<List<TutoringRequest>>(
   (ref) => ref.watch(tutoringRepositoryProvider).teacherRequests(_today()),
 );
 
-/// Koç / müdür: önümüzdeki 14 günün talepleri.
+/// Müdür: önümüzdeki 14 günün talepleri.
 final managedTutoringRequestsProvider = FutureProvider<List<TutoringRequest>>(
   (ref) => ref.watch(tutoringRepositoryProvider).managedRequests(_today()),
 );

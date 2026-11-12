@@ -45,17 +45,6 @@ class TutoringAdminScreen extends ConsumerWidget {
   );
 }
 
-/// Koç: kendi öğrencilerinin talepleri (salt okunur).
-class CoachTutoringScreen extends StatelessWidget {
-  const CoachTutoringScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(tr('Soru çözümü talepleri'))),
-    body: const ManagedTutoringRequests(),
-  );
-}
-
 class _SessionsTab extends ConsumerWidget {
   const _SessionsTab();
 
@@ -158,7 +147,7 @@ class _SessionsTab extends ConsumerWidget {
   }
 }
 
-/// Koç ve müdür: önümüzdeki 14 günün talepleri, gün gün.
+/// Müdür: önümüzdeki 14 günün talepleri, gün gün.
 class ManagedTutoringRequests extends ConsumerWidget {
   const ManagedTutoringRequests({super.key});
 
@@ -211,31 +200,58 @@ class ManagedTutoringRequests extends ConsumerWidget {
   }
 }
 
-/// Oturum ekle / düzenle.
+/// Oturum ekle / düzenle. Ders programı tablosundan açılınca öğretmen,
+/// derslik, gün ve saat dolu gelir (NOTLAR §95). Kaydedilince program da
+/// tazelenir.
 Future<void> showTutoringSessionDialog(
   BuildContext context,
   WidgetRef ref, {
   TutoringSession? edit,
+  String? teacherId,
+  String? roomId,
+  int? day,
+  int? start,
+  int? end,
 }) => showDialog<void>(
   context: context,
-  builder: (_) => _SessionDialog(edit: edit),
+  builder: (_) => _SessionDialog(
+    edit: edit,
+    teacherId: teacherId,
+    roomId: roomId,
+    day: day,
+    start: start,
+    end: end,
+  ),
 );
 
 class _SessionDialog extends ConsumerStatefulWidget {
-  const _SessionDialog({this.edit});
+  const _SessionDialog({
+    this.edit,
+    this.teacherId,
+    this.roomId,
+    this.day,
+    this.start,
+    this.end,
+  });
 
   final TutoringSession? edit;
+  final String? teacherId;
+  final String? roomId;
+  final int? day;
+  final int? start;
+  final int? end;
 
   @override
   ConsumerState<_SessionDialog> createState() => _SessionDialogState();
 }
 
 class _SessionDialogState extends ConsumerState<_SessionDialog> {
-  late String? _teacher = widget.edit?.teacherId;
+  late String? _teacher = widget.edit?.teacherId ?? widget.teacherId;
+  late String? _room = widget.edit?.roomId ?? widget.roomId;
   late TutoringKind _kind = widget.edit?.kind ?? TutoringKind.questionSolving;
-  late int _day = widget.edit?.day ?? 1;
-  late int _start = widget.edit?.start ?? 15 * 60;
-  late int _end = widget.edit?.end ?? 16 * 60;
+  late int _day = widget.edit?.day ?? widget.day ?? 1;
+  late int _start = widget.edit?.start ?? widget.start ?? 15 * 60;
+  late int _end = widget.edit?.end ?? widget.end ?? 16 * 60;
   late final _capacity = TextEditingController(
     text: '${widget.edit?.capacity ?? 4}',
   );
@@ -295,11 +311,12 @@ class _SessionDialogState extends ConsumerState<_SessionDialog> {
               end: _end,
               capacity: _kind == TutoringKind.privateLesson ? 1 : cap,
               branch: _branch.text.trim().isEmpty ? null : _branch.text.trim(),
-              roomId: widget.edit?.roomId,
+              roomId: _room,
               active: _active,
             ),
           );
       ref.invalidate(tutoringSessionsProvider);
+      ref.invalidate(timetableSetupProvider);
       if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) showMessage(context, tutoringErrorMessage(e));
@@ -310,8 +327,9 @@ class _SessionDialogState extends ConsumerState<_SessionDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final teachers =
-        ref.watch(timetableSetupProvider).value?.teachers ?? const [];
+    final setup = ref.watch(timetableSetupProvider).value;
+    final teachers = setup?.teachers ?? const [];
+    final rooms = setup?.rooms ?? const [];
     return AlertDialog(
       title: Text(
         widget.edit == null ? tr('Oturum ekle') : tr('Oturumu düzenle'),
@@ -380,6 +398,24 @@ class _SessionDialogState extends ConsumerState<_SessionDialog> {
                   ),
                 ],
               ),
+              if (rooms.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String?>(
+                  key: const ValueKey('tutoring-room'),
+                  initialValue: rooms.any((r) => r.id == _room) ? _room : null,
+                  isExpanded: true,
+                  decoration: InputDecoration(labelText: tr('Derslik')),
+                  items: [
+                    DropdownMenuItem<String?>(child: Text(tr('Derslik yok'))),
+                    for (final r in rooms)
+                      DropdownMenuItem<String?>(
+                        value: r.id,
+                        child: Text(r.name),
+                      ),
+                  ],
+                  onChanged: (v) => setState(() => _room = v),
+                ),
+              ],
               const SizedBox(height: 12),
               if (_kind != TutoringKind.privateLesson)
                 TextField(
@@ -417,6 +453,209 @@ class _SessionDialogState extends ConsumerState<_SessionDialog> {
           key: const ValueKey('tutoring-save'),
           onPressed: _saving ? null : _save,
           child: Text(tr('Kaydet')),
+        ),
+      ],
+    );
+  }
+}
+
+/// Öğretmenin boş ders saatleri (gün, başlangıç, bitiş).
+typedef FreeHour = ({int day, int start, int end});
+
+/// Toplu açma: öğretmenin programdaki boş saatlerinden seçilenlere aynı
+/// türde oturum açar (NOTLAR §95). Açılamayanlar (ör. yayındaki programda
+/// dersi olan saat) sayıyla bildirilir.
+Future<void> showBulkTutoringDialog(
+  BuildContext context, {
+  required String teacherId,
+  required String teacherName,
+  required List<FreeHour> hours,
+}) => showDialog<void>(
+  context: context,
+  builder: (_) =>
+      _BulkDialog(teacherId: teacherId, teacherName: teacherName, hours: hours),
+);
+
+class _BulkDialog extends ConsumerStatefulWidget {
+  const _BulkDialog({
+    required this.teacherId,
+    required this.teacherName,
+    required this.hours,
+  });
+
+  final String teacherId;
+  final String teacherName;
+  final List<FreeHour> hours;
+
+  @override
+  ConsumerState<_BulkDialog> createState() => _BulkDialogState();
+}
+
+class _BulkDialogState extends ConsumerState<_BulkDialog> {
+  final _picked = <FreeHour>{};
+  TutoringKind _kind = TutoringKind.questionSolving;
+  final _capacity = TextEditingController(text: '4');
+  final _branch = TextEditingController();
+  bool _saving = false;
+
+  @override
+  void dispose() {
+    _capacity.dispose();
+    _branch.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    if (_picked.isEmpty) {
+      showMessage(context, tr('En az bir saat seç.'));
+      return;
+    }
+    setState(() => _saving = true);
+    final repo = ref.read(tutoringRepositoryProvider);
+    final cap = (int.tryParse(_capacity.text) ?? 1).clamp(1, 60);
+    final branch = _branch.text.trim();
+    var done = 0, failed = 0;
+    for (final h
+        in _picked.toList()..sort(
+          (a, b) => a.day != b.day
+              ? a.day.compareTo(b.day)
+              : a.start.compareTo(b.start),
+        )) {
+      try {
+        await repo.saveSession(
+          TutoringSession(
+            id: '',
+            teacherId: widget.teacherId,
+            kind: _kind,
+            day: h.day,
+            start: h.start,
+            end: h.end,
+            capacity: _kind == TutoringKind.privateLesson ? 1 : cap,
+            branch: branch.isEmpty ? null : branch,
+          ),
+        );
+        done++;
+      } catch (_) {
+        failed++;
+      }
+    }
+    ref.invalidate(tutoringSessionsProvider);
+    ref.invalidate(timetableSetupProvider);
+    if (!mounted) return;
+    Navigator.pop(context);
+    showMessage(
+      context,
+      failed == 0
+          ? tr('{n} oturum açıldı', {'n': done})
+          : tr('{n} oturum açıldı, {m} saat açılamadı (çakışma)', {
+              'n': done,
+              'm': failed,
+            }),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final days = {for (final h in widget.hours) h.day}.toList()..sort();
+    final text = Theme.of(context).textTheme;
+    return AlertDialog(
+      title: Text(tr('Boş saatleri aç')),
+      content: SizedBox(
+        width: 420,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                tr(
+                  '{name} için programda boş olan ders saatleri. Seçtiklerine her hafta oturum açılır.',
+                  {'name': widget.teacherName},
+                ),
+                style: text.bodySmall,
+              ),
+              const SizedBox(height: 12),
+              SegmentedButton<TutoringKind>(
+                showSelectedIcon: false,
+                segments: [
+                  for (final k in TutoringKind.values)
+                    ButtonSegment(value: k, label: Text(k.label)),
+                ],
+                selected: {_kind},
+                onSelectionChanged: (s) => setState(() => _kind = s.first),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  if (_kind != TutoringKind.privateLesson) ...[
+                    Expanded(
+                      child: TextField(
+                        controller: _capacity,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        decoration: InputDecoration(
+                          labelText: tr('Kontenjan (kişi)'),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                  ],
+                  Expanded(
+                    child: TextField(
+                      controller: _branch,
+                      maxLength: 40,
+                      decoration: InputDecoration(
+                        labelText: tr('Ders (boşsa branşı)'),
+                        counterText: '',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              if (widget.hours.isEmpty)
+                Text(tr('Programda boş saati yok.'))
+              else
+                for (final d in days) ...[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8, bottom: 4),
+                    child: Text(dayLong(d), style: text.labelLarge),
+                  ),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: [
+                      for (final h in widget.hours.where((x) => x.day == d))
+                        FilterChip(
+                          key: ValueKey('free-${h.day}-${h.start}'),
+                          label: Text(formatHm(h.start)),
+                          selected: _picked.contains(h),
+                          onSelected: (v) => setState(
+                            () => v ? _picked.add(h) : _picked.remove(h),
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(tr('Vazgeç')),
+        ),
+        TextButton(
+          key: const ValueKey('bulk-tutoring-save'),
+          onPressed: _saving ? null : _save,
+          child: Text(
+            _picked.isEmpty
+                ? tr('Aç')
+                : tr('{n} saati aç', {'n': _picked.length}),
+          ),
         ),
       ],
     );

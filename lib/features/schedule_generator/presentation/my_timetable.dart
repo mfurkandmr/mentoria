@@ -5,6 +5,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/i18n.dart';
 import '../../../shared/widgets/common.dart';
+import '../../auth/data/auth_repository.dart';
+import '../../auth/data/profile.dart';
+import '../../tutoring/data/tutoring_repository.dart';
+import '../../tutoring/presentation/tutoring_timetable_widgets.dart';
 import '../data/timetable_repository.dart';
 import '../domain/models.dart';
 import 'timetable_format.dart';
@@ -62,22 +66,34 @@ class MyTimetableScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final items = ref.watch(myTimetableProvider);
     final text = Theme.of(context).textTheme;
+    // Öğretmen: soru çözümü / birebir oturumları da programda (NOTLAR §95).
+    final isTeacher =
+        ref.watch(currentProfileProvider).value?.role == UserRole.teacher;
+    final sessions = isTeacher
+        ? ref.watch(myTutoringSessionsProvider).value ??
+              const <TutoringSession>[]
+        : const <TutoringSession>[];
     return Scaffold(
       appBar: AppBar(title: Text(tr('Ders programı'))),
       body: AsyncView(
         value: items,
         onRetry: () => ref.invalidate(myTimetableProvider),
         builder: (list) {
-          if (list.isEmpty) {
+          if (list.isEmpty && sessions.isEmpty) {
             return Center(child: Text(tr('Yayında program yok.')));
           }
-          final days = {for (final i in list) i.day}.toList()..sort();
+          final days = {
+            for (final i in list) i.day,
+            for (final s in sessions)
+              if (s.active) s.day,
+          }.toList()..sort();
           final today = DateTime.now().weekday;
           final teacherView = list.every((i) => i.studentId == null);
           return ListView(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
             children: [
-              Text(list.first.scheduleName, style: text.titleMedium),
+              if (list.isNotEmpty)
+                Text(list.first.scheduleName, style: text.titleMedium),
               for (final d in days) ...[
                 Padding(
                   padding: const EdgeInsets.only(top: 16, bottom: 6),
@@ -115,6 +131,7 @@ class MyTimetableScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
+                ...teacherTutoringForDay(context, ref, d, sessions: sessions),
               ],
             ],
           );
