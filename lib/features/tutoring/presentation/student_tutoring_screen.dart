@@ -220,6 +220,8 @@ class _SlotCard extends StatelessWidget {
     } else {
       action = FilledButton(
         key: ValueKey('request-${s.sessionId}'),
+        // Temadaki tam genişlik satırı ezmesin (yazı harf harf kırılıyordu).
+        style: FilledButton.styleFrom(minimumSize: const Size(0, 40)),
         onPressed: () => onRequest(s),
         child: Text(tr('Talep et')),
       );

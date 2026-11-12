@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:mentoria/core/theme/app_theme.dart';
 import 'package:mentoria/dev/demo_mode.dart';
 import 'package:mentoria/dev/demo_tutoring.dart';
 import 'package:mentoria/features/notifications/data/notification_repository.dart';
@@ -77,6 +78,8 @@ void main() {
         ),
         child: MaterialApp.router(
           routerConfig: router,
+          // Uygulamanın teması: dolu düğmeler tam genişlik (satırı ezebilir).
+          theme: AppTheme.light(),
           locale: const Locale('tr', 'TR'),
           supportedLocales: const [Locale('tr', 'TR')],
           localizationsDelegates: GlobalMaterialLocalizations.delegates,
@@ -203,6 +206,32 @@ void main() {
       (await tutoring.myRequests()).where((r) => r.topic == 'Türev'),
       isEmpty,
     );
+  });
+
+  testWidgets('oturum kartı geniş ekranda da okunur (düğme satırı ezmez)', (
+    t,
+  ) async {
+    await pump(
+      t,
+      const StudentTutoringScreen(),
+      role: 'student',
+      tutoring: repo('demo-student', 'student'),
+    );
+    t.view.physicalSize = const Size(3800, 2000); // ~1520 dp genişlik
+    await t.pumpAndSettle();
+    final button = find.byWidgetPredicate(
+      (w) =>
+          w.key is ValueKey &&
+          '${(w.key! as ValueKey).value}'.startsWith('request-ts-'),
+    );
+    expect(button, findsWidgets);
+    expect(t.getSize(button.first).width, lessThan(300));
+    final card = find.ancestor(of: button.first, matching: find.byType(Card));
+    final title = find.descendant(
+      of: card,
+      matching: find.textContaining('Soru çözümü'),
+    );
+    expect(t.getSize(title.first).width, greaterThan(100));
   });
 
   testWidgets('kurumda oturum yokken de giriş kartı görünür', (t) async {

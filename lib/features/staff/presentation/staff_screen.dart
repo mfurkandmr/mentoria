@@ -273,6 +273,7 @@ class _InviteCard extends ConsumerWidget {
               children: [
                 FilledButton.tonalIcon(
                   key: ValueKey('staff-invite-${role.name}'),
+                  style: FilledButton.styleFrom(minimumSize: const Size(0, 40)),
                   onPressed: () =>
                       showInviteCodeDialog(context, ref, role: role),
                   icon: const Icon(Icons.vpn_key_outlined),
