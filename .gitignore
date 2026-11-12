@@ -60,3 +60,9 @@ android/key.properties
 
 # Yük testi oturum anahtarları
 tool/loadtest/users.json
+
+# Yük testi: bağlantı adresi ve paketler
+tool/loadtest/.env.local
+tool/loadtest/node_modules/
+tool/loadtest/results/
+tool/loadtest/*.crt

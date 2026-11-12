@@ -3298,3 +3298,57 @@ günlere dağıtıyordu; artık 2 saatlik bitişik bloklar: 3 → 2+1, 4 → 2+2
 - Kesin kural değil (yumuşak): öğretmen müsaitliği ya da sınıf doluluğu
   izin vermezse 2+1+1 kalabilir; puan ekranında görünür.
 - Test: `test/schedule_generator/block_distribution_test.dart`.
+
+## 97. Yük testi: Nano sunucunun sınırı (12 Kasım 2026)
+
+Amaç: veritabanı kaç kullanıcıya kadar 100 ms altında hizmet verir.
+Test projesi Mentoria-Test (`iruiyvfndxhkuiwbekuf`), canlı DEĞİL. İkisi de
+Nano boyutunda (kullanıcının ekranında canlı "NANO" görünüyor).
+
+**Hazırlık (yapıldı):**
+- Bağlantı `tool/loadtest/.env.local` (git'e girmez): `LT_DB_URL` (Session
+  pooler, parola kullanıcıda), `LT_DB_CA=prod-ca-2021.crt` (Supabase SSL
+  sertifikası, klasörde), `LT_ANON_KEY`, `LT_PASSWORD` (yuk-* hesaplarının
+  parolası). Test projesine geçici SQL Edge Function kurmak güvenlik
+  kuralına takıldı; yerel `pg` ile bağlanılıyor.
+- `apply_migrations.mjs`: test projesine 48 migration uygulandı (artık canlıyla
+  aynı, 20261112120000'e kadar). Sonraki migration'lar için argümansız çalışır.
+- `prepare.mjs`: 25 koç (koç başına 40 öğrenci), 1000 öğrenci, 20.000 soru
+  kaydı, 3.000 deneme, 10 öğretmen, 5 sınıf, yayında program, 20 soru çözümü
+  oturumu.
+- `tokens.mjs` (28 hesap: auth giriş sınırı yüzünden), `mix.js` (gerçekçi
+  karışım: %42 ana sayfa, %20 soru kaydı, %12 deneme, %8 program, %6 soru
+  çözümü, %10 koç, %2 müdür, +%3 ağ referansı), `ramp.sh "A B C" süre`
+  (her kademe ayrı, öncesinde sunucu sağlık kontrolü), `report.mjs`,
+  `pgstats.mjs` (sunucu tarafı sorgu süreleri). Sonuçlar `results/` (git dışı).
+
+**Bulgular (şimdiye kadar):**
+- Bu bilgisayardan Frankfurt'a veritabanına uğramayan istek bile ~95-115 ms
+  (ağ). Kullanıcının gördüğü süre Türkiye'den 100 ms altına inemez; ölçüt
+  sunucu tarafı süre.
+- Sunucu süreleri (düşük yükte): müdür kokpiti `admin_cockpit` ~415-440 ms
+  (en büyük sorun), `student_home` ~22 ms, `my_timetable` ~13 ms, diğerleri
+  1-5 ms.
+- Kısa (90 sn) kademeler: 10 ve 20 işlem/sn rahat (sunucu süreleri normal);
+  25-35 arası dalgalı (bir koşuda 30 iyi, 25 ve 35 çöktü); 40'ta doyma
+  (geçit bile yavaşlıyor), 80+ çöküş, 160'ta sunucu dakikalarca kendine
+  gelmedi (522).
+- 10 dakikalık 15 işlem/sn: birkaç dakika sonra çöktü (%10 hata, 60 sn zaman
+  aşımı). Nano'nun işlemci/disk burst kredisi bitince kalıcı kapasite çok
+  düşüyor.
+- 1 işlem ≈ 1,7 HTTP isteği (ana sayfa 3 istek).
+
+**Dayanıklılık (10 dk, kredi bitmiş sunucu):** 10 işlem/sn çöktü (%7 hata,
+ağ referansı bile ~1 sn). 5 işlem/sn: ortanca normal (149 ms, ~100 ms ağ) ama
+aralıklı duraklama (p95 41 sn, %3 hata, DB sorguları ara ara 5-7 sn). DB
+69 MB, önbellek isabeti %99,99: darboğaz disk değil, Nano'nun paylaşımlı
+işlemcisi (burst kredisi bitince). Zamanlanmış işler küçük pay (bildirim
+kuyruğu 15 sn'de bir, yük altında ~350 ms).
+
+**Sonuç:** sağlıklı işlemcide sunucu süreleri müdür kokpiti dışında 25 ms
+altı (100 ms hedefi rahat). Nano kısa ani yükte ~20 işlem/sn (~35 HTTP/sn,
+aynı anda ~400 aktif kullanıcı) taşır; sürekli yükte 5 işlem/sn'de bile
+takılır. Yayından önce üst boyut (Pro + Micro/Small) ve `admin_cockpit`
+hızlandırma gerekli; yükseltmeden sonra aynı testler (`ramp.sh`) yeniden
+koşulmalı. Testler arasında sunucunun toparlanması gerekir (kredi saatlerce
+dolar).

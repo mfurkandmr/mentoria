@@ -50,3 +50,22 @@ k6 run -e SUPABASE_URL=https://<staging>.supabase.co -e ANON_KEY=... -e RATE=40 
 
 Sonuç kötüyse önce Reports'taki yavaş sorgulara bak. Yeterli değilse
 Settings → Compute'tan bir üst boyuta geçip aynı testi tekrarla.
+
+## Karışık senaryo ve kapasite ölçümü (NOTLAR §97)
+
+Yalnızca Mentoria-Test. Bağlantı `.env.local` (git dışı): `LT_DB_URL`
+(Session pooler), `LT_DB_CA=prod-ca-2021.crt` (Dashboard → Database →
+Settings → SSL), `LT_ANON_KEY`, `LT_PASSWORD`.
+
+```bash
+cd tool/loadtest && npm install
+node apply_migrations.mjs        # test projesini depoyla eşitle
+node prepare.mjs                 # 25 koç, sınıflar, program, soru çözümü
+bash ramp.sh "10 20 40" 90s      # kademe başına k6 + DB süreleri
+node report.mjs                  # son sonucun tablosu
+node pgstats.mjs                 # sunucu tarafı sorgu süreleri
+```
+
+`mix.js` gerçek kullanım karışımıdır; `ramp.sh` her kademeden önce sunucunun
+toparlanmasını bekler. Nano'da burst kredisi bitince sonuçlar düşer: testler
+arasında dinlendir.
