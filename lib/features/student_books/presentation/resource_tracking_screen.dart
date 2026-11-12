@@ -35,25 +35,50 @@ class _ResourceTrackingScreenState
     extends ConsumerState<ResourceTrackingScreen> {
   ExamType _type = ExamType.tyt;
 
-  /// Sunucu yanıtı gelene kadar ekranda gösterilen değişiklikler.
-  final _pending = <(String, int), bool>{};
+  /// Bu ekranda yapılan işaretler. Kaydı başarılı olan da burada kalır:
+  /// her dokunuşta bütün işaretleri sunucudan yeniden çekmeye gerek yok.
+  /// Ekrandan çıkınca liste tazelenir.
+  final _local = <(String, int), bool>{};
 
   bool get _canEdit => widget.viewer != BooksViewer.parent;
 
   Future<void> _toggle(String studentBookId, int topicId, bool done) async {
     final key = (studentBookId, topicId);
-    setState(() => _pending[key] = done);
+    final before = _local[key];
+    setState(() => _local[key] = done);
     try {
       await ref
           .read(booksRepositoryProvider)
           .setTopicMark(studentBookId, topicId, done);
-      ref.invalidate(bookTopicMarksProvider(widget.studentId));
-      await ref.read(bookTopicMarksProvider(widget.studentId).future);
     } catch (_) {
-      if (mounted) showMessage(context, tr('Kaydedilemedi. Tekrar dene.'));
-    } finally {
-      if (mounted) setState(() => _pending.remove(key));
+      if (!mounted) return;
+      setState(() {
+        if (before == null) {
+          _local.remove(key);
+        } else {
+          _local[key] = before;
+        }
+      });
+      showMessage(context, tr('Kaydedilemedi. Tekrar dene.'));
     }
+  }
+
+  // dispose içinde ref kullanılamaz; kapsayıcı önceden alınır.
+  ProviderContainer? _container;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _container = ProviderScope.containerOf(context, listen: false);
+  }
+
+  @override
+  void dispose() {
+    // Değişiklik olduysa başka ekranlar (ve geri dönüş) güncel listeyi görsün.
+    if (_local.isNotEmpty) {
+      _container?.invalidate(bookTopicMarksProvider(widget.studentId));
+    }
+    super.dispose();
   }
 
   @override
@@ -86,65 +111,75 @@ class _ResourceTrackingScreenState
                 for (final b in o.books)
                   if (b.status != StudentBookStatus.dropped) b,
               ];
-              final visible = topicsForGrade(all, grade);
+              // Konular derse göre bir kez gruplanır (her ders için tüm
+              // listeyi taramak yerine).
+              final bySubject = <String, List<Topic>>{};
+              for (final t in topicsForGrade(all, grade)) {
+                (bySubject[t.subjectCode] ??= []).add(t);
+              }
+              for (final l in bySubject.values) {
+                l.sort((a, b) => a.sort.compareTo(b.sort));
+              }
               final subjects = [
                 for (final s in examSubjects)
                   if ((school || s.examType == _type) &&
-                      visible.any((t) => t.subjectCode == s.code) &&
-                      books.any(
-                        (b) =>
-                            b.book.subjectCode == null ||
-                            b.book.subjectCode == s.code,
-                      ))
-                    s,
-              ];
-              bool done(String sb, int topic) =>
-                  _pending[(sb, topic)] ?? saved.contains((sb, topic));
-
-              return ListView(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
-                children: [
-                  if (!school)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: SegmentedButton<ExamType>(
-                        showSelectedIcon: false,
-                        segments: [
-                          for (final t in ExamType.values)
-                            ButtonSegment(value: t, label: Text(t.label)),
-                        ],
-                        selected: {_type},
-                        onSelectionChanged: (s) =>
-                            setState(() => _type = s.first),
-                      ),
-                    ),
-                  if (subjects.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: EmptyState(
-                        title: tr('Bu bölümde kitabın yok'),
-                        message: tr(
-                          'Kitap eklediğinde konuları burada kitap kitap işaretleyebilirsin.',
-                        ),
-                      ),
-                    ),
-                  for (final s in subjects)
-                    _SubjectTable(
-                      title: school ? s.name : '${s.examType.label} ${s.name}',
-                      topics: [
-                        for (final t in visible)
-                          if (t.subjectCode == s.code) t,
-                      ]..sort((a, b) => a.sort.compareTo(b.sort)),
+                      bySubject.containsKey(s.code))
+                    (
+                      subject: s,
                       books: [
                         for (final b in books)
                           if (b.book.subjectCode == null ||
                               b.book.subjectCode == s.code)
                             b,
                       ],
-                      isDone: done,
-                      onToggle: _canEdit ? _toggle : null,
                     ),
-                ],
+              ].where((e) => e.books.isNotEmpty).toList();
+              bool done(String sb, int topic) =>
+                  _local[(sb, topic)] ?? saved.contains((sb, topic));
+
+              final header = <Widget>[
+                if (!school)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: SegmentedButton<ExamType>(
+                      showSelectedIcon: false,
+                      segments: [
+                        for (final t in ExamType.values)
+                          ButtonSegment(value: t, label: Text(t.label)),
+                      ],
+                      selected: {_type},
+                      onSelectionChanged: (s) =>
+                          setState(() => _type = s.first),
+                    ),
+                  ),
+                if (subjects.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: EmptyState(
+                      title: tr('Bu bölümde kitabın yok'),
+                      message: tr(
+                        'Kitap eklediğinde konuları burada kitap kitap işaretleyebilirsin.',
+                      ),
+                    ),
+                  ),
+              ];
+
+              // Ders tabloları ekrana girdikçe çizilir.
+              return ListView.builder(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+                itemCount: header.length + subjects.length,
+                itemBuilder: (context, i) {
+                  if (i < header.length) return header[i];
+                  final e = subjects[i - header.length];
+                  final s = e.subject;
+                  return _SubjectTable(
+                    title: school ? s.name : '${s.examType.label} ${s.name}',
+                    topics: bySubject[s.code]!,
+                    books: e.books,
+                    isDone: done,
+                    onToggle: _canEdit ? _toggle : null,
+                  );
+                },
               );
             },
           ),
