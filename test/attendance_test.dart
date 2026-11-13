@@ -138,15 +138,15 @@ void main() {
       );
 
       expect(
-        find.text('Gelmeyenlerin velisine SMS gönderilsin mi?'),
+        find.text('Gelmeyenlerin velisine WhatsApp mesajı gönderilsin mi?'),
         findsOneWidget,
       );
       expect(find.text('Veli telefonu yok'), findsOneWidget);
       await t.tap(find.text('Gönder (1)'));
       await t.pumpAndSettle();
       expect(repo.sentSms.single.$1, '+905321234567');
-      expect(find.text('1 veliye SMS sırasına alındı.'), findsOneWidget);
-      expect(find.textContaining('Veliye SMS gönderildi'), findsOneWidget);
+      expect(find.text('1 veliye WhatsApp sırasına alındı.'), findsOneWidget);
+      expect(find.textContaining('Veliye WhatsApp gönderildi'), findsOneWidget);
     });
 
     testWidgets('veli telefonu eklenince SMS gönderilebilir', (t) async {
@@ -174,7 +174,7 @@ void main() {
         '+905337654321',
       );
 
-      await t.tap(find.byTooltip('Gelmeyenlerin velisine SMS'));
+      await t.tap(find.byTooltip('Gelmeyenlerin velisine WhatsApp'));
       await t.pumpAndSettle();
       await t.tap(find.text('Gönder (1)'));
       await t.pumpAndSettle();

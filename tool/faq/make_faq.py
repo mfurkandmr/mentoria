@@ -34,7 +34,7 @@ def sections_dart(name, sections):
     return '\n'.join(out)
 
 
-GROUPS = [('student', F.STUDENT), ('coach', F.COACH), ('admin', F.ADMIN), ('parent', F.PARENT),
+GROUPS = [('student', F.STUDENT), ('coach', F.COACH), ('admin', F.ADMIN), ('parent', F.PARENT), ('teacher', F.TEACHER),
           ('common', F.COMMON), ('platform', F.PLATFORM)]
 
 
@@ -70,6 +70,7 @@ def main():
         '    UserRole.coach => _coach(),',
         '    UserRole.admin => _admin(),',
         '    UserRole.parent => _parent(),',
+        '    UserRole.teacher => _teacher(),',
         '  },',
         '  if (superAdmin) ..._platform(),',
         '  ..._common(),',

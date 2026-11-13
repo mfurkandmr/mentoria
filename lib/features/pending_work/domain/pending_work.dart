@@ -164,7 +164,7 @@ List<PendingItem> pendingItems({
               ? tr('öğrencinin bugünkü yoklaması alınmadı')
               : tr('öğrenci bugünkü yoklamada işaretsiz'),
           reason: tr(
-            'Gelmeyenlerin velisine SMS ancak yoklama kaydedilince gider.',
+            'Gelmeyenlerin velisine WhatsApp mesajı ancak yoklama kaydedilince gider.',
           ),
           route: '/attendance',
         ),

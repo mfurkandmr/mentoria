@@ -1748,6 +1748,56 @@ const enStrings = <String, String>{
   'Örn. Cumartesi TYT denemesi': 'E.g. TYT mock exam on Saturday',
   'Duyuru metni': 'Announcement text',
 
+  'Lisans süresi doldu ({expiry}). Öğrenci, koç ve veliler giriş yapamıyor.':
+      'License expired ({expiry}). Students, coaches and parents can’t sign in.',
+  'Kurumunun lisans süresi doldu. Kurum yöneticinle iletişime geç.':
+      'Your school’s licence has expired. Contact your school administrator.',
+
+  // Öğretmen paneli (NOTLAR §86)
+  'Öğretmen davet et; kayıt olanlar listeye düşer':
+      'Invite teachers; those who sign up join the list',
+  'Öğretmen davet et': 'Invite teacher',
+  'Öğretmen bu kodla kayıt olunca öğretmen listene kendiliğinden eklenir.':
+      'When the teacher signs up with this code, they are added to your teacher list automatically.',
+  'En az bir branş seç.': 'Pick at least one subject.',
+  'Branşların': 'Your subjects',
+  'Öğretmen paneli hakkında': 'About the teacher panel',
+  'Ders programı ayarları': 'Timetable settings',
+  'Öğretmen davet koduyla kayıt olan öğretmen buraya kendiliğinden eklenir ve kendi panelinden programını görür. Elle eklediğin öğretmenlerin hesabı yoktur.':
+      'Teachers who sign up with a teacher invite code are added here automatically and see their timetable in their own panel. Teachers you added by hand have no account.',
+  'Henüz öğretmen yok. Davet kodu oluştur ve gönder.':
+      'No teachers yet. Create an invite code and send it.',
+  '{name} adında iki kayıt var: biri senin eklediğin, biri kendi kaydı. Aynı kişiyse birleştir; program ve ödeme kayıtları korunur.':
+      'There are two records named {name}: one you added and one from their own sign-up. If they are the same person, merge them; timetable and payment records are kept.',
+  'Birleştir': 'Merge',
+  '{n} öğretmen · {a} hesaplı': '{n} teachers · {a} with an account',
+  'Hesabı var': 'Has account',
+  'Hesap yok': 'No account',
+  'Kayıtlar birleştirilsin mi?': 'Merge the records?',
+  'Senin eklediğin kayıt öğretmenin hesabına bağlanır; kayıt olurken açılan ikinci satır silinir.':
+      'The record you added is linked to the teacher’s account; the second record created at sign-up is deleted.',
+  'Birleştirildi': 'Merged',
+  'İki kaydın aynı saatte dersi var. Önce programda birini taşı.':
+      'Both records have a lesson at the same time. Move one of them in the timetable first.',
+  'Birleştirilemedi. Tekrar dene.': 'Couldn’t merge. Please try again.',
+  'Öğretmen kaydın bulunamadı': 'Your teacher record wasn’t found',
+  'Kurumdaki öğretmen kaydın silinmiş olabilir. Kurum müdürüne ulaş.':
+      'Your teacher record at the school may have been deleted. Contact your school manager.',
+  'Merhaba, {name}': 'Hello, {name}',
+  'Bugünkü ders': 'Lessons today',
+  'Şimdi: {b} · {c}': 'Now: {b} · {c}',
+  'Sıradaki {t}: {b}': 'Next at {t}: {b}',
+  'Bugün dersin bitti ya da yok': 'No more lessons today',
+  'Haftalık programı açar': 'Opens the weekly timetable',
+  'Yayında program yok': 'No published timetable',
+  '{n} sınıf': '{n} classes',
+  'Kurum ders programını yayınlayınca derslerin burada görünür.':
+      'Your lessons appear here once the school publishes the timetable.',
+  'Bugün dersin yok.': 'No lessons today.',
+  'Branşlarım': 'My subjects',
+  'Branşını seç; ders programı buna göre hazırlanır.':
+      'Pick your subjects; the timetable is built from them.',
+  'Başka bir branş': 'Another subject',
   // SSS (üretildi: python tool/faq/make_faq.py; elle düzenleme)
   'Başlarken': 'Getting started',
   'Nasıl kayıt olurum?': 'How do I sign up?',
@@ -1819,8 +1869,8 @@ const enStrings = <String, String>{
   'Görev tek maddelik kısa bir hatırlatmadır. Ödev birden çok maddeden (konu, soru sayısı) oluşur ve öğrenci her maddeyi işaretleyerek bitirir. İkisinde de öğrenciye bildirim gider.':
       'A task is a short single-item reminder. Homework has several items (topics, question counts) that the student ticks off. Both send the student a notification.',
   'Görüşmeleri nasıl planlarım?': 'How do I schedule meetings?',
-  '"Görüşme ekle" ile tek seferlik ya da her hafta tekrarlanan görüşme planla. Öğrenciye görüşmeden 24 saat önce hatırlatma gider; görüşme sonrasında yapıldı ya da yapılmadı diye işaretleyebilirsin.':
-      'Use "Add meeting" to schedule a one-off or weekly recurring meeting. The student gets a reminder 24 hours before, and afterwards you can mark it as held or missed.',
+  '"Görüşme ekle" ile tek seferlik ya da her hafta tekrarlanan görüşme planla. Öğrenciye görüşmeden 24 saat önce hatırlatma gider; görüşme sonrasında yapıldı ya da gelmedi diye işaretleyebilirsin. "Gelmedi" işaretinde veliye WhatsApp\'tan bilgi mesajı gider.':
+      'Use "Add meeting" to schedule a one-off or weekly recurring meeting. The student gets a reminder 24 hours before, and afterwards you can mark it as held or missed. Marking "absent" sends the parent a WhatsApp message.',
   'Notlarımı öğrenci görür mü?': 'Can the student see my notes?',
   'Evet, öğrenciye yazdığın notlar öğrencinin ana sayfasında görünür ve bildirim olarak gider.':
       'Yes. Notes you write to a student appear on their home screen and are sent as a notification.',
@@ -1852,10 +1902,6 @@ const enStrings = <String, String>{
   'Lisans ve koltuk sayısı ne demek?': 'What are the licence and seat count?',
   'Kurumunun kaç öğrenciye kadar ve hangi tarihe kadar kullanabileceğini belirler. Koltuklar dolduysa yeni öğrenci kayıt olamaz. Lisans süresi bitince öğrenci, koç ve veliler uygulamaya giremez; lisans uzatılınca erişim kendiliğinden geri gelir.':
       'They set how many students your school can have and until when. If seats are full, new students can’t sign up. When the licence expires, students, coaches and parents can’t use the app; access returns automatically once it is renewed.',
-  'Lisans süresi doldu ({expiry}). Öğrenci, koç ve veliler giriş yapamıyor.':
-      'License expired ({expiry}). Students, coaches and parents can’t sign in.',
-  'Kurumunun lisans süresi doldu. Kurum yöneticinle iletişime geç.':
-      'Your school’s licence has expired. Contact your school administrator.',
   'Öğrencinin koçunu değiştirebilir miyim?': 'Can I change a student’s coach?',
   'Evet. Öğrenciler listesinde öğrencinin seçeneklerinden "Koçunu değiştir"i kullan.':
       'Yes. Use "Change coach" in the student’s options on the Students list.',
@@ -1906,6 +1952,30 @@ const enStrings = <String, String>{
   'Koçla nasıl iletişime geçerim?': 'How do I contact the coach?',
   'Uygulamada mesajlaşma yoktur. Koçla dershane üzerinden iletişime geçebilirsin.':
       'There’s no messaging in the app. You can reach the coach through the school.',
+  'Kurum müdürünün verdiği öğretmen davet koduyla kayıt olursun. Kayıt olunca kurumun öğretmen listesine kendiliğinden eklenirsin; müdürün seni ayrıca yazmasına gerek kalmaz.':
+      'You sign up with the teacher invite code from your school manager. Once you sign up you’re added to the school’s teacher list automatically; the manager doesn’t need to enter you separately.',
+  'Branşımı nasıl değiştiririm?': 'How do I change my subjects?',
+  'Ana sayfadaki "Branşlarım" kartına dokun, derslerini seç ve kaydet. Ders programı bu branşlara göre hazırlanır.':
+      'Tap the "My subjects" card on your home screen, pick your subjects and save. The timetable is built from these subjects.',
+  'Program': 'Timetable',
+  'Ders programımı nereden görürüm?': 'Where do I see my timetable?',
+  'Kurum programı yayınlayınca ana sayfanda bugünkü derslerin ve haftalık programın görünür. Program yayınlanmadıysa boş görünür.':
+      'Once the school publishes the timetable, today’s lessons and your weekly timetable appear on your home screen. It stays empty until it’s published.',
+  'Müsait olmadığım saatleri nasıl bildiririm?':
+      'How do I tell the school when I’m not available?',
+  'Kurum müdürüne söyle; ders programı ayarlarında müsait olduğun saatleri girer. Program bu saatlere göre hazırlanır.':
+      'Tell your school manager; they enter your available hours in the timetable settings. The timetable is built around them.',
+  'Programdaki değişiklikleri nasıl görürüm?':
+      'How do I see changes to the timetable?',
+  'Ana sayfada ve haftalık programda her zaman yayındaki son hâli görünür. Ekranı aşağı çekerek yenileyebilirsin.':
+      'Your home screen and weekly timetable always show the latest published version. Pull down to refresh.',
+  'Öğrencilerin verilerini görebilir miyim?': 'Can I see students’ data?',
+  'Hayır. Öğretmen paneli yalnızca kendi derslerini gösterir; öğrenci takibini koçlar yapar.':
+      'No. The teacher panel only shows your own lessons; coaches follow students’ progress.',
+  'Birden fazla kurumda çalışıyorum, ne yapmalıyım?':
+      'I work at more than one school. What should I do?',
+  'Her kurum için ayrı hesap gerekir: her kurumun öğretmen davet koduyla farklı bir e-posta adresiyle kayıt olursun.':
+      'You need a separate account for each school: sign up with each school’s teacher invite code using a different email address.',
   'Uygulama': 'The app',
   'Bildirimler gelmiyor, ne yapmalıyım?':
       'I’m not getting notifications. What should I do?',
@@ -1928,6 +1998,85 @@ const enStrings = <String, String>{
       'Add a school from Profile > "School management" and edit its logo, colours and font. Users arriving through the school’s link see that look.',
   // SSS sonu
 
+  // Soru çözümü / birebir (NOTLAR §87)
+  'Soru çözümü': 'Question solving',
+  'Birebir ders': 'One-to-one lesson',
+  'Etüt': 'Study hall',
+  'Onay bekliyor': 'Awaiting approval',
+  'Onaylandı': 'Approved',
+  'Reddedildi': 'Rejected',
+  'Bu oturumun kontenjanı dolu.': 'This session is full.',
+  'Bu oturuma zaten talebin var.':
+      'You already have a request for this session.',
+  'Bir güne en çok 3 talep verebilirsin.':
+      'You can make at most 3 requests per day.',
+  'Bu oturum için talep süresi geçti.':
+      'It’s too late to request this session.',
+  'Öğretmenin bu saatte başka bir oturumu var.':
+      'The teacher has another session at this time.',
+  'Öğretmenin bu saatte programda dersi var.':
+      'The teacher has a timetabled lesson at this time.',
+  'Bu talep için zaten karar verilmiş.':
+      'This request has already been decided.',
+  'Konu: {t}': 'Topic: {t}',
+  'Gerekçe: {t}': 'Reason: {t}',
+  'Soru çözümü ve birebir': 'Question solving & one-to-one',
+  'Onaylı: {d} {t} · {b}': 'Approved: {d} {t} · {b}',
+  '{n} talebin onay bekliyor': '{n} of your requests are awaiting approval',
+  'Öğretmenlerden soru çözümü ya da birebir ders iste':
+      'Ask teachers for question solving or a one-to-one lesson',
+  'Talebin öğretmene gönderildi': 'Your request was sent to the teacher',
+  'Talep iptal edilsin mi?': 'Cancel the request?',
+  'Öğretmen bu saatte seni beklemeyecek.':
+      'The teacher won’t expect you at this time.',
+  'Talep iptal edildi': 'Request cancelled',
+  'Taleplerim': 'My requests',
+  'Açık oturum yok': 'No open sessions',
+  'Kurumun önümüzdeki günler için soru çözümü ya da birebir ders saati açmadı. Açtığında burada görünür; buradan talep edersin.':
+      'Your institution has not opened question-solving or one-to-one slots for the coming days. When it does, they appear here and you can request one.',
+
+  'Açık oturumlar': 'Open sessions',
+  'Dolu': 'Full',
+  '{t}/{c} dolu': '{t}/{c} taken',
+  'Konu ya da soru (isteğe bağlı)': 'Topic or question (optional)',
+  'Bekleyen talep yok': 'No pending requests',
+  '{n} talep onayını bekliyor': '{n} requests awaiting your approval',
+  'Onayla': 'Approve',
+  'Yaklaşan onaylılar': 'Upcoming approved',
+  'Haftalık oturumlarım': 'My weekly sessions',
+  'Talep onaylandı': 'Request approved',
+  'Talep reddedildi': 'Request rejected',
+  'Talep reddedilsin mi?': 'Reject the request?',
+  'Gerekçe (isteğe bağlı, öğrenciye gider)':
+      'Reason (optional, sent to the student)',
+  'Talepler': 'Requests',
+  'Oturum ekle': 'Add session',
+  'Haftalık saatler her hafta tekrarlanır. Öğrenci önümüzdeki 14 gün için talep eder, öğretmen onaylar. Öğretmenin programda dersi olan saate oturum açılamaz.':
+      'Weekly hours repeat every week. Students request for the next 14 days and the teacher approves. You can’t open a session when the teacher has a timetabled lesson.',
+  'Henüz oturum yok. Öğretmenlere soru çözümü ya da birebir ders saati aç.':
+      'No sessions yet. Open question-solving or one-to-one hours for teachers.',
+  '{n} kişilik': 'for {n}',
+  'Kapalı': 'Closed',
+  'Bu saate gelmiş bütün talepler de silinir.':
+      'All requests for this slot are deleted too.',
+  'Önümüzdeki 14 günün talepleri. Onayı öğretmen verir; buradan yalnızca izlenir.':
+      'Requests for the next 14 days. The teacher approves them; here you can only follow them.',
+  'Talep yok.': 'No requests.',
+  'Öğretmeni seç.': 'Pick the teacher.',
+  'Bitiş saati başlangıçtan sonra olmalı.':
+      'The end time must be after the start time.',
+  'Oturumu düzenle': 'Edit session',
+  'Başlangıç {t}': 'Start {t}',
+  'Bitiş {t}': 'End {t}',
+  'Kontenjan (kişi)': 'Capacity (people)',
+  'Ders (boşsa öğretmenin branşı)': 'Subject (blank: the teacher’s subject)',
+  'Talebe açık': 'Open for requests',
+  'Talebin onaylandı': 'Your request was approved',
+  'Talebin onaylanmadı': 'Your request wasn’t approved',
+  '{name} soru çözümü istedi': '{name} asked for question solving',
+  'Onayını bekliyor': 'Awaiting your approval',
+  'Öğretmenlere saat aç; talepleri izle':
+      'Open hours for teachers; follow requests',
   // Bildirim kanalı
   'Mentoria bildirimleri': 'Mentoria notifications',
   'Ödev, görüşme, mesaj ve deneme bildirimleri':
@@ -2264,14 +2413,15 @@ const enStrings = <String, String>{
   'Cep telefonunu 05XX XXX XX XX biçiminde yaz.':
       'Enter the mobile number as 05XX XXX XX XX.',
   'Gönder ({n})': 'Send ({n})',
-  'Hatırlatma SMS\'i gönderilsin mi?': 'Send a reminder SMS?',
+  'Hatırlatma WhatsApp\'tan gönderilsin mi?': 'Send the reminder on WhatsApp?',
   'Hatırlatma gönderilmedi: telefon yok ya da bugün gönderildi.':
       'No reminder sent: no phone number, or already sent today.',
   'Hatırlatıldı: {d}': 'Reminded: {d}',
   'Her ayın {d}. günü': 'Day {d} of each month',
-  'Seçilen velilere SMS gider.': 'An SMS goes to the selected parents.',
-  'Taksit hatırlatma SMS\'i bu numaraya gider.':
-      'Instalment reminder SMS messages go to this number.',
+  'Seçilen velilere WhatsApp mesajı gider.':
+      'A WhatsApp message goes to the selected parents.',
+  'Taksit hatırlatması bu WhatsApp numarasına gider.':
+      'Instalment reminders go to this WhatsApp number.',
   'Taksit hatırlatması gönderilsin mi?': 'Send instalment reminders?',
   'Toplam {v}. Velilere hatırlatma gönderilsin mi?':
       'Total {v}. Send reminders to parents?',
@@ -2279,7 +2429,8 @@ const enStrings = <String, String>{
   'Veli cep telefonu': 'Parent mobile number',
   'Veli telefonu yok': 'No parent phone number',
   'Veliye hatırlat': 'Remind parent',
-  '{n} hatırlatma SMS sırasına alındı.': '{n} reminder SMS queued.',
+  '{n} hatırlatma WhatsApp sırasına alındı.':
+      '{n} reminders queued on WhatsApp.',
   '{who} · {phone}\n{v} · vade {d}': '{who} · {phone}\n{v} · due {d}',
   'Ödeme günü': 'Payment day',
   'Ödeme günü ve veli': 'Payment day and parent',
@@ -2367,7 +2518,7 @@ const enStrings = <String, String>{
   'Yaptığın işaretler silinsin mi?': 'Discard the marks you made?',
   'Yoklama kaydedildi.': 'Attendance saved.',
   'Yoklama': 'Attendance',
-  'Gelmeyenlerin velisine SMS': 'SMS parents of absent students',
+  'Gelmeyenlerin velisine WhatsApp': 'WhatsApp parents of absent students',
   'Önceki gün': 'Previous day',
   'Bugün · {d}': 'Today · {d}',
   'Sonraki gün': 'Next day',
@@ -2378,27 +2529,27 @@ const enStrings = <String, String>{
   'Yoklamayı kaydet ({n})': 'Save attendance ({n})',
   'Veli telefonu kaydedildi.': 'Parent\'s phone saved.',
   'No {n}': 'No. {n}',
-  'Veliye SMS gönderildi': 'SMS sent to parent',
+  'Veliye WhatsApp gönderildi': 'WhatsApp sent to parent',
   'Kaydedilmedi': 'Not saved',
   'Veli telefonu': 'Parent\'s phone',
   'Veli telefonu ekle': 'Add parent\'s phone',
   'Şu an kurum finansındaki veli numarası kullanılıyor. Buraya yazarsan bu numara kullanılır.':
       'The parent number from the institution\'s finance records is used now. If you enter one here, this number is used instead.',
-  '"Gelmedi" SMS\'i bu numaraya gider.':
-      'The "absent" SMS goes to this number.',
-  'SMS gönderilecek gelmeyen öğrenci yok.':
-      'There are no absent students to send an SMS for.',
-  'Gelmeyenlerin velisine SMS gönderilsin mi?':
-      'Send an SMS to the parents of absent students?',
-  'Seçilen velilere "öğrenciniz bugün kuruma gelmedi" SMS\'i gider.':
-      'Selected parents get a "your child did not come to the institution" SMS.',
+  '"Gelmedi" mesajı bu WhatsApp numarasına gider.':
+      'The "absent" message goes to this WhatsApp number.',
+  'Mesaj gönderilecek gelmeyen öğrenci yok.':
+      'There are no absent students to message.',
+  'Gelmeyenlerin velisine WhatsApp mesajı gönderilsin mi?':
+      'Send a WhatsApp message to the parents of absent students?',
+  'Seçilen velilere "öğrenciniz bugün kuruma gelmedi" mesajı WhatsApp\'tan gider.':
+      'Selected parents get a "your child did not come to the institution" message on WhatsApp.',
   'Kurumdaki veli numarası': 'Parent number on file',
   'Gönderme': 'Don\'t send',
-  'SMS gönderilmedi: telefon yok ya da bugün gönderildi.':
-      'No SMS sent: no phone, or already sent today.',
-  '{n} veliye SMS sırasına alındı.': 'SMS queued for {n} parents.',
-  'Günlük yoklama ve gelmeyenin velisine SMS':
-      'Daily attendance and SMS to parents of absent students',
+  'Mesaj gönderilmedi: telefon yok ya da bugün gönderildi.':
+      'No message sent: no phone, or already sent today.',
+  '{n} veliye WhatsApp sırasına alındı.': 'WhatsApp queued for {n} parents.',
+  'Günlük yoklama ve gelmeyenin velisine WhatsApp':
+      'Daily attendance and WhatsApp to parents of absent students',
   'Bugünkü yoklama alınmadı': 'Today\'s attendance hasn\'t been taken',
   'Bugün {p} geldi · {a} gelmedi': 'Today {p} present · {a} absent',
   '{n} işaretsiz': '{n} unmarked',
@@ -2789,11 +2940,12 @@ const enStrings = <String, String>{
   'Sıradaki: {time} {branch}': 'Next: {time} {branch}',
   'Bugünkü dersler bitti': 'Today\'s lessons are over',
   // Velilere toplu SMS
-  '{n} veliye SMS gönderilsin mi?': 'Send an SMS to {n} parents?',
+  '{n} veliye WhatsApp mesajı gönderilsin mi?':
+      'Send a WhatsApp message to {n} parents?',
   '{n} öğrencinin veli telefonu kayıtlı değil; onlara gitmez.':
       '{n} students have no parent phone on file; they won\'t get it.',
-  'Son gönderimin üzerinden 10 dakika geçmeden yeni SMS gönderilemez.':
-      'A new SMS can\'t be sent until 10 minutes after the last one.',
+  'Son gönderimin üzerinden 10 dakika geçmeden yeni toplu mesaj gönderilemez.':
+      'A new bulk message can\'t be sent until 10 minutes after the last one.',
   'Seçilenlerin hiçbirinde veli telefonu yok.':
       'None of the selected students has a parent phone.',
   'Resmi tatil': 'Public holiday',
@@ -2805,11 +2957,11 @@ const enStrings = <String, String>{
   'Veli toplantısı': 'Parent meeting',
   '{gün} saat {saat}\'te veli toplantımız yapılacaktır. Katılımınızı bekleriz.':
       'Our parent meeting will be held on {gün} at {saat}. We look forward to seeing you.',
-  'Velilere SMS': 'SMS to parents',
+  'Velilere WhatsApp': 'WhatsApp to parents',
   'Mesaj': 'Message',
   'Velilere gidecek metni yaz': 'Write the text for parents',
-  'Başına "{org}:" eklenir. {n} karakter · yaklaşık {k} SMS':
-      '"{org}:" is added at the start. {n} characters · about {k} SMS',
+  'Başına "{org}:" eklenir. {n} karakter':
+      '"{org}:" is added at the start. {n} characters',
   'Kime': 'To',
   'Tüm veliler': 'All parents',
   'Henüz sınıf yok.': 'No classes yet.',
@@ -2818,14 +2970,14 @@ const enStrings = <String, String>{
   '{n} veliye gidecek': 'Goes to {n} parents',
   '{n} öğrencinin veli telefonu yok': '{n} students have no parent phone',
   'Telefon ekle': 'Add phone',
-  'Yalnızca bilgilendirme gönder: reklam ya da kampanya içerikli SMS için velinin ticari ileti izni (İYS) gerekir.':
-      'Send information only: advertising or campaign SMS needs the parent\'s commercial message consent (İYS).',
+  'Yalnızca bilgilendirme gönder: reklam ya da kampanya içerikli mesaj WhatsApp kurallarına aykırıdır, kurumun numarası kapatılabilir.':
+      'Send information only: advertising or campaign messages break WhatsApp rules and the institution\'s number may be blocked.',
   'Gönderilenler': 'Sent',
-  'Otomatik SMS': 'Automatic SMS',
+  'Otomatik mesajlar': 'Automatic messages',
   'Deneme sonuçları velilere gitsin': 'Send exam results to parents',
-  'Kurum sınavı yayınlanınca her öğrencinin velisine toplam net, kurum sırası ve ders ders doğru, yanlış, net SMS ile gider; sonradan yüklenen optikler de. Her öğrenci için bir kez. Ders sayısına göre mesaj birkaç SMS tutar.':
-      "When an institution exam is published, each student's parent gets the total net, institution rank and correct, wrong and net per subject by SMS, including sheets uploaded later. Once per student. Depending on the number of subjects, a message may take several SMS.",
-  'Henüz SMS gönderilmedi.': 'No SMS sent yet.',
+  'Kurum sınavı yayınlanınca her öğrencinin velisine toplam net, kurum sırası ve ders ders doğru, yanlış, net WhatsApp\'tan gider; sonradan yüklenen optikler de. Her öğrenci için bir kez.':
+      "When an institution exam is published, each student's parent gets the total net, institution rank and correct, wrong and net per subject on WhatsApp, including sheets uploaded later. Once per student.",
+  'Henüz mesaj gönderilmedi.': 'No messages sent yet.',
   '{n} veli': '{n} parents',
   '{n} gitti': '{n} delivered',
   '{n} sırada': '{n} queued',
@@ -3574,8 +3726,8 @@ const enStrings = <String, String>{
       'students have no attendance taken today',
   'öğrenci bugünkü yoklamada işaretsiz':
       'students are unmarked in today’s attendance',
-  'Gelmeyenlerin velisine SMS ancak yoklama kaydedilince gider.':
-      'Parents of absent students get an SMS only after attendance is saved.',
+  'Gelmeyenlerin velisine WhatsApp mesajı ancak yoklama kaydedilince gider.':
+      'Parents of absent students get a WhatsApp message only after attendance is saved.',
   'kurum sınavının sonucu yayın bekliyor':
       'institution exams are waiting to be published',
   'Optikler yüklendi; yayınlanana kadar öğrenci ve veliler sonucu göremez.':
@@ -3623,7 +3775,8 @@ const enStrings = <String, String>{
       'Exam results, institution exams, answer sheet scanning and exam plan',
   'Deneme sonuçları, kurum sınavları, optik okuma ve trendler':
       'Exam results, institution exams, answer sheet scanning and trends',
-  'Velilere SMS ve toplu duyurular': 'SMS to parents and bulk announcements',
+  'Velilere WhatsApp ve toplu duyurular':
+      'WhatsApp to parents and bulk announcements',
   'Duyurular ve öğrenci daveti': 'Announcements and student invites',
   'Deneme sonuç dosyasını yükle, öğrencilere dağıt':
       'Upload an exam results file and share it with students',
@@ -3837,8 +3990,8 @@ const enStrings = <String, String>{
   'Optik okuyucu çıktısını yükle': 'Upload the optic reader output',
   'Cevabı ya da kazanımı eksik soru var; önce tamamla.':
       'Some questions have no answer or outcome; complete them first.',
-  'Cevap anahtarı, kazanım ve optik çıktısını yükle':
-      'Upload the answer key, outcomes and optic output',
+  'Kazanım tablosunu ve optik çıktısını yükle':
+      'Upload the outcome table and optic output',
   'Yanlış ve boşlar ({n})': 'Wrong and blank ({n})',
   'Bütün sorular ({n})': 'All questions ({n})',
   'Bu sınavda yanlış ya da boş soru yok.':
@@ -3873,8 +4026,8 @@ const enStrings = <String, String>{
       'The optic output lines could not be read.',
   'Optik okuyucunun verdiği dosyayı seç: Excel, CSV ya da makinenin sabit sütunlu .txt çıktısı. Her satır bir öğrenci.':
       'Pick the optic reader\'s file: Excel, CSV or the machine\'s fixed-width .txt output. One student per row.',
-  'Sınav türü anlaşılmadı: "{d}". Şimdilik yalnızca TYT dosyadan kurulur.':
-      'Exam type not recognised: "{d}". Only TYT can be created from files for now.',
+  'Sınav türü anlaşılmadı: "{d}". Sınav adında TYT, AYT ya da YDT geçmeli.':
+      'Exam type not recognised: "{d}". The exam name must contain TYT, AYT or YDT.',
   'Bölüm listesi ders sırasıyla uyuşmuyor: {d}':
       'The section list does not match the subject order: {d}',
   'Cevap anahtarı soru sayısını tutmuyor: {d}':
@@ -3890,10 +4043,162 @@ const enStrings = <String, String>{
   '{n} ({no}): kitapçık boştu. {b} sayıldı; {b} anahtarıyla {c} doğru, öbürüyle {o} doğru.':
       '{n} ({no}): booklet was blank. Counted as {b}; {c} correct with the {b} key, {o} with the other.',
   'Dosyalar kullanılamadı': 'The files could not be used',
+  'Sınavın adı ve tarihi': 'Exam name and date',
+  'Cevaplar kazanım tablosundan alındı; ayrı cevap anahtarı dosyası gerekmez.':
+      'The answers were taken from the outcome table; no separate answer key file is needed.',
+  'TYT, AYT ya da YDT geçerse türü addan anlaşılır.':
+      'If it contains TYT, AYT or YDT, the type is taken from the name.',
+  'Kazanım tablosunda her sorunun cevabı yok ("a_cevap" sütunu). Cevap anahtarı dosyasını da seç.':
+      'The outcome table does not have an answer for every question ("a_cevap" column). Select the answer key file too.',
   'Cevap anahtarı dosyası bulunamadı ("A KITAPÇIĞI" satırı olmalı).':
       'No answer key file found (it needs an "A KITAPÇIĞI" line).',
   'Kazanım tablosu bulunamadı ("soru_no" başlığı olmalı).':
       'No outcome table found (it needs a "soru_no" header).',
   'Sınav kaydedilemedi. Tekrar dene.':
       'The exam could not be saved. Try again.',
+  // WhatsApp bağlantısı (NOTLAR §88)
+  'Ayarlar': 'Settings',
+  'Bağla': 'Connect',
+  'Bağlantı güncellendi': 'Connection updated',
+  'Bağlantı kaldırıldı': 'Connection removed',
+  'Bağlantıyı kaldır': 'Remove connection',
+  'Bu işlem için yetkin yok.': 'You are not allowed to do this.',
+  'Erişim anahtarı': 'Access token',
+  'Erişim anahtarı geçersiz.': 'The access token is not valid.',
+  'Erişim anahtarı silinir. Velilere giden mesajlar yeniden bağlanana kadar sırada bekler.':
+      'The access token is deleted. Messages to parents wait in the queue until you connect again.',
+  'Kayıtlı. Değiştirmek istemiyorsan boş bırak.':
+      'Saved. Leave it empty if you don\'t want to change it.',
+  'Mesaj şablonu': 'Message template',
+  'Meta Business panelinde WhatsApp → API Setup sayfasından kopyala. Erişim anahtarı için kalıcı bir "System User" anahtarı kullan.':
+      'Copy these from WhatsApp → API Setup in Meta Business. Use a permanent "System User" token as the access token.',
+  'Numara (görünen)': 'Number (shown)',
+  'Numara bilgileri': 'Number details',
+  'Numara kimliği ve hesap kimliği yalnızca rakamdan oluşur.':
+      'The phone number ID and account ID contain digits only.',
+  'Son 30 gün: {s} gönderildi · {r} okundu · {f} gitmedi':
+      'Last 30 days: {s} sent · {r} read · {f} not delivered',
+  'Telefon numarası kimliği': 'Phone number ID',
+  'Velilere giden bütün mesajlar (yoklama, taksit hatırlatma, toplu mesaj, deneme sonucu) kurumun WhatsApp Business numarasından gider. Veli cevap yazarsa cevap kurumun WhatsApp Business uygulamasına düşer.':
+      'All messages to parents (attendance, instalment reminders, bulk messages, exam results) go from the institution\'s WhatsApp Business number. If a parent replies, the reply arrives in the institution\'s WhatsApp Business app.',
+  'Velilere mesaj gitmesi için kurumun numarasını bağla.':
+      'Connect the institution\'s number so messages reach parents.',
+  'WhatsApp Business hesap kimliği': 'WhatsApp Business account ID',
+  'WhatsApp bağlandı': 'WhatsApp connected',
+  'WhatsApp bağlantısı': 'WhatsApp connection',
+  'WhatsApp bağlantısı kaldırılsın mı?': 'Remove the WhatsApp connection?',
+  'WhatsApp bağlı değil': 'WhatsApp is not connected',
+  'WhatsApp bağlı · {p}': 'WhatsApp connected · {p}',
+  'WhatsApp, velinin son 24 saatte yazmadığı mesajlar için Meta onaylı şablon ister. Aşağıdaki metni Meta panelinde "Utility" kategorisinde, Türkçe olarak bu adla bir kez onaylat.':
+      'WhatsApp needs a Meta-approved template for messages to parents who haven\'t written in the last 24 hours. Get the text below approved once in Meta, in the "Utility" category, in Turkish, under this name.',
+  '{d} tarihinde bağlandı': 'Connected on {d}',
+  '{n} mesaj sırada': '{n} messages in the queue',
+  '{n} mesaj sırada bekliyor; WhatsApp bağlanınca gider.':
+      '{n} messages are waiting; they go once WhatsApp is connected.',
+  'İlk bağlantıda erişim anahtarı gerekli.':
+      'An access token is needed for the first connection.',
+  'Şablon adı küçük harf, rakam ve _ içerebilir.':
+      'The template name may contain lowercase letters, digits and _.',
+  'Şablon metni kopyalandı': 'Template text copied',
+  // Veliye WhatsApp: ödev PDF'i ve koç mesajı (NOTLAR §89)
+  'Belirtilmedi': 'Not set',
+  'Bu belge {org} tarafından hazırlanmıştır.':
+      'This document was prepared by {org}.',
+  'Bu veliye 24 saatte en çok 5 mesaj gönderilebilir.':
+      'You can send this parent at most 5 messages in 24 hours.',
+  'Gitmedi': 'Not delivered',
+  'Gönderildi': 'Sent',
+  'Henüz veliye mesaj gitmedi.': 'No messages sent to the parent yet.',
+  'Mesaj 1-900 karakter olmalı.': 'The message must be 1-900 characters.',
+  'Mesaj veliye WhatsApp\'tan gönderiliyor.':
+      'The message is being sent to the parent on WhatsApp.',
+  'Okundu': 'Read',
+  'Son tarih': 'Due date',
+  'Sırada': 'Queued',
+  'Teslim edildi': 'Delivered',
+  'Veli telefonu kayıtlı olmadığı için ödev veliye gitmedi.':
+      'The homework was not sent to the parent because no parent phone is saved.',
+  'Veliye WhatsApp': 'WhatsApp the parent',
+  'Veliye giden son mesajlar': 'Recent messages to the parent',
+  'Veliye ne yazmak istersin?': 'What would you like to tell the parent?',
+  'Verildiği gün': 'Assigned on',
+  '{name} öğrencisinin velisine kurumun WhatsApp numarasından, senin adınla gider. Veli cevap yazarsa cevap kurumun WhatsApp Business uygulamasına düşer.':
+      'Goes to {name}\'s parent from the institution\'s WhatsApp number, in your name. If the parent replies, the reply arrives in the institution\'s WhatsApp Business app.',
+  '{n} madde': '{n} items',
+  '{n} madde · toplam {q} soru': '{n} items · {q} questions in total',
+  'Ödev PDF\'i': 'Homework PDF',
+  'Ödev PDF\'i veliye WhatsApp\'tan gönderiliyor.':
+      'The homework PDF is being sent to the parent on WhatsApp.',
+  'Ödev bildirimi': 'Homework notice',
+  'Ödev veliye gönderilemedi.': 'The homework could not be sent to the parent.',
+  'Ödevi veren': 'Assigned by',
+  'Öğrencinin veli telefonu kayıtlı değil.':
+      'No parent phone is saved for this student.',
+  '… ve {n} madde daha (uygulamada).': '… and {n} more items (in the app).',
+  '12. sınıf / mezun': '12th grade / graduate',
+  'Sınıfını seç.': 'Choose your grade.',
+  'Sınıfın': 'Your grade',
+  'Sınıfı': 'Grade',
+  'Seçilmedi · bütün konular görünür': 'Not set · all topics are shown',
+  'Sınıf {grade} olarak kaydedildi. Konular buna göre listelenir.':
+      'Grade saved as {grade}. Topics are listed accordingly.',
+  'Bu sınıf için konu listesi henüz eklenmedi.':
+      'No topics have been added for this grade yet.',
+  'Kaynak takibi': 'Resource tracking',
+  'Hangi kitaptan hangi konu bitti, tabloda işaretle.':
+      'Tick which topic is finished in which book.',
+  'Bu bölümde kitabın yok': 'No books in this section',
+  'Kitap eklediğinde konuları burada kitap kitap işaretleyebilirsin.':
+      'Once you add a book, you can tick off its topics here.',
+  'Öğrenci gelmedi': 'Student did not attend',
+  'Veliye WhatsApp\'tan bilgi mesajı gider.':
+      'The parent gets a WhatsApp message.',
+  'Veliye WhatsApp\'tan bilgi mesajı gönderiliyor.':
+      'Sending the parent a WhatsApp message.',
+  'Veli telefonu kayıtlı olmadığı için veliye mesaj gitmedi.':
+      'No parent phone on file, so no message was sent.',
+  'Görüşme saati gelince "yapıldı" ya da "gelmedi" olarak işaretleyebilirsin.':
+      'Once the meeting time arrives you can mark it "held" or "absent".',
+  'Sıralama {n}': 'Rank {n}',
+  'Detayları gizle': 'Hide details',
+  'Detaylar': 'Details',
+  'Derslere göre netler': 'Nets by subject',
+  'Konu analizi yalnızca optikten okunan kurum sınavlarında var; bu deneme elle girildi.':
+      'Topic analysis is only available for scanned institution exams; this one was entered by hand.',
+  'Kurumun henüz açık saat girmedi':
+      'Your institution has not opened any slots yet',
+  'Derslik yok': 'No room',
+  'Derslik bu saatte dolu (ders ya da başka oturum).':
+      'The room is busy at this time (a lesson or another session).',
+  'Soru çözümü, birebir ve etüt': 'Question solving, one-to-one and study hall',
+  'Oturum yok. Öğrenciler açılan saatlere talep gönderir, öğretmen onaylar.':
+      'No sessions. Students request the opened hours and the teacher approves.',
+  'Derse dokun: kilitle ya da taşı. Boş saate dokun: soru çözümü, birebir ya da etüt aç.':
+      'Tap a lesson to lock or move it. Tap an empty hour to open question solving, one-to-one or study hall.',
+  'Talebini öğretmen onaylar. Bir güne en çok 3 talep verebilirsin.':
+      'The teacher approves your request. You can make at most 3 requests per day.',
+  '{n} talep onay bekliyor': '{n} requests awaiting approval',
+  '{n} açık saat var': '{n} open slots',
+  'Bugün {n} açık saat var': '{n} open slots today',
+  'Öğretmenden soru çözümü ya da birebir iste':
+      'Ask a teacher for question solving or a one-to-one lesson',
+  'En az bir saat seç.': 'Pick at least one hour.',
+  '{n} oturum açıldı': '{n} sessions opened',
+  '{n} oturum açıldı, {m} saat açılamadı (çakışma)':
+      '{n} sessions opened, {m} hours could not be opened (conflict)',
+  'Boş saatleri aç': 'Open free hours',
+  '{name} için programda boş olan ders saatleri. Seçtiklerine her hafta oturum açılır.':
+      'Free lesson hours for {name} in the timetable. A weekly session is opened for each one you pick.',
+  'Ders (boşsa branşı)': 'Subject (empty: their branch)',
+  'Programda boş saati yok.': 'No free hours in the timetable.',
+  '{n} saati aç': 'Open {n} hours',
+  'Boş saatleri toplu aç': 'Open free hours in bulk',
+  'Dağılım: {plan} (2 saatlik bitişik bloklar)':
+      'Split: {plan} (back-to-back 2-hour blocks)',
+  'Her gün en çok 1 saat; bloklanmaz.': 'At most 1 hour a day; no blocks.',
+  'Öğretmen uygulamaya davet koduyla kaydolur; kendi panelinde ders programını ve soru çözümü taleplerini görür. "Personel ekle" yalnızca izin ve ödeme kartı açar.':
+      'Teachers join the app with an invite code and see their timetable and question-solving requests in their own panel. "Add staff" only opens a leave and pay card.',
+  'Koç uygulamaya davet koduyla kaydolur. "Personel ekle" yalnızca izin ve ödeme kartı açar.':
+      'Coaches join the app with an invite code. "Add staff" only opens a leave and pay card.',
+  'Öğretmen hesapları': 'Teacher accounts',
 };

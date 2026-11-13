@@ -1,6 +1,7 @@
 import '../features/schedule_generator/data/timetable_repository.dart';
 import '../features/schedule_generator/domain/models.dart';
 import '../features/schedule_generator/domain/schedule_generator.dart';
+import '../features/tutoring/data/tutoring_repository.dart';
 import 'demo_rich.dart';
 
 class _Schedule {
@@ -29,6 +30,9 @@ class InMemoryTimetableRepository implements TimetableRepository {
   final String viewerId;
   final String viewerRole;
   final List<String> children;
+
+  /// Soru çözümü oturumları (demo'da bellekteki oturum deposundan).
+  List<TutoringSession> Function()? tutoringSource;
 
   List<TimeSlot> _slots;
   final List<TeacherRecord> _teachers;
@@ -97,6 +101,8 @@ class InMemoryTimetableRepository implements TimetableRepository {
           maxWeeklyHours: 16,
           availability: mornings,
         ),
+        // Öğretmen hesabıyla kayıt olmuş (demo öğretmen paneli).
+        profileId: 'demo-teacher',
       ),
       TeacherRecord(
         Teacher(
@@ -216,6 +222,7 @@ class InMemoryTimetableRepository implements TimetableRepository {
     rooms: [..._rooms],
     classrooms: [..._classrooms],
     lessons: [..._lessons],
+    tutoring: [...?tutoringSource?.call()],
   );
 
   @override
@@ -276,6 +283,96 @@ class InMemoryTimetableRepository implements TimetableRepository {
     for (final s in _schedules) {
       s.entries.removeWhere((e) => e.teacherId == id);
     }
+  }
+
+  /// Öğretmen hesabının kaydı (`my_teacher()` gibi).
+  TeacherRecord? teacherOf(String profileId) =>
+      _teachers.where((t) => t.profileId == profileId).firstOrNull;
+
+  /// Öğretmenin branşlarını değiştirir (`set_my_teacher_branches`).
+  void setBranches(String profileId, Set<String> branches) {
+    final i = _teachers.indexWhere((t) => t.profileId == profileId);
+    if (i < 0) throw StateError('NOT_ALLOWED');
+    final t = _teachers[i].teacher;
+    _teachers[i] = TeacherRecord(
+      Teacher(
+        id: t.id,
+        name: t.name,
+        branches: branches,
+        maxWeeklyHours: t.maxWeeklyHours,
+        availability: t.availability,
+      ),
+      profileId: profileId,
+    );
+  }
+
+  /// `merge_teachers`: [fromId]'nin (hesaplı) dersleri [keepId]'ye
+  /// (hesapsız) geçer, [keepId] hesaba bağlanır, [fromId] silinir.
+  void mergeTeachers(String keepId, String fromId) {
+    final ki = _teachers.indexWhere((t) => t.teacher.id == keepId);
+    final fi = _teachers.indexWhere((t) => t.teacher.id == fromId);
+    if (ki < 0 || fi < 0 || keepId == fromId) throw StateError('NOT_ALLOWED');
+    final keep = _teachers[ki];
+    final from = _teachers[fi];
+    if (keep.profileId != null || from.profileId == null) {
+      throw StateError('TEACHER_MERGE_BAD_PAIR');
+    }
+    for (final s in _schedules) {
+      final busy = {
+        for (final e in s.entries)
+          if (e.teacherId == keepId) e.timeSlotId,
+      };
+      if (s.entries.any(
+        (e) => e.teacherId == fromId && busy.contains(e.timeSlotId),
+      )) {
+        throw StateError('TEACHER_MERGE_CONFLICT');
+      }
+    }
+    for (final s in _schedules) {
+      s.entries = [
+        for (final e in s.entries)
+          e.teacherId == fromId
+              ? ScheduleEntry(
+                  teacherId: keepId,
+                  classroomId: e.classroomId,
+                  timeSlotId: e.timeSlotId,
+                  branch: e.branch,
+                  roomId: e.roomId,
+                  locked: e.locked,
+                )
+              : e,
+      ];
+    }
+    _lessons = [
+      for (final l in _lessons)
+        l.teacherId == fromId
+            ? ClassLesson(
+                id: l.id,
+                classroomId: l.classroomId,
+                branch: l.branch,
+                weeklyHours: l.weeklyHours,
+                teacherId: keepId,
+                maxPerDay: l.maxPerDay,
+              )
+            : l,
+    ];
+    final k = keep.teacher;
+    _teachers[ki] = TeacherRecord(
+      Teacher(
+        id: k.id,
+        name: k.name,
+        branches: {
+          ...k.branches,
+          ...from.teacher.branches.where((b) => b != 'Genel'),
+        },
+        maxWeeklyHours: k.maxWeeklyHours,
+        availability: k.availability.isNotEmpty
+            ? k.availability
+            : from.teacher.availability,
+      ),
+      profileId: from.profileId,
+    );
+    _teachers.removeAt(fi);
   }
 
   @override

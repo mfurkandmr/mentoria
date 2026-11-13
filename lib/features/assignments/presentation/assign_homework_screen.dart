@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/exam_subjects.dart';
+import '../../../core/constants/grade_levels.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/format.dart';
@@ -12,6 +15,10 @@ import '../../coach/data/coach_repository.dart';
 import '../../tracking/data/tracking_models.dart';
 import '../../tracking/data/tracking_repository.dart';
 import '../data/assignment_repository.dart';
+import '../../admin/data/admin_repository.dart';
+import '../../auth/data/auth_repository.dart';
+import '../../whatsapp/data/guardian_messaging_repository.dart';
+import 'homework_pdf.dart';
 import '../../../core/design/motion.dart';
 import '../../../core/design/haptics.dart';
 
@@ -47,8 +54,17 @@ class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
     super.dispose();
   }
 
-  List<ExamSubject> get _subjects =>
-      examSubjects.where((s) => s.examType == _type).toList();
+  /// 9-11. sınıf öğrencisinde yalnızca o sınıfta konusu olan dersler
+  /// (null: süzme yok, 12 / mezun).
+  Set<String>? _gradeCodes;
+
+  List<ExamSubject> get _subjects {
+    final all = examSubjects.where((s) => s.examType == _type).toList();
+    final codes = _gradeCodes;
+    if (codes == null) return all;
+    final some = all.where((s) => codes.contains(s.code)).toList();
+    return some.isEmpty ? all : some;
+  }
 
   void _toggle(AssignmentItemDraft d) {
     final list = [..._basket.value];
@@ -139,8 +155,17 @@ class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
 
   Widget _buildPicker(BuildContext context) {
     final text = Theme.of(context).textTheme;
+    final gradeTopics =
+        ref.watch(studentTopicsProvider(_student!.id)).value ?? const <Topic>[];
+    final grade = ref.watch(studentGradeProvider(_student!.id)).value;
+    _gradeCodes = effectiveGrade(grade) < 12
+        ? {for (final t in gradeTopics) t.subjectCode}
+        : null;
+    if (!_subjects.any((s) => s.code == _subject)) {
+      _subject = _subjects.first.code;
+    }
     final topics =
-        (ref.watch(topicsProvider).value ?? const <Topic>[])
+        gradeTopics
             .where((t) => t.subjectCode == _subject)
             .where((t) => _fold(t.name).contains(_fold(_topicQuery)))
             .toList()
@@ -650,20 +675,32 @@ class _BasketSheetState extends ConsumerState<_BasketSheet> {
       _error = null;
     });
     try {
-      await ref
+      final title = _title.text.trim();
+      final items = widget.basket.value;
+      final note = _note.text.trim().isEmpty ? null : _note.text.trim();
+      final id = await ref
           .read(assignmentRepositoryProvider)
           .sendAssignment(
             studentId: widget.student.id,
-            title: _title.text.trim(),
-            items: widget.basket.value,
+            title: title,
+            items: items,
             dueOn: _due,
-            note: _note.text.trim().isEmpty ? null : _note.text.trim(),
+            note: note,
           );
       ref.invalidate(assignmentsProvider(widget.student.id));
       widget.basket.value = const [];
       if (!mounted) return;
+      // Veliye PDF (NOTLAR §89): sayfa kapanırken arkada sürer.
+      final delivery = await _guardianDelivery(
+        assignmentId: id,
+        title: title,
+        items: items,
+        note: note,
+      );
+      if (!mounted) return;
       celebrate(context);
       Navigator.pop(context, true);
+      if (delivery != null) unawaited(delivery());
     } catch (_) {
       if (mounted) {
         setState(() {
@@ -671,6 +708,69 @@ class _BasketSheetState extends ConsumerState<_BasketSheet> {
           _error = tr('Gönderilemedi. Tekrar dene.');
         });
       }
+    }
+  }
+
+  /// Ödevin PDF'ini veliye gönderecek işi hazırlar. Gereken her şey sayfa
+  /// kapanmadan okunur; iş bitince sonucu alttaki bildirimde söyler.
+  Future<Future<void> Function()?> _guardianDelivery({
+    required String assignmentId,
+    required String title,
+    required List<AssignmentItemDraft> items,
+    String? note,
+  }) async {
+    try {
+      final messenger = ScaffoldMessenger.of(context);
+      final font = Theme.of(context).textTheme.bodyMedium?.fontFamily;
+      final accent = context.brand.primaryDeep;
+      final repo = ref.read(guardianMessagingRepositoryProvider);
+      final me = await ref.read(currentProfileProvider.future);
+      String orgName;
+      try {
+        orgName = (await ref.read(orgProvider.future)).name;
+      } catch (_) {
+        orgName = '';
+      }
+      final student = widget.student.fullName;
+      final due = _due;
+      return () async {
+        String? message;
+        try {
+          final r = await repo.sendHomeworkPdf(
+            assignmentId: assignmentId,
+            studentId: widget.student.id,
+            buildPdf: () => renderHomeworkPdf(
+              orgName: orgName,
+              senderName: me?.fullName ?? orgName,
+              studentName: student,
+              title: title,
+              items: items,
+              dueOn: due,
+              note: note,
+              accent: accent,
+              fontFamily: font,
+            ),
+          );
+          message = switch (r) {
+            HomeworkDelivery.queued => tr(
+              "Ödev PDF'i veliye WhatsApp'tan gönderiliyor.",
+            ),
+            HomeworkDelivery.noPhone => tr(
+              'Veli telefonu kayıtlı olmadığı için ödev veliye gitmedi.',
+            ),
+            HomeworkDelivery.already => null,
+          };
+        } catch (_) {
+          message = tr('Ödev veliye gönderilemedi.');
+        }
+        // Koç bu arada uygulamadan çıkmış olabilir: gösterecek yer yoksa geç.
+        if (message == null || !messenger.mounted) return;
+        try {
+          messenger.showSnackBar(SnackBar(content: Text(message)));
+        } catch (_) {}
+      };
+    } catch (_) {
+      return null;
     }
   }
 

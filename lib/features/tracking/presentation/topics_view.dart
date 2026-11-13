@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/exam_subjects.dart';
+import '../../../core/constants/grade_levels.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/widgets/common.dart';
 import '../../../shared/widgets/panel.dart';
@@ -65,24 +66,31 @@ class _TopicsViewState extends ConsumerState<TopicsView> {
   Widget build(BuildContext context) {
     final topics = ref.watch(topicsProvider);
     final progress = ref.watch(topicProgressProvider(widget.studentId));
+    // 9-11. sınıf: yalnızca o sınıfın konuları, TYT / AYT ayrımı olmadan
+    // ders ders tek listede. 12 / mezun: sınav türü sekmeleri.
+    final grade = effectiveGrade(
+      ref.watch(studentGradeProvider(widget.studentId)).value,
+    );
+    final school = grade < 12;
 
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-          child: SizedBox(
-            width: double.infinity,
-            child: SegmentedButton<ExamType>(
-              showSelectedIcon: false,
-              segments: [
-                for (final t in ExamType.values)
-                  ButtonSegment(value: t, label: Text(t.label)),
-              ],
-              selected: {_type},
-              onSelectionChanged: (s) => setState(() => _type = s.first),
+        if (!school)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+            child: SizedBox(
+              width: double.infinity,
+              child: SegmentedButton<ExamType>(
+                showSelectedIcon: false,
+                segments: [
+                  for (final t in ExamType.values)
+                    ButtonSegment(value: t, label: Text(t.label)),
+                ],
+                selected: {_type},
+                onSelectionChanged: (s) => setState(() => _type = s.first),
+              ),
             ),
           ),
-        ),
         Expanded(
           child: AsyncView(
             value: topics,
@@ -92,10 +100,13 @@ class _TopicsViewState extends ConsumerState<TopicsView> {
               onRetry: () =>
                   ref.invalidate(topicProgressProvider(widget.studentId)),
               builder: (status) => _TopicsContent(
-                topics: [
-                  for (final t in all)
-                    if (subjectByCode(t.subjectCode).examType == _type) t,
-                ],
+                topics: school
+                    ? topicsForGrade(all, grade)
+                    : [
+                        for (final t in all)
+                          if (subjectByCode(t.subjectCode).examType == _type) t,
+                      ],
+                bySchoolSubject: school,
                 status: status,
                 studentId: widget.studentId,
                 canEdit: widget.canEdit,
@@ -114,10 +125,14 @@ class _TopicsContent extends ConsumerWidget {
     required this.status,
     required this.studentId,
     required this.canEdit,
+    this.bySchoolSubject = false,
   });
 
   final List<Topic> topics;
   final Map<int, TopicStatus> status;
+
+  /// Okul dersine göre grupla (TYT ve AYT Matematik tek "Matematik").
+  final bool bySchoolSubject;
   final String studentId;
   final bool canEdit;
 
@@ -129,7 +144,9 @@ class _TopicsContent extends ConsumerWidget {
       return Center(
         child: EmptyState(
           title: tr('Konu listesi boş'),
-          message: tr('Bu sınav türü için konu listesi henüz eklenmedi.'),
+          message: bySchoolSubject
+              ? tr('Bu sınıf için konu listesi henüz eklenmedi.')
+              : tr('Bu sınav türü için konu listesi henüz eklenmedi.'),
         ),
       );
     }
@@ -140,8 +157,16 @@ class _TopicsContent extends ConsumerWidget {
     final percent = (counts[TopicStatus.done]! * 100 / topics.length).round();
 
     final bySubject = <String, List<Topic>>{};
+    // Aynı adlı derslerden listede ilk gelenin kodu (TYT önce).
+    final codeByName = <String, String>{};
+    for (final s in examSubjects) {
+      codeByName.putIfAbsent(s.trName, () => s.code);
+    }
     for (final t in topics) {
-      bySubject.putIfAbsent(t.subjectCode, () => []).add(t);
+      final key = bySchoolSubject
+          ? codeByName[subjectByCode(t.subjectCode).trName] ?? t.subjectCode
+          : t.subjectCode;
+      bySubject.putIfAbsent(key, () => []).add(t);
     }
     final subjectCodes = bySubject.keys.toList()
       ..sort(

@@ -9,6 +9,8 @@ import '../../../shared/widgets/common.dart';
 import '../../schedule_generator/data/timetable_repository.dart';
 import '../../schedule_generator/domain/models.dart';
 import '../../schedule_generator/presentation/timetable_format.dart';
+import '../../tutoring/data/tutoring_repository.dart';
+import '../../tutoring/presentation/tutoring_timetable_widgets.dart';
 import '../data/student_schedule.dart';
 
 /// Öğrenci: "Bugün" (sırayla, süren ders vurgulu) ve "Hafta" (ızgara).
@@ -25,6 +27,8 @@ class StudentScheduleScreen extends ConsumerWidget {
       ref.invalidate(myClassroomProvider);
       ref.invalidate(myTimetableProvider);
       ref.invalidate(studentScheduleProvider);
+      ref.invalidate(myTutoringRequestsProvider);
+      ref.invalidate(openTutoringSlotsProvider);
       await ref
           .read(studentScheduleProvider.future)
           .catchError(
@@ -179,6 +183,8 @@ class _TodayTab extends StatelessWidget {
               highlight: identical(i, current),
               past: i.end <= now.hour * 60 + now.minute,
             ),
+        // Bugünkü soru çözümü / birebir (NOTLAR §95).
+        StudentTutoringSchedule(onlyDate: now),
       ],
     );
   }
@@ -380,6 +386,8 @@ class _WeekTab extends StatelessWidget {
             ],
           ),
         ),
+        // Önümüzdeki günlerin soru çözümü / birebir talepleri.
+        const StudentTutoringSchedule(),
       ],
     );
   }

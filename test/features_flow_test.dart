@@ -234,6 +234,13 @@ void main() {
     // Öğrenciler → Zeynep'in koçunu değiştir
     await tester.tap(find.text('Öğrenciler').last);
     await tester.pumpAndSettle();
+    // Araçlar artık satırlara sarılıyor; liste aşağıda başlar.
+    await tester.scrollUntilVisible(
+      find.text('Zeynep Arslan'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
     final zeynep = find.ancestor(
       of: find.text('Zeynep Arslan'),
       matching: find.byType(StudentCard),

@@ -59,9 +59,18 @@ import 'demo_staff.dart';
 import '../features/staff/data/staff_repository.dart';
 import '../features/client_errors/data/client_error_repository.dart';
 import 'demo_repositories.dart';
+import 'demo_teacher.dart';
+import 'demo_tutoring.dart';
+import 'demo_whatsapp.dart';
+import 'demo_guardian_messaging.dart';
+import '../features/whatsapp/data/guardian_messaging_repository.dart';
+import '../features/whatsapp/data/whatsapp_repository.dart';
+import '../features/tutoring/data/tutoring_repository.dart';
+import '../features/teacher/data/teacher_repository.dart';
 
 /// Demo modunda Supabase yerine kullanılan sahte veriler.
-/// `DEMO_ROLE` = `student` (varsayılan) | `coach` | `admin` | `parent`.
+/// `DEMO_ROLE` = `student` (varsayılan) | `coach` | `admin` | `parent` |
+/// `teacher`.
 /// [successRanking]: kurumda başarı sıralaması açık mı (testler için).
 Future<List<Override>> buildDemoOverrides([
   String? role,
@@ -97,6 +106,15 @@ Future<List<Override>> buildDemoOverrides([
 
   /// Testler kendi müdür kokpiti deposunu verebilir (yoksa demo verisi).
   CockpitRepository? cockpit,
+
+  /// Testler kendi soru çözümü deposunu verebilir (yoksa demo verisi).
+  TutoringRepository? tutoring,
+
+  /// Testler kendi WhatsApp bağlantı deposunu verebilir (yoksa demo: bağlı).
+  WhatsAppRepository? whatsapp,
+
+  /// Testler kendi veliye WhatsApp (ödev PDF'i, koç mesajı) deposunu verebilir.
+  GuardianMessagingRepository? guardian,
 ]) async {
   role ??= Env.activeDemoRole;
   final exams = InMemoryExamRepository.demo();
@@ -151,11 +169,13 @@ Future<List<Override>> buildDemoOverrides([
       'coach' => 'demo-coach',
       'admin' => 'demo-admin',
       'parent' => 'demo-parent',
+      'teacher' => 'demo-teacher',
       _ => 'demo-student',
     },
     canView: switch (role) {
       'coach' => (s) => meetingCoaches[s] == 'demo-coach',
       'admin' => (_) => true,
+      'teacher' => (_) => false,
       _ => (s) => s == 'demo-student',
     },
     names: {
@@ -206,6 +226,11 @@ Future<List<Override>> buildDemoOverrides([
       fullName: 'Selin Yılmaz',
       role: UserRole.parent,
     ),
+    'teacher' => const Profile(
+      id: 'demo-teacher',
+      fullName: 'Mehmet Arslan',
+      role: UserRole.teacher,
+    ),
     _ => const Profile(
       id: 'demo-student',
       fullName: 'Elif Yılmaz',
@@ -220,6 +245,20 @@ Future<List<Override>> buildDemoOverrides([
           viewerId: profile.id,
           viewerRole: role,
         );
+  final TutoringRepository demoTutoring =
+      tutoring ??
+      InMemoryTutoringRepository.demo(
+        viewerId: profile.id,
+        viewerRole: role,
+        teacherNames: demoTimetable.teacherNames,
+        studentNames: {
+          for (final e in demoStudents().entries) e.key: e.value.$1,
+        },
+      );
+  // Ders programı soru çözümü oturumlarını görsün (NOTLAR §95).
+  if (demoTutoring is InMemoryTutoringRepository) {
+    demoTimetable.tutoringSource = () => demoTutoring.sessions;
+  }
   final center =
       examCenter ??
       InMemoryExamCenter.demo(
@@ -303,6 +342,12 @@ Future<List<Override>> buildDemoOverrides([
         id: 'demo-parent',
         fullName: 'Selin Yılmaz',
         role: UserRole.parent,
+        createdAt: now,
+      ),
+      OrgMember(
+        id: 'demo-teacher',
+        fullName: 'Mehmet Arslan',
+        role: UserRole.teacher,
         createdAt: now,
       ),
     ],
@@ -395,6 +440,14 @@ Future<List<Override>> buildDemoOverrides([
           ),
     ),
     timetableRepositoryProvider.overrideWithValue(timetable ?? demoTimetable),
+    teacherRepositoryProvider.overrideWithValue(
+      InMemoryTeacherRepository(
+        demoTimetable,
+        viewerId: profile.id,
+        orgName: 'Bal Akademi',
+      ),
+    ),
+    tutoringRepositoryProvider.overrideWithValue(demoTutoring),
     studentManagementRepositoryProvider.overrideWithValue(
       students ??
           InMemoryStudentManagementRepository(
@@ -424,6 +477,22 @@ Future<List<Override>> buildDemoOverrides([
             classOf: demoTimetable.classOf,
             children: const {'demo-student'},
           ),
+    ),
+    guardianMessagingRepositoryProvider.overrideWithValue(
+      guardian ??
+          (InMemoryGuardianMessagingRepository(
+            phoneOf: {
+              for (final id in demoStudents().keys) id: '+905321112233',
+            },
+            senderName: profile.fullName,
+          )..seedRead(
+            'demo-student',
+            'Elif bu hafta deneme netini 6 artırdı, tebrik ederim.',
+          )),
+    ),
+    whatsAppRepositoryProvider.overrideWithValue(
+      whatsapp ??
+          InMemoryWhatsAppRepository(isAdmin: role == 'admin', connected: true),
     ),
     bulkSmsRepositoryProvider.overrideWithValue(
       bulkSms ??

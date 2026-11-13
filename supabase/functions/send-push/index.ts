@@ -45,7 +45,7 @@ type NotificationRow = {
   kind: 'assignment' | 'exam' | 'task' | 'note' | 'deletion_request' | 'meeting'
     | 'review' | 'weekly_report' | 'daily_question' | 'duel' | 'duel_result' | 'plan'
     | 'announcement' | 'inactivity_warning' | 'risk_digest' | 'installment_due'
-    | 'timetable' | 'book_request' | 'coach_alert';
+    | 'timetable' | 'book_request' | 'coach_alert' | 'tutoring_request';
   data: Record<string, unknown>;
 };
 
@@ -231,6 +231,21 @@ function texts(n: NotificationRow): { title: string; body: string; route: string
         body: [s(d.from) ? `${s(d.from)} yazdı` : '', s(d.reason)].filter(Boolean).join(': '),
         route: s(d.route) || '/coach',
       };
+    case 'tutoring_request': {
+      // Öğretmene yeni talep; öğrenciye onay / ret (NOTLAR §87).
+      const dt = new Date(`${s(d.date)}T12:00:00Z`);
+      const day = isNaN(dt.getTime())
+        ? ''
+        : dt.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', timeZone: 'Europe/Istanbul' });
+      const when = [day, s(d.time), s(d.branch)].filter(Boolean).join(' ');
+      if (d.event === 'approved') {
+        return { title: 'Talebin onaylandı', body: [when, s(d.teacher)].filter(Boolean).join(' · '), route: s(d.route) || '/student/study' };
+      }
+      if (d.event === 'rejected') {
+        return { title: 'Talebin onaylanmadı', body: [when, s(d.teacher), s(d.reason)].filter(Boolean).join(' · '), route: s(d.route) || '/student/study' };
+      }
+      return { title: `${s(d.student)} soru çözümü istedi`, body: `${when} · Onayını bekliyor`, route: s(d.route) || '/teacher' };
+    }
   }
 }
 

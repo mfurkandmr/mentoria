@@ -14,6 +14,8 @@ import '../../admin/data/admin_repository.dart';
 import '../../schedule_generator/data/timetable_repository.dart';
 import '../../student_management/data/student_management_repository.dart';
 import '../data/bulk_sms_repository.dart';
+import '../../whatsapp/data/whatsapp_repository.dart';
+import '../../whatsapp/presentation/whatsapp_connect_screen.dart';
 import '../../../core/design/haptics.dart';
 import '../../../core/design/motion.dart';
 
@@ -111,7 +113,9 @@ class _BulkSmsScreenState extends ConsumerState<BulkSmsScreen> {
       animationStyle: AppMotion.overlayStyle(context),
       builder: (d) => AlertDialog(
         title: Text(
-          tr('{n} veliye SMS gönderilsin mi?', {'n': reach.recipients}),
+          tr('{n} veliye WhatsApp mesajı gönderilsin mi?', {
+            'n': reach.recipients,
+          }),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -163,14 +167,14 @@ class _BulkSmsScreenState extends ConsumerState<BulkSmsScreen> {
       _body.clear();
       setState(() => _busy = false);
       AppHaptics.confirm();
-      _toast(tr('{n} veliye SMS sırasına alındı.', {'n': r.recipients}));
+      _toast(tr('{n} veliye WhatsApp sırasına alındı.', {'n': r.recipients}));
     } catch (e) {
       if (!mounted) return;
       setState(() => _busy = false);
       _toast(
         '$e'.contains('SMS_TOO_SOON')
             ? tr(
-                'Son gönderimin üzerinden 10 dakika geçmeden yeni SMS gönderilemez.',
+                'Son gönderimin üzerinden 10 dakika geçmeden yeni toplu mesaj gönderilemez.',
               )
             : '$e'.contains('NO_RECIPIENTS')
             ? tr('Seçilenlerin hiçbirinde veli telefonu yok.')
@@ -201,10 +205,12 @@ class _BulkSmsScreenState extends ConsumerState<BulkSmsScreen> {
       ),
     };
     return Scaffold(
-      appBar: AppBar(title: Text(tr('Velilere SMS'))),
+      appBar: AppBar(title: Text(tr('Velilere WhatsApp'))),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
         children: [
+          if (ref.watch(whatsAppStatusProvider).value case final wa?)
+            WhatsAppStatusCard(status: wa),
           Wrap(
             spacing: 6,
             runSpacing: 6,
@@ -227,10 +233,10 @@ class _BulkSmsScreenState extends ConsumerState<BulkSmsScreen> {
             decoration: InputDecoration(
               labelText: tr('Mesaj'),
               hintText: tr('Velilere gidecek metni yaz'),
-              helperText: tr(
-                'Başına "{org}:" eklenir. {n} karakter · yaklaşık {k} SMS',
-                {'org': org, 'n': full.length, 'k': smsSegments(full)},
-              ),
+              helperText: tr('Başına "{org}:" eklenir. {n} karakter', {
+                'org': org,
+                'n': full.length,
+              }),
               helperMaxLines: 2,
               alignLabelWithHint: true,
             ),
@@ -316,7 +322,7 @@ class _BulkSmsScreenState extends ConsumerState<BulkSmsScreen> {
           ),
           Text(
             tr(
-              'Yalnızca bilgilendirme gönder: reklam ya da kampanya içerikli SMS için velinin ticari ileti izni (İYS) gerekir.',
+              'Yalnızca bilgilendirme gönder: reklam ya da kampanya içerikli mesaj WhatsApp kurallarına aykırıdır, kurumun numarası kapatılabilir.',
             ),
             style: text.bodySmall,
           ),
@@ -338,7 +344,7 @@ class _BulkSmsScreenState extends ConsumerState<BulkSmsScreen> {
             ),
           ),
           const SizedBox(height: 20),
-          CockpitHeading(tr('Otomatik SMS')),
+          CockpitHeading(tr('Otomatik mesajlar')),
           const _ExamResultSmsTile(),
           const SizedBox(height: 12),
           CockpitHeading(tr('Gönderilenler')),
@@ -348,7 +354,7 @@ class _BulkSmsScreenState extends ConsumerState<BulkSmsScreen> {
             builder: (list) => list.isEmpty
                 ? Padding(
                     padding: const EdgeInsets.all(16),
-                    child: Text(tr('Henüz SMS gönderilmedi.')),
+                    child: Text(tr('Henüz mesaj gönderilmedi.')),
                   )
                 : Column(
                     children: [
@@ -420,7 +426,7 @@ class _ExamResultSmsTileState extends ConsumerState<_ExamResultSmsTile> {
         title: Text(tr('Deneme sonuçları velilere gitsin')),
         subtitle: Text(
           tr(
-            'Kurum sınavı yayınlanınca her öğrencinin velisine toplam net, kurum sırası ve ders ders doğru, yanlış, net SMS ile gider; sonradan yüklenen optikler de. Her öğrenci için bir kez. Ders sayısına göre mesaj birkaç SMS tutar.',
+            'Kurum sınavı yayınlanınca her öğrencinin velisine toplam net, kurum sırası ve ders ders doğru, yanlış, net WhatsApp\'tan gider; sonradan yüklenen optikler de. Her öğrenci için bir kez.',
           ),
         ),
         value: on.value ?? false,
@@ -528,7 +534,7 @@ class _StudentPickerState extends State<_StudentPicker> {
 ToolInfo bulkSmsTool() => ToolInfo(
   id: 'bulk-sms-card',
   icon: Icons.sms_outlined,
-  title: tr('Velilere SMS'),
+  title: tr('Velilere WhatsApp'),
   status: tr('Resmi tatil, toplantı, duyuru: istediğin metni gönder'),
   open: (context) => context.push('/admin/sms'),
 );

@@ -59,7 +59,7 @@ sorumlusu veri sorumlusunun kendisidir.
 
 | Görev | Sorumlu |
 |---|---|
-| Politikanın güncellenmesi | [AD SOYAD] |
-| Silme taleplerinin yanıtlanması (30 gün içinde) | [AD SOYAD] |
-| Teknik imha ve otomatik görevler | [AD SOYAD] |
-| Veri ihlali bildirimi (Kurul'a 72 saat içinde) | [AD SOYAD] |
+| Politikanın güncellenmesi | Mehmet Furkan Demir |
+| Silme taleplerinin yanıtlanması (30 gün içinde) | Mehmet Furkan Demir |
+| Teknik imha ve otomatik görevler | Mehmet Furkan Demir |
+| Veri ihlali bildirimi (Kurul'a 72 saat içinde) | Mehmet Furkan Demir |

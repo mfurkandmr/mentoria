@@ -12,24 +12,30 @@ import 'package:supabase_flutter/supabase_flutter.dart' show AuthException;
 
 /// Supabase'e gitmeden kayıt akışını izleyen sahte depo.
 class _FakeAuth implements AuthRepository {
-  _FakeAuth({this.numberMode = 'free', this.numbers = const {}});
+  _FakeAuth({
+    this.numberMode = 'free',
+    this.numbers = const {},
+    this.role = UserRole.student,
+  });
 
   /// Kurumun kayıt modu ve numara → 'ok' | 'not_found' | 'taken'.
   final String numberMode;
   final Map<String, String> numbers;
 
+  /// Davetin rolü.
+  final UserRole role;
+
   final calls = <String>[];
   String? signedUpEmail;
   String? studentNumber;
+  List<String>? teacherBranches;
   int? birthYear;
+  int? gradeLevel;
   bool? ranking;
 
   @override
-  Future<InviteInfo?> checkInvite(String code) async => InviteInfo(
-    role: UserRole.student,
-    orgName: 'Bal Kurs',
-    numberMode: numberMode,
-  );
+  Future<InviteInfo?> checkInvite(String code) async =>
+      InviteInfo(role: role, orgName: 'Bal Kurs', numberMode: numberMode);
 
   @override
   Future<String> matchStudentNumber(String code, String number) async {
@@ -44,15 +50,19 @@ class _FakeAuth implements AuthRepository {
     required String fullName,
     required String inviteCode,
     int? birthYear,
+    int? gradeLevel,
     String? studentNumber,
+    List<String>? teacherBranches,
     bool rankingConsent = false,
     bool guardianApproval = false,
     bool childRanking = false,
   }) async {
     calls.add('signUp');
     signedUpEmail = email;
+    this.teacherBranches = teacherBranches;
     this.studentNumber = studentNumber;
     this.birthYear = birthYear;
+    this.gradeLevel = gradeLevel;
     ranking = rankingConsent;
     return true;
   }
@@ -135,6 +145,10 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('$year').last);
       await tester.pumpAndSettle();
+      await tester.tap(find.text('Sınıf'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('11. sınıf').last);
+      await tester.pumpAndSettle();
       await tester.tap(
         find.text(
           "Kullanım Koşulları'nı kabul ediyorum; Aydınlatma Metni'ni okudum.",
@@ -169,6 +183,7 @@ void main() {
       expect(auth.studentNumber, '1042');
       expect(auth.calls.first, 'match:1042');
       expect(auth.birthYear, DateTime.now().year - 17);
+      expect(auth.gradeLevel, 11);
       expect(auth.ranking, isTrue);
 
       // 3. adım: doğrulama kodu.
@@ -205,6 +220,65 @@ void main() {
     },
   );
 
+  testWidgets('öğretmen daveti: branş seçmeden kayıt olmaz, branşlar gider', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1080, 4500);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final auth = _FakeAuth(role: UserRole.teacher);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          authRepositoryProvider.overrideWithValue(auth),
+        ],
+        child: const MaterialApp(
+          home: InviteSignupScreen(initialCode: 'OGRETMN1'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Öğrenci numaran'), findsNothing);
+    expect(find.text('Doğum yılı'), findsNothing);
+    final fields = find.byType(TextFormField);
+    await tester.enterText(fields.at(1), 'Selin Kaya');
+    await tester.enterText(fields.at(2), 'selin@gmail.com');
+    await tester.enterText(fields.at(3), 'balarisi1');
+    await tester.enterText(fields.at(4), 'balarisi1');
+    await tester.tap(
+      find.text(
+        "Kullanım Koşulları'nı kabul ediyorum; Aydınlatma Metni'ni okudum.",
+      ),
+    );
+    final submit = find.text('Devam et: e-postamı doğrula');
+    await tester.ensureVisible(submit);
+    await tester.tap(submit);
+    await tester.pumpAndSettle();
+    expect(find.text('En az bir branş seç.'), findsOneWidget);
+    expect(auth.calls, isEmpty);
+    // Hata mesajı düğmenin üstünü kapatmasın.
+    ScaffoldMessenger.of(tester.element(submit)).removeCurrentSnackBar();
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('signup-branch-Kimya')),
+    );
+    await tester.tap(find.byKey(const ValueKey('signup-branch-Kimya')));
+    await tester.tap(find.byKey(const ValueKey('signup-branch-Biyoloji')));
+    await tester.pump();
+    await tester.ensureVisible(submit);
+    await tester.tap(submit);
+    await tester.pumpAndSettle();
+    expect(auth.calls, ['signUp']);
+    expect(auth.teacherBranches, ['Kimya', 'Biyoloji']);
+    expect(auth.studentNumber, isNull);
+    await tester.pumpWidget(const SizedBox());
+  });
+
   testWidgets('liste modu: listede olmayan numarayla kayıt yapılmaz', (
     tester,
   ) async {
@@ -240,6 +314,10 @@ void main() {
     await tester.tap(find.text('Doğum yılı'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('$year').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Sınıf'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('12. sınıf / mezun').last);
     await tester.pumpAndSettle();
     await tester.tap(
       find.text(

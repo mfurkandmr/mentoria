@@ -181,9 +181,9 @@ class _OrgExamScreenState extends ConsumerState<OrgExamScreen> {
   }
 
   static List<ExamSubjectDef> _defaultSubjects(ExamType t) => [
-    for (final s in examSubjects)
-      if (s.examType == t)
-        ExamSubjectDef(code: s.code, questionCount: s.questionCount),
+    // Kitapçık sırası: AYT'de Edebiyat-Sosyal-1, Sosyal-2, Matematik, Fen.
+    for (final s in bookletSubjects(t))
+      ExamSubjectDef(code: s.code, questionCount: s.questionCount),
   ];
 
   void _update(ExamDefinition e) => setState(() {
@@ -1352,7 +1352,7 @@ ToolInfo orgExamsTool(WidgetRef ref, String basePath) {
     title: tr('Kurum sınavları'),
     status: drafts > 0
         ? tr('{n} sınavın sonuçları yayın bekliyor', {'n': drafts})
-        : tr('Cevap anahtarı, kazanım ve optik çıktısını yükle'),
+        : tr('Kazanım tablosunu ve optik çıktısını yükle'),
     needsAction: drafts > 0,
     open: (context) => context.push('$basePath/org-exams'),
   );

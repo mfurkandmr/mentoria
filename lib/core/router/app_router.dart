@@ -29,9 +29,11 @@ import '../../features/attendance/presentation/attendance_screen.dart';
 import '../../features/finance/presentation/finance_screen.dart';
 import '../../features/staff/presentation/staff_screen.dart';
 import '../../features/student_books/presentation/book_report_screen.dart';
+import '../../features/schedule_generator/presentation/my_timetable.dart';
 import '../../features/schedule_generator/presentation/schedule_screen.dart';
 import '../../features/schedule_generator/presentation/setup_wizard_screen.dart';
 import '../../features/sms/presentation/bulk_sms_screen.dart';
+import '../../features/whatsapp/presentation/whatsapp_connect_screen.dart';
 import '../../features/student_books/presentation/book_pool_screen.dart';
 import '../../features/student_books/presentation/books_screens.dart';
 import '../../features/student_management/presentation/classes_screen.dart';
@@ -71,6 +73,10 @@ import '../../features/student/presentation/student_shell.dart';
 import '../../features/tracking/presentation/questions_view.dart';
 import '../../features/tracking/presentation/study_view.dart';
 import '../../features/tracking/presentation/topics_view.dart';
+import '../../features/teacher/presentation/admin_teachers_screen.dart';
+import '../../features/teacher/presentation/teacher_home_screen.dart';
+import '../../features/tutoring/presentation/admin_tutoring_screen.dart';
+import '../../features/tutoring/presentation/student_tutoring_screen.dart';
 import '../config/env.dart';
 import '../constants/exam_subjects.dart';
 
@@ -109,6 +115,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           'coach' => '/coach',
           'admin' => '/admin',
           'parent' => '/parent',
+          'teacher' => '/teacher',
           _ => '/student',
         };
         if (loc.startsWith('/platform') && Env.activeDemoRole == 'admin') {
@@ -233,6 +240,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, _) => const StudentScheduleScreen(),
       ),
       GoRoute(
+        path: '/student/study',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, _) => const StudentTutoringScreen(),
+      ),
+      GoRoute(
         path: '/student/plan',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (_, _) => const StudentPlanScreen(),
@@ -305,6 +317,23 @@ final routerProvider = Provider<GoRouter>((ref) {
                     int.tryParse(state.uri.queryParameters['tab'] ?? '') ?? 0,
               ),
             ),
+          ),
+        ],
+      ),
+      // Öğretmen paneli (NOTLAR §86): kendi programı ve branşları.
+      GoRoute(
+        path: '/teacher',
+        builder: (_, _) => const ExitGuard(child: TeacherHomeScreen()),
+        routes: [
+          GoRoute(
+            path: 'profile',
+            pageBuilder: (_, state) =>
+                _cockpitPage(state, const ProfileScreen()),
+          ),
+          GoRoute(
+            path: 'timetable',
+            pageBuilder: (_, state) =>
+                _cockpitPage(state, const MyTimetableScreen()),
           ),
         ],
       ),
@@ -402,6 +431,13 @@ GoRoute _managerRoutes(String base, Widget home) => GoRoute(
         path: 'sms',
         pageBuilder: (_, state) => _cockpitPage(state, const BulkSmsScreen()),
       ),
+    // Kurumun WhatsApp Business bağlantısı: yalnızca müdür.
+    if (base == '/admin')
+      GoRoute(
+        path: 'whatsapp',
+        pageBuilder: (_, state) =>
+            _cockpitPage(state, const WhatsAppConnectScreen()),
+      ),
     // Müdür kokpitinin alt sayfaları (NOTLAR §59).
     if (base == '/admin') ...[
       GoRoute(
@@ -477,6 +513,21 @@ GoRoute _managerRoutes(String base, Widget home) => GoRoute(
             ),
           ),
         ],
+      ),
+    // Soru çözümü / birebir: müdür oturum açar, öğretmen onaylar. Koçla
+    // ilgisi yok (NOTLAR §95).
+    if (base == '/admin')
+      GoRoute(
+        path: 'tutoring',
+        pageBuilder: (_, state) =>
+            _cockpitPage(state, const TutoringAdminScreen()),
+      ),
+    // Öğretmenler (hesaplı / hesapsız, davet, birleştirme): yalnızca müdür.
+    if (base == '/admin')
+      GoRoute(
+        path: 'teachers',
+        pageBuilder: (_, state) =>
+            _cockpitPage(state, const AdminTeachersScreen()),
       ),
     // Personel: yalnızca müdür.
     if (base == '/admin')

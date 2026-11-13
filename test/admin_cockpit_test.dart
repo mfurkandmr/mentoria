@@ -435,7 +435,7 @@ void main() {
         ('Kurum sınavları', '/admin/org-exams'),
         ('Deneme trendleri', '/admin/trends'),
         ('Kitap havuzu', '/admin/books'),
-        ('Velilere SMS', '/admin/sms'),
+        ('Velilere WhatsApp', '/admin/sms'),
       ]) {
         // Kompakt ızgaradaki kutu.
         final f = find.descendant(
@@ -737,6 +737,39 @@ void main() {
       await tester.pumpAndSettle();
       expect(_visited.last, '/admin/invites');
     });
+
+    testWidgets(
+      'telefonda Koçlar sekmesinde bütün araçlar görünür (kaydırmadan)',
+      (tester) async {
+        // 1080 x 2400 piksel, 2.6 oranı ≈ 415 dp genişlik.
+        await _pump(
+          tester,
+          const AdminHomeScreen(),
+          await _overrides(),
+          size: const Size(1245, 2400),
+        );
+        final nav = find.byType(NavigationBar);
+        await tester.tap(
+          find.descendant(of: nav, matching: find.text('Koçlar')),
+        );
+        await tester.pumpAndSettle();
+        for (final id in [
+          'tool-invites',
+          'tool-teachers',
+          'tool-tutoring',
+          'tool-meetings',
+        ]) {
+          expect(
+            find.byKey(ValueKey('strip-$id')).hitTestable(),
+            findsOneWidget,
+            reason: id,
+          );
+        }
+        await tester.tap(find.byKey(const ValueKey('strip-tool-tutoring')));
+        await tester.pumpAndSettle();
+        expect(_visited.last, '/admin/tutoring');
+      },
+    );
 
     testWidgets('alt çubuk: 6 sekme, gruplanmış araçlar', (tester) async {
       await _pump(tester, const AdminHomeScreen(), await _overrides());

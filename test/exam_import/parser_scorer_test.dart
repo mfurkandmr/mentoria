@@ -151,6 +151,94 @@ void main() {
       expect(cols['SOSYAL'], ['TYT_TAR', 'TYT_COG', 'TYT_FEL', 'TYT_DIN']);
     });
 
+    test('AYT başlıkları: dört test sütunu', () {
+      final ayt = [for (final s in bookletSubjects(ExamType.ayt)) s.code];
+      final t = OpticResultParser.guess([
+        'T.C. Kimlik No',
+        'Öğrenci No',
+        'Adı Soyadı',
+        'TÜRK DİLİ VE EDEBİYATI-SOSYAL BİLİMLER-1',
+        'SOSYAL BİLİMLER-2',
+        'MATEMATİK',
+        'FEN BİLİMLERİ',
+      ], ayt);
+      expect(t.studentNo, 'Öğrenci No');
+      final cols = {for (final c in t.columns) c.column: c.subjects};
+      expect(cols['TÜRK DİLİ VE EDEBİYATI-SOSYAL BİLİMLER-1'], [
+        'AYT_EDB',
+        'AYT_TAR1',
+        'AYT_COG1',
+      ]);
+      expect(cols['SOSYAL BİLİMLER-2'], [
+        'AYT_TAR2',
+        'AYT_COG2',
+        'AYT_FELG',
+        'AYT_DIN',
+      ]);
+      expect(cols['MATEMATİK'], ['AYT_MAT']);
+      expect(cols['FEN BİLİMLERİ'], ['AYT_FIZ', 'AYT_KIM', 'AYT_BIY']);
+      expect(cols.containsKey('T.C. Kimlik No'), isFalse);
+    });
+
+    test('AYT başlıkları: kısaltmalar ve ders ders sütunlar', () {
+      final ayt = [for (final s in bookletSubjects(ExamType.ayt)) s.code];
+      final short = OpticResultParser.guess([
+        'NO',
+        'SOS1',
+        'SOS2',
+        'MAT',
+        'FEN',
+      ], ayt);
+      expect(
+        {for (final c in short.columns) c.column: c.subjects}['SOS1'],
+        ['AYT_EDB', 'AYT_TAR1', 'AYT_COG1'],
+        reason: 'ilk test Edebiyat ile başlar',
+      );
+      final each = OpticResultParser.guess([
+        'NO',
+        'EDEBİYAT',
+        'TARİH-1',
+        'COĞRAFYA-1',
+        'TARİH-2',
+        'COĞRAFYA-2',
+        'FELSEFE GRUBU',
+        'DİN KÜLTÜRÜ',
+        'MATEMATİK',
+        'FİZİK',
+        'KİMYA',
+        'BİYOLOJİ',
+      ], ayt);
+      expect(
+        [for (final c in each.columns) c.subjects.single],
+        ayt,
+        reason: 'her sütun kendi dersine',
+      );
+      // Numarasız iki "Tarih" sütunu: ilki Tarih-1, ikincisi Tarih-2.
+      final twice = OpticResultParser.guess(
+        headersOf([
+          ['NO', 'TARİH', 'TARİH'],
+        ]),
+        ayt,
+      );
+      expect(
+        [for (final c in twice.columns) c.subjects],
+        [
+          ['AYT_TAR1'],
+          ['AYT_TAR2'],
+        ],
+      );
+    });
+
+    test('YDT başlıkları', () {
+      for (final h in ['YABANCI DİL', 'İNGİLİZCE', 'YDT', 'Dil Cevapları']) {
+        final t = OpticResultParser.guess(
+          ['Öğrenci No', 'Ad Soyad', h],
+          ['YDT_YD'],
+        );
+        expect(t.columns.single.subjects, ['YDT_YD'], reason: h);
+      }
+    });
+
     test('şablon JSON gidip gelir', () {
       final back = ImportTemplate.fromJson(template.toJson(), name: 'Optik');
       expect(back.toJson(), template.toJson());
@@ -291,6 +379,44 @@ void main() {
         ayt,
       );
       expect(a.subjects.keys, ['AYT_MAT']);
+    });
+
+    test('YDT: 80 soru tek ders; boş kağıt sayılmaz', () {
+      final ydt = ExamDefinition(
+        name: 'YDT 1',
+        examType: ExamType.ydt,
+        takenOn: DateTime(2026, 11, 1),
+        subjects: const [ExamSubjectDef(code: 'YDT_YD', questionCount: 80)],
+        questions: [
+          for (var n = 1; n <= 80; n++)
+            KeyQuestion(subject: 'YDT_YD', number: n, correct: 'ABCDE'[n % 5]),
+        ],
+      );
+      // İlk 50 doğru, 20 yanlış, 10 boş.
+      final s = ExamScorer.score(
+        {
+          'YDT_YD': [
+            for (var n = 1; n <= 80; n++)
+              n <= 50
+                  ? 'ABCDE'[n % 5]
+                  : n <= 70
+                  ? 'ABCDE'[(n + 1) % 5]
+                  : null,
+          ],
+        },
+        'A',
+        ydt,
+      );
+      final yd = s.subjects['YDT_YD']!;
+      expect((yd.correct, yd.wrong, yd.blank, yd.net), (50, 20, 10, 45.0));
+      expect(s.totalNet, 45);
+      final empty = ExamScorer.score(
+        {'YDT_YD': List.filled(80, null)},
+        'A',
+        ydt,
+      );
+      expect(empty.subjects, isEmpty);
+      expect(empty.totalNet, 0);
     });
   });
 

@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/i18n.dart';
+import '../../../shared/format.dart';
 import '../../../shared/widgets/common.dart';
 import '../../import/data/spreadsheet_reader.dart';
 import '../data/exam_admin_repository.dart';
@@ -17,7 +18,7 @@ import '../../../core/design/motion.dart';
 /// Paket hatası → kullanıcı metni.
 String examPackageProblemText(ExamPackageProblem p) => switch (p.kind) {
   ExamPackageProblemKind.unsupportedType => tr(
-    'Sınav türü anlaşılmadı: "{d}". Şimdilik yalnızca TYT dosyadan kurulur.',
+    'Sınav türü anlaşılmadı: "{d}". Sınav adında TYT, AYT ya da YDT geçmeli.',
     {'d': p.detail},
   ),
   ExamPackageProblemKind.sections => tr(
@@ -82,8 +83,88 @@ Future<void> _showProblems(BuildContext context, List<String> problems) =>
       ),
     );
 
+/// Anahtar dosyası yokken sınavın adı ve tarihi (kazanım tablosundaki
+/// cevaplarla kurulacak). Ad, tablonun dosya adından önerilir.
+Future<(String, DateTime)?> _askExamInfo(
+  BuildContext context,
+  String suggested,
+) {
+  final name = TextEditingController(text: suggested);
+  var date = DateTime.now();
+  return showDialog<(String, DateTime)>(
+    context: context,
+    animationStyle: AppMotion.overlayStyle(context),
+    builder: (d) => StatefulBuilder(
+      builder: (d, setState) => AlertDialog(
+        title: Text(tr('Sınavın adı ve tarihi')),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              tr(
+                'Cevaplar kazanım tablosundan alındı; ayrı cevap anahtarı dosyası gerekmez.',
+              ),
+              style: Theme.of(d).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              key: const ValueKey('package-exam-name'),
+              controller: name,
+              autofocus: true,
+              decoration: InputDecoration(
+                labelText: tr('Sınav adı'),
+                helperText: tr(
+                  'TYT, AYT ya da YDT geçerse türü addan anlaşılır.',
+                ),
+                helperMaxLines: 2,
+              ),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              key: const ValueKey('package-exam-date'),
+              icon: const Icon(Icons.event_rounded),
+              label: Text(formatLongDate(date)),
+              onPressed: () async {
+                final picked = await showDatePicker(
+                  context: d,
+                  initialDate: date,
+                  firstDate: DateTime(2020),
+                  lastDate: DateTime.now().add(const Duration(days: 365)),
+                );
+                if (picked != null) setState(() => date = picked);
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(d).pop(),
+            child: Text(tr('Vazgeç')),
+          ),
+          FilledButton(
+            key: const ValueKey('package-exam-ok'),
+            onPressed: () {
+              final n = name.text.trim();
+              if (n.isNotEmpty) Navigator.of(d).pop((n, date));
+            },
+            child: Text(tr('Devam')),
+          ),
+        ],
+      ),
+    ),
+  ).whenComplete(name.dispose);
+}
+
+/// "TYT_Deneme_7.xlsx" → "TYT Deneme 7".
+String examNameFromFile(String file) => file
+    .replaceAll(RegExp(r'\.[A-Za-z0-9]+$'), '')
+    .replaceAll(RegExp(r'[_]+'), ' ')
+    .trim();
+
 /// Dosyaları içeriklerine göre tanır, sınavı taslak olarak kurar ve optik
-/// çıktısı da seçildiyse doğrulama raporuna geçer.
+/// çıktısı da seçildiyse doğrulama raporuna geçer. Kazanım tablosu her
+/// sorunun cevabını içeriyorsa cevap anahtarı dosyası gerekmez.
 Future<void> createExamFromFiles(
   BuildContext context,
   WidgetRef ref,
@@ -97,6 +178,7 @@ Future<void> createExamFromFiles(
 
   String? keyText;
   SheetRows? table;
+  String tableName = '';
   String? opticText;
   String opticName = 'optik.txt';
   for (final f in files) {
@@ -110,30 +192,40 @@ Future<void> createExamFromFiles(
     } else {
       try {
         final rows = (await readSpreadsheetInBackground(bytes)).values.first;
-        if (looksLikeOutcomeTable(rows)) table = rows;
+        if (looksLikeOutcomeTable(rows)) {
+          table = rows;
+          tableName = f.name;
+        }
       } catch (_) {
         // Tanınmayan dosya: aşağıda eksik diye bildirilir.
       }
     }
   }
   if (!context.mounted) return;
-  if (keyText == null || table == null) {
+  final rows = table == null ? null : parseOutcomeTable(table);
+  ParsedAnswerKey? key = keyText == null ? null : parseAnswerKey(keyText);
+  if (rows == null || (key == null && !outcomeTableHasAnswers(rows))) {
     await _showProblems(context, [
-      if (keyText == null)
-        tr('Cevap anahtarı dosyası bulunamadı ("A KITAPÇIĞI" satırı olmalı).'),
-      if (table == null)
+      if (rows == null)
         tr('Kazanım tablosu bulunamadı ("soru_no" başlığı olmalı).'),
+      if (rows != null)
+        tr(
+          'Kazanım tablosunda her sorunun cevabı yok ("a_cevap" sütunu). Cevap anahtarı dosyasını da seç.',
+        ),
     ]);
     return;
+  }
+  if (key == null) {
+    // Cevaplar tablodan: yalnızca ad ve tarih sorulur.
+    final info = await _askExamInfo(context, examNameFromFile(tableName));
+    if (info == null || !context.mounted) return;
+    key = answerKeyFromTable(rows, name: info.$1, takenOn: info.$2)!;
   }
 
   final ExamPackage package;
   List<OpticLine>? lines;
   try {
-    package = buildExamPackage(
-      parseAnswerKey(keyText),
-      parseOutcomeTable(table),
-    );
+    package = buildExamPackage(key, rows);
     if (opticText != null) {
       final total = package.exam.subjects.fold<int>(
         0,

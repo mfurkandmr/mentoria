@@ -2960,7 +2960,13 @@ karakter, UTF-8, sondaki 120 karakter cevap, öncesi kitapçık), anahtar metni 
   sihirbaz "Dosyalardan sınav kur"u önerir. Tek kitapçıkta .txt sihirbazda doğrudan okunur.
 - Kitapçığı boş satır: iki anahtarla puanlanır, fark ≥10 doğruysa o kitapçık seçilir ve raporda
   not düşülür (örnekte 2026040 B: 65'e 23); değilse A kalır.
-- Şimdilik yalnızca TYT dosyadan kurulur (ders sınırları TYT'ye göre). `*` boş sayılır.
+- TYT, AYT ve YDT dosyadan kurulur (10 Kasım): tür sınav adından, yoksa anahtar uzunluğundan
+  (120 / 160 / 80). AYT'de genel soru numarası kitapçık sırasını izler (`bookletSubjects`:
+  Edebiyat-Sosyal-1, Sosyal-2, Matematik, Fen); .txt her zaman bu sırayla bölünür, sınavdaki
+  ders sırası farklı olsa da (`subjectsInBookletOrder`). Excel başlık tahmini AYT'yi tanır
+  ("Sosyal-1/2", "Tarih-1/2", "TDE"). AYT / YDT gerçek makine dosyasıyla denenmedi; testler
+  TYT07 biçiminde üretilen dosyalarla (`exam_package_ayt_ydt_test.dart`,
+  `exam_import_ayt_ydt_test.mjs`). `*` boş sayılır.
 - Örnekte: Elif 72 D / 38 Y / 10 B = 62,5 net; en yüksek Vildan 104,75; Can Öztürk boş;
   Gökhan'ın numarası 0045127 (kurum kaydında 45127 ise eşleşir). Canlı kurumda denenmedi;
   numaralar kurum listesinde yoksa raporda "eşleşmedi" çıkar.
@@ -3016,3 +3022,387 @@ confirm / warn`); `CockpitMotion` ve `CockpitHaptics` kalktı.
   JSON; yanıt `code: "00"`). Biçim resmi dokümandan değil, Netgsm Go istemcisinin
   (`mobinova/netgsm-go`) kaynağından doğrulandı; sağlayıcı bağlanınca ilk mesajla deneyin.
 - **Demo + env.json:** router'daki oturum dinleyicisi demo modunda Supabase'e dokunmaz.
+
+## 86. Öğretmen rolü ve öğretmen paneli (11 Kasım 2026)
+
+Plan: `docs/OGRETMEN_WHATSAPP_PLANI.md` (A aşaması; B soru çözümü ve C WhatsApp
+henüz yok). Migration'lar `20261111100000_teacher_role_enum` (enum değeri ayrı dosyada:
+PostgreSQL yeni değeri aynı işlemde kullandırmaz) ve `20261111110000_teacher_role`
+(rollback'leri var; ikisi de **canlıda**). Test: `supabase/tests/teacher_role_test.mjs`,
+`test/teacher_test.dart`, `test/auth/invite_signup_test.dart` (öğretmen kaydı).
+
+- **Rol:** `user_role` = `teacher`, ana sayfa `/teacher`. Öğretmen öğrenci verisi
+  görmez (koç değil); `teachers` tablosunu da doğrudan okuyamaz, kendi satırı
+  `my_teacher()` ile gelir. Programı mevcut `my_timetable()` (`teachers.profile_id`).
+- **Davet:** müdür → `create_invite('teacher')` (kredi harcamaz). Müdür panelinde
+  Koçlar sekmesi şeridinde "Öğretmenler" (`/admin/teachers`): liste, "Hesabı var /
+  Hesap yok", "Öğretmen davet et". Kayıt ekranında öğretmen davetinde branş seçimi
+  zorunlu (`teacher_branches`); sunucu boş gelirse `Genel` yazar.
+- **Kendiliğinden liste:** `apply_signup_invite` öğretmen profilini açınca `teachers`
+  satırını da açar. `guard_timetable_row` (20261105140000 sürümü üzerine) yalnızca
+  SECURITY DEFINER fonksiyonların işlem içinde açtığı `mentoria.timetable_trusted`
+  bayrağıyla müdür denetimini atlar; `teachers.profile_id` artık `teacher` rolünü de
+  kabul eder.
+- **Branş:** öğretmen panelindeki "Branşlarım" → `set_my_teacher_branches`.
+- **Birleştirme:** müdür daha önce elle eklediği hesapsız öğretmenle aynı adlı hesaplı
+  satır görünce "Birleştir" → `merge_teachers(keep, from)`: program, ders ihtiyacı,
+  müsaitlik (elle girilen kalır), ücret, gider, personel bağlantısı korunur; aynı saatte
+  iki satırın dersi varsa `TEACHER_MERGE_CONFLICT`. Otomatik birleştirme yok (yanlış
+  eşleşme riski).
+- **Demo:** `DEMO_ROLE=teacher` (Mehmet Arslan, demo programındaki Fizik öğretmeni);
+  web `/demo` için `tool/web/build_web.py` APP_ROUTES'a `teacher` eklendi.
+- **SSS:** `tool/faq/faq_content.py` TEACHER. Oluşturucu, elle güncellenmiş lisans
+  sorusunu eski metne döndürüyordu; kaynak güncellendi, SSS bloğu içindeki iki lisans
+  çevirisi bloğun dışına taşındı.
+- **Açık:** öğretmene bildirim yok (program yayınlanınca yalnızca öğrenciye gidiyor);
+  öğretmen müsaitliğini kendisi giremiyor; KVKK aydınlatma metninde öğretmen rolü yok.
+
+## 87. Soru çözümü, birebir ders ve etüt talepleri (11 Kasım 2026)
+
+Plan B aşaması (`docs/OGRETMEN_WHATSAPP_PLANI.md`). Migration
+`20261111120000_tutoring_sessions` (rollback'i var; **canlıda**), `send-push` v17.
+Testler: `supabase/tests/tutoring_sessions_test.mjs` (48 adım), `test/tutoring_test.dart`.
+Ad notu: `study_sessions` pomodoro tablosu olduğu için yeni tablolar `tutoring_*`.
+
+- **Kullanıcı kararı:** talebi yalnızca öğretmen onaylar / reddeder; koç ve müdür
+  yalnızca görür.
+- **Oturum (`tutoring_sessions`):** müdür açar (`/admin/tutoring`, Koçlar şeridinde
+  "Soru çözümü ve birebir"): öğretmen, tür (soru çözümü / birebir / etüt), gün, saat,
+  kontenjan (birebirde 1), ders (boşsa öğretmenin ilk branşı), açık/kapalı. Haftalık
+  tekrarlar. Öğretmenin aynı gün çakışan oturumu (`TUTOR_SESSION_OVERLAP`) ya da
+  yayındaki programda o saatte dersi (`TUTOR_TEACHER_BUSY`) varsa reddedilir. Program
+  üreticisi bu oturumları henüz görmüyor (ters yönde koruma yok).
+- **Talep (`tutoring_requests`, yalnızca RPC):** öğrenci `/student/study` (ana sayfada
+  `TutoringHomeCard`, kurumda oturum yoksa görünmez): 7 günlük liste, "Talep et" + konu.
+  Kurallar: 14 gün, başlamış oturum yok, aynı oturuma aynı gün tek etkin talep, günde 3
+  etkin talep, onaylı sayısı kontenjana ulaşınca `TUTOR_SESSION_FULL`. Öğrenci iptal
+  edebilir. Saatler Türkiye saatiyle (`tr_now()`).
+- **Öğretmen:** ana sayfada "Soru çözümü ve birebir" bölümü: bekleyenler (onayla /
+  gerekçeli reddet), yaklaşan onaylılar, haftalık oturumları.
+- **Koç:** İletişim sekmesinde "Soru çözümü talepleri" (`/coach/tutoring`, kendi
+  öğrencileri); müdür aynı listeyi oturum ekranının Talepler sekmesinde görür.
+- **Bildirim `tutoring_request`:** yeni talep → öğretmene (hesabı varsa, rota
+  `/teacher`); karar → öğrenciye (`/student/study`).
+- `merge_teachers` oturumları da taşır (aksi hâlde silinen satırla giderdi).
+- **Açık:** talep kayıtları için saklama süresi yok (KVKK listesinde); geçmiş talepler
+  ekranda görünmüyor (yalnızca bugün ve sonrası); öğretmen gelen/gelmeyen işaretlemiyor.
+
+## 88. Velilere WhatsApp, SMS kapandı (11 Kasım 2026)
+
+Kurum velilerle yalnızca WhatsApp'tan konuşuyor (docs/OGRETMEN_WHATSAPP_PLANI.md §C, F).
+Migration `20261111130000_whatsapp`, Edge Function `send-whatsapp` ve `whatsapp-webhook`.
+Kurulum: `docs/WHATSAPP_KURULUM.md`.
+
+- **Kuyruk aynı:** `sms_outbox` (adı korunuyor; yoklama, taksit, toplu mesaj, deneme sonucu
+  fonksiyonları adla yazıyor). Yeni sütunlar `channel` (varsayılan `whatsapp`), `template`,
+  `params`, `media_path` (ödev PDF'i için hazır), `wa_message_id`, `delivered_at`, `read_at`.
+  Sıradaki eski SMS'ler de `whatsapp` yapıldı.
+- **Bağlantı `org_whatsapp`:** kurum başına `phone_number_id`, `waba_id`, görünen numara,
+  kalıcı erişim anahtarı, şablon adı. Politika yok, istemci hiç okuyamaz; müdür
+  `org_whatsapp_status()` ile durumu ve son 30 gün sayılarını görür (anahtar dönmez),
+  `set_org_whatsapp` (anahtar boşsa eskisi kalır) / `disconnect_org_whatsapp`.
+  Embedded Signup yok: bilgiler Meta panelinden elle girilir.
+- **Gönderim:** `kick_sms()` artık `send-whatsapp`'ı dürter (adı korunuyor, 5 dakikalık
+  zamanlayıcı aynı). `claim_messages()` kilitli alır (çift gönderim yok, 15 dk'dan uzun
+  'sending' → 'failed'); yalnızca bağlı kurumların mesajları. Satırda şablon yoksa kurumun
+  genel şablonu `kurum_bilgilendirme`: {{1}} metin, {{2}} kurum adı. Değişkende satır sonu
+  olamaz (` · ` olur), en çok 1024 karakter.
+- **Webhook:** Meta imzası (`X-Hub-Signature-256`, `WHATSAPP_APP_SECRET`) doğrulanır;
+  `whatsapp_mark` teslim / okundu / hata yazar. Veli cevapları alınmaz (coexistence: müdürün
+  WhatsApp Business uygulamasında kalır).
+- **SMS:** `claim_sms` yalnızca `channel = 'sms'` alır; `send-sms` repoda duruyor ama
+  `SMS_PROVIDER` boş, hiçbir şey göndermez. Panodan silinebilir. Ekranlarda "SMS" yazıları
+  WhatsApp oldu; toplu mesajdaki SMS sayacı kaldırıldı.
+- **Uygulama:** `/admin/whatsapp` (`WhatsAppConnectScreen`), toplu mesaj ekranının başında
+  `WhatsAppStatusCard` (bağlı değilse kırmızı, sıradaki mesaj sayısı). Demo: bağlı.
+- **Açık:** ödev PDF'i (4. aşama), koçun veliye mesajı için şablon, veli WhatsApp rızası
+  (`whatsapp_guardian`) ve yurt dışına aktarım (KVKK listesinde).
+
+## 89. Ödev PDF'i ve koçun mesajı veliye WhatsApp'tan (11 Kasım 2026)
+
+Migration `20261111140000_homework_whatsapp`, `send-whatsapp` v2. Şablonlar:
+`docs/WHATSAPP_KURULUM.md`.
+
+- **Ödev:** koç / müdür "Öğrenciye gönder" deyince ödev kaydedilir (`send_assignment` artık
+  kimliği döndürür), sayfa kapanır ve arkada veliye gönderim başlar:
+  `queue_homework_whatsapp` önce denenir; `no_phone` / `already` ise PDF hiç üretilmez.
+  `HW_NO_PDF` gelirse uygulama PDF'i çizer (`renderHomeworkPdf`: tek A4, kurum şeridi marka
+  renginde, başlık, öğrenci, ödevi veren, tarihler, maddeler, not), `homework` kovasına
+  `<kurum>/<ödev>.pdf` olarak yükler ve yeniden çağırır. Yolu sunucu kurar; yükleme politikası
+  yalnızca o ödevi yönetebilene (`can_manage_assignment`) ve kendi kurum klasörüne izin verir.
+  Mesaj `odev_bildirimi` şablonu, belge başlığında `Odev.pdf` (7 günlük imzalı adres);
+  değişkenler: veren, öğrenci, başlık, son tarih, kurum. Her ödev bir kez (tekil index).
+  Sonuç koça alttaki bildirimle söylenir (gönderiliyor / veli telefonu yok / gönderilemedi).
+- **Koç → veli:** öğrenci sayfasının üst çubuğunda sohbet simgesi ("Veliye WhatsApp") →
+  `GuardianMessageSheet`: metin (1-900), `send_guardian_message` (`koc_mesaji` şablonu:
+  öğrenci, koç, metin, kurum), öğrenci başına 24 saatte en çok 5 (`GUARDIAN_MSG_LIMIT`).
+  Altında son 30 mesaj ve durumu (`guardian_messages`: sırada / gönderildi / teslim /
+  okundu / gitmedi + hata).
+- `sms_outbox.student_id` (öğrenci silinince satır da silinir), `assignment_id`.
+- **Saklama:** PDF 80 gün (`purge_homework_pdfs`, pg_cron `homework-pdf-retention` →
+  `storage_cleanup`), mesaj kaydı 90 gün (mevcut).
+- **Açık:** öğretmen rolü ödev veremiyor (`can_manage_student` yalnızca koç / müdür);
+  kuruma logo PDF'e basılmıyor (yalnızca ad ve renk); sınıfa toplu ödev yok (her öğrenci ayrı).
+
+## 90. Kurum sınavı: cevap anahtarı dosyası isteğe bağlı (11 Kasım 2026)
+
+Kurumun kazanım tablosu (`soru_no;bolum;kazanim;zorluk;a_cevap;b_sorusunun_yeri`) her sorunun
+A cevabını ve B kitapçığındaki yerini zaten içeriyor. "Dosyalardan sınav kur" artık yalnızca
+kazanım tablosu (+ isteğe bağlı optik çıktısı) ile çalışır: `answerKeyFromTable` A anahtarını
+`a_cevap`'tan, B anahtarını yerlerden kurar (iptal: `-` / `X` / `İPTAL`). Ad ve tarih küçük bir
+pencerede sorulur (ad, tablonun dosya adından önerilir; tür addan ya da soru sayısından).
+Anahtar dosyası da seçilirse eskisi gibi o kullanılır ve tabloyla çelişki denetlenir. Tabloda
+bir sorunun cevabı eksikse anahtar dosyası istenir. Test: TYT07 örneğinde tablodan kurulan
+anahtar dosyadakiyle bire bir aynı, öğrenci satırları da aynı.
+
+
+## 91. Öğrencinin sınıf seviyesi (11 Kasım 2026)
+
+Öğrenci kaydolurken sınıfını seçer: 9, 10, 11, 12 / mezun (12 ile mezun aynı).
+Konu listeleri buna göre süzülür.
+
+- **Sunucu:** `profiles.grade_level` (9-12, boş = bilinmiyor). Kayıt verisindeki
+  `grade_level` `apply_signup_invite` ile yazılır. `set_grade_level(öğrenci,
+  seviye)` ile öğrencinin kendisi ya da onu yöneten koç / müdür değiştirir;
+  doğrudan güncelleme kapalı. Migration `20261111150000_grade_level`.
+- **Eşleme uygulamada:** `lib/core/constants/grade_levels.dart`. Mevcut YKS
+  konularının her biri işlendiği sınıfa (9 / 10 / 11) bağlandı. 9-11 yalnızca
+  kendi sınıfının konularını görür; 12 / mezun ve sınıfı seçilmemiş eski hesaplar
+  hepsini. TYT ile AYT'de aynı olan konu alt sınıflara bir kez gösterilir.
+  `test/grade_level_test.dart`, eşlemedeki her adın seed'de olduğunu denetler
+  (seed'de konu adı değişirse eşleme de değişmeli).
+- **Ekranlar:** kayıt ekranında "Sınıf" seçimi zorunlu. Konular ekranında 9-11
+  için TYT / AYT sekmesi yok; konular ders ders tek listede (TYT ve AYT
+  Matematik tek "Matematik"). Soru ekleme, yanlış defteri ve ödev verme
+  ekranındaki konu seçimi de süzülür; ödev verme ekranında konusu olmayan dersler
+  gizlenir. Profilde ("Sınıfın") ve koçun öğrenci sayfasında ("Sınıfı") değişir.
+- **Açık:** eşleme eski MEB müfredatının ünite sırasına göre. Maarif Modeli'nin
+  yeni ünitelerine göre bir öğretmenle gözden geçirilmeli. Deneme, YKS sayacı,
+  hedef ve net hesabı sınıfa göre değişmiyor. Yeni öğretim yılında sınıflar kendi
+  kendine artmıyor.
+
+## 92. Kaynak takibi: kitap × konu işaretleri (12 Kasım 2026)
+
+Rakip uygulamadaki "Kaynak Takibi" tablosunun karşılığı. Kitaplarım ekranındaki
+"Kaynak takibi" kartından açılır (öğrenci, koç / müdürün öğrenci sayfasındaki
+Kitaplar sekmesi, veli).
+
+- **Ekran:** ders başına bir tablo; satırlar konular, sütunlar öğrencinin o
+  dersteki kitapları (karma kitap her derste), hücre işaret kutusu. Başlıkta
+  "biten / toplam". Kitabı olmayan ders gösterilmez; bırakılan kitap sütun
+  olmaz. 12 / mezunda TYT / AYT sekmesi, 9-11'de yalnızca o sınıfın konuları
+  (§91). `resource_tracking_screen.dart`.
+- **Sunucu:** `book_topic_marks (student_book_id, topic_id)`; satır varsa
+  bitti. Okuma: öğrenciyi görebilen herkes. Yazma yalnızca
+  `set_book_topic_mark(kitap, konu, bitti)`: öğrenci kendisi ya da koçu /
+  müdürü; veli işaretleyemez. Konu kitabın dersinden olmalı (`BAD_TOPIC`).
+  Migration `20261112100000_book_topic_marks` (rollback'i var).
+- **Açık:** işaret, Konular ekranındaki konu durumunu (`topic_progress`)
+  değiştirmez; ikisi ayrı. Koç için sınıf / kurum geneli kaynak takibi raporu
+  yok. Tablo dönemlik: yeni dönemde kitap yeniden eklenince işaretler boş başlar.
+
+## 93. Görüşmeye (ödevlendirmeye) gelmeyen öğrenci: veliye WhatsApp (12 Kasım 2026)
+
+Koç haftalık görüşmeyi (§9) "Öğrenci gelmedi" diye işaretleyince veliye kurumun
+WhatsApp numarasından bilgi mesajı gider.
+
+- **Sunucu:** `set_meeting_status` 'missed' işaretinde veli telefonuna mesajı
+  `sms_outbox`'a yazar (kurumun genel şablonu; Meta'da yeni şablon gerekmez).
+  Aynı görüşme için bir kez (`meeting_occurrences.guardian_notified_at`; işaret
+  kaldırılıp yeniden konsa da ikinci mesaj gitmez). Dönüş: 'notified' |
+  'no_phone' | null. Migration `20261112110000_meeting_missed_whatsapp`.
+- **Metin:** "Sayın {veli}, {kurum}: öğrenciniz {ad}, {gün} günü saat {saat}
+  için planlanan koç görüşmesine (ödevlendirme) gelmedi. Koçu: {koç}."
+- **Uygulama:** seçenek "Görüşme yapılmadı" yerine "Öğrenci gelmedi" (altında
+  "Veliye WhatsApp'tan bilgi mesajı gider"); durum etiketi "Gelmedi". Koç
+  sonucu görür: gönderiliyor / veli telefonu yok.
+- **Dikkat:** görüşme koç yüzünden yapılmadıysa "Bu haftalık iptal" seçilmeli;
+  "gelmedi" veliye mesaj gönderir ve geri alınamaz. Yalnızca öğrencinin koçu
+  işaretler (müdür işaretleyemez). Planlanmış görüşmesi olmayan öğrenci için
+  işaret yok: önce görüşme eklenmeli.
+
+## 94. Deneme kartı: Detaylar ve Konu analizi düğmeleri (12 Kasım 2026)
+
+Denemeler listesinde her deneme artık rakip uygulamadaki gibi bir kart
+(`_ExamTile`, `exams_screen.dart`): tür etiketi, ad, toplam net, tarih ve
+kurum sıralaması (kurum sınavında), toplam doğru / yanlış / boş ve iki düğme.
+
+- **Detaylar:** derslere göre net, D / Y / B tablosu kartın içinde açılır.
+- **Konu analizi:** kurum sınavında karnenin "Konu analizi" sekmesi
+  (`ReportCardScreen`, sekme 1). Elle girilen denemede konu verisi olmadığı
+  için düğme nedenini söyleyen bir bildirim gösterir.
+- Kart başlığına dokununca eski ayrıntı sayfası açılır (yanlışlar, silme).
+- Sunucu değişikliği yok.
+
+## 95. Soru çözümü ders programında; koçla ilgisi yok (12 Kasım 2026)
+
+Kullanıcı kararı: soru çözümü / birebir / etüt öğretmen rolünün işi, koçla
+ilgisi yok; oturumlar ders programının içinde olmalı. Planın dört adımı da
+yapıldı (tek tablo, iki yönlü çakışma, toplu açma, herkes kendi programında).
+
+- **Koç çıkarıldı:** koç panelindeki "Soru çözümü talepleri" aracı ve
+  `/coach/tutoring` rotası kaldırıldı; `managed_tutoring_requests` yalnızca
+  müdüre döner (`is_org_admin`). Öğrenci ekranındaki "koçun görür" cümlesi
+  çıktı. Demo deposunda `coachOf` yok.
+- **Ders programı tablosu (`schedule_screen.dart`):** Öğretmen ve Derslik
+  görünümünde oturumlar ayrı renkte hücre olarak çıkar (`tutoring-cell-*`),
+  boş saate dokununca oturum formu öğretmen / derslik, gün ve saatle dolu
+  açılır (`add-tutoring-*`). Tablonun altında öğretmenin / dersliğin bütün
+  oturumları liste olarak durur (ders saatleri dışında kalanlar, ör. 15.00
+  sonrası, tabloda görünmediği için). Sınıf görünümünde oturum yok.
+- **Oturum formu:** derslik seçimi eklendi; kaydedince program da tazelenir.
+  `showTutoringSessionDialog` artık `teacherId/roomId/day/start/end` alır.
+- **Üretici iki yönlü:** `TimetableSetup.tutoring` (açık oturumlar,
+  `fetchSetup` okur; müdür dışına boş) → `toInput` öğretmene ve dersliğe
+  `blocked` blok olarak verir. `Teacher.freeAt` / `Room.freeAt` üretici,
+  `validateHard` ve elle taşımada (`moveProblems`) kullanılır. Müsaitlik
+  (`availableAt`) ayrı kalır: kurulum sihirbazı oturumları müsaitsizlik diye
+  kaydetmesin.
+- **Sunucu:** `guard_tutoring_session` dersliği de denetler: aynı saatte
+  başka açık oturum ya da yayındaki programda ders varsa `TUTOR_ROOM_BUSY`.
+  Migration `20261112120000_tutoring_timetable` (rollback var).
+- **Açık:** yayınlama sunucuda oturum çakışmasına bakmaz (istemci üretici ve
+  doğrulayıcı bakar). Oturum talebe kapatılınca (`active=false`) programdan
+  da düşer.
+- Testler: `test/schedule_generator/tutoring_blocks_test.dart`,
+  `schedule_screen_test` ("boş saate soru çözümü açılır"),
+  `supabase/tests/tutoring_timetable_test.mjs`.
+- **Toplu açma:** ders programı → Öğretmen görünümü → "Boş saatleri toplu
+  aç": öğretmenin bu programda dersi ve oturumu olmayan, müsait ders
+  saatleri çip olarak listelenir; seçilenlere aynı tür / kontenjan / ders ile
+  haftalık oturum açılır (`showBulkTutoringDialog`). Açılamayanlar (yayındaki
+  programla çakışma) sayıyla bildirilir. Her ders saati ayrı oturum.
+- **Kendi programında:** öğretmenin "Ders programı" ekranında (`MyTimetableScreen`)
+  oturumları gün gün, bekleyen talep sayısıyla (`teacherTutoringForDay`);
+  öğrencinin "Ders programım"ında Bugün sekmesinde o günün, Hafta sekmesinde
+  önümüzdeki günlerin onaylı / bekleyen talepleri ve açık saat sayısı
+  (`StudentTutoringSchedule`, `tutoring_timetable_widgets.dart`). Öğrencinin
+  sınıfı / yayında programı yoksa bu ekran boş durumda kalır; giriş ana
+  sayfadaki karttan.
+
+## 96. Ders programı: 2'li blok dağılımı (12 Kasım 2026)
+
+Kullanıcı isteği: üretici bir sınıfın dersini 1+1+1 / 2+1+1 diye ayrı
+günlere dağıtıyordu; artık 2 saatlik bitişik bloklar: 3 → 2+1, 4 → 2+2,
+5 → 2+2+1, 6 → 2+2+2.
+
+- **Puan (`constraints.dart`, `splitPenalty` = 4):** her ders için tek
+  saatlik gün sayısı (tek haftalık saatte 1'e izin) ve aynı gündeki
+  saatlerin arası açılması cezalı. Üretici iyileştirmesi (annealing) bu
+  puanı düşürür. Günde 3 ve üstü zaten `maxPerDay` (varsayılan 2) cezası.
+- **Yerleştirme (`_cost`):** gün içinde 1 saati olan derse bitişik saat
+  güçlü öncelik (-6), bitişik olmayan aynı gün +4; gereken gün sayısı
+  (`ceil(saat/2)`) dolmuşsa yeni gün açmak +6. Ders → saat izleme `_lAt`.
+- **"Günde en çok 1"** seçilen derste blok kuralı yok (eski davranış).
+- Sihirbazın ders penceresinde planlanan bölünüş yazar (`blockPlan`).
+- Kesin kural değil (yumuşak): öğretmen müsaitliği ya da sınıf doluluğu
+  izin vermezse 2+1+1 kalabilir; puan ekranında görünür.
+- Test: `test/schedule_generator/block_distribution_test.dart`.
+
+## 97. Yük testi: Nano sunucunun sınırı (12 Kasım 2026)
+
+Amaç: veritabanı kaç kullanıcıya kadar 100 ms altında hizmet verir.
+Test projesi Mentoria-Test (`iruiyvfndxhkuiwbekuf`), canlı DEĞİL. İkisi de
+Nano boyutunda (kullanıcının ekranında canlı "NANO" görünüyor).
+
+**Hazırlık (yapıldı):**
+- Bağlantı `tool/loadtest/.env.local` (git'e girmez): `LT_DB_URL` (Session
+  pooler, parola kullanıcıda), `LT_DB_CA=prod-ca-2021.crt` (Supabase SSL
+  sertifikası, klasörde), `LT_ANON_KEY`, `LT_PASSWORD` (yuk-* hesaplarının
+  parolası). Test projesine geçici SQL Edge Function kurmak güvenlik
+  kuralına takıldı; yerel `pg` ile bağlanılıyor.
+- `apply_migrations.mjs`: test projesine 48 migration uygulandı (artık canlıyla
+  aynı, 20261112120000'e kadar). Sonraki migration'lar için argümansız çalışır.
+- `prepare.mjs`: 25 koç (koç başına 40 öğrenci), 1000 öğrenci, 20.000 soru
+  kaydı, 3.000 deneme, 10 öğretmen, 5 sınıf, yayında program, 20 soru çözümü
+  oturumu.
+- `tokens.mjs` (28 hesap: auth giriş sınırı yüzünden), `mix.js` (gerçekçi
+  karışım: %42 ana sayfa, %20 soru kaydı, %12 deneme, %8 program, %6 soru
+  çözümü, %10 koç, %2 müdür, +%3 ağ referansı), `ramp.sh "A B C" süre`
+  (her kademe ayrı, öncesinde sunucu sağlık kontrolü), `report.mjs`,
+  `pgstats.mjs` (sunucu tarafı sorgu süreleri). Sonuçlar `results/` (git dışı).
+
+**Bulgular (şimdiye kadar):**
+- Bu bilgisayardan Frankfurt'a veritabanına uğramayan istek bile ~95-115 ms
+  (ağ). Kullanıcının gördüğü süre Türkiye'den 100 ms altına inemez; ölçüt
+  sunucu tarafı süre.
+- Sunucu süreleri (düşük yükte): müdür kokpiti `admin_cockpit` ~415-440 ms
+  (en büyük sorun), `student_home` ~22 ms, `my_timetable` ~13 ms, diğerleri
+  1-5 ms.
+- Kısa (90 sn) kademeler: 10 ve 20 işlem/sn rahat (sunucu süreleri normal);
+  25-35 arası dalgalı (bir koşuda 30 iyi, 25 ve 35 çöktü); 40'ta doyma
+  (geçit bile yavaşlıyor), 80+ çöküş, 160'ta sunucu dakikalarca kendine
+  gelmedi (522).
+- 10 dakikalık 15 işlem/sn: birkaç dakika sonra çöktü (%10 hata, 60 sn zaman
+  aşımı). Nano'nun işlemci/disk burst kredisi bitince kalıcı kapasite çok
+  düşüyor.
+- 1 işlem ≈ 1,7 HTTP isteği (ana sayfa 3 istek).
+
+**Dayanıklılık (10 dk, kredi bitmiş sunucu):** 10 işlem/sn çöktü (%7 hata,
+ağ referansı bile ~1 sn). 5 işlem/sn: ortanca normal (149 ms, ~100 ms ağ) ama
+aralıklı duraklama (p95 41 sn, %3 hata, DB sorguları ara ara 5-7 sn). DB
+69 MB, önbellek isabeti %99,99: darboğaz disk değil, Nano'nun paylaşımlı
+işlemcisi (burst kredisi bitince). Zamanlanmış işler küçük pay (bildirim
+kuyruğu 15 sn'de bir, yük altında ~350 ms).
+
+**Sonuç:** sağlıklı işlemcide sunucu süreleri müdür kokpiti dışında 25 ms
+altı (100 ms hedefi rahat). Nano kısa ani yükte ~20 işlem/sn (~35 HTTP/sn,
+aynı anda ~400 aktif kullanıcı) taşır; sürekli yükte 5 işlem/sn'de bile
+takılır. Yayından önce üst boyut (Pro + Micro/Small) ve `admin_cockpit`
+hızlandırma gerekli; yükseltmeden sonra aynı testler (`ramp.sh`) yeniden
+koşulmalı. Testler arasında sunucunun toparlanması gerekir (kredi saatlerce
+dolar).
+
+## 98. Müdür kokpiti hızlandırma (13 Kasım 2026)
+
+Yük testinde (NOTLAR §97) bulunan tek yavaş nokta düzeltildi: `admin_cockpit()`
+içindeki "net_drops" (son sınavda 3+ net düşüş uyarısı) her öğrencinin son
+sınavını aynı CTE'yi kendisiyle birleştirerek (`ex a join ex b`) buluyordu.
+CTE'ler indekslenmediği için bu, öğrenci × sınav sayısı kadar satır tarıyordu
+(1000 öğrenci × 3000 sınav kaydında toplam sürenin ~%95'i). `lead()` pencere
+fonksiyonuyla tek geçişte hesaplayan sürüme geçildi (kendiyle birleştirme
+yok). Migration `20261113100000_cockpit_perf` (rollback var), **canlıda**.
+
+- **Ölçüm:** EXPLAIN ANALYZE (Mentoria-Test, 1000 öğrenci/3000 sınav):
+  503 ms → 59 ms (~8,5 kat). Mantık aynı: `supabase/tests/admin_cockpit_test.mjs`
+  (net_drops dahil) ve tüm SQL paketi değişmeden geçti.
+- **Yeni araç:** `tool/loadtest/explain_cockpit.mjs [migration.sql]` — bir
+  fonksiyon gövdesini test kurumunun verisiyle EXPLAIN ANALYZE eder, en
+  pahalı düğümleri sıralar. Varsayılan dosya eski sürüm; yeni sürümü ölçmek
+  için dosya yolunu vermek gerekir (bir kez bu yüzden yanlış dosya ölçüldü).
+- **Sistem geneli:** bu düzeltme tek sorguyu hızlandırır; Nano'nun genel
+  kapasite tavanını (NOTLAR §97'deki sürekli yük çöküşü) değiştirmez — o,
+  paylaşımlı işlemci kredisiyle ilgili, sorguyla değil. Bugün bu yüzden iki
+  yeniden ölçüm (25 ve 40 işlem/sn) güvenilir çıkmadı: hem Auth giriş IP
+  sınırına (çok sayıda `tokens.mjs` çağrısı) hem de sunucunun önceki
+  testlerden toparlanmamasına denk geldi. `ag_gecikmesi` (veritabanına hiç
+  uğramayan referans istek) o turlarda da saniyelerce sürdü — darboğazın
+  artık sorguda değil, genel yığında (PostgREST/bağlantı havuzu) olduğunun
+  kanıtı. Temiz bir karşılaştırma için test projesine uzun süre
+  dokunulmaması gerekiyor.
+
+## 99. Tanıtım sitesi güncel, demo açık, KVKK 1.3 (13 Kasım 2026)
+
+- **Demo artık gizli değil:** tanıtım sayfasında "Demoyu deneyin" (üst çubuk ve giriş
+  bölümü) ve `#demo` bölümünde beş rol kartı (`/demo/panel/?rol=...`). `/demo/` arama
+  motorlarına açık; `/demo/panel/` hâlâ `noindex` (robots.txt + `_headers`). Demo
+  yalnızca örnek veriyle çalışır (DEMO=true, sunucuya bağlanmaz). Tanıtım talebi
+  `#iletisim` bölümünde e-postayla.
+- **İçerik tutarlılığı:** SMS yerine WhatsApp (§88), öğretmen rolü (beş rol), soru
+  çözümü ve birebir ders ders programında (§95), 2'li blok dağılımı (§96), kaynak takibi.
+- **KVKK (legalVersion 1.3):** aydınlatma metnine veli adı ve telefonu (WhatsApp
+  bilgilendirmeleri), ödeme kayıtları ve veliye gösterimi, öğretmen bilgisi ve
+  öğretmenin gördükleri, soru çözümü talepleri, Meta (WhatsApp Business) ve Cloudflare
+  veri işleyen olarak, WhatsApp kaydı 90 gün / ödev PDF'i 80 gün saklama eklendi.
+  "Telefon numarası işlenmez" cümlesi öğrencinin kendi telefonu olarak düzeltildi.
+  Web adresi `https://mentoria.com.tr` (hesap silme `/app/hesap-sil`) dolduruldu.
+- **Açık:** `[AD SOYAD]`, `[ADRES]`, `[KVKK E-POSTA ADRESİ]` hâlâ boş (yayındaki yasal
+  sayfalarda görünür); avukat incelemesi.
+- **Cloudflare:** `mentoria.com.tr` zone'u eklendi (ücretsiz plan, NS
+  `malcolm`/`romina.ns.cloudflare.com`, Turhost'ta girildi), 13 Kasım'da aktif.
+- **Yayında:** Pages projesi `mentoria` (`mentoria-90l.pages.dev`), `mentoria.com.tr` ve
+  `www` custom domain olarak bağlı. Yükleme elle: `npx wrangler@4 pages deploy build/site
+  --project-name mentoria --branch main` (wrangler bu bilgisayarda giriş yaptı). GitHub
+  Actions yayını (`deploy-web.yml`) hâlâ kapalı (`WEB_DEPLOY` yok).
+- **E-posta:** Cloudflare Email Routing; `iletisim@` ve `kvkk@` → hesabın Gmail'i,
+  catch-all kapalı. Supabase Auth Site URL `https://mentoria.com.tr/app` (kullanıcı girdi).

@@ -229,6 +229,7 @@ class PushService {
               '/student/announcements',
               '/student/timetable',
               '/student/books',
+              '/student/study',
             }.contains(route) ||
             route.startsWith('/admin/finance')
         ? router.push(route)

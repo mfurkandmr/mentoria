@@ -5,7 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:mentoria/dev/demo_mode.dart';
 import 'package:mentoria/dev/demo_sms.dart';
-import 'package:mentoria/features/sms/data/bulk_sms_repository.dart';
 import 'package:mentoria/features/sms/presentation/bulk_sms_screen.dart';
 import 'package:mentoria/shared/motion.dart';
 
@@ -15,18 +14,10 @@ void main() {
     await initializeDateFormatting('tr_TR');
   });
 
-  test('SMS sayısı', () {
-    expect(smsSegments(''), 0);
-    expect(smsSegments('a' * 155), 1);
-    expect(smsSegments('ğ' * 156), 2);
-    expect(smsSegments('Merhaba 😀'), 1);
-    expect(smsSegments('😀' * 40), 2);
-  });
-
   late InMemoryBulkSmsRepository repo;
 
   Future<void> pump(WidgetTester t) async {
-    t.view.physicalSize = const Size(1080, 3600);
+    t.view.physicalSize = const Size(1080, 4200);
     t.view.devicePixelRatio = 2.5;
     addTearDown(t.view.reset);
     repo = InMemoryBulkSmsRepository(
@@ -78,14 +69,17 @@ void main() {
     await t.pump();
     await t.tap(find.byKey(const ValueKey('sms-send')));
     await t.pumpAndSettle();
-    expect(find.text('2 veliye SMS gönderilsin mi?'), findsOneWidget);
+    expect(
+      find.text('2 veliye WhatsApp mesajı gönderilsin mi?'),
+      findsOneWidget,
+    );
     await t.tap(find.byKey(const ValueKey('sms-confirm')));
     await t.pumpAndSettle();
     expect(repo.outbox, [
       ('+905321112233', 'Bal Akademi: 29 Ekim nedeniyle kurumumuz kapalıdır.'),
       ('+905334445566', 'Bal Akademi: 29 Ekim nedeniyle kurumumuz kapalıdır.'),
     ]);
-    expect(find.text('2 veliye SMS sırasına alındı.'), findsOneWidget);
+    expect(find.text('2 veliye WhatsApp sırasına alındı.'), findsOneWidget);
     expect(find.textContaining('2 sırada'), findsOneWidget);
 
     // 10 dakika dolmadan ikinci gönderim olmaz.

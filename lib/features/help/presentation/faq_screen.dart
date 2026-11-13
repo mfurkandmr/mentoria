@@ -40,6 +40,7 @@ String _panelName(UserRole role) => switch (role) {
   UserRole.coach => tr('Koç paneli hakkında'),
   UserRole.admin => tr('Kurum müdürü paneli hakkında'),
   UserRole.parent => tr('Veli paneli hakkında'),
+  UserRole.teacher => tr('Öğretmen paneli hakkında'),
 };
 
 /// Rolün sıkça sorulan soruları; aranabilir.
@@ -182,6 +183,9 @@ class _FaqScreenState extends ConsumerState<FaqScreen> {
               ),
               UserRole.parent => tr(
                 'Sorunun cevabını bulamadın mı? Çocuğunun dershanesine ulaşabilirsin.',
+              ),
+              UserRole.teacher => tr(
+                'Sorunun cevabını bulamadın mı? Kurum müdürüne ulaşabilirsin.',
               ),
             },
             textAlign: TextAlign.center,

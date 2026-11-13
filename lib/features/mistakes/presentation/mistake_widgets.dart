@@ -661,9 +661,11 @@ class _AddMistakeSheetState extends ConsumerState<_AddMistakeSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final topics = (ref.watch(topicsProvider).value ?? const <Topic>[])
-        .where((t) => t.subjectCode == _subject)
-        .toList();
+    final topics =
+        (ref.watch(studentTopicsProvider(widget.studentId)).value ??
+                const <Topic>[])
+            .where((t) => t.subjectCode == _subject)
+            .toList();
     final brand = context.brand;
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),

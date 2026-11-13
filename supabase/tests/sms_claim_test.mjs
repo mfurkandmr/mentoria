@@ -38,8 +38,8 @@ console.log('Kuyruktan alma');
 const org = (await one(`insert into public.organizations (name, seat_limit) values ('SMS Kurumu', 20) returning id, tenant_id`));
 for (const n of [1, 2, 3]) {
   await db.query(
-    `insert into public.sms_outbox (tenant_id, org_id, phone, body, created_at)
-     values ($1, $2, '+90500000000${n}', 'mesaj ${n}', now() - make_interval(mins => $3))`,
+    `insert into public.sms_outbox (tenant_id, org_id, channel, phone, body, created_at)
+     values ($1, $2, 'sms', '+90500000000${n}', 'mesaj ${n}', now() - make_interval(mins => $3))`,
     [org.tenant_id, org.id, 10 - n]);
 }
 const first = await rows(`select * from public.claim_sms(2)`);

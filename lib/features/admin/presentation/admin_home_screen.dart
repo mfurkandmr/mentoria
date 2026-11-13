@@ -92,7 +92,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
       // Finans tek başına: ekranın kendisi (kendi üst çubuğu ve sekmeleri).
       const FinanceScreen(),
       ToolGroupTab(
-        description: tr('Velilere SMS ve toplu duyurular'),
+        description: tr('Velilere WhatsApp ve toplu duyurular'),
         tools: messageTools('/admin'),
       ),
     ];
@@ -411,6 +411,20 @@ class _CoachesTab extends ConsumerWidget {
               open: (c) => c.push('/admin/invites'),
             ),
             ToolInfo(
+              id: 'tool-teachers',
+              icon: Icons.co_present_outlined,
+              title: tr('Öğretmenler'),
+              status: tr('Öğretmen davet et; kayıt olanlar listeye düşer'),
+              open: (c) => c.push('/admin/teachers'),
+            ),
+            ToolInfo(
+              id: 'tool-tutoring',
+              icon: Icons.quiz_outlined,
+              title: tr('Soru çözümü ve birebir'),
+              status: tr('Öğretmenlere saat aç; talepleri izle'),
+              open: (c) => c.push('/admin/tutoring'),
+            ),
+            ToolInfo(
               id: 'tool-meetings',
               icon: Icons.event_available_outlined,
               title: tr('Koç görüşmeleri'),
@@ -630,12 +644,11 @@ class _InvitesTab extends ConsumerWidget {
                       shape: BoxShape.circle,
                       color: context.cockpit.faint,
                     ),
-                    child: Icon(
-                      i.role == UserRole.coach
-                          ? Icons.groups_outlined
-                          : Icons.school_outlined,
-                      color: context.cockpit.ink,
-                    ),
+                    child: Icon(switch (i.role) {
+                      UserRole.coach => Icons.groups_outlined,
+                      UserRole.teacher => Icons.co_present_outlined,
+                      _ => Icons.school_outlined,
+                    }, color: context.cockpit.ink),
                   ),
                   title: Text(
                     i.code,
@@ -741,13 +754,15 @@ class _InviteDialogState extends ConsumerState<_InviteDialog> {
     setState(() => _loading = true);
     try {
       final repo = ref.read(adminRepositoryProvider);
-      final code = widget.role == UserRole.coach
-          ? await repo.createCoachInvite(maxUses: _uses)
-          : await repo.createStudentInvite(
-              coachId: _coachId!,
-              maxUses: _uses,
-              guardianStatement: _guardianStatement,
-            );
+      final code = switch (widget.role) {
+        UserRole.coach => await repo.createCoachInvite(maxUses: _uses),
+        UserRole.teacher => await repo.createTeacherInvite(maxUses: _uses),
+        _ => await repo.createStudentInvite(
+          coachId: _coachId!,
+          maxUses: _uses,
+          guardianStatement: _guardianStatement,
+        ),
+      };
       ref.invalidate(orgInvitesProvider);
       setState(() => _code = code);
     } catch (e) {
@@ -766,12 +781,18 @@ class _InviteDialogState extends ConsumerState<_InviteDialog> {
         .where((m) => m.role == UserRole.coach)
         .toList();
     final text = Theme.of(context).textTheme;
-    final isCoach = widget.role == UserRole.coach;
+    // Koç ve öğretmen daveti kredi harcamaz, koç seçimi yok.
+    final isCoach =
+        widget.role == UserRole.coach || widget.role == UserRole.teacher;
     final canCreate =
         isCoach || (ref.watch(orgCreditsProvider).value?.canAddStudent ?? true);
 
     return AlertDialog(
-      title: Text(isCoach ? tr('Koç davet et') : tr('Öğrenci davet et')),
+      title: Text(switch (widget.role) {
+        UserRole.coach => tr('Koç davet et'),
+        UserRole.teacher => tr('Öğretmen davet et'),
+        _ => tr('Öğrenci davet et'),
+      }),
       content: SizedBox(
         width: 360,
         child: _code != null
@@ -797,6 +818,16 @@ class _InviteDialogState extends ConsumerState<_InviteDialog> {
                     }),
                     style: text.bodySmall,
                   ),
+                  if (widget.role == UserRole.teacher) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      tr(
+                        'Öğretmen bu kodla kayıt olunca öğretmen listene kendiliğinden eklenir.',
+                      ),
+                      textAlign: TextAlign.center,
+                      style: text.bodySmall,
+                    ),
+                  ],
                 ],
               )
             : Column(

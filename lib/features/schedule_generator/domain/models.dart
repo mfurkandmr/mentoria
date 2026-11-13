@@ -91,6 +91,9 @@ class AvailabilityRange {
 
   bool covers(TimeSlot s) => s.day == day && s.start >= start && s.end <= end;
 
+  /// Ders saatiyle kesişiyor mu (soru çözümü oturumu gibi dolu bloklar).
+  bool overlaps(TimeSlot s) => s.day == day && s.start < end && start < s.end;
+
   Map<String, dynamic> toJson() => {'day': day, 'start': start, 'end': end};
 }
 
@@ -101,6 +104,7 @@ class Teacher {
     required this.branches,
     this.maxWeeklyHours = 30,
     this.availability = const [],
+    this.blocked = const [],
   });
 
   factory Teacher.fromJson(Map<String, dynamic> j) => Teacher(
@@ -112,6 +116,7 @@ class Teacher {
       for (final a in j['availability'] as List)
         AvailabilityRange.fromJson(Map<String, dynamic>.from(a as Map)),
     ],
+    blocked: _ranges(j['blocked']),
   );
 
   final String id;
@@ -122,8 +127,17 @@ class Teacher {
   /// Müsait aralıklar; boşsa her saat müsait.
   final List<AvailabilityRange> availability;
 
+  /// Dolu bloklar: soru çözümü / birebir / etüt oturumları (NOTLAR §95).
+  /// Müsaitlikten ayrı tutulur: kurulum sihirbazı müsaitliği kaydederken
+  /// oturumlar müsaitsizlik olarak yazılmasın.
+  final List<AvailabilityRange> blocked;
+
   bool availableAt(TimeSlot s) =>
       availability.isEmpty || availability.any((a) => a.covers(s));
+
+  /// Bu saate ders konabilir mi: müsait ve oturumu yok.
+  bool freeAt(TimeSlot s) =>
+      availableAt(s) && !blocked.any((b) => b.overlaps(s));
 
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -131,26 +145,44 @@ class Teacher {
     'branches': branches.toList(),
     'max': maxWeeklyHours,
     'availability': [for (final a in availability) a.toJson()],
+    'blocked': [for (final b in blocked) b.toJson()],
   };
 }
 
+List<AvailabilityRange> _ranges(Object? list) => [
+  for (final a in list as List? ?? const [])
+    AvailabilityRange.fromJson(Map<String, dynamic>.from(a as Map)),
+];
+
 class Room {
-  const Room({required this.id, required this.name, this.capacity});
+  const Room({
+    required this.id,
+    required this.name,
+    this.capacity,
+    this.blocked = const [],
+  });
 
   factory Room.fromJson(Map<String, dynamic> j) => Room(
     id: j['id'] as String,
     name: j['name'] as String,
     capacity: j['capacity'] as int?,
+    blocked: _ranges(j['blocked']),
   );
 
   final String id;
   final String name;
   final int? capacity;
 
+  /// Bu derslikteki soru çözümü / birebir oturumları (NOTLAR §95).
+  final List<AvailabilityRange> blocked;
+
+  bool freeAt(TimeSlot s) => !blocked.any((b) => b.overlaps(s));
+
   Map<String, dynamic> toJson() => {
     'id': id,
     'name': name,
     'capacity': capacity,
+    'blocked': [for (final b in blocked) b.toJson()],
   };
 }
 

@@ -10,6 +10,8 @@ import '../../../shared/format.dart';
 import '../../../shared/widgets/common.dart';
 import '../../../shared/widgets/tool_tile.dart';
 import '../../admin/data/admin_repository.dart';
+import '../../admin/presentation/admin_home_screen.dart'
+    show showInviteCodeDialog;
 import '../../auth/data/profile.dart';
 import '../../coach/data/coach_repository.dart';
 import '../../finance/data/finance_repository.dart';
@@ -209,6 +211,14 @@ class _StaffScreenState extends ConsumerState<StaffScreen> {
                 ],
               ),
               const SizedBox(height: 10),
+              // Uygulama hesabı daveti: personel kartı yalnızca İK kaydıdır;
+              // öğretmen / koç kendi paneline davet koduyla girer.
+              if (_filter == _Filter.teachers || _filter == _Filter.coaches)
+                _InviteCard(
+                  role: _filter == _Filter.teachers
+                      ? UserRole.teacher
+                      : UserRole.coach,
+                ),
               if (shown.isEmpty)
                 Padding(
                   padding: const EdgeInsets.all(24),
@@ -225,6 +235,61 @@ class _StaffScreenState extends ConsumerState<StaffScreen> {
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+/// Personel → Öğretmenler / Koçlar: uygulamaya davet kodu.
+class _InviteCard extends ConsumerWidget {
+  const _InviteCard({required this.role});
+
+  final UserRole role;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final teacher = role == UserRole.teacher;
+    return Card(
+      margin: const EdgeInsets.only(bottom: 10),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              teacher
+                  ? tr(
+                      'Öğretmen uygulamaya davet koduyla kaydolur; kendi panelinde ders programını ve soru çözümü taleplerini görür. "Personel ekle" yalnızca izin ve ödeme kartı açar.',
+                    )
+                  : tr(
+                      'Koç uygulamaya davet koduyla kaydolur. "Personel ekle" yalnızca izin ve ödeme kartı açar.',
+                    ),
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              children: [
+                FilledButton.tonalIcon(
+                  key: ValueKey('staff-invite-${role.name}'),
+                  style: FilledButton.styleFrom(minimumSize: const Size(0, 40)),
+                  onPressed: () =>
+                      showInviteCodeDialog(context, ref, role: role),
+                  icon: const Icon(Icons.vpn_key_outlined),
+                  label: Text(
+                    teacher ? tr('Öğretmen davet et') : tr('Koç davet et'),
+                  ),
+                ),
+                if (teacher)
+                  TextButton(
+                    onPressed: () => context.push('/admin/teachers'),
+                    child: Text(tr('Öğretmen hesapları')),
+                  ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

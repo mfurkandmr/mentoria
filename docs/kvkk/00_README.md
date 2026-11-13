@@ -22,9 +22,9 @@
 
 - [x] Veri sorumlusu: şirket yok, bireysel geliştirici (gerçek kişi; MERSİS
       ve KEP yok). Metinler buna göre düzenlendi (29 Ekim 2026).
-- [ ] Ad soyad (`[AD SOYAD]`) ve yazışma adresi (`[ADRES]`)
-- [ ] KVKK başvuruları için e-posta adresi (`[KVKK E-POSTA ADRESİ]`)
-- [ ] Web sürümünün adresi (`[WEB ADRESİ]`; hesap silme sayfası
+- [x] Ad soyad (`Mehmet Furkan Demir`) ve yazışma adresi (`Akpıyar Mah. 4120 Sok. Önder Apt. No: 10, Karaköprü / Şanlıurfa`); KVKK e-postası `kvkk@mentoria.com.tr` (13 Kasım 2026, Gmail'e yönlendirilecek)
+- [ ] KVKK başvuruları için e-posta adresi (`kvkk@mentoria.com.tr`)
+- [x] Web sürümünün adresi (13 Kasım 2026: `https://mentoria.com.tr`, hesap silme `/app/hesap-sil`; `[WEB ADRESİ]`; hesap silme sayfası
       `[WEB ADRESİ]/#/hesap-sil`, Google Play formuna da bu yazılır)
 - [x] Saklama süreleri: silinen hesap 30 gün, lisansı biten kurum 1 yıl,
       uzun süre kullanılmayan hesap 2 yıl (30 gün önceden uyarı), duyurular
@@ -35,11 +35,11 @@
       politikası 5. bölüm)
 - [ ] Kullanım koşulları: yetkili mahkeme ili ve ücretlendirme modeli
       (`08_kullanim_kosullari.md` 8. ve 12. maddeler)
-- [ ] Kurum finansı (NOTLAR §46-47): veli adı ve cep telefonu taksit
+- [x] (13 Kasım 2026: veli adı/telefonu, ödeme kayıtları, WhatsApp/Meta, öğretmen, soru çözümü talepleri aydınlatma metnine eklendi; legalVersion 1.3) Kurum finansı (NOTLAR §46-47): veli adı ve cep telefonu taksit
       hatırlatma SMS'i için işleniyor; aydınlatma metnine (işlenen veriler,
       amaç, SMS sağlayıcısı alıcı olarak) eklenmeli, sonra `legalVersion`
       artırılmalı. SMS sağlayıcısıyla veri işleme sözleşmesi gerekir.
-- [ ] Finans (NOTLAR §56, 6 Kasım 2026): veli artık çocuğunun ücret, taksit ve
+- [x] Finans (NOTLAR §56, 6 Kasım 2026): veli artık çocuğunun ücret, taksit ve
       makbuzlarını uygulamada görüyor; makbuzda ödeyen veli adı var. Aydınlatma
       metnine "veliye ödeme bilgisinin gösterilmesi" eklenmeli.
 - [ ] Kendi SMTP/e-posta sağlayıcınız var mı? (Doğrulama e-postaları için)
@@ -126,6 +126,17 @@
       kurum duyuruları için de kullanılıyor; aydınlatma metnindeki amaçlara
       "kurum bilgilendirme SMS'leri" eklenmeli. Ticari/kampanya SMS'i için
       İYS kaydı ve onay gerekir (uygulama yalnızca uyarıyor, içeriği denetlemiyor).
+- [ ] Velilere WhatsApp (11 Kasım 2026, NOTLAR.md §88): SMS kapandı; veli telefonu, veli
+      adı, öğrenci adı, devamsızlık, taksit, deneme sonucu ve duyuru metni artık Meta
+      (WhatsApp Cloud API) üzerinden gidiyor, yani **yurt dışına aktarım** (KVKK md. 9).
+      Aydınlatma metninde SMS sağlayıcısı yerine Meta yazılmalı; veliden WhatsApp için
+      açık rıza alınmalı (`consents` türü `whatsapp_guardian`, henüz yok, gönderim rızayı
+      denetlemiyor). Meta ile veri işleme şartları, mesaj kayıtları 90 gün (mevcut).
+- [ ] Ödev PDF'i ve koç mesajı veliye (11 Kasım 2026, NOTLAR.md §89): ödev PDF'i
+      (öğrenci adı, ödevi veren, ders/konu, not) `homework` kovasında 80 gün tutulup Meta'ya
+      imzalı adresle veriliyor; koçun serbest metinli mesajı da Meta'dan geçiyor. Koç
+      metne öğrenci hakkında hassas bilgi yazabilir (uygulama denetlemiyor). Aydınlatma
+      metnine ve veri envanterine eklenmeli.
 - [ ] Öğretmen ödemeleri (9 Kasım 2026, NOTLAR.md §78): `teacher_pay_rates` ve
       `finance_expenses` öğretmenin ücretini, ödemelerini ve müdürün notunu tutar;
       öğretmenin uygulama hesabı olmayabilir. Veri envanterine, veri işleme
@@ -136,3 +147,9 @@
       sorulsun. Veri envanteri, çalışan aydınlatma metni ve saklama süresi eklenmeli.
 - [ ] Çek / senet (9 Kasım 2026, NOTLAR.md §80): keşideci / lehtar adı, öğrenci bağlantısı ve
       banka bilgisi tutuluyor. Mali kayıt saklama süresi ve envantere ekleme avukata sorulsun.
+- [ ] Öğretmen rolü (11 Kasım 2026, NOTLAR.md §86): öğretmen hesabı (ad, e-posta, branş)
+      yeni bir ilgili kişi grubu; aydınlatma metninde öğretmen yok. Öğretmen yalnızca kendi
+      programını ve talep eden öğrencinin adını + sınıfını görür.
+- [ ] Soru çözümü talepleri (11 Kasım 2026, NOTLAR.md §87): `tutoring_requests` öğrencinin
+      hangi gün hangi öğretmenden ne konuda destek istediğini, ret gerekçesini tutar; öğretmen,
+      koç ve müdür görür. Saklama süresi belirlenmedi (öneri: dönem sonu ya da 1 yıl).

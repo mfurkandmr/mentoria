@@ -12,6 +12,7 @@ import '../../auth/data/auth_repository.dart';
 import '../../tracking/data/tracking_models.dart';
 import '../../tracking/data/tracking_repository.dart';
 import '../data/books_repository.dart';
+import 'resource_tracking_screen.dart';
 import '../../../core/design/motion.dart';
 import '../../../shared/widgets/skeleton.dart';
 
@@ -37,6 +38,7 @@ String _errorText(Object e) => e is BookLimitException
     : tr('Kaydedilemedi. Tekrar dene.');
 
 void _refresh(WidgetRef ref, String studentId) {
+  ref.invalidate(bookTopicMarksProvider(studentId));
   ref.invalidate(booksOverviewProvider);
   ref.invalidate(bookProgressProvider);
   ref.invalidate(bookPoolProvider);
@@ -201,6 +203,27 @@ class _StudentBooksViewState extends ConsumerState<StudentBooksView> {
                   ),
                 ),
               ),
+              if (o.books.isNotEmpty)
+                Card(
+                  child: ListTile(
+                    key: const ValueKey('resource-tracking'),
+                    leading: const Icon(Icons.fact_check_outlined),
+                    title: Text(tr('Kaynak takibi')),
+                    subtitle: Text(
+                      tr('Hangi kitaptan hangi konu bitti, tabloda işaretle.'),
+                    ),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => ResourceTrackingScreen(
+                          studentId: widget.studentId,
+                          viewer: widget.viewer,
+                          term: o.term,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               if (widget.viewer == BooksViewer.parent)
                 _WeeklySummary(books: o.books),
               if (canAdd)

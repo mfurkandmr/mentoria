@@ -1,4 +1,5 @@
 import '../../../core/cache/static_cache.dart';
+import '../../../core/constants/grade_levels.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -18,6 +19,12 @@ abstract interface class TrackingRepository {
   Future<List<Topic>> fetchTopics();
   Future<Map<int, TopicStatus>> fetchTopicProgress(String studentId);
   Future<void> setTopicStatus(String studentId, int topicId, TopicStatus s);
+
+  /// Öğrencinin sınıf seviyesi (9-12; bilinmiyorsa null). NOTLAR §91.
+  Future<int?> fetchGradeLevel(String studentId);
+
+  /// Öğrenci kendisi ya da koçu / müdürü değiştirir (`set_grade_level`).
+  Future<void> setGradeLevel(String studentId, int grade);
 
   Future<List<StudySession>> fetchSessions(
     String studentId, {
@@ -157,6 +164,22 @@ class SupabaseTrackingRepository implements TrackingRepository {
   }
 
   @override
+  Future<int?> fetchGradeLevel(String studentId) async {
+    final row = await _client
+        .from('profiles')
+        .select('grade_level')
+        .eq('id', studentId)
+        .maybeSingle();
+    return (row?['grade_level'] as num?)?.toInt();
+  }
+
+  @override
+  Future<void> setGradeLevel(String studentId, int grade) => _client.rpc(
+    'set_grade_level',
+    params: {'p_student': studentId, 'p_grade': grade},
+  );
+
+  @override
   Future<Map<int, TopicStatus>> fetchTopicProgress(String studentId) async {
     final seed = await HomeSeed.take(studentId, 'topic_progress');
     final List rows =
@@ -289,6 +312,23 @@ final questionLogsProvider = FutureProvider.family<List<QuestionLog>, String>((
 final topicsProvider = FutureProvider<List<Topic>>(
   (ref) => ref.watch(trackingRepositoryProvider).fetchTopics(),
 );
+
+/// Öğrencinin sınıf seviyesi (9-12; null = bilinmiyor, 12 gibi).
+final studentGradeProvider = FutureProvider.family<int?, String>(
+  (ref, studentId) =>
+      ref.watch(trackingRepositoryProvider).fetchGradeLevel(studentId),
+);
+
+/// Öğrencinin sınıfına göre süzülmüş konular (9. sınıf yalnızca 9. sınıf
+/// konularını görür; 12 / mezun hepsini).
+final studentTopicsProvider = FutureProvider.family<List<Topic>, String>((
+  ref,
+  studentId,
+) async {
+  final topics = await ref.watch(topicsProvider.future);
+  final grade = await ref.watch(studentGradeProvider(studentId).future);
+  return topicsForGrade(topics, grade);
+});
 
 final topicProgressProvider =
     FutureProvider.family<Map<int, TopicStatus>, String>((ref, studentId) {

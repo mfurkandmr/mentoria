@@ -64,7 +64,11 @@ enum NotificationKind {
   bookRequest(Icons.menu_book_rounded, 'book_request'),
 
   /// Koça: kurum müdürü kokpitten bir öğrenci için "ilgilen" dedi.
-  coachAlert(Icons.support_agent_rounded, 'coach_alert');
+  coachAlert(Icons.support_agent_rounded, 'coach_alert'),
+
+  /// Öğretmene: soru çözümü / birebir talebi geldi. Öğrenciye: talep
+  /// onaylandı ya da reddedildi (NOTLAR §87).
+  tutoringRequest(Icons.quiz_rounded, 'tutoring_request');
 
   const NotificationKind(this.icon, [this._db]);
   final IconData icon;
@@ -152,6 +156,11 @@ class AppNotification {
     NotificationKind.coachAlert => tr('{name} ile ilgilenir misin?', {
       'name': data['student'] ?? '',
     }),
+    NotificationKind.tutoringRequest => switch (data['event']) {
+      'approved' => tr('Talebin onaylandı'),
+      'rejected' => tr('Talebin onaylanmadı'),
+      _ => tr('{name} soru çözümü istedi', {'name': data['student'] ?? ''}),
+    },
   };
 
   String get body => switch (kind) {
@@ -229,7 +238,25 @@ class AppNotification {
       if (data['from'] != null) tr('{name} yazdı', {'name': data['from']}),
       if ('${data['reason'] ?? ''}'.isNotEmpty) '${data['reason']}',
     ].join(': '),
+    NotificationKind.tutoringRequest => [
+      [
+        _tutoringDate(data['date']),
+        '${data['time'] ?? ''}',
+        '${data['branch'] ?? ''}',
+      ].where((s) => s.isNotEmpty).join(' '),
+      if (data['event'] == 'new') tr('Onayını bekliyor'),
+      if (data['event'] != 'new' && data['teacher'] != null)
+        '${data['teacher']}',
+      if (data['event'] == 'rejected' && data['reason'] != null)
+        '${data['reason']}',
+    ].join(' · '),
   };
+
+  /// "13 Kasım" (talep günü).
+  static String _tutoringDate(Object? iso) {
+    final d = DateTime.tryParse('${iso ?? ''}');
+    return d == null ? '' : DateFormat('d MMMM', localeTag).format(d);
+  }
 
   /// "13 Ekim" (haftanın pazartesisi).
   static String _weekLabel(Object? iso) {
@@ -310,6 +337,7 @@ class AppNotification {
     NotificationKind.timetable => '${data['route'] ?? '/student/timetable'}',
     NotificationKind.bookRequest => '${data['route'] ?? '/student/books'}',
     NotificationKind.coachAlert => '${data['route'] ?? '/coach'}',
+    NotificationKind.tutoringRequest => '${data['route'] ?? '/student/study'}',
   };
 
   AppNotification markRead() => AppNotification(

@@ -27,7 +27,7 @@
 ## Metin A: Velinin uygulamada verdiği onay
 
 Velisi / yasal temsilcisi olduğum **[Öğrenci Ad Soyad]** adlı öğrencinin
-Mentoria'yı kullanmasına ilişkin olarak, [AD SOYAD] tarafından
+Mentoria'yı kullanmasına ilişkin olarak, Mehmet Furkan Demir tarafından
 hazırlanan **Aydınlatma Metni**'ni okudum.
 
 **☐ (Zorunlu)** Çocuğumun Mentoria hesabının açılmasına ve Aydınlatma
@@ -39,7 +39,7 @@ kısaltmasının (ör. "El***"), avatarının ve deneme netinin aynı kurumdaki
 diğer öğrencilere gösterilmesine açık rıza veriyorum.
 
 Bu onaylarımı istediğim zaman uygulamadaki "Gizlilik ve izinler"
-sayfasından veya [KVKK E-POSTA ADRESİ] adresine yazarak geri
+sayfasından veya kvkk@mentoria.com.tr adresine yazarak geri
 çekebileceğimi biliyorum. Zorunlu onayı geri çekersem çocuğumun hesabı
 kapatılır ve verileri Saklama ve İmha Politikası'na göre silinir.
 

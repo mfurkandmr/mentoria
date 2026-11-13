@@ -1,3 +1,4 @@
+import '../../exam_analysis/data/exam_report_repository.dart';
 import '../../exam_analysis/presentation/report_card_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -391,7 +392,11 @@ class _SubjectBar extends StatelessWidget {
   }
 }
 
-class _ExamTile extends StatelessWidget {
+/// Bir denemenin kartı: tür, ad, toplam net, tarih / sıralama, doğru-yanlış-boş
+/// ve iki düğme: "Detaylar" (derslere göre netler kartın içinde açılır) ve
+/// "Konu analizi" (kurum sınavında konu konu başarı). Başlığa dokununca
+/// ayrıntı sayfası açılır (yanlışlar, silme).
+class _ExamTile extends ConsumerStatefulWidget {
   const _ExamTile({
     required this.exam,
     required this.studentId,
@@ -405,65 +410,284 @@ class _ExamTile extends StatelessWidget {
   final double? change;
 
   @override
+  ConsumerState<_ExamTile> createState() => _ExamTileState();
+}
+
+class _ExamTileState extends ConsumerState<_ExamTile> {
+  bool _open = false;
+
+  Exam get exam => widget.exam;
+
+  void _sheet() => showModalBottomSheet<void>(
+    context: context,
+    sheetAnimationStyle: AppMotion.overlayStyle(context),
+    // Alt menünün üstünde açılsın (sekme içi gezgin değil).
+    useRootNavigator: true,
+    isScrollControlled: true,
+    showDragHandle: true,
+    builder: (_) => ExamDetailSheet(
+      exam: exam,
+      studentId: widget.studentId,
+      canDelete: widget.canManage,
+    ),
+  );
+
+  void _topics(bool hasCard) {
+    if (!hasCard) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      showMessage(
+        context,
+        tr(
+          'Konu analizi yalnızca optikten okunan kurum sınavlarında var; bu deneme elle girildi.',
+        ),
+      );
+      return;
+    }
+    Navigator.of(context, rootNavigator: true).push(
+      MaterialPageRoute<void>(
+        builder: (_) => ReportCardScreen(examId: exam.id, initialTab: 1),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
+    final scheme = Theme.of(context).colorScheme;
+    final brand = context.brand;
+    final summary = ref
+        .watch(reportCardsProvider(widget.studentId))
+        .value
+        ?.where((c) => c.examId == exam.id)
+        .firstOrNull;
+    final correct = exam.results.fold(0, (s, r) => s + r.correct);
+    final wrong = exam.results.fold(0, (s, r) => s + r.wrong);
+    final blank = exam.results.fold(0, (s, r) => s + r.blank);
     final subtitle = [
       formatLongDate(exam.takenOn),
+      if (summary?.rankOrg != null) tr('Sıralama {n}', {'n': summary!.rankOrg}),
       if (exam.field != null) exam.field!.label,
       if (exam.publisher?.isNotEmpty ?? false) exam.publisher!,
     ].join(' · ');
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () => showModalBottomSheet<void>(
-          context: context,
-          sheetAnimationStyle: AppMotion.overlayStyle(context),
-          // Alt menünün üstünde açılsın (sekme içi gezgin değil).
-          useRootNavigator: true,
-          isScrollControlled: true,
-          showDragHandle: true,
-          builder: (_) => ExamDetailSheet(
-            exam: exam,
-            studentId: studentId,
-            canDelete: canManage,
+    Widget count(IconData icon, Color color, String label, int n) => Expanded(
+      child: Column(
+        children: [
+          Icon(icon, size: 20, color: color),
+          Text(label, style: text.labelSmall),
+          Text(
+            '$n',
+            style: text.titleMedium?.copyWith(
+              fontWeight: FontWeight.w900,
+              color: color,
+            ),
           ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      exam.name,
-                      style: text.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(subtitle, style: text.bodySmall),
-                  ],
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+        ],
+      ),
+    );
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 10),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          InkWell(
+            onTap: _sheet,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '${formatNet(exam.totalNet)} net',
-                    style: text.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w900,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: brand.primary,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            exam.examType.label,
+                            style: text.labelSmall?.copyWith(
+                              color: brand.ink,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          exam.name,
+                          style: text.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(subtitle, style: text.bodySmall),
+                      ],
                     ),
                   ),
-                  if (change != null) _ChangeLabel(change: change!),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        '${formatNet(exam.totalNet)} net',
+                        style: text.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          color: brand.primary,
+                        ),
+                      ),
+                      if (widget.change != null)
+                        _ChangeLabel(change: widget.change!),
+                    ],
+                  ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: scheme.outlineVariant),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Row(
+                    children: [
+                      count(
+                        Icons.check_circle_rounded,
+                        brand.success,
+                        tr('Doğru'),
+                        correct,
+                      ),
+                      count(
+                        Icons.cancel_rounded,
+                        brand.danger,
+                        tr('Yanlış'),
+                        wrong,
+                      ),
+                      count(
+                        Icons.remove_circle_rounded,
+                        scheme.outline,
+                        tr('Boş'),
+                        blank,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: FilledButton.tonalIcon(
+                        key: ValueKey('exam-details-${exam.id}'),
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size(0, 44),
+                        ),
+                        onPressed: () => setState(() => _open = !_open),
+                        icon: Icon(
+                          _open
+                              ? Icons.expand_less_rounded
+                              : Icons.expand_more_rounded,
+                        ),
+                        label: Text(
+                          _open ? tr('Detayları gizle') : tr('Detaylar'),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        key: ValueKey('exam-topics-${exam.id}'),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size(0, 44),
+                        ),
+                        onPressed: () => _topics(summary != null),
+                        icon: const Icon(Icons.bar_chart_rounded),
+                        label: Text(tr('Konu analizi')),
+                      ),
+                    ),
+                  ],
+                ),
+                if (_open) ...[
+                  const SizedBox(height: 12),
+                  Text(
+                    tr('Derslere göre netler'),
+                    style: text.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Table(
+                    columnWidths: const {
+                      0: FlexColumnWidth(3),
+                      1: FlexColumnWidth(1.4),
+                      2: FlexColumnWidth(),
+                      3: FlexColumnWidth(),
+                      4: FlexColumnWidth(),
+                    },
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    children: [
+                      TableRow(
+                        children: [
+                          Text(tr('Ders'), style: text.labelMedium),
+                          Text(
+                            tr('Net'),
+                            style: text.labelMedium,
+                            textAlign: TextAlign.center,
+                          ),
+                          for (final h in ['D', 'Y', 'B'])
+                            Text(
+                              h,
+                              style: text.labelMedium,
+                              textAlign: TextAlign.center,
+                            ),
+                        ],
+                      ),
+                      for (final r in exam.results)
+                        TableRow(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 6),
+                              child: Text(r.subject.name),
+                            ),
+                            Text(
+                              formatNet(r.net),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w800,
+                                color: brand.success,
+                              ),
+                            ),
+                            Text(
+                              '${r.correct}',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: brand.success),
+                            ),
+                            Text(
+                              '${r.wrong}',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: brand.danger),
+                            ),
+                            Text('${r.blank}', textAlign: TextAlign.center),
+                          ],
+                        ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

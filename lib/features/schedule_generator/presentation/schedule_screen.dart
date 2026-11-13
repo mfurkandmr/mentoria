@@ -6,6 +6,10 @@ import 'package:intl/intl.dart';
 
 import '../../../core/i18n/i18n.dart';
 import '../../../shared/widgets/common.dart';
+import '../../tutoring/data/tutoring_repository.dart';
+import '../../tutoring/presentation/admin_tutoring_screen.dart'
+    show FreeHour, showBulkTutoringDialog, showTutoringSessionDialog;
+import '../../tutoring/presentation/tutoring_widgets.dart' show tutoringIcon;
 import '../data/timetable_repository.dart';
 import '../domain/constraints.dart';
 import '../domain/models.dart';
@@ -508,6 +512,65 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     });
   }
 
+  /// Soru çözümü / birebir oturumu ekle ya da düzenle (NOTLAR §95).
+  /// Öğretmen görünümünde öğretmen, derslik görünümünde derslik dolu gelir.
+  Future<void> _tutoring(
+    TimetableMode mode,
+    String targetId, {
+    TutoringSession? edit,
+    TimeSlot? slot,
+  }) async {
+    await showTutoringSessionDialog(
+      context,
+      ref,
+      edit: edit,
+      teacherId: mode == TimetableMode.teacher ? targetId : null,
+      roomId: mode == TimetableMode.room ? targetId : null,
+      day: slot?.day,
+      start: slot?.start,
+      end: slot?.end,
+    );
+    if (!mounted) return;
+    // Taslaktaki dersler korunur; yalnızca oturumlar tazelenir.
+    ref.invalidate(timetableSetupProvider);
+    try {
+      final setup = await ref.read(timetableSetupProvider.future);
+      if (mounted) setState(() => _setup = setup);
+    } catch (_) {}
+  }
+
+  /// Öğretmenin bu programda boş olan ders saatlerine toplu oturum aç.
+  Future<void> _bulkTutoring(String teacherId) async {
+    final setup = _setup, entries = _entries;
+    if (setup == null || entries == null) return;
+    final record = setup.teachers
+        .where((t) => t.teacher.id == teacherId)
+        .firstOrNull;
+    if (record == null) return;
+    final busy = {
+      for (final e in entries)
+        if (e.teacherId == teacherId) e.timeSlotId,
+    };
+    final hours = <FreeHour>[
+      for (final s in setup.slots)
+        if (!busy.contains(s.id) &&
+            record.teacher.availableAt(s) &&
+            setup.tutoringAt(s, teacherId: teacherId).isEmpty)
+          (day: s.day, start: s.start, end: s.end),
+    ]..sort((a, b) => a.day != b.day ? a.day - b.day : a.start - b.start);
+    await showBulkTutoringDialog(
+      context,
+      teacherId: teacherId,
+      teacherName: record.teacher.name,
+      hours: hours,
+    );
+    if (!mounted) return;
+    try {
+      final fresh = await ref.read(timetableSetupProvider.future);
+      if (mounted) setState(() => _setup = fresh);
+    } catch (_) {}
+  }
+
   Future<void> _openEntry(int index) async {
     final setup = _setup!, entries = _entries!;
     final e = entries[index];
@@ -732,6 +795,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                                 setState(() => _targets[mode] = id),
                             onMove: _move,
                             onOpen: _openEntry,
+                            onTutoring: _tutoring,
+                            onBulkTutoring: _bulkTutoring,
                             header: _Header(
                               info: info,
                               softScore: softScore(setup.toInput(), entries),
@@ -888,6 +953,8 @@ class _ModeView extends StatelessWidget {
     required this.onTarget,
     required this.onMove,
     required this.onOpen,
+    required this.onTutoring,
+    required this.onBulkTutoring,
     required this.header,
   });
 
@@ -898,6 +965,14 @@ class _ModeView extends StatelessWidget {
   final ValueChanged<String?> onTarget;
   final void Function(int index, String slotId) onMove;
   final ValueChanged<int> onOpen;
+  final void Function(
+    TimetableMode mode,
+    String targetId, {
+    TutoringSession? edit,
+    TimeSlot? slot,
+  })
+  onTutoring;
+  final ValueChanged<String> onBulkTutoring;
   final Widget header;
 
   @override
@@ -944,9 +1019,13 @@ class _ModeView extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            tr(
-              'Derse dokun: kilitle ya da taşı. Basılı tutup sürükle: başka saate taşı.',
-            ),
+            mode == TimetableMode.classroom
+                ? tr(
+                    'Derse dokun: kilitle ya da taşı. Basılı tutup sürükle: başka saate taşı.',
+                  )
+                : tr(
+                    'Derse dokun: kilitle ya da taşı. Boş saate dokun: soru çözümü, birebir ya da etüt aç.',
+                  ),
             style: Theme.of(context).textTheme.bodySmall,
           ),
           const SizedBox(height: 8),
@@ -957,7 +1036,26 @@ class _ModeView extends StatelessWidget {
             targetId: selected!,
             onMove: onMove,
             onOpen: onOpen,
+            onTutoring: mode == TimetableMode.classroom
+                ? null
+                : ({edit, slot}) =>
+                      onTutoring(mode, selected, edit: edit, slot: slot),
           ),
+          if (mode != TimetableMode.classroom)
+            _TutoringList(
+              sessions: [
+                for (final t in setup.tutoring)
+                  if (mode == TimetableMode.teacher
+                      ? t.teacherId == selected
+                      : t.roomId == selected)
+                    t,
+              ],
+              onEdit: (t) => onTutoring(mode, selected, edit: t),
+              onAdd: () => onTutoring(mode, selected),
+              onBulk: mode == TimetableMode.teacher
+                  ? () => onBulkTutoring(selected)
+                  : null,
+            ),
         ],
       ],
     );
@@ -972,6 +1070,7 @@ class _Grid extends StatelessWidget {
     required this.targetId,
     required this.onMove,
     required this.onOpen,
+    this.onTutoring,
   });
 
   final TimetableSetup setup;
@@ -980,6 +1079,9 @@ class _Grid extends StatelessWidget {
   final String targetId;
   final void Function(int index, String slotId) onMove;
   final ValueChanged<int> onOpen;
+
+  /// Öğretmen / derslik görünümünde oturum aç ya da düzenle.
+  final void Function({TutoringSession? edit, TimeSlot? slot})? onTutoring;
 
   @override
   Widget build(BuildContext context) {
@@ -1050,6 +1152,90 @@ class _Grid extends StatelessWidget {
       );
     }
 
+    // Soru çözümü / birebir oturumu: derslerden ayrı renkte.
+    Widget tutoringTile(TutoringSession t) => Container(
+      width: 92,
+      height: 64,
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: scheme.tertiaryContainer,
+        border: Border.all(color: scheme.tertiary),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(tutoringIcon(t.kind), size: 14, color: scheme.tertiary),
+              const SizedBox(width: 3),
+              Expanded(
+                child: Text(
+                  t.kind.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: text.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: scheme.onTertiaryContainer,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Text(
+            mode == TimetableMode.room
+                ? teachers[t.teacherId] ?? ''
+                : t.branch ?? '',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: text.labelSmall?.copyWith(color: scheme.onTertiaryContainer),
+          ),
+          Text(
+            t.timeLabel,
+            maxLines: 1,
+            style: text.labelSmall?.copyWith(color: scheme.onTertiaryContainer),
+          ),
+        ],
+      ),
+    );
+
+    Widget? emptyCell(TimeSlot slot) {
+      final add = onTutoring;
+      if (add == null) return null;
+      final busy = setup.tutoringAt(
+        slot,
+        teacherId: mode == TimetableMode.teacher ? targetId : null,
+        roomId: mode == TimetableMode.room ? targetId : null,
+      );
+      if (busy.isNotEmpty) {
+        return Semantics(
+          button: true,
+          label: busy.first.kind.label,
+          child: InkWell(
+            key: ValueKey('tutoring-cell-${slot.id}'),
+            onTap: () => add(edit: busy.first),
+            child: tutoringTile(busy.first),
+          ),
+        );
+      }
+      return Semantics(
+        button: true,
+        label: tr('Oturum ekle'),
+        child: InkWell(
+          key: ValueKey('add-tutoring-${slot.id}'),
+          borderRadius: BorderRadius.circular(8),
+          onTap: () => add(slot: slot),
+          child: SizedBox.expand(
+            child: Icon(
+              Icons.add_rounded,
+              size: 16,
+              color: scheme.outline.withValues(alpha: 0.5),
+            ),
+          ),
+        ),
+      );
+    }
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Table(
@@ -1098,7 +1284,7 @@ class _Grid extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: here.isEmpty
-                              ? null
+                              ? emptyCell(slot)
                               : Semantics(
                                   button: true,
                                   label: entries[here.first].branch,
@@ -1126,6 +1312,105 @@ class _Grid extends StatelessWidget {
               ],
             ),
         ],
+      ),
+    );
+  }
+}
+
+/// Öğretmenin ya da dersliğin bütün oturumları: ders saatleri dışında
+/// kalanlar (ör. 15.00 sonrası, cumartesi) tabloda görünmediği için
+/// altta liste olarak da durur.
+class _TutoringList extends StatelessWidget {
+  const _TutoringList({
+    required this.sessions,
+    required this.onEdit,
+    required this.onAdd,
+    this.onBulk,
+  });
+
+  final List<TutoringSession> sessions;
+  final ValueChanged<TutoringSession> onEdit;
+  final VoidCallback onAdd;
+
+  /// Öğretmen görünümünde: boş saatleri toplu aç.
+  final VoidCallback? onBulk;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    final sorted = [...sessions]
+      ..sort(
+        (a, b) => a.day != b.day
+            ? a.day.compareTo(b.day)
+            : a.start.compareTo(b.start),
+      );
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 10, 8, 6),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      tr('Soru çözümü, birebir ve etüt'),
+                      style: text.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                  TextButton.icon(
+                    key: const ValueKey('timetable-add-tutoring'),
+                    onPressed: onAdd,
+                    icon: const Icon(Icons.add),
+                    label: Text(tr('Oturum ekle')),
+                  ),
+                ],
+              ),
+              if (onBulk != null)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    key: const ValueKey('timetable-bulk-tutoring'),
+                    onPressed: onBulk,
+                    icon: const Icon(Icons.playlist_add_rounded),
+                    label: Text(tr('Boş saatleri toplu aç')),
+                  ),
+                ),
+              if (sorted.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    tr(
+                      'Oturum yok. Öğrenciler açılan saatlere talep gönderir, öğretmen onaylar.',
+                    ),
+                    style: text.bodySmall,
+                  ),
+                ),
+              for (final t in sorted)
+                ListTile(
+                  key: ValueKey('timetable-tutoring-${t.id}'),
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  leading: Icon(tutoringIcon(t.kind)),
+                  title: Text(
+                    '${dayLong(t.day)} ${t.timeLabel} · ${t.kind.label}',
+                  ),
+                  subtitle: Text(
+                    [
+                      ?t.branch,
+                      if (t.capacity > 1) tr('{n} kişilik', {'n': t.capacity}),
+                    ].join(' · '),
+                  ),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => onEdit(t),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

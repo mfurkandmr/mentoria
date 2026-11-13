@@ -129,7 +129,7 @@ Future<void> showRemindDialog(
             shrinkWrap: true,
             children: [
               Text(
-                tr('Seçilen velilere SMS gider.'),
+                tr('Seçilen velilere WhatsApp mesajı gider.'),
                 style: Theme.of(c).textTheme.bodySmall,
               ),
               for (final (f, i) in items)
@@ -186,7 +186,7 @@ Future<void> _sendReminders(
       context,
       r.queued == 0
           ? tr('Hatırlatma gönderilmedi: telefon yok ya da bugün gönderildi.')
-          : tr('{n} hatırlatma SMS sırasına alındı.', {'n': r.queued}),
+          : tr('{n} hatırlatma WhatsApp sırasına alındı.', {'n': r.queued}),
     );
   } catch (_) {
     if (context.mounted) {
@@ -239,7 +239,7 @@ class _PayerFields extends StatelessWidget {
         decoration: InputDecoration(
           labelText: tr('Veli cep telefonu'),
           hintText: '05XX XXX XX XX',
-          helperText: tr('Taksit hatırlatma SMS\'i bu numaraya gider.'),
+          helperText: tr('Taksit hatırlatması bu WhatsApp numarasına gider.'),
         ),
       ),
     ],
@@ -723,7 +723,7 @@ class _FeeSheet extends ConsumerWidget {
     }
     final ok = await confirm(
       context,
-      title: tr('Hatırlatma SMS\'i gönderilsin mi?'),
+      title: tr('Hatırlatma WhatsApp\'tan gönderilsin mi?'),
       message: tr('{who} · {phone}\n{v} · vade {d}', {
         'who': fee.payerName ?? tr('Veli'),
         'phone': formatPhone(fee.payerPhone!),

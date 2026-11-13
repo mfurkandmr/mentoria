@@ -47,6 +47,7 @@ class InMemoryTrackingRepository implements TrackingRepository {
   final _progress = <String, Map<int, TopicStatus>>{};
   final _sessions = <String, List<StudySession>>{};
   final _goals = <String, Goals>{};
+  final _grades = <String, int>{};
   int _id = 1;
 
   List<QuestionLog> logsOf(String s) => _logs[s] ?? const [];
@@ -90,6 +91,15 @@ class InMemoryTrackingRepository implements TrackingRepository {
 
   @override
   Future<List<Topic>> fetchTopics() async => [..._topics];
+
+  @override
+  Future<int?> fetchGradeLevel(String studentId) async => _grades[studentId];
+
+  @override
+  Future<void> setGradeLevel(String studentId, int grade) async {
+    if (grade < 9 || grade > 12) throw ArgumentError('BAD_GRADE');
+    _grades[studentId] = grade;
+  }
 
   @override
   Future<Map<int, TopicStatus>> fetchTopicProgress(String studentId) async => {
@@ -296,8 +306,12 @@ class InMemoryAdminRepository implements AdminRepository {
   Future<List<OrgMember>> fetchMembers() async => [..._members];
 
   String _add(UserRole role, int maxUses, [String? coachId]) {
-    final code =
-        '${role == UserRole.coach ? 'KOC' : 'OGR'}${1000 + _invites.length}';
+    final prefix = switch (role) {
+      UserRole.coach => 'KOC',
+      UserRole.teacher => 'OGT',
+      _ => 'OGR',
+    };
+    final code = '$prefix${1000 + _invites.length}';
     _invites.insert(
       0,
       OrgInvite(
@@ -315,6 +329,10 @@ class InMemoryAdminRepository implements AdminRepository {
   @override
   Future<String> createCoachInvite({int maxUses = 1}) async =>
       _add(UserRole.coach, maxUses);
+
+  @override
+  Future<String> createTeacherInvite({int maxUses = 1}) async =>
+      _add(UserRole.teacher, maxUses);
 
   @override
   Future<String> createStudentInvite({
@@ -618,7 +636,7 @@ class InMemoryAssignmentRepository implements AssignmentRepository {
         ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
   @override
-  Future<void> sendAssignment({
+  Future<String> sendAssignment({
     required String studentId,
     required String title,
     required List<AssignmentItemDraft> items,
@@ -657,6 +675,7 @@ class InMemoryAssignmentRepository implements AssignmentRepository {
       refId: id,
       at: at,
     );
+    return id;
   }
 
   @override
@@ -1271,8 +1290,14 @@ class InMemoryMeetingRepository implements MeetingRepository {
     );
   }
 
+  /// Veli telefonu kayıtlı olmayan öğrenciler (testler için).
+  final noGuardianPhone = <String>{};
+
+  /// "Gelmedi" mesajı giden görüşmeler (plan, gün).
+  final guardianNotified = <(String, DateTime)>{};
+
   @override
-  Future<void> setStatus(
+  Future<String?> setStatus(
     String scheduleId,
     DateTime day,
     MeetingStatus? status,
@@ -1289,6 +1314,13 @@ class InMemoryMeetingRepository implements MeetingRepository {
     } else {
       _statuses[(scheduleId, d)] = status;
     }
+    if (status != MeetingStatus.missed ||
+        guardianNotified.contains((scheduleId, d))) {
+      return null;
+    }
+    if (noGuardianPhone.contains(s.studentId)) return 'no_phone';
+    guardianNotified.add((scheduleId, d));
+    return 'notified';
   }
 }
 

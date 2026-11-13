@@ -297,6 +297,18 @@ void main() {
       expect(find.text('Nur Sever'), findsOneWidget);
     });
 
+    testWidgets('Öğretmenler filtresinde uygulama daveti var', (t) async {
+      await pump(t, const StaffScreen());
+      expect(find.byKey(const ValueKey('staff-invite-teacher')), findsNothing);
+      await t.tap(find.widgetWithText(ChoiceChip, 'Öğretmenler'));
+      await t.pumpAndSettle();
+      final invite = find.byKey(const ValueKey('staff-invite-teacher'));
+      expect(invite, findsOneWidget);
+      await t.tap(invite);
+      await t.pumpAndSettle();
+      expect(find.byType(Dialog), findsOneWidget);
+    });
+
     testWidgets('kartı olmayan koça izin girilince kart açılır', (t) async {
       await pump(t, const StaffDetailScreen(personKey: 'c_demo-coach-2'));
       expect(find.text('Burak Yıldız'), findsOneWidget);

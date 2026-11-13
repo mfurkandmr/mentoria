@@ -1,0 +1,322 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../core/constants/exam_subjects.dart';
+import '../../../core/constants/grade_levels.dart';
+import '../../../core/i18n/i18n.dart';
+import '../../../core/theme/brand_theme.dart';
+import '../../../shared/widgets/common.dart';
+import '../../tracking/data/tracking_models.dart';
+import '../../tracking/data/tracking_repository.dart';
+import '../data/books_repository.dart';
+import 'books_screens.dart' show BooksViewer;
+
+/// Kaynak takibi (NOTLAR §92): ders başına bir tablo; satırlar konular,
+/// sütunlar öğrencinin o dersteki kitapları. Kutuya dokununca "bu kitaptan
+/// bu konu bitti" işaretlenir. Veli yalnızca görür.
+class ResourceTrackingScreen extends ConsumerStatefulWidget {
+  const ResourceTrackingScreen({
+    super.key,
+    required this.studentId,
+    required this.viewer,
+    this.term,
+  });
+
+  final String studentId;
+  final BooksViewer viewer;
+  final String? term;
+
+  @override
+  ConsumerState<ResourceTrackingScreen> createState() =>
+      _ResourceTrackingScreenState();
+}
+
+class _ResourceTrackingScreenState
+    extends ConsumerState<ResourceTrackingScreen> {
+  ExamType _type = ExamType.tyt;
+
+  /// Bu ekranda yapılan işaretler. Kaydı başarılı olan da burada kalır:
+  /// her dokunuşta bütün işaretleri sunucudan yeniden çekmeye gerek yok.
+  /// Ekrandan çıkınca liste tazelenir.
+  final _local = <(String, int), bool>{};
+
+  bool get _canEdit => widget.viewer != BooksViewer.parent;
+
+  Future<void> _toggle(String studentBookId, int topicId, bool done) async {
+    final key = (studentBookId, topicId);
+    final before = _local[key];
+    setState(() => _local[key] = done);
+    try {
+      await ref
+          .read(booksRepositoryProvider)
+          .setTopicMark(studentBookId, topicId, done);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        if (before == null) {
+          _local.remove(key);
+        } else {
+          _local[key] = before;
+        }
+      });
+      showMessage(context, tr('Kaydedilemedi. Tekrar dene.'));
+    }
+  }
+
+  // dispose içinde ref kullanılamaz; kapsayıcı önceden alınır.
+  ProviderContainer? _container;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _container = ProviderScope.containerOf(context, listen: false);
+  }
+
+  @override
+  void dispose() {
+    // Değişiklik olduysa başka ekranlar (ve geri dönüş) güncel listeyi görsün.
+    if (_local.isNotEmpty) {
+      _container?.invalidate(bookTopicMarksProvider(widget.studentId));
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final overview = ref.watch(
+      booksOverviewProvider((widget.studentId, widget.term)),
+    );
+    final topics = ref.watch(topicsProvider);
+    final marks = ref.watch(bookTopicMarksProvider(widget.studentId));
+    final grade = effectiveGrade(
+      ref.watch(studentGradeProvider(widget.studentId)).value,
+    );
+    final school = grade < 12;
+
+    return Scaffold(
+      appBar: AppBar(title: Text(tr('Kaynak takibi'))),
+      body: AsyncView(
+        value: overview,
+        onRetry: () => ref.invalidate(booksOverviewProvider),
+        builder: (o) => AsyncView(
+          value: topics,
+          onRetry: () => ref.invalidate(topicsProvider),
+          builder: (all) => AsyncView(
+            value: marks,
+            onRetry: () =>
+                ref.invalidate(bookTopicMarksProvider(widget.studentId)),
+            builder: (saved) {
+              // Bırakılan kitaplar tabloda yer almaz.
+              final books = [
+                for (final b in o.books)
+                  if (b.status != StudentBookStatus.dropped) b,
+              ];
+              // Konular derse göre bir kez gruplanır (her ders için tüm
+              // listeyi taramak yerine).
+              final bySubject = <String, List<Topic>>{};
+              for (final t in topicsForGrade(all, grade)) {
+                (bySubject[t.subjectCode] ??= []).add(t);
+              }
+              for (final l in bySubject.values) {
+                l.sort((a, b) => a.sort.compareTo(b.sort));
+              }
+              final subjects = [
+                for (final s in examSubjects)
+                  if ((school || s.examType == _type) &&
+                      bySubject.containsKey(s.code))
+                    (
+                      subject: s,
+                      books: [
+                        for (final b in books)
+                          if (b.book.subjectCode == null ||
+                              b.book.subjectCode == s.code)
+                            b,
+                      ],
+                    ),
+              ].where((e) => e.books.isNotEmpty).toList();
+              bool done(String sb, int topic) =>
+                  _local[(sb, topic)] ?? saved.contains((sb, topic));
+
+              final header = <Widget>[
+                if (!school)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: SegmentedButton<ExamType>(
+                      showSelectedIcon: false,
+                      segments: [
+                        for (final t in ExamType.values)
+                          ButtonSegment(value: t, label: Text(t.label)),
+                      ],
+                      selected: {_type},
+                      onSelectionChanged: (s) =>
+                          setState(() => _type = s.first),
+                    ),
+                  ),
+                if (subjects.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: EmptyState(
+                      title: tr('Bu bölümde kitabın yok'),
+                      message: tr(
+                        'Kitap eklediğinde konuları burada kitap kitap işaretleyebilirsin.',
+                      ),
+                    ),
+                  ),
+              ];
+
+              // Ders tabloları ekrana girdikçe çizilir.
+              return ListView.builder(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+                itemCount: header.length + subjects.length,
+                itemBuilder: (context, i) {
+                  if (i < header.length) return header[i];
+                  final e = subjects[i - header.length];
+                  final s = e.subject;
+                  return _SubjectTable(
+                    title: school ? s.name : '${s.examType.label} ${s.name}',
+                    topics: bySubject[s.code]!,
+                    books: e.books,
+                    isDone: done,
+                    onToggle: _canEdit ? _toggle : null,
+                  );
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SubjectTable extends StatelessWidget {
+  const _SubjectTable({
+    required this.title,
+    required this.topics,
+    required this.books,
+    required this.isDone,
+    required this.onToggle,
+  });
+
+  final String title;
+  final List<Topic> topics;
+  final List<StudentBook> books;
+  final bool Function(String studentBookId, int topicId) isDone;
+  final Future<void> Function(String studentBookId, int topicId, bool done)?
+  onToggle;
+
+  static const _bookWidth = 92.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    final scheme = Theme.of(context).colorScheme;
+    final line = BorderSide(color: scheme.outlineVariant);
+    final total = topics.length * books.length;
+    final finished = [
+      for (final t in topics)
+        for (final b in books)
+          if (isDone(b.id, t.id)) 1,
+    ].length;
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 14),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    style: text.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: context.brand.primary,
+                    ),
+                  ),
+                ),
+                Text('$finished / $total', style: text.labelMedium),
+              ],
+            ),
+            const SizedBox(height: 10),
+            LayoutBuilder(
+              builder: (context, box) {
+                // Konu sütunu kalan yeri alır; kitap çoksa tablo yana kayar.
+                final topicWidth = (box.maxWidth - books.length * _bookWidth)
+                    .clamp(150.0, double.infinity);
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Table(
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    border: TableBorder(
+                      horizontalInside: line,
+                      verticalInside: line,
+                      bottom: line,
+                    ),
+                    columnWidths: {
+                      0: FixedColumnWidth(topicWidth),
+                      for (var i = 0; i < books.length; i++)
+                        i + 1: const FixedColumnWidth(_bookWidth),
+                    },
+                    children: [
+                      TableRow(
+                        decoration: BoxDecoration(
+                          color: scheme.surfaceContainerHighest,
+                        ),
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Text(tr('Konu'), style: text.labelLarge),
+                          ),
+                          for (final b in books)
+                            Tooltip(
+                              message: '${b.book.name} · ${b.book.publisher}',
+                              child: Padding(
+                                padding: const EdgeInsets.all(6),
+                                child: Text(
+                                  b.book.name,
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                  style: text.labelMedium?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                      for (final t in topics)
+                        TableRow(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 6,
+                              ),
+                              child: Text(t.name, style: text.bodyMedium),
+                            ),
+                            for (final b in books)
+                              Checkbox(
+                                key: ValueKey('mark-${b.id}-${t.id}'),
+                                value: isDone(b.id, t.id),
+                                semanticLabel: '${t.name} · ${b.book.name}',
+                                onChanged: onToggle == null
+                                    ? null
+                                    : (v) => onToggle!(b.id, t.id, v ?? false),
+                              ),
+                          ],
+                        ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

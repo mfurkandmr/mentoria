@@ -21,6 +21,7 @@ import '../../auth/presentation/reset_password_screen.dart';
 import '../../coaching/presentation/coaching_widgets.dart';
 import '../../help/presentation/faq_screen.dart';
 import '../data/account_repository.dart';
+import '../../tracking/presentation/grade_level_card.dart';
 import '../../../shared/widgets/effects.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../ranking/data/ranking_repository.dart';
@@ -90,6 +91,8 @@ class ProfileScreen extends ConsumerWidget {
                   const SizedBox(height: 20),
                   _DetailsCard(details: d, role: profile.role),
                   if (profile.role == UserRole.student) ...[
+                    const SizedBox(height: 12),
+                    GradeLevelCard(studentId: profile.id),
                     const SizedBox(height: 12),
                     GoalsCard(studentId: profile.id, canEdit: true),
                     const SizedBox(height: 12),

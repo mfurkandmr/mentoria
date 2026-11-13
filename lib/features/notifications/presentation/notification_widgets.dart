@@ -31,6 +31,7 @@ void openNotification(BuildContext context, AppNotification n) {
         '/student/announcements',
         '/student/timetable',
         '/student/books',
+        '/student/study',
       }.contains(n.route) ||
       n.route.startsWith('/admin/finance')) {
     router.push(n.route);
@@ -196,6 +197,7 @@ class NotificationTile extends StatelessWidget {
                   NotificationKind.timetable => context.brand.info,
                   NotificationKind.bookRequest => context.brand.secondary,
                   NotificationKind.coachAlert => context.brand.danger,
+                  NotificationKind.tutoringRequest => context.brand.info,
                 },
                 foregroundColor:
                     n.kind == NotificationKind.exam ||
