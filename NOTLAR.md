@@ -3352,3 +3352,31 @@ takılır. Yayından önce üst boyut (Pro + Micro/Small) ve `admin_cockpit`
 hızlandırma gerekli; yükseltmeden sonra aynı testler (`ramp.sh`) yeniden
 koşulmalı. Testler arasında sunucunun toparlanması gerekir (kredi saatlerce
 dolar).
+
+## 98. Müdür kokpiti hızlandırma (13 Kasım 2026)
+
+Yük testinde (NOTLAR §97) bulunan tek yavaş nokta düzeltildi: `admin_cockpit()`
+içindeki "net_drops" (son sınavda 3+ net düşüş uyarısı) her öğrencinin son
+sınavını aynı CTE'yi kendisiyle birleştirerek (`ex a join ex b`) buluyordu.
+CTE'ler indekslenmediği için bu, öğrenci × sınav sayısı kadar satır tarıyordu
+(1000 öğrenci × 3000 sınav kaydında toplam sürenin ~%95'i). `lead()` pencere
+fonksiyonuyla tek geçişte hesaplayan sürüme geçildi (kendiyle birleştirme
+yok). Migration `20261113100000_cockpit_perf` (rollback var), **canlıda**.
+
+- **Ölçüm:** EXPLAIN ANALYZE (Mentoria-Test, 1000 öğrenci/3000 sınav):
+  503 ms → 59 ms (~8,5 kat). Mantık aynı: `supabase/tests/admin_cockpit_test.mjs`
+  (net_drops dahil) ve tüm SQL paketi değişmeden geçti.
+- **Yeni araç:** `tool/loadtest/explain_cockpit.mjs [migration.sql]` — bir
+  fonksiyon gövdesini test kurumunun verisiyle EXPLAIN ANALYZE eder, en
+  pahalı düğümleri sıralar. Varsayılan dosya eski sürüm; yeni sürümü ölçmek
+  için dosya yolunu vermek gerekir (bir kez bu yüzden yanlış dosya ölçüldü).
+- **Sistem geneli:** bu düzeltme tek sorguyu hızlandırır; Nano'nun genel
+  kapasite tavanını (NOTLAR §97'deki sürekli yük çöküşü) değiştirmez — o,
+  paylaşımlı işlemci kredisiyle ilgili, sorguyla değil. Bugün bu yüzden iki
+  yeniden ölçüm (25 ve 40 işlem/sn) güvenilir çıkmadı: hem Auth giriş IP
+  sınırına (çok sayıda `tokens.mjs` çağrısı) hem de sunucunun önceki
+  testlerden toparlanmamasına denk geldi. `ag_gecikmesi` (veritabanına hiç
+  uğramayan referans istek) o turlarda da saniyelerce sürdü — darboğazın
+  artık sorguda değil, genel yığında (PostgREST/bağlantı havuzu) olduğunun
+  kanıtı. Temiz bir karşılaştırma için test projesine uzun süre
+  dokunulmaması gerekiyor.

@@ -69,3 +69,13 @@ node pgstats.mjs                 # sunucu tarafı sorgu süreleri
 `mix.js` gerçek kullanım karışımıdır; `ramp.sh` her kademeden önce sunucunun
 toparlanmasını bekler. Nano'da burst kredisi bitince sonuçlar düşer: testler
 arasında dinlendir.
+
+## Tek fonksiyonu profilleme (NOTLAR §98)
+
+```bash
+node explain_cockpit.mjs [migration.sql]   # varsayılan: ilk admin_cockpit sürümü
+```
+
+Fonksiyon gövdesini test kurumunun verisiyle `EXPLAIN ANALYZE` eder, en
+pahalı düğümleri listeler. Yeni bir sürümü ölçerken dosya yolunu mutlaka ver
+— aksi halde eski sürüm ölçülür.
