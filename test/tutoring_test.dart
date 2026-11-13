@@ -227,11 +227,14 @@ void main() {
     expect(button, findsWidgets);
     expect(t.getSize(button.first).width, lessThan(300));
     final card = find.ancestor(of: button.first, matching: find.byType(Card));
-    final title = find.descendant(
-      of: card,
-      matching: find.textContaining('Soru çözümü'),
-    );
-    expect(t.getSize(title.first).width, greaterThan(100));
+    // İlk kartın türü güne göre değişir (soru çözümü / birebir / etüt):
+    // kartın en geniş yazısı ezilmemiş olmalı.
+    final texts = find.descendant(of: card, matching: find.byType(Text));
+    final widest = texts
+        .evaluate()
+        .map((e) => e.size!.width)
+        .reduce((a, b) => a > b ? a : b);
+    expect(widest, greaterThan(100));
   });
 
   testWidgets('kurumda oturum yokken de giriş kartı görünür', (t) async {

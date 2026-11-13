@@ -3380,3 +3380,29 @@ yok). Migration `20261113100000_cockpit_perf` (rollback var), **canlıda**.
   artık sorguda değil, genel yığında (PostgREST/bağlantı havuzu) olduğunun
   kanıtı. Temiz bir karşılaştırma için test projesine uzun süre
   dokunulmaması gerekiyor.
+
+## 99. Tanıtım sitesi güncel, demo açık, KVKK 1.3 (13 Kasım 2026)
+
+- **Demo artık gizli değil:** tanıtım sayfasında "Demoyu deneyin" (üst çubuk ve giriş
+  bölümü) ve `#demo` bölümünde beş rol kartı (`/demo/panel/?rol=...`). `/demo/` arama
+  motorlarına açık; `/demo/panel/` hâlâ `noindex` (robots.txt + `_headers`). Demo
+  yalnızca örnek veriyle çalışır (DEMO=true, sunucuya bağlanmaz). Tanıtım talebi
+  `#iletisim` bölümünde e-postayla.
+- **İçerik tutarlılığı:** SMS yerine WhatsApp (§88), öğretmen rolü (beş rol), soru
+  çözümü ve birebir ders ders programında (§95), 2'li blok dağılımı (§96), kaynak takibi.
+- **KVKK (legalVersion 1.3):** aydınlatma metnine veli adı ve telefonu (WhatsApp
+  bilgilendirmeleri), ödeme kayıtları ve veliye gösterimi, öğretmen bilgisi ve
+  öğretmenin gördükleri, soru çözümü talepleri, Meta (WhatsApp Business) ve Cloudflare
+  veri işleyen olarak, WhatsApp kaydı 90 gün / ödev PDF'i 80 gün saklama eklendi.
+  "Telefon numarası işlenmez" cümlesi öğrencinin kendi telefonu olarak düzeltildi.
+  Web adresi `https://mentoria.com.tr` (hesap silme `/app/hesap-sil`) dolduruldu.
+- **Açık:** `[AD SOYAD]`, `[ADRES]`, `[KVKK E-POSTA ADRESİ]` hâlâ boş (yayındaki yasal
+  sayfalarda görünür); avukat incelemesi.
+- **Cloudflare:** `mentoria.com.tr` zone'u eklendi (ücretsiz plan, NS
+  `malcolm`/`romina.ns.cloudflare.com`, Turhost'ta girildi), 13 Kasım'da aktif.
+- **Yayında:** Pages projesi `mentoria` (`mentoria-90l.pages.dev`), `mentoria.com.tr` ve
+  `www` custom domain olarak bağlı. Yükleme elle: `npx wrangler@4 pages deploy build/site
+  --project-name mentoria --branch main` (wrangler bu bilgisayarda giriş yaptı). GitHub
+  Actions yayını (`deploy-web.yml`) hâlâ kapalı (`WEB_DEPLOY` yok).
+- **E-posta:** Cloudflare Email Routing; `iletisim@` ve `kvkk@` → hesabın Gmail'i,
+  catch-all kapalı. Supabase Auth Site URL `https://mentoria.com.tr/app` (kullanıcı girdi).

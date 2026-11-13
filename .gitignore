@@ -66,3 +66,6 @@ tool/loadtest/.env.local
 tool/loadtest/node_modules/
 tool/loadtest/results/
 tool/loadtest/*.crt
+
+# wrangler (Cloudflare Pages yükleme) yerel önbelleği
+.wrangler/

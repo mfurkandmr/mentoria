@@ -592,3 +592,14 @@ body.navy {
 .navy :is(.platform-card, .contact) { border: 1px solid rgba(255, 255, 255, .12); }
 .navy .platform-card { background: linear-gradient(160deg, var(--navy-800), #2A3F7E); }
 .navy footer { background: #040A1C; border-top-color: rgba(255, 255, 255, .08); }
+
+/* Beş rol (öğretmen ayrı) ve tanıtım sayfasındaki demo kartları */
+.roles5 { grid-template-columns: repeat(5, 1fr); }
+@media (max-width: 1100px) { .roles5 { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 720px) { .roles5 { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 540px) { .roles5 { grid-template-columns: 1fr; } }
+.demo-roles { grid-template-columns: repeat(3, 1fr); max-width: 1040px; margin: 0 auto; }
+@media (max-width: 960px) { .demo-roles { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .demo-roles { grid-template-columns: 1fr; } }
+.navy .demo-roles .card { --ink: #0F172A; --text: #334155; --muted: #64748B; color: var(--text); }
+.navy .demo-roles .role h3 { color: var(--ink); }

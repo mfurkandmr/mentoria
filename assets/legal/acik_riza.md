@@ -4,7 +4,7 @@
 
 ---
 
-[AD SOYAD] ("Mentoria") tarafından hazırlanan **Aydınlatma
+Mehmet Furkan Demir ("Mentoria") tarafından hazırlanan **Aydınlatma
 Metni**'ni okudum. Aşağıda **işaretlediğim** konularda kişisel verilerimin
 işlenmesine açık rıza veriyorum. İşaretlemediğim konularda verilerim bu
 amaçlarla işlenmez. Hiçbirini işaretlemesem de Mentoria'yı kullanabileceğimi

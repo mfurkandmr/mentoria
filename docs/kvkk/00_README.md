@@ -22,9 +22,9 @@
 
 - [x] Veri sorumlusu: şirket yok, bireysel geliştirici (gerçek kişi; MERSİS
       ve KEP yok). Metinler buna göre düzenlendi (29 Ekim 2026).
-- [ ] Ad soyad (`[AD SOYAD]`) ve yazışma adresi (`[ADRES]`)
-- [ ] KVKK başvuruları için e-posta adresi (`[KVKK E-POSTA ADRESİ]`)
-- [ ] Web sürümünün adresi (`[WEB ADRESİ]`; hesap silme sayfası
+- [x] Ad soyad (`Mehmet Furkan Demir`) ve yazışma adresi (`Akpıyar Mah. 4120 Sok. Önder Apt. No: 10, Karaköprü / Şanlıurfa`); KVKK e-postası `kvkk@mentoria.com.tr` (13 Kasım 2026, Gmail'e yönlendirilecek)
+- [ ] KVKK başvuruları için e-posta adresi (`kvkk@mentoria.com.tr`)
+- [x] Web sürümünün adresi (13 Kasım 2026: `https://mentoria.com.tr`, hesap silme `/app/hesap-sil`; `[WEB ADRESİ]`; hesap silme sayfası
       `[WEB ADRESİ]/#/hesap-sil`, Google Play formuna da bu yazılır)
 - [x] Saklama süreleri: silinen hesap 30 gün, lisansı biten kurum 1 yıl,
       uzun süre kullanılmayan hesap 2 yıl (30 gün önceden uyarı), duyurular
@@ -35,11 +35,11 @@
       politikası 5. bölüm)
 - [ ] Kullanım koşulları: yetkili mahkeme ili ve ücretlendirme modeli
       (`08_kullanim_kosullari.md` 8. ve 12. maddeler)
-- [ ] Kurum finansı (NOTLAR §46-47): veli adı ve cep telefonu taksit
+- [x] (13 Kasım 2026: veli adı/telefonu, ödeme kayıtları, WhatsApp/Meta, öğretmen, soru çözümü talepleri aydınlatma metnine eklendi; legalVersion 1.3) Kurum finansı (NOTLAR §46-47): veli adı ve cep telefonu taksit
       hatırlatma SMS'i için işleniyor; aydınlatma metnine (işlenen veriler,
       amaç, SMS sağlayıcısı alıcı olarak) eklenmeli, sonra `legalVersion`
       artırılmalı. SMS sağlayıcısıyla veri işleme sözleşmesi gerekir.
-- [ ] Finans (NOTLAR §56, 6 Kasım 2026): veli artık çocuğunun ücret, taksit ve
+- [x] Finans (NOTLAR §56, 6 Kasım 2026): veli artık çocuğunun ücret, taksit ve
       makbuzlarını uygulamada görüyor; makbuzda ödeyen veli adı var. Aydınlatma
       metnine "veliye ödeme bilgisinin gösterilmesi" eklenmeli.
 - [ ] Kendi SMTP/e-posta sağlayıcınız var mı? (Doğrulama e-postaları için)

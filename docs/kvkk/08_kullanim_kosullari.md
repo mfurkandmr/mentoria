@@ -11,7 +11,7 @@
 
 ## 1. Taraflar ve kapsam
 
-Bu koşullar, [AD SOYAD] ("Mentoria", "biz") tarafından sunulan
+Bu koşullar, Mehmet Furkan Demir ("Mentoria", "biz") tarafından sunulan
 Mentoria mobil uygulaması ve web uygulamasının ("Hizmet") kullanımını
 düzenler. Hesap oluşturan ya da Hizmet'i kullanan herkes ("kullanıcı",
 "sen") bu koşulları kabul etmiş sayılır.
@@ -148,7 +148,7 @@ yetkilidir.
 
 ## 13. İletişim
 
-[AD SOYAD] · [ADRES] · [E-POSTA ADRESİ]
+Mehmet Furkan Demir · Akpıyar Mah. 4120 Sok. Önder Apt. No: 10, Karaköprü / Şanlıurfa · kvkk@mentoria.com.tr
 
 ---
 

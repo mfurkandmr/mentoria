@@ -1,8 +1,8 @@
-"""Web sitesini tek klasörde toplar: tanıtım sayfası + panel + gizli demo.
+"""Web sitesini tek klasörde toplar: tanıtım sayfası + panel + demo.
 
     mentoria.com.tr/              site/ (tanıtım sayfası, yasal metinler)
     mentoria.com.tr/app/          Flutter web, gerçek Supabase (giriş yapılan)
-    mentoria.com.tr/demo/         rol seçimi (site/demo/, bağlantı verilmez)
+    mentoria.com.tr/demo/         rol seçimi (site/demo/, tanıtım sayfasından bağlantılı)
     mentoria.com.tr/demo/panel/   Flutter web, DEMO=true (örnek veri)
 
 Kullanım (proje kökünden; yol ASCII olmalı, NOTLAR "APK derleme yolu"):
@@ -279,7 +279,7 @@ HEADERS = """# tool/web/build_web.py üretir; elle düzenlemeyin.
 /app/*
   X-Robots-Tag: noindex, nofollow
 
-/demo/*
+/demo/panel/*
   X-Robots-Tag: noindex, nofollow
 
 /firebase-messaging-sw.js
