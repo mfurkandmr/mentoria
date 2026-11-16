@@ -13,7 +13,7 @@
 //     {{1}} = mesaj metni, {{2}} = kurum adı. Metin Meta'ya bir kez
 //     onaylatılır (docs/WHATSAPP_KURULUM.md).
 //   * `media_path` ('kova/yol/dosya.pdf') varsa şablonun belge başlığına
-//     7 günlük imzalı Storage adresiyle eklenir.
+//     24 saatlik imzalı Storage adresiyle eklenir.
 //
 // Gerekli gizli değerler (Supabase → Edge Functions → Secrets):
 //   PUSH_WEBHOOK_SECRET   tetikleyiciyle paylaşılan parola (send-push ile aynı)
@@ -71,7 +71,7 @@ async function mediaLink(db: SupabaseClient, path: string): Promise<string | nul
   if (slash <= 0) return null;
   const { data } = await db.storage
     .from(path.slice(0, slash))
-    .createSignedUrl(path.slice(slash + 1), 7 * 24 * 3600);
+    .createSignedUrl(path.slice(slash + 1), 24 * 3600);
   return data?.signedUrl ?? null;
 }
 
@@ -165,7 +165,7 @@ Deno.serve(async (req) => {
     }
     if (r.ok) sent++;
     else failed++;
-    await db
+    const { error: updErr } = await db
       .from('sms_outbox')
       .update(
         r.ok
@@ -173,6 +173,7 @@ Deno.serve(async (req) => {
           : { status: 'failed', error: r.error },
       )
       .eq('id', m.id);
+    if (updErr) console.error('sms_outbox güncellenemedi', m.id, updErr.message);
   }
   return json({ sent, failed });
 });

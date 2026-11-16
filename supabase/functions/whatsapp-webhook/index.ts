@@ -19,6 +19,14 @@ import { createClient } from 'jsr:@supabase/supabase-js@2';
 
 const enc = new TextEncoder();
 
+// Sabit zamanlı metin karşılaştırması.
+function safeEqual(a: string, b: string) {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
 async function validSignature(raw: string, header: string | null, secret: string) {
   if (!header?.startsWith('sha256=')) return false;
   const key = await crypto.subtle.importKey(
@@ -39,7 +47,7 @@ Deno.serve(async (req) => {
   if (req.method === 'GET') {
     const token = Deno.env.get('WHATSAPP_VERIFY_TOKEN');
     if (token && url.searchParams.get('hub.mode') === 'subscribe'
-        && url.searchParams.get('hub.verify_token') === token) {
+        && safeEqual(url.searchParams.get('hub.verify_token') ?? '', token)) {
       return new Response(url.searchParams.get('hub.challenge') ?? '', { status: 200 });
     }
     return new Response('forbidden', { status: 403 });
