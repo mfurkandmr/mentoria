@@ -3431,3 +3431,26 @@ yok). Migration `20261113100000_cockpit_perf` (rollback var), **canlıda**.
 - Canlıdaki `send-sms` fonksiyonu Supabase panelinden elle silinmeli (araçla silinemiyor).
 - **Sonra yapılacak:** `sms_outbox` / `kick_sms` / `lib/features/sms` / `bulk_sms_*` adlarını
   WhatsApp'a göre yeniden adlandırmak (büyük iş: migration + rollback + testler).
+
+## 102. Güvenlik denetimi düzeltmeleri (20 Kasım)
+
+- 16 Kasım denetimi (7 rol + anon, tablo/RPC/storage/kayıt akışı/finans/süper yönetici, bağımlılıklar):
+  yetki yükseltme ve kurumlar arası sızıntı **bulunmadı**. Denemeler `Mentoria-Test`te, rollback'li
+  işlemlerle yapıldı; canlıya dokunulmadı.
+- **Migration `20261120100000_security_fixes`** (rollback'li, test: `security_fixes_test.mjs`):
+  `profiles.full_name` en çok 100 karakter (kayıt ve profil güncellemesinde tetikleyiciyle
+  kısaltılır; eski uzun adlar da kısaltıldı); `request_tutoring_session` öğrenci başına 24 saatte
+  en çok 15 yeni talep (iptal edilenler sayılır, `TUTOR_RATE_LIMIT`) — aç/iptal döngüsüyle
+  öğretmene sınırsız bildirim gitmesin diye.
+- **Migration `20261120110000_duel_consent`** (ayrı, rollback'li): `duel_opponents` ve `create_duel`
+  yalnızca `ranking_visible()` öğrencileri (rıza + 18 yaş altıysa veli onayı) kabul eder;
+  `avatar_leaderboard` ile aynı kural. **Ürün etkisi:** sıralama rızası vermeyen öğrenci düello
+  listesinde görünmez ve davet edilemez. `duels_test` kurulumuna rıza eklendi.
+- Uygulama: `TUTOR_RATE_LIMIT` hata metni + İngilizce çevirisi.
+- **Düzeltilen yanlış değerlendirme:** `set_birth_year` zaten kilitli (`BIRTH_YEAR_LOCKED`; yalnızca
+  boş yıl bir kez girilir) ve `update_my_branding` adı zaten 80 karaktere keser. Doğum yılı kayıtta
+  kullanıcı beyanıdır; bu tasarım sınırı olarak kalıyor.
+- **Açık kalanlar:** Auth "leaked password protection" (panel), canlı `send-sms` fonksiyonunu silme
+  (panel), Firebase API anahtarı kısıtı (Google Cloud), Edge Function parola karşılaştırması
+  (`!==`), `app_config.update_url` şema kontrolü, web'de CSP, `archive`/`image`/`xml` paket
+  güncellemeleri, mentoria.com.tr'ye dışarıdan test.

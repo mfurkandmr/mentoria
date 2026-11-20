@@ -82,6 +82,17 @@ const answersFor = async (duel, nCorrect) => {
 const backdate = async (duel, col, sec) => { await asSuper(); await db.query(`update public.duels set ${col} = now() - make_interval(secs => $2) where id = $1`, [duel, sec]); };
 const mine = async (who) => { await asUser(who); return (await db.query(`select * from public.my_duels()`)).rows; };
 
+// Düello yalnızca sıralamada görünmeye izin veren öğrenciler arasında (20261120110000_duel_consent):
+// kurulumdaki bütün öğrencilere sıralama rızası + (18 yaş altı olduklarından) veli onayı verilir.
+await asSuper();
+await db.exec(`
+  insert into public.consents (user_id, kind, granted, version, source, given_by)
+  select p.id, k.kind, true, '1.0', case when k.kind = 'ranking' then 'self' else 'institution' end,
+         case when k.kind = 'ranking' then p.id
+              else (select cs.coach_id from public.coach_students cs where cs.student_id = p.id limit 1) end
+  from public.profiles p cross join (values ('ranking'), ('guardian_approval')) k(kind)
+  where p.role = 'student'`);
+
 console.log('Rakipler');
 await asUser(ahmet);
 const ops = (await db.query(`select * from public.duel_opponents()`)).rows;

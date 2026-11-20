@@ -2010,6 +2010,8 @@ const enStrings = <String, String>{
       'You already have a request for this session.',
   'Bir güne en çok 3 talep verebilirsin.':
       'You can make at most 3 requests per day.',
+  'Çok fazla talep verdin. Biraz sonra tekrar dene.':
+      'You have made too many requests. Please try again later.',
   'Bu oturum için talep süresi geçti.':
       'It’s too late to request this session.',
   'Öğretmenin bu saatte başka bir oturumu var.':
