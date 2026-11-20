@@ -3406,3 +3406,28 @@ yok). Migration `20261113100000_cockpit_perf` (rollback var), **canlıda**.
   Actions yayını (`deploy-web.yml`) hâlâ kapalı (`WEB_DEPLOY` yok).
 - **E-posta:** Cloudflare Email Routing; `iletisim@` ve `kvkk@` → hesabın Gmail'i,
   catch-all kapalı. Supabase Auth Site URL `https://mentoria.com.tr/app` (kullanıcı girdi).
+
+## 100. Kod incelemesi düzeltmeleri (15 Kasım)
+
+- **Migration `20261114100000_review_fixes`** (rollback'li, test: `review_fixes_test.mjs`):
+  `decide_tutoring_request` geçmiş tarihli/pasif oturumlu talebi onaylamaz ve `my_tenant_active()`
+  ister; `my_tutoring_sessions` / `teacher_tutoring_requests` öğretmen rolü + aktif kurum ister;
+  öğretmen daveti/kaydı lisans süresini (`LICENSE_EXPIRED`) denetler; soru çözümü talepleri
+  `retention_settings.tutoring_keep` (1 yıl) sonrası gece görevinde silinir.
+- **Edge Functions:** ödev PDF imzalı URL'si 7 günden 24 saate indi; webhook `verify_token`
+  sabit zamanlı karşılaştırılır; `send-whatsapp` outbox güncelleme hatasını loglar.
+- **`.gitattributes`:** `* text=auto eol=lf` (CRLF/LF gürültüsü için).
+- **Bilerek yapılmayanlar:** `org_whatsapp.access_token` Vault'a taşınmadı (tasarım kararı);
+  bekleyen talep sayısına üst sınır konmadı; veli WhatsApp rızası ve FCM başlığındaki öğrenci
+  adının aydınlatma metnine eklenmesi avukat listesinde (`docs/YAPILACAKLAR.md`).
+- **Bilinen:** `plan_notify_test` iki kontrolü tarihe bağlı olarak başarısız (bu değişiklikten bağımsız).
+- Migration henüz canlıya uygulanmadı; Edge Function'lar yeniden dağıtılmadı.
+
+## 101. Ölü SMS kodunun temizliği (15 Kasım)
+
+- Migration `20261114110000_drop_claim_sms` (rollback'li): `claim_sms` kaldırıldı. `send-sms`
+  Edge Function repodan silindi, `sms_claim_test.mjs` kaldırıldı. Kuyruk adı `sms_outbox`,
+  `kick_sms()` ve `channel` kısıtı (`'sms'` eski kayıtlar için) kaldı.
+- Canlıdaki `send-sms` fonksiyonu Supabase panelinden elle silinmeli (araçla silinemiyor).
+- **Sonra yapılacak:** `sms_outbox` / `kick_sms` / `lib/features/sms` / `bulk_sms_*` adlarını
+  WhatsApp'a göre yeniden adlandırmak (büyük iş: migration + rollback + testler).

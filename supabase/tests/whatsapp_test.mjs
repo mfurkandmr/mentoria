@@ -116,8 +116,8 @@ check(got[0].org_name === 'Bal Akademi' && got[0].access_token === TOKEN && got[
 check((await rows(`select * from public.claim_messages(50)`)).length === 0, 'ikinci çağrı boş (çift gönderim yok)');
 check((await one(`select status from public.sms_outbox where body = 'mesaj 3'`)).status === 'queued',
   'bağlı olmayan kurumun mesajı kuyrukta bekler');
-const sms = await rows(`select * from public.claim_sms(50)`);
-check(sms.length === 1 && sms[0].body === 'eski sms', 'claim_sms yalnızca SMS kanalını alır', sms);
+check((await one(`select status from public.sms_outbox where body = 'eski sms'`)).status === 'queued',
+  'eski SMS kanallı satır claim_messages ile alınmaz');
 
 console.log('Webhook durumu');
 await db.query(`update public.sms_outbox set status = 'sent', wa_message_id = 'wamid.A1' where body = 'mesaj 1'`);

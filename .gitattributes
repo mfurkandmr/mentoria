@@ -1,0 +1,11 @@
+# Satır sonlarını depoda LF tut (CRLF/LF gürültüsünü önler).
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.ttf binary
+*.otf binary
+*.pdf binary
+*.jar binary
