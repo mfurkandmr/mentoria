@@ -221,6 +221,9 @@ String tutoringErrorMessage(Object e) {
   if (s.contains('TUTOR_DAILY_LIMIT')) {
     return tr('Bir güne en çok 3 talep verebilirsin.');
   }
+  if (s.contains('TUTOR_RATE_LIMIT')) {
+    return tr('Çok fazla talep verdin. Biraz sonra tekrar dene.');
+  }
   if (s.contains('TUTOR_BAD_DATE')) {
     return tr('Bu oturum için talep süresi geçti.');
   }
