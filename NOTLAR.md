@@ -3454,3 +3454,29 @@ yok). Migration `20261113100000_cockpit_perf` (rollback var), **canlıda**.
   (panel), Firebase API anahtarı kısıtı (Google Cloud), Edge Function parola karşılaştırması
   (`!==`), `app_config.update_url` şema kontrolü, web'de CSP, `archive`/`image`/`xml` paket
   güncellemeleri, mentoria.com.tr'ye dışarıdan test.
+
+## 103. Web başlıkları: CSP, security.txt (20 Kasım)
+
+- 20 Kasım pasif web testi (başlıklar, TLS, açıkta dosya, JS paketinde sır, anonim API, Edge
+  Function yetkisi): kritik açık yok. Ayrıntı §102 ve hafıza kaydında.
+- **CSP (yalnızca tanıtım sayfaları):** `tool/web/build_web.py` içindeki `CSP` / `CSP_PATHS`
+  (`/`, `/gizlilik/*`, `/aydinlatma/*`, `/kullanim-kosullari/*`, `/demo/`) → `_headers`.
+  Yalnızca kendi kaynağı; `script-src 'self'`, satır içi stil yalnızca nitelik olarak
+  (`style-src-attr`). Tarayıcıda doğrulandı. Tanıtım sayfasındaki satır içi script
+  `site/boot.js`e taşındı (davranış aynı: `no-js` sınıfı + oturumlu kullanıcıyı `/app/`e yönlendirme).
+- **Flutter panelleri (`/app`, `/demo/panel`) CSP'siz kaldı:** CanvasKit `www.gstatic.com`dan gelir
+  ve `'wasm-unsafe-eval'` ister; zorunlu CSP için önce CanvasKit/yazı tiplerini kendi alan adımızdan
+  sunmak (`--no-web-resources-cdn`, paketlenmiş font), yeniden derleyip tarayıcıda denemek ve
+  KVKK aydınlatmasını güncellemek gerekir (ayrı iş). Raporlama modu eklenmedi: rapor toplayan
+  uç nokta yok.
+- **`site/.well-known/security.txt`:** iletişim `iletisim@mentoria.com.tr`, `Expires` 2027-11-20.
+  Tarih dolunca `test/web_test.dart` bilerek kırılır; tarihi bir yıl ileri alın.
+- **Koruma testi:** `test/web_test.dart` tanıtım sayfalarında satır içi `<script>`, olay işleyici,
+  `<style>`, dış kaynak olmadığını ve CSP'nin panellere uygulanmadığını denetler.
+- **Bilerek yapılmayanlar:** HSTS `includeSubDomains`/`preload` eklenmedi (HTTP'ye açık bir alt alan
+  adı varsa bir yıl kilitler; alt alan adları doğrulanınca eklenebilir). `www` → apex yönlendirmesi
+  repoda yapılamaz (`_redirects` yol bazlı): Cloudflare panelinde Redirect Rule ile yapılmalı.
+- **Birleştirince doğrula:** `deploy-web` siteyi otomatik yükler. Sonra
+  `curl -I https://mentoria.com.tr/` (CSP var), `/app/` (CSP yok) ve
+  `/.well-known/security.txt` (200) kontrol edilmeli; Pages `.well-known` klasörünü yüklemezse
+  dosya başka yolla sunulmalı.

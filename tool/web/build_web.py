@@ -286,6 +286,19 @@ HEADERS = """# tool/web/build_web.py üretir; elle düzenlemeyin.
   Cache-Control: no-cache
 """
 
+# Tanıtım sayfaları ve yasal metinler (statik) için sıkı CSP: yalnızca kendi
+# alan adı, satır içi script/olay işleyici yok (test/web_test.dart bunu korur).
+# Flutter panelleri (/app, /demo/panel) CSP'siz: CanvasKit Google CDN'inden
+# gelir ve 'wasm-unsafe-eval' ister; ayrı iş (NOTLAR §103).
+CSP = (
+    "default-src 'none'; script-src 'self'; style-src 'self'; "
+    "style-src-attr 'unsafe-inline'; img-src 'self'; font-src 'self'; "
+    "connect-src 'self'; manifest-src 'self'; form-action 'none'; "
+    "base-uri 'none'; frame-ancestors 'none'"
+)
+CSP_PATHS = ("/", "/gizlilik/*", "/aydinlatma/*", "/kullanim-kosullari/*", "/demo/")
+HEADERS += "".join(f"\n{p}\n  Content-Security-Policy: {CSP}\n" for p in CSP_PATHS)
+
 
 def assemble() -> None:
     if OUT.exists():

@@ -1,0 +1,5 @@
+# Güvenlik açığı bildirimi / Security vulnerability reports
+Contact: mailto:iletisim@mentoria.com.tr
+Expires: 2027-11-20T00:00:00.000Z
+Preferred-Languages: tr, en
+Canonical: https://mentoria.com.tr/.well-known/security.txt

@@ -108,4 +108,97 @@ void main() {
     expect(Env.webPushConfigured, isFalse);
     expect(Env.firebaseVapidKey, isNotEmpty);
   });
+
+  // Tanıtım sayfaları sıkı CSP ile yayınlanır (tool/web/build_web.py, NOTLAR
+  // §103): satır içi script, olay işleyici ve dış kaynak olursa sayfa bozulur.
+  group('tanıtım sayfaları CSP ile uyumlu', () {
+    const pages = [
+      'site/index.html',
+      'site/_legal.html',
+      'site/demo/index.html',
+      'site/404.html',
+    ];
+
+    test('satır içi script ve olay işleyici yok', () {
+      final inline = RegExp(
+        r'<script(?![^>]*\bsrc=)[^>]*>',
+        caseSensitive: false,
+      );
+      final handler = RegExp(
+        r'\son[a-z]+\s*=\s*["'
+        "'"
+        r']',
+        caseSensitive: false,
+      );
+      for (final p in pages) {
+        final html = File(p).readAsStringSync();
+        expect(
+          inline.hasMatch(html),
+          isFalse,
+          reason: '$p: satır içi <script>',
+        );
+        expect(handler.hasMatch(html), isFalse, reason: '$p: olay işleyici');
+        expect(
+          html.contains('<style'),
+          isFalse,
+          reason: '$p: satır içi <style>',
+        );
+        expect(
+          html.contains('javascript:'),
+          isFalse,
+          reason: '$p: javascript:',
+        );
+      }
+    });
+
+    test('dış kaynak yüklenmez', () {
+      final external = RegExp(
+        r'''<(?:script|link|img|iframe|source)[^>]*\s(?:src|href)=["']https?://(?!mentoria\.com\.tr)''',
+        caseSensitive: false,
+      );
+      for (final p in pages) {
+        expect(
+          external.hasMatch(File(p).readAsStringSync()),
+          isFalse,
+          reason: '$p: üçüncü taraf kaynak',
+        );
+      }
+      expect(
+        RegExp(
+          r'@import|url\(\s*["'
+          "'"
+          r']?https?:',
+        ).hasMatch(File('site/styles.css').readAsStringSync()),
+        isFalse,
+      );
+    });
+
+    test('CSP yalnızca kendi kaynağına izin verir, panellere uygulanmaz', () {
+      final py = File('tool/web/build_web.py').readAsStringSync();
+      final csp = RegExp(
+        r'CSP = \((.*?)\n\)',
+        dotAll: true,
+      ).firstMatch(py)!.group(1)!;
+      expect(csp, contains("script-src 'self'"));
+      expect(csp, contains("frame-ancestors 'none'"));
+      expect(csp, isNot(contains('unsafe-eval')));
+      expect(csp, isNot(contains("script-src 'self' 'unsafe-inline'")));
+      final paths = RegExp(r'CSP_PATHS = \((.*?)\)').firstMatch(py)!.group(1)!;
+      expect(paths, isNot(contains('/app')));
+      expect(paths, isNot(contains('/demo/panel')));
+    });
+
+    test('security.txt geçerli alanları içerir', () {
+      final t = File('site/.well-known/security.txt').readAsStringSync();
+      expect(t, contains('Contact: mailto:'));
+      expect(t, contains('Expires: '));
+      final exp = RegExp(r'Expires: (\S+)').firstMatch(t)!.group(1)!;
+      expect(
+        DateTime.parse(exp).isAfter(DateTime.now()),
+        isTrue,
+        reason:
+            'site/.well-known/security.txt süresi doldu: Expires tarihini bir yıl ileri alın',
+      );
+    });
+  });
 }
