@@ -67,6 +67,8 @@ void main() {
     addTearDown(t.view.reset);
     final tracking = InMemoryTrackingRepository(topics: _topics);
     if (grade != null) await tracking.setGradeLevel('s1', grade);
+    // Bu testler eski müfredatın sınıf süzmesini sınar (Maarif: NOTLAR §104).
+    await tracking.setCurriculum('s1', 'eski');
     await t.pumpWidget(
       ProviderScope(
         overrides: [

@@ -379,6 +379,8 @@ class _OverviewTab extends StatelessWidget {
         if (canEditGoals) ...[
           GradeLevelCard(studentId: studentId, self: false),
           const SizedBox(height: 12),
+          CurriculumCard(studentId: studentId, self: false),
+          const SizedBox(height: 12),
         ],
         if (s != null) ...[
           StatRow(

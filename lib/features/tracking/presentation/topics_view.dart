@@ -71,7 +71,11 @@ class _TopicsViewState extends ConsumerState<TopicsView> {
     final grade = effectiveGrade(
       ref.watch(studentGradeProvider(widget.studentId)).value,
     );
-    final school = grade < 12;
+    final curriculum =
+        ref.watch(studentCurriculumProvider(widget.studentId)).value ??
+        defaultCurriculum(grade);
+    // Maarif ya da 9-11. sınıf: tek liste; 12 / mezun eski müfredat: TYT / AYT.
+    final school = grade < 12 || curriculum == curriculumMaarif;
 
     return Column(
       children: [
@@ -101,9 +105,13 @@ class _TopicsViewState extends ConsumerState<TopicsView> {
                   ref.invalidate(topicProgressProvider(widget.studentId)),
               builder: (status) => _TopicsContent(
                 topics: school
-                    ? topicsForGrade(all, grade)
+                    ? topicsForGrade(all, grade, curriculum: curriculum)
                     : [
-                        for (final t in all)
+                        for (final t in topicsForGrade(
+                          all,
+                          grade,
+                          curriculum: curriculum,
+                        ))
                           if (subjectByCode(t.subjectCode).examType == _type) t,
                       ],
                 bySchoolSubject: school,

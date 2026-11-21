@@ -91,7 +91,10 @@ class _ResourceTrackingScreenState
     final grade = effectiveGrade(
       ref.watch(studentGradeProvider(widget.studentId)).value,
     );
-    final school = grade < 12;
+    final curriculum =
+        ref.watch(studentCurriculumProvider(widget.studentId)).value ??
+        defaultCurriculum(grade);
+    final school = grade < 12 || curriculum == curriculumMaarif;
 
     return Scaffold(
       appBar: AppBar(title: Text(tr('Kaynak takibi'))),
@@ -114,7 +117,11 @@ class _ResourceTrackingScreenState
               // Konular derse göre bir kez gruplanır (her ders için tüm
               // listeyi taramak yerine).
               final bySubject = <String, List<Topic>>{};
-              for (final t in topicsForGrade(all, grade)) {
+              for (final t in topicsForGrade(
+                all,
+                grade,
+                curriculum: curriculum,
+              )) {
                 (bySubject[t.subjectCode] ??= []).add(t);
               }
               for (final l in bySubject.values) {

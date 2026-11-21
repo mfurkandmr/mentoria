@@ -94,6 +94,8 @@ class ProfileScreen extends ConsumerWidget {
                     const SizedBox(height: 12),
                     GradeLevelCard(studentId: profile.id),
                     const SizedBox(height: 12),
+                    CurriculumCard(studentId: profile.id),
+                    const SizedBox(height: 12),
                     GoalsCard(studentId: profile.id, canEdit: true),
                     const SizedBox(height: 12),
                     const _ParentInviteCard(),

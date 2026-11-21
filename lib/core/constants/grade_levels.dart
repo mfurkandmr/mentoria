@@ -6,6 +6,9 @@
 //  * 12 (12. sınıf ve mezun aynı): bütün YKS konuları.
 //  * Seviye bilinmiyorsa (eski hesap) 12 gibi davranılır.
 //
+// Maarif Modeli konuları ayrı tutulur (topics.curriculum = 'maarif', sınıfı
+// kendi grade alanında); aşağıdaki eşleme yalnızca eski müfredat içindir.
+//
 // Eşleme MEB lise müfredatının ünite sırasına göre, YKS konu adları
 // üzerinden yapılmıştır (supabase/seed.sql, seed_ayt_ydt_topics.sql). Burada
 // olmayan konu yalnızca 12 / mezunda görünür. TYT ile AYT'de aynı konu
@@ -24,17 +27,52 @@ String gradeLabel(int grade) =>
 int effectiveGrade(int? grade) =>
     grade == null || grade >= 12 || grade < 9 ? 12 : grade;
 
-/// Konu bu sınıf seviyesinde görünür mü?
-bool topicVisibleForGrade(Topic t, int? grade) {
+/// Müfredat adları (`topics.curriculum`, `profiles.curriculum`).
+const curriculumEski = 'eski';
+const curriculumMaarif = 'maarif';
+
+/// Seçim yapılmadıysa sınıftan türetilen müfredat: 9-11 Maarif Modeli,
+/// 12 / mezun / bilinmeyen eski müfredat (NOTLAR §104).
+String defaultCurriculum(int? grade) =>
+    effectiveGrade(grade) < 12 ? curriculumMaarif : curriculumEski;
+
+/// Öğrencinin geçerli müfredatı: seçtiği, yoksa sınıftan türetilen.
+String effectiveCurriculum(int? grade, String? chosen) =>
+    chosen == curriculumEski || chosen == curriculumMaarif
+    ? chosen!
+    : defaultCurriculum(grade);
+
+/// "Eski müfredat" / "Maarif Modeli".
+String curriculumLabel(String curriculum) =>
+    curriculum == curriculumMaarif ? tr('Maarif Modeli') : tr('Eski müfredat');
+
+/// Konu bu sınıf seviyesinde ve müfredatta görünür mü?
+///
+///  * eski: bugünkü kural (9-11'de `topicGrades` eşlemesi, 12 / mezunda hepsi).
+///  * maarif: yalnızca öğrencinin sınıfının Maarif konuları.
+/// `curriculum` verilmezse eski müfredat sayılır (geriye uyumlu).
+bool topicVisibleForGrade(
+  Topic t,
+  int? grade, {
+  String curriculum = curriculumEski,
+}) {
   final g = effectiveGrade(grade);
+  if (curriculum == curriculumMaarif) {
+    return t.isMaarif && t.grade == g;
+  }
+  if (t.isMaarif) return false;
   if (g == 12) return true;
   return topicGrades[t.subjectCode]?[t.name]?.contains(g) ?? false;
 }
 
-/// Sınıf seviyesine göre süzülmüş konular.
-List<Topic> topicsForGrade(List<Topic> topics, int? grade) => [
+/// Sınıf seviyesine ve müfredata göre süzülmüş konular.
+List<Topic> topicsForGrade(
+  List<Topic> topics,
+  int? grade, {
+  String curriculum = curriculumEski,
+}) => [
   for (final t in topics)
-    if (topicVisibleForGrade(t, grade)) t,
+    if (topicVisibleForGrade(t, grade, curriculum: curriculum)) t,
 ];
 
 /// Ders kodu → konu adı → işlendiği sınıflar (9-11). 12. sınıf konuları

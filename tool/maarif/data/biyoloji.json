@@ -1,0 +1,489 @@
+{
+  "ders": "Biyoloji",
+  "kaynak_kok": "https://tymm.meb.gov.tr/ogretim-programlari/ders/biyoloji-dersi",
+  "siniflar": [
+    {
+      "sinif": 9,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/biyoloji-dersi/11",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "Yaşam",
+          "unite_url": "https://tymm.meb.gov.tr/biyoloji-dersi/unite/2",
+          "guncelleme": "30.09.2026",
+          "ders_saati": 44,
+          "icerik_cercevesi": [
+            "Yaşam Bilimi: Biyoloji: Biyolojinin Önemi, Biyoloji Biliminin Gelişimindeki Dönüm Noktaları, Bilimin Doğası, Bilimsel Araştırma Süreçleri, Bilim Etiği, Canlıların Ortak Özellikleri (Hücresel Yapı, Organizasyon, Beslenme, Enerji Üretimi ve Tüketimi, Boşaltım, Büyüme ve Gelişme, Metabolizma, Uyarılara Tepki, Homeostazi, Üreme, Varyasyon ve Adaptasyon)",
+            "Temel Bileşenler: İnorganik Moleküller (Su, Mineraller), Organik Moleküller (Karbohidratlar [Monosakkaritler (Riboz, Deoksiriboz, Fruktoz, Glikoz, Galaktoz)], Disakkaritler (Sükroz, Maltoz, Laktoz), Polisakkaritler (Glikojen, Nişasta, Selüloz, Kitin), Lipitler (Yağ Asitleri, Trigliseritler, Fosfolipitler, Steroitler), Proteinler (Amino Asitlerin Yapısı, Enzimler (Basit ve Bileşik Enzimler, Aktivasyon Enerjisi, Enzim-Substrat İlişkisi, Enzimatik Reaksiyonlara Etki Eden Faktörler), Nükleik Asitler (DNA ve RNA’nın Yapısı), Vitaminler (Yağda Çözünen Vitaminler, Suda Çözünen Vitaminler)"
+          ],
+          "icerik_basliklari": [
+            "Yaşam Bilimi: Biyoloji",
+            "Temel Bileşenler"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "BİY.9.1.1",
+              "metin": "Biyolojideki dönüm noktalarının insan hayatına katkılarını sorgulayabilme"
+            },
+            {
+              "kod": "BİY.9.1.2",
+              "metin": "Bilimsel araştırma süreçlerinde bilimin doğasını yorumlayabilme"
+            },
+            {
+              "kod": "BİY.9.1.3",
+              "metin": "Bilimsel araştırmaların bilim etiğine uygunluğu ile ilgili bilgi toplayabilme"
+            },
+            {
+              "kod": "BİY.9.1.4",
+              "metin": "Çevresindeki canlıların özelliklerini bilimsel olarak gözlemleyebilme"
+            },
+            {
+              "kod": "BİY.9.1.5",
+              "metin": "İnorganik moleküllerin önemi hakkında bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "BİY.9.1.6",
+              "metin": "Organik moleküllerin yapısı ve çeşitleriyle ilgili bilgi toplayabilme"
+            },
+            {
+              "kod": "BİY.9.1.7",
+              "metin": "Besinlerin yapısında karbohidrat, lipit ve protein varlığının belirlenmesiyle ilgili deney yapabilme"
+            },
+            {
+              "kod": "BİY.9.1.8",
+              "metin": "pH ve sıcaklığın enzim aktivitesini etkilediğini gösteren deney yapabilme"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "Organizasyon",
+          "unite_url": "https://tymm.meb.gov.tr/biyoloji-dersi/unite/3",
+          "guncelleme": "30.09.2026",
+          "ders_saati": 24,
+          "icerik_cercevesi": [
+            "Hücrenin Organizasyonu: Prokaryot ve Ökaryot Hücre, Hücre Zarı, Sitoplazma, Sitoplazmik Yapılar, Organeller ve Çekirdek, Hücre Zarından Madde Geçişleri (Pasif Taşıma, Basit Difüzyon, Kolaylaştırılmış Difüzyon, Ozmoz, Aktif Taşıma, Endositoz, Ekzositoz)",
+            "Sınıflandırma ve Biyoçeşitlilik: Sınıflandırmada Temel Yaklaşımlar ve Modern Sınıflandırma (Linne ve İkili Adlandırma, Sınıflandırma Kategorileri), Üç Üst Âlem (Domain) Sisteminde Yer Alan Canlılar ve Genel Özellikleri [Bakteriler, Arkeler, Ökaryotlar (Protistler, Bitkiler, Mantarlar, Hayvanlar)], Biyoçeşitlilik"
+          ],
+          "icerik_basliklari": [
+            "Hücrenin Organizasyonu",
+            "Sınıflandırma ve Biyoçeşitlilik"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "BİY.9.2.1",
+              "metin": "Hücre alt birimlerini ve bu birimlerin işlevleri arasındaki ilişkileri çözümleyebilme"
+            },
+            {
+              "kod": "BİY.9.2.2",
+              "metin": "Hücre zarından madde geçişlerini sınıflandırabilme"
+            },
+            {
+              "kod": "BİY.9.2.3",
+              "metin": "Küçük moleküllerin hücre zarından pasif geçişi ile ilgili deney yapabilme"
+            },
+            {
+              "kod": "BİY.9.2.4",
+              "metin": "Canlıları sınıflandırabilme"
+            },
+            {
+              "kod": "BİY.9.2.5",
+              "metin": "Üç üst âlem (domain) sisteminde yer alan canlıların özellikleri ile ilgili çıkarım yapabilme"
+            },
+            {
+              "kod": "BİY.9.2.6",
+              "metin": "Biyoçeşitliliği oluşturan unsurlarla ilgili bilimsel çıkarım yapabilme"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sinif": 10,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/biyoloji-dersi/12",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "Enerji",
+          "unite_url": "https://tymm.meb.gov.tr/biyoloji-dersi/unite/8",
+          "guncelleme": "30.09.2026",
+          "ders_saati": 34,
+          "icerik_cercevesi": [
+            "Güneşten Besinlere: Canlılık İçin Enerjinin Önemi (ATP’nin Yapısı ve Enerji Aktarımında ATP’nin Rolü), Işık Enerjisi Kullanılarak Besin Sentezi: Fotosentez (Işığın Kullanıldığı Tepkimeler, Işığın Kullanılmadığı Tepkimeler, Fotosentez Hızına Etki Eden Çevresel Faktörler), Işık Enerjisi Kullanılmadan Besin Sentezi: Kemosentez",
+            "Besinlerden Enerjiye: Sindirim (Hücre İçi Sindirim ve Hücre Dışı Sindirim), Canlılarda Sindirim Yapıları, İnsanda Sindirim, Emilim ve Taşınma, Hücresel Solunum (Glikoliz, Sitrik Asit Döngüsü, Elektron Taşıma Sistemi), Besinlerin Solunuma Katılma Yolları, Fermantasyon (Laktik Asit Fermantasyonu, Etil Alkol Fermantasyonu), Enerji-Metabolizma İlişkisi"
+          ],
+          "icerik_basliklari": [
+            "Güneşten Besinlere",
+            "Besinlerden Enerjiye"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "BİY.10.1.1",
+              "metin": "Canlıların yaşamına devam edebilmesi için enerjinin gerekliliğini sorgulayabilme"
+            },
+            {
+              "kod": "BİY.10.1.2",
+              "metin": "Fotosentez reaksiyonlarıyla ilgili bilimsel model oluşturabilme"
+            },
+            {
+              "kod": "BİY.10.1.3",
+              "metin": "Fotosentezde kullanılan ve üretilen maddelerle ilgili deney yapabilme"
+            },
+            {
+              "kod": "BİY.10.1.4",
+              "metin": "Kemosentez hakkında bilgi toplayabilme"
+            },
+            {
+              "kod": "BİY.10.1.5",
+              "metin": "Canlılarda sindirim çeşitlerini ve yapılarını sınıflandırabilme"
+            },
+            {
+              "kod": "BİY.10.1.6",
+              "metin": "İnsanda enerji eldesi için sindirim, emilim ve taşıma süreçlerinin gerekliliği ile ilgili bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "BİY.10.1.7",
+              "metin": "Hücresel solunum reaksiyonlarıyla ilgili bilimsel model oluşturabilme"
+            },
+            {
+              "kod": "BİY.10.1.8",
+              "metin": "Farklı besin gruplarından enerji eldesi süreçlerini karşılaştırabilme"
+            },
+            {
+              "kod": "BİY.10.1.9",
+              "metin": "Fermantasyon ile ilgili deney yapabilme"
+            },
+            {
+              "kod": "BİY.10.1.10",
+              "metin": "Besinlerden elde edilen enerjinin canlının metabolik süreçlerine katkısı ile ilgili bilimsel çıkarım yapabilme"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "Ekoloji",
+          "unite_url": "https://tymm.meb.gov.tr/biyoloji-dersi/unite/10",
+          "guncelleme": "30.09.2026",
+          "ders_saati": 34,
+          "icerik_cercevesi": [
+            "Ekosistemler: Ekosistemin Bileşenleri (Cansız ve Canlı Bileşenler, Popülasyon, Komünite, Ekosistem), Tür İçi ve Türler Arası Etkileşimler, Süksesyon, Popülasyon Dinamikleri, Ekosistemde Madde ve Enerji Akışı (Besin Zinciri, Besin Ağı, Ekolojik Piramitler, Biyolojik Birikim ve Etkileri), Madde Döngüleri (Su, Karbon, Azot Döngüsü)",
+            "Ekolojik Sürdürülebilirlik: Ekolojik Sürdürülebilirliğin Önemi, Ekolojik Sürdürülebilirliği Kısıtlayan/Engelleyen Durumlar (Habitat Kaybı/Parçalanması, Kirlilik ve Çevre Sorunları, Biyoçeşitlilik Kaybı), Ekolojik Sürdürülebilirliğin Sağlanması (Ekolojik Ayak İzinin Küçültülmesi, Doğal Kaynakların ve Biyoçeşitliliğin Korunması, Atık Yönetimi)"
+          ],
+          "icerik_basliklari": [
+            "Ekosistemler",
+            "Ekolojik Sürdürülebilirlik"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "BİY.10.2.1",
+              "metin": "Ekosistemin cansız ve canlı bileşenleri arasındaki ilişkileri çözümleyebilme"
+            },
+            {
+              "kod": "BİY.10.2.2",
+              "metin": "Komünitelerde ve popülasyonlarda görülen etkileşimleri ve değişimleri sorgulayabilme"
+            },
+            {
+              "kod": "BİY.10.2.3",
+              "metin": "Ekosistemdeki enerji akışıyla ilgili tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "BİY.10.2.4",
+              "metin": "Madde döngüleri ile ilgili bilimsel model oluşturabilme"
+            },
+            {
+              "kod": "BİY.10.2.5",
+              "metin": "Ekolojik sürdürülebilirliğin önemini yorumlayabilme"
+            },
+            {
+              "kod": "BİY.10.2.6",
+              "metin": "Çevresinde sürdürülebilirliği kısıtlayan durumlarla ilgili gözleme dayalı tahmin yapabilme"
+            },
+            {
+              "kod": "BİY.10.2.7",
+              "metin": "Ekolojik ayak izini küçültebilme yollarını bilimsel olarak sorgulayabilme"
+            },
+            {
+              "kod": "BİY.10.2.8",
+              "metin": "Doğal kaynakların ve biyoçeşitliliğin korunması için alınan önlemleri sorgulayabilme"
+            },
+            {
+              "kod": "BİY.10.2.9",
+              "metin": "Çevresinde atık yönetimi konusunda yapılan çalışmalarla ilgili bilgi toplayabilme"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sinif": 11,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/biyoloji-dersi/13",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "Tepki",
+          "unite_url": "https://tymm.meb.gov.tr/biyoloji-dersi/unite/13",
+          "guncelleme": "30.09.2026",
+          "ders_saati": 78,
+          "icerik_cercevesi": [
+            "Canlılık ve Tepki: Farklı Canlıların Uyaranlara Karşı Oluşturduğu Tepkiler",
+            "Bitkilerde Tepki: Bitkilerde Hormonlar Bitkilerde Tepki Mekanizmaları (Tropizma, Nasti)",
+            "Hayvanlarda Tepki: Uyartıların Alınması (Reseptörler, Uyaran Çeşitleri), Nöronların Yapısı, Nöronlarda Sinyal İletimi ve Sinaps, Duyu Organları, Uyarıların Yorumlanması, Hayvanlarda Sinir Sistemi Farklılıkları, İnsan Sinir Sisteminin Yapısı, Refleksler",
+            "Uyartıya Mekanik Tepki: Kemik, Eklem ve Kasların Hareketteki Rolü, Kemik ve Kasların Birlikte Çalışma İlişkisi, Kaslarda Kasılmanın Kontrolü, Kasların Kasılma Mekanizması",
+            "Bağışıklık: Doğal Bağışıklık, Kazanılmış Bağışıklık (Aktif ve Pasif Bağışıklık), Alerji"
+          ],
+          "icerik_basliklari": [
+            "Canlılık ve Tepki",
+            "Bitkilerde Tepki",
+            "Hayvanlarda Tepki",
+            "Uyartıya Mekanik Tepki",
+            "Bağışıklık"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "BİY.11.1.1",
+              "metin": "Farklı canlıların uyaranlara karşı oluşturduğu tepki mekanizmaları ile ilgili tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "BİY.11.1.2",
+              "metin": "Bitkisel hormonların etkileri hakkında akıl yürütebilme"
+            },
+            {
+              "kod": "BİY.11.1.3",
+              "metin": "Bitkilerdeki tepki mekanizmalarını sınıflandırabilme"
+            },
+            {
+              "kod": "BİY.11.1.4",
+              "metin": "Bitkilerde yönelme hareketlerini gözlemleyebileceği deney yapabilme"
+            },
+            {
+              "kod": "BİY.11.1.5",
+              "metin": "Duyu reseptörlerini ve duyu reseptörlerinin bulunduğu duyu organlarını sınıflandırabilme"
+            },
+            {
+              "kod": "BİY.11.1.6",
+              "metin": "Hayvanlardaki sinir sistemi farklılıkları ile ilgili analojik akıl yürütebilme"
+            },
+            {
+              "kod": "BİY.11.1.7",
+              "metin": "İnsanda sinir sistemi yapısını çözümleyebilme"
+            },
+            {
+              "kod": "BİY.11.1.8",
+              "metin": "Refleks olayını yorumlayabilme"
+            },
+            {
+              "kod": "BİY.11.1.9",
+              "metin": "Harekete dayalı tepkinin oluşmasında iskelet, kas ve eklemlerin eş güdümlü çalışmasıyla ilgili eleştirel düşünebilme"
+            },
+            {
+              "kod": "BİY.11.1.10",
+              "metin": "İskelet kaslarının kasılma ve gevşeme mekanizması ile ilgili bilimsel model oluşturabilme"
+            },
+            {
+              "kod": "BİY.11.1.11",
+              "metin": "Bağışıklığı sınıflandırabilme"
+            },
+            {
+              "kod": "BİY.11.1.12",
+              "metin": "Alerjik tepkilerin oluşumunu sorgulayabilme"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "Homeostazi",
+          "unite_url": "https://tymm.meb.gov.tr/biyoloji-dersi/unite/16",
+          "guncelleme": "30.09.2026",
+          "ders_saati": 60,
+          "icerik_cercevesi": [
+            "Homeostazi ve Canlılar İçin Önemi: Farklı Canlı Türlerindeki Homeostatik Yapı ve Sistemler, Homeostatik Süreçler, Pozitif ve Negatif Geri Bildirim, Sinir Sistemi ve Homeostazi, Endokrin Sistem ve Homeostazi, Dolaşım Sistemi ve Homeostazi, Solunum Sistemi ve Homeostazi, Boşaltım Sistemi ve Homeostazi, Sistemlerin Es Güdümlü Çalışması",
+            "Homeostazinin Sağlanamadığı Durumlarda Oluşabilecek Sağlık Problemleri: Homeostazinin Sağlanamadığı Durumlarda Oluşabilecek Sağlık Problemleri (Diabetes Mellitus, Diabetes İnsipidus, Kan Basıncı Anormallikleri, Obezite)"
+          ],
+          "icerik_basliklari": [
+            "Homeostazi ve Canlılar İçin Önemi",
+            "Homeostazinin Sağlanamadığı Durumlarda Oluşabilecek Sağlık Problemleri"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "BİY.11.2.1",
+              "metin": "Homeostazinin canlılar için önemiyle ilgili bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "BİY.11.2.2",
+              "metin": "Homeostatik süreçleri sorgulayabilme"
+            },
+            {
+              "kod": "BİY.11.2.3",
+              "metin": "Pozitif ve negatif geri bildirim mekanizmalarını karşılaştırabilme"
+            },
+            {
+              "kod": "BİY.11.2.4",
+              "metin": "Homeostazinin sağlanmasında sinir sisteminin etkilerini çözümleyebilme"
+            },
+            {
+              "kod": "BİY.11.2.5",
+              "metin": "Endokrin sisteminin homeostazi işlevine yönelik bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "BİY.11.2.6",
+              "metin": "Dolaşım sistemi ve homeostazi arasındaki ilişki ile ilgili bilimsel model oluşturabilme"
+            },
+            {
+              "kod": "BİY.11.2.7",
+              "metin": "Solunum sisteminin homeostazinin sağlanmasındaki rolünü kanıtlarla ortaya koyabilme"
+            },
+            {
+              "kod": "BİY.11.2.8",
+              "metin": "Boşaltım sisteminin homeostazi işlevine yönelik bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "BİY.11.2.9",
+              "metin": "Homeostazinin sağlanmasında sistemlerin eş güdümlü çalışmasıyla ilgili eleştirel düşünebilme"
+            },
+            {
+              "kod": "BİY.11.2.10",
+              "metin": "Homeostazinin sağlanamadığı durumlarda oluşabilecek sağlık problemleri hakkında hipotez oluşturabilme"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sinif": 12,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/biyoloji-dersi/14",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "Üreme",
+          "unite_url": "https://tymm.meb.gov.tr/biyoloji-dersi/unite/19",
+          "guncelleme": "30.09.2026",
+          "ders_saati": 69,
+          "icerik_cercevesi": [
+            "Hücre Bölünmeleri ve Üreme: Hücre Bölünmesinin Canlılar İçin Önemi, Kromozom Yapısı ve Özellikleri, Hücre Döngüsü (İnterfaz, Mitoz ve Sitokinez, Mayoz), Kromozomlarda Ayrılmama",
+            "Üreme Çeşitleri: Eşeysiz Üreme (İkiye Bölünme, Tomurcuklanma, Sporla Üreme, Rejenerasyon, Partenogenez, Vejetatif Üreme), Eşeyli Üreme (Gametogenez, Döllenme), Eşeysiz ve Eşeyli Üreme Arasındaki Farklar",
+            "Üreme ve Gelişme: İnsanda Üreme ve Gelişme (Dişi ve Erkek Üreme Sistemlerinin Yapısı, Menstrual Döngü, Döllenme, Kısırlık ve Tedavi Teknikleri, Embriyonik Gelişim), Bitkilerde Eşeyli Üreme ve Gelişme (Çiçeğin Kısımları ve Görevleri, Çiçekli Bitkilerde Tozlaşma, Döllenme, Tohum ve Meyvenin Oluşumu, Çimlenme)"
+          ],
+          "icerik_basliklari": [
+            "Hücre Bölünmeleri ve Üreme",
+            "Üreme Çeşitleri",
+            "Üreme ve Gelişme"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "BİY.12.1.1",
+              "metin": "Hücre bölünmesinin ve üremenin canlılar için önemini yorumlayabilme"
+            },
+            {
+              "kod": "BİY.12.1.2",
+              "metin": "Hücredeki genetik materyalin organizasyonunu çözümleyebilme"
+            },
+            {
+              "kod": "BİY.12.1.3",
+              "metin": "Canlılarda hücre döngüsü ve hücre bölünmesini sorgulayabilme"
+            },
+            {
+              "kod": "BİY.12.1.4",
+              "metin": "Kromozomlarda ayrılmamanın sonuçlarıyla ilgili bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "BİY.12.1.5",
+              "metin": "Üreme hücrelerinin oluşum süreci ve yapılarını karşılaştırabilme"
+            },
+            {
+              "kod": "BİY.12.1.6",
+              "metin": "Eşeysiz ve eşeyli üreme ile ilgili bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "BİY.12.1.7",
+              "metin": "Erkek ve dişi üreme sistemlerinin yapısı ve işleyişiyle ilgili bilgi toplayabilme"
+            },
+            {
+              "kod": "BİY.12.1.8",
+              "metin": "Embriyonik gelişimle ilgili bilgi toplayabilme"
+            },
+            {
+              "kod": "BİY.12.1.9",
+              "metin": "Çiçeğin kısımları ve görevleriyle ilgili bilimsel gözlem yapabilme"
+            },
+            {
+              "kod": "BİY.12.1.10",
+              "metin": "Çimlenmeyi etkileyen faktörleri gözlemleyebileceği deney yapabilme"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "Gen",
+          "unite_url": "https://tymm.meb.gov.tr/biyoloji-dersi/unite/22",
+          "guncelleme": "30.09.2026",
+          "ders_saati": 69,
+          "icerik_cercevesi": [
+            "Nükleik Asitler ve Gen İfadesi: Nükleik Asitlerin Canlılıktaki Rolü, DNA ve RNA’nın Moleküler Yapısı, DNA Replikasyonu, Gen İfadesi (Gen, Genetik Kod, Transkripsiyon, Translasyon), Genetik Yapıdaki Değişiklikler",
+            "Kalıtım: Kalıtımın Temel İlkeleri (Monohibrit Çaprazlama, Dihibrit Çaprazlama, Kontrol (Geri) Çaprazlama), Mendel Kalıtımından Farklılıklar (Eş Baskınlık, Çok Alellilik), Eşeye Bağlı Kalıtım (Eşeyin Kromozomal Temeli, X Bağlı Kalıtım, Y Bağlı Kalıtım), Soyağacı Analizi, Genetik Testler ve Genetik Danışmanlık",
+            "Biyoteknoloji: Biyoteknolojinin Tıp Alanındaki Uygulamaları (İlaç Üretimi, Hücre Kültürü, Kök Hücre, Rekombinant Aşılar, Protein ve Hormon Üretimi), Biyoteknolojinin Tarım Alanındaki Uygulamaları, Bitki Doku Kültürü, Ökaryotik Hücrelere Gen Aktarımı, Biyoteknolojinin Endüstri, Çevre ve Adli Tıp Alanlarındaki Uygulamaları, Biyoteknoloji ve Etik"
+          ],
+          "icerik_basliklari": [
+            "Nükleik Asitler ve Gen İfadesi",
+            "Kalıtım",
+            "Biyoteknoloji"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "BİY.12.2.1",
+              "metin": "Nükleik asitlerin yapısını ve canlılıktaki rolünü sorgulayabilme"
+            },
+            {
+              "kod": "BİY.12.2.2",
+              "metin": "DNA replikasyonunun bilimsel modelini oluşturabilme"
+            },
+            {
+              "kod": "BİY.12.2.3",
+              "metin": "Genetik bilginin ürüne dönüşüm sürecini çözümleyebilme"
+            },
+            {
+              "kod": "BİY.12.2.4",
+              "metin": "Genetik yapıdaki değişikliklerin canlı yaşamına etkileri hakkında eleştirel düşünebilme"
+            },
+            {
+              "kod": "BİY.12.2.5",
+              "metin": "Mendel kalıtım ilkelerinin geçerli olduğu genetik problemleri çözebilme"
+            },
+            {
+              "kod": "BİY.12.2.6",
+              "metin": "Eş baskınlık ve çok alellilikle ilgili deney yapabilme"
+            },
+            {
+              "kod": "BİY.12.2.7",
+              "metin": "Eşeye bağlı kalıtıma ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "BİY.12.2.8",
+              "metin": "Genetik testlerin ve genetik danışmanlığın önemini sorgulayabilme"
+            },
+            {
+              "kod": "BİY.12.2.9",
+              "metin": "Biyoteknolojinin uygulama alanları ile ilgili bilgi toplayabilme"
+            },
+            {
+              "kod": "BİY.12.2.10",
+              "metin": "Biyoteknolojik uygulamaların etik boyutunu eleştirel düşünebilme"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "belirsizlikler": [
+    "Biyoloji programı 'Tema' yapısındadır; sınıf başına 2 tema. 12. sınıf kitabı ders sayfasında listelenmemiş.",
+    "Sınıf numarası eşlemesi ders sayfasındaki bağlantı sırası ve sınıf sayfası başlığıyla doğrulandı: .../11=9. sınıf, .../12=10. sınıf, .../13=11. sınıf, .../14=12. sınıf.",
+    "Ders saati yalnızca ünite/tema düzeyinde sayfada verilir; alt konu bazında saat yok.",
+    "Ünite sayfalarında alt ünite bağlantısı yok; ünite kimlikleri arasındaki boşluklar sınıf sayfasında listelenmeyen kayıtlardır, bu dosyalara alınmadı.",
+    "icerik_cercevesi: sayfadaki kalın başlık + altındaki düz metin 'Başlık: detay' olarak birleştirildi (ayırıcı ': ' tarafımdan eklendi); icerik_basliklari yalnızca kalın başlıkları içerir. Kalın başlık olmayan sayfalarda her madde ayrı satırdır ve icerik_basliklari boştur.",
+    "ogrenme_ciktilari.metin: kalın başlık cümlesi (kod hariç); a), b) gibi alt süreç bileşenleri alınmadı.",
+    "Veriler HTML'den doğrudan ayrıştırıldı (tymm.meb.gov.tr); 'guncelleme' sayfadaki 'Güncelleme tarihi' değeridir."
+  ]
+}

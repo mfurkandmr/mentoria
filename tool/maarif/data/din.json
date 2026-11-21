@@ -1,0 +1,635 @@
+{
+  "ders": "Din Kültürü ve Ahlak Bilgisi",
+  "kaynak_kok": "https://tymm.meb.gov.tr/ogretim-programlari/ders/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim",
+  "siniflar": [
+    {
+      "sinif": 9,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/11",
+      "sayfa_basligi": "Din Kültürü ve Ahlak Bilgisi Dersi (Ortaöğretim) 9.Sınıf",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "1. Ünite: Allah-İnsan İlişkisi",
+          "unite_url": "https://tymm.meb.gov.tr/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/unite/139",
+          "guncelleme": null,
+          "ders_saati": 14,
+          "icerik_cercevesi": [
+            "İnsan ve İnsanın Yaratılışı",
+            "Doğruyu Arayan Bir Varlık Olarak İnsan",
+            "İbadet ve Dua Eden Bir Varlık Olarak İnsan",
+            "Kur’an’dan Mesajlar"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "DKAB.9.1.1",
+              "metin": "İnsanın yaratılışını ve özelliklerini ayetlerden hareketle tefekkür ederek sorgulayabilme"
+            },
+            {
+              "kod": "DKAB.9.1.2",
+              "metin": "İnsanın doğruyu arayan bir varlık olarak bilgiye ulaşma yolları hakkında eleştirel düşünebilme"
+            },
+            {
+              "kod": "DKAB.9.1.3",
+              "metin": "Allah (cc) ile iletişimin ibadet ve dua ile sağlandığını yansıtabilme"
+            },
+            {
+              "kod": "DKAB.9.1.4",
+              "metin": "Rum suresi 17-27. ayetlerin mesajlarını özetleyebilme"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "2. Ünite: İslam’da İnanç Esasları",
+          "unite_url": "https://tymm.meb.gov.tr/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/unite/140",
+          "guncelleme": null,
+          "ders_saati": 16,
+          "icerik_cercevesi": [
+            "İman ve İmanın mahiyeti",
+            "İslam’da İman Esasları",
+            "İmanın Bireye ve Topluma Kazandırdıkları",
+            "Kur’an’dan Mesajlar"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "DKAB.9.2.1",
+              "metin": "İman ve imanın mahiyetiyle ilgili konuları sorgulayabilme"
+            },
+            {
+              "kod": "DKAB.9.2.2",
+              "metin": "İslam’ın iman esaslarını ayet ve hadisler bağlamında özetleyebilme"
+            },
+            {
+              "kod": "DKAB.9.2.3",
+              "metin": "İmanın bireye ve topluma kazandırdıklarını yansıtabilme"
+            },
+            {
+              "kod": "DKAB.9.2.4",
+              "metin": "Bakara suresinin 177. ayetindeki mesajları özetleyebilme"
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "3. Ünite: İslam’da İbadetler",
+          "unite_url": "https://tymm.meb.gov.tr/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/unite/141",
+          "guncelleme": null,
+          "ders_saati": 14,
+          "icerik_cercevesi": [
+            "İslam’da İbadetin Kapsamı",
+            "İslam’da Temel İbadetler",
+            "İnsan ve İbadet",
+            "Kur’an’dan Mesajlar"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "DKAB.9.3.1",
+              "metin": "İslam’da ibadet ve ibadetin temel ilkeleri hakkında bilgi toplayabilme"
+            },
+            {
+              "kod": "DKAB.9.3.2",
+              "metin": "İslam’da temel ibadetleri sınıflandırabilme"
+            },
+            {
+              "kod": "DKAB.9.3.3",
+              "metin": "İnsan ve ibadet ilişkisini yorumlayabilme"
+            },
+            {
+              "kod": "DKAB.9.3.4",
+              "metin": "Bakara suresi 21, Zariyat suresi 56 ve Hicr suresi 99. ayetlerin mesajlarını özetleyebilme"
+            }
+          ]
+        },
+        {
+          "sira": 4,
+          "ad": "4. Ünite: İslam’da Ahlak İlkeleri",
+          "unite_url": "https://tymm.meb.gov.tr/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/unite/142",
+          "guncelleme": null,
+          "ders_saati": 12,
+          "icerik_cercevesi": [
+            "İslam’da Ahlakın Mahiyeti",
+            "Ahlakın Temel Unsurları",
+            "Ahlaki Tutum ve Davranışlar",
+            "Kur’an’dan Mesajlar"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "DKAB.9.4.1",
+              "metin": "İslam’da ahlakın mahiyetini sorgulayabilme"
+            },
+            {
+              "kod": "DKAB.9.4.2",
+              "metin": "Ahlakın temel unsurlarını sentezleyebilme"
+            },
+            {
+              "kod": "DKAB.9.4.3",
+              "metin": "Ahlaki tutum ve davranışlarla ilgili eleştirel düşünebilme"
+            },
+            {
+              "kod": "DKAB.9.4.4",
+              "metin": "İsra suresi 23-29. ayetlerdeki mesajları özetleyebilme"
+            }
+          ]
+        },
+        {
+          "sira": 5,
+          "ad": "5. Ünite: Kur’an’a Göre Hz. Muhammed",
+          "unite_url": "https://tymm.meb.gov.tr/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/unite/143",
+          "guncelleme": null,
+          "ders_saati": 12,
+          "icerik_cercevesi": [
+            "Hz. Muhammed’in Beşerî ve Peygamberlik Yönü",
+            "Hz. Muhammed’in Örnekliği",
+            "Kültürümüzde Hz. Muhammed ve Ehlibeyt Sevgisi",
+            "Kur’an’dan Mesajlar"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "DKAB.9.5.1",
+              "metin": "Hz. Muhammed’in (sav) beşerî ve peygamberlik yönünü özetleyebilme"
+            },
+            {
+              "kod": "DKAB.9.5.2",
+              "metin": "Hz. Muhammed’in (sav) örnekliğini esas alarak kendi bakış açısını yapılandırabilme"
+            },
+            {
+              "kod": "DKAB.9.5.3",
+              "metin": "Kültürümüzde Hz. Muhammed (sav) ve Ehlibeyt sevgisini yorumlayabilme"
+            },
+            {
+              "kod": "DKAB.9.5.4",
+              "metin": "Ahzab suresinin 45-46 ve Nahl suresinin 43-44. ayetlerindeki mesajları özetleyebilme"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sinif": 10,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/12",
+      "sayfa_basligi": "Din Kültürü ve Ahlak Bilgisi Dersi (Ortaöğretim) 10.Sınıf",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "1. Ünite: İslam’da Varlık Ve Bilgi",
+          "unite_url": "https://tymm.meb.gov.tr/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/unite/144",
+          "guncelleme": null,
+          "ders_saati": 14,
+          "icerik_cercevesi": [
+            "İslam’da Bilgi ve Bilginin Kaynakları",
+            "Allah-Âlem İlişkisi",
+            "Kur’an’dan Mesajlar"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "DKAB.10.1.1",
+              "metin": "İslam’da bilginin yerini ve kaynaklarını çözümleyebilme"
+            },
+            {
+              "kod": "DKAB.10.1.2",
+              "metin": "Allah-âlem ilişkisini tefekkür ederek sorgulayabilme"
+            },
+            {
+              "kod": "DKAB.10.1.3",
+              "metin": "İsra suresi 36 ve Mülk suresi 23. ayetlerin mesajlarını özetleyebilme"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "2. Ünite: Allah’ı Tanımak",
+          "unite_url": "https://tymm.meb.gov.tr/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/unite/145",
+          "guncelleme": null,
+          "ders_saati": 16,
+          "icerik_cercevesi": [
+            "Allah’ın Varlığının Delilleri",
+            "Allah’ı İsim ve Sıfatlarıyla Tanımak",
+            "Kur’an’dan Mesajlar"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "DKAB.10.2.1",
+              "metin": "Allah’ın (cc) varlığının delilleri üzerine akıl yürütebilme"
+            },
+            {
+              "kod": "DKAB.10.2.2",
+              "metin": "Allah’ı (cc) gereği gibi tanıyabilmek için O’nun isim ve sıfatlarını hayata yansıması bakımından sentezleyebilme"
+            },
+            {
+              "kod": "DKAB.10.2.3",
+              "metin": "Haşr suresi 22-24. ayetlerin mesajlarını özetleyebilme"
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "3. Ünite: İslam’ın Evrensel Mesajları",
+          "unite_url": "https://tymm.meb.gov.tr/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/unite/146",
+          "guncelleme": null,
+          "ders_saati": 14,
+          "icerik_cercevesi": [
+            "İslam’ın Tevhit İlkesi",
+            "İslam’da Adalet ve Eşitlik",
+            "İslam ve Barış",
+            "Kur’an’dan Mesajlar"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "DKAB.10.3.1",
+              "metin": "İslam’ın evrensel mesajlarından biri olan tevhit ilkesi hakkında bilgi toplayabilme"
+            },
+            {
+              "kod": "DKAB.10.3.2",
+              "metin": "İslam’ın adalet ve eşitlik ilkeleri arasındaki ilişkiyi sentezleyebilme"
+            },
+            {
+              "kod": "DKAB.10.3.3",
+              "metin": "İslam ve barış ilişkisini yorumlayabilme"
+            },
+            {
+              "kod": "DKAB.10.3.4",
+              "metin": "Nahl suresi 90, Nisa suresi 58 ve Bakara suresi 208. ayetlerin mesajlarını özetleyebilme"
+            }
+          ]
+        },
+        {
+          "sira": 4,
+          "ad": "4. Ünite: Din, Çevre Ve Teknoloji",
+          "unite_url": "https://tymm.meb.gov.tr/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/unite/147",
+          "guncelleme": null,
+          "ders_saati": 12,
+          "icerik_cercevesi": [
+            "İnsan, Çevre ve Ahlak",
+            "Teknoloji ve Ahlak",
+            "Çevre ve Teknoloji",
+            "Kur’an’dan Mesajlar"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "DKAB.10.4.1",
+              "metin": "İnsan, çevre ve ahlak arasındaki ilişkiyi yorumlayabilme"
+            },
+            {
+              "kod": "DKAB.10.4.2",
+              "metin": "Teknoloji ve ahlak ilişkisini çözümleyebilme"
+            },
+            {
+              "kod": "DKAB.10.4.3",
+              "metin": "Çevre ve teknoloji ilişkisini özetleyebilme"
+            },
+            {
+              "kod": "DKAB.10.4.4",
+              "metin": "Rum suresi 41. ayetin mesajlarını özetleyebilme"
+            }
+          ]
+        },
+        {
+          "sira": 5,
+          "ad": "5. Ünite: İslam Düşüncesinde İtikadi-Siyasi Ve Fıkhi Yorumlar",
+          "unite_url": "https://tymm.meb.gov.tr/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/unite/148",
+          "guncelleme": null,
+          "ders_saati": 12,
+          "icerik_cercevesi": [
+            "Dinî Yorum Farklılıklarının Sebepleri",
+            "İslam Düşüncesinde İtikadi-Siyasi ve Fıkhi Yorumlar",
+            "Kur’an’dan Mesajlar"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "DKAB.10.5.1",
+              "metin": "Dinî yorum farklılıklarının ortaya çıkış sebeplerini sentezleyebilme"
+            },
+            {
+              "kod": "DKAB.10.5.2",
+              "metin": "İslam düşüncesindeki itikadi-siyasi ve fıkhi yorumları karşılaştırabilme"
+            },
+            {
+              "kod": "DKAB.10.5.3",
+              "metin": "Hucurat suresi 13. ayetin mesajını özetleyebilme"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sinif": 11,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/13",
+      "sayfa_basligi": "Din Kültürü ve Ahlak Bilgisi Dersi (Ortaöğretim) 11.Sınıf",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "1. Ünite: Kader, İrade Ve Sorumluluk",
+          "unite_url": "https://tymm.meb.gov.tr/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/unite/149",
+          "guncelleme": null,
+          "ders_saati": 14,
+          "icerik_cercevesi": [
+            "İnsan ve Kader",
+            "Akıl, İrade ve Sorumluluk Sahibi Bir Varlık Olarak İnsan",
+            "Kur’an’dan Mesajlar"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "DKAB.11.1.1",
+              "metin": "Kader ve kaderle ilgili kavramları yapılandırabilme"
+            },
+            {
+              "kod": "DKAB.11.1.2",
+              "metin": "İnsan, akıl, irade ve sorumluluk kavramları arasındaki ilişki hakkında eleştirel düşünebilme"
+            },
+            {
+              "kod": "DKAB.11.1.3",
+              "metin": "Bakara suresi 286. ayetin mesajlarını özetleyebilme"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "2. Ünite: Din, Felsefe, Bilim Ve Sanat",
+          "unite_url": "https://tymm.meb.gov.tr/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/unite/150",
+          "guncelleme": null,
+          "ders_saati": 14,
+          "icerik_cercevesi": [
+            "Din",
+            "Din, Felsefe ve Bilim",
+            "Din ve Sanat",
+            "Kur’an’dan Mesajlar"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "DKAB.11.2.1",
+              "metin": "Din tanımlarını ve din ile ilgili yaklaşımları genelleyebilme"
+            },
+            {
+              "kod": "DKAB.11.2.2",
+              "metin": "Dinin felsefe ve bilimle ilişkisini sorgulayabilme"
+            },
+            {
+              "kod": "DKAB.11.2.3",
+              "metin": "Din ve sanat arasındaki ilişkiyi çözümleyebilme"
+            },
+            {
+              "kod": "DKAB.11.2.4",
+              "metin": "Al-i İmran suresi 190-191. ayetlerin mesajlarını özetleyebilme"
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "3. Ünite: İslam Medeniyeti Ve Gönül Coğrafyamız",
+          "unite_url": "https://tymm.meb.gov.tr/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/unite/151",
+          "guncelleme": null,
+          "ders_saati": 14,
+          "icerik_cercevesi": [
+            "Medeniyetin Oluşumu",
+            "İslam Medeniyetinin İzleri",
+            "İslam Medeniyetinin Bugünü ve Geleceği",
+            "Kur’an’dan Mesajlar"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "DKAB.11.3.1",
+              "metin": "Medeniyetin oluşumuna etki eden unsurları çözümleyebilme"
+            },
+            {
+              "kod": "DKAB.11.3.2",
+              "metin": "İslam medeniyetinin izlerini özetleyebilme"
+            },
+            {
+              "kod": "DKAB.11.3.3",
+              "metin": "İslam medeniyetinin bugünü ve geleceği hakkında akıl yürütebilme"
+            },
+            {
+              "kod": "DKAB.11.3.4",
+              "metin": "Rum suresi 9. ayetin mesajlarını özetleyebilme"
+            }
+          ]
+        },
+        {
+          "sira": 4,
+          "ad": "4. Ünite: İnançla İlgili Meseleler",
+          "unite_url": "https://tymm.meb.gov.tr/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/unite/152",
+          "guncelleme": null,
+          "ders_saati": 16,
+          "icerik_cercevesi": [
+            "İnançla İlgili Felsefi Yaklaşımlar",
+            "Kötülük Problemi",
+            "Yeni Dinî Hareketler ve Din İstismarı",
+            "Kur’an’dan Mesajlar"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "DKAB.11.4.1",
+              "metin": "İnançla ilgili felsefi yaklaşımları sorgulayabilme"
+            },
+            {
+              "kod": "DKAB.11.4.2",
+              "metin": "Kötülük problemi hakkında eleştirel düşünebilme"
+            },
+            {
+              "kod": "DKAB.11.4.3",
+              "metin": "Din istismarının ve yeni dinî hareketlerin ortaya çıkış sebeplerinisonuçlarını sorgulayabilme"
+            },
+            {
+              "kod": "DKAB.11.4.4",
+              "metin": "Hadid suresi 1-5. ayetlerin mesajlarını özetleyebilme"
+            }
+          ]
+        },
+        {
+          "sira": 5,
+          "ad": "5. Ünite: Yahudilik Ve Hristiyanlık",
+          "unite_url": "https://tymm.meb.gov.tr/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/unite/153",
+          "guncelleme": null,
+          "ders_saati": 10,
+          "icerik_cercevesi": [
+            "Yahudilik",
+            "Hristiyanlık"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "DKAB.11.5.1",
+              "metin": "Yahudilik ve Hristiyanlık dinlerinin tarihini ve temel özelliklerini özetleyebilme"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sinif": 12,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/14",
+      "sayfa_basligi": "Din Kültürü ve Ahlak Bilgisi Dersi (Ortaöğretim) 12.Sınıf",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "1. Ünite: Kur’an-ı Kerim",
+          "unite_url": "https://tymm.meb.gov.tr/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/unite/154",
+          "guncelleme": null,
+          "ders_saati": 14,
+          "icerik_cercevesi": [
+            "Kur’an-ı Kerim’in Tarihi",
+            "Kur’an-ı Kerim’in Ana Konuları ve Temel Özellikleri",
+            "Kur’an-ı Kerim’in Anlaşılmasında Temel İlkeler",
+            "Kur’an-ı Kerim ve Kültürümüz",
+            "Kur’an’dan Mesajlar"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "DKAB.12.1.1",
+              "metin": "Kur’an-ı Kerim’in tarihî süreci hakkında bilgi toplayabilme"
+            },
+            {
+              "kod": "DKAB.12.1.2",
+              "metin": "Kur’an-ı Kerim’in ana konularını ve temel özelliklerini sentezleyebilme"
+            },
+            {
+              "kod": "DKAB.12.1.3",
+              "metin": "Kur’an-ı Kerim’in anlaşılmasında temel ilkeleri özetleyebilme"
+            },
+            {
+              "kod": "DKAB.12.1.4",
+              "metin": "Kur’an-ı Kerim’in kültürümüze etkisini yorumlayabilme"
+            },
+            {
+              "kod": "DKAB.12.1.5",
+              "metin": "İsra suresi 9. ayetin mesajlarını özetleyebilme"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "2. Ünite: Din Ve Aile",
+          "unite_url": "https://tymm.meb.gov.tr/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/unite/155",
+          "guncelleme": null,
+          "ders_saati": 12,
+          "icerik_cercevesi": [
+            "İslam’da Aile",
+            "Aile İçi İletişim",
+            "Aile ve Ahlaki Değerler",
+            "Kur’an’dan Mesajlar"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "DKAB.12.2.1",
+              "metin": "İslam’ın aile kurumuna verdiği önemi yorumlayabilme"
+            },
+            {
+              "kod": "DKAB.12.2.2",
+              "metin": "Aile içi iletişim ve etkileşim sürecini çözümleyebilme"
+            },
+            {
+              "kod": "DKAB.12.2.3",
+              "metin": "Aile hayatında dikkat edilmesi gereken ahlaki değerleri özetleyebilme"
+            },
+            {
+              "kod": "DKAB.12.2.4",
+              "metin": "Ahkaf suresi 15. ayetin mesajlarını özetleyebilme"
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "3. Ünite: Güncel Dinî Meseleler",
+          "unite_url": "https://tymm.meb.gov.tr/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/unite/156",
+          "guncelleme": null,
+          "ders_saati": 14,
+          "icerik_cercevesi": [
+            "Dinî Meselelerin Çözümünde Temel İlke ve Yöntemler",
+            "Gıda Maddeleriyle İlgili Meseleler",
+            "Bağımlılıkla İlgili Meseleler",
+            "Günlük Hayatla İlgili Meseleler",
+            "Kur’an’dan Mesajlar"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "12.3.1",
+              "metin": "Güncel dinî meselelerin çözümünde temel ilke ve yöntemleri özetleyebilme"
+            },
+            {
+              "kod": "12.3.2",
+              "metin": "Gıda maddeleriyle ilgili meseleleri yorumlayabilme"
+            },
+            {
+              "kod": "12.3.3",
+              "metin": "Bağımlılıkla ilgili meseleleri sorgulayabilme"
+            },
+            {
+              "kod": "12.3.4",
+              "metin": "Günlük hayatla ilgili meseleleri sorgulayabilme"
+            },
+            {
+              "kod": "12.3.5",
+              "metin": "Enam suresi 151-152. ayetlerinin mesajlarını özetleyebilme"
+            }
+          ]
+        },
+        {
+          "sira": 4,
+          "ad": "4. Ünite: İslam Düşüncesinde Tasavvufi Yorumlar",
+          "unite_url": "https://tymm.meb.gov.tr/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/unite/157",
+          "guncelleme": null,
+          "ders_saati": 16,
+          "icerik_cercevesi": [
+            "Tasavvufi Düşüncenin Oluşumu",
+            "Tasavvufi Düşüncenin Ahlaki Boyutu",
+            "Kültürümüzde Etkin Olan Tasavvufi Yorumlar",
+            "Alevilik Bektaşilikte Temel Kavramlar ve Cem Erkânı",
+            "Kur’an’dan Mesajlar"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "DKAB.12.4.1",
+              "metin": "Tasavvufi düşüncenin oluşum sürecini çözümleyebilme"
+            },
+            {
+              "kod": "DKAB.12.4.2",
+              "metin": "Tasavvufi düşüncenin ahlaki boyutunu özetleyebilme"
+            },
+            {
+              "kod": "DKAB.12.4.3",
+              "metin": "Kültürümüzde etkin olan tasavvufi yorumlar hakkında bilgi toplayabilme"
+            },
+            {
+              "kod": "DKAB.12.4.4",
+              "metin": "Alevilik Bektaşilikte temel kavramlar ve cem erkânını sentezleyebilme"
+            },
+            {
+              "kod": "DKAB.12.4.5",
+              "metin": "Hucurat suresi 10. ayetin mesajlarını özetleyebilme"
+            }
+          ]
+        },
+        {
+          "sira": 5,
+          "ad": "5. Ünite: Hint Ve Çin Dinleri",
+          "unite_url": "https://tymm.meb.gov.tr/din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim/unite/158",
+          "guncelleme": null,
+          "ders_saati": 10,
+          "icerik_cercevesi": [
+            "Hinduizm",
+            "Budizm",
+            "Sihizm",
+            "Konfüçyanizm",
+            "Taoizm"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "DKAB.12.5.1",
+              "metin": "Hinduizm, Budizm, Sihizm, Konfüçyanizm, Taoizm dinlerinin tarihini ve temel özelliklerini özetleyebilme"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "belirsizlikler": [
+    "Ders adı sitede 'Din Kültürü ve Ahlak Bilgisi Dersi (Ortaöğretim)'; slug din-kulturu-ve-ahlak-bilgisi-dersi-ortaogretim. 9-12. sınıf sayfaları var (kimlik 11-14).",
+    "Din Kültürü ünite sayfalarında 'Güncelleme tarihi' satırı yok; 'guncelleme' null bırakıldı.",
+    "12. sınıf 3. ünite (Güncel Dinî Meseleler) çıktı kodları kaynakta 'DKAB.' öneki olmadan '12.3.1' ... '12.3.5' biçiminde yazılmış; olduğu gibi alındı.",
+    "Sitede ayrıca 'Din Kültürü ve Ahlak Bilgisi Dersi (Temel Eğitim)' (ortaokul) var; kapsam dışı."
+  ],
+  "kaynak_notu": "Veriler tymm.meb.gov.tr sayfalarının HTML'inden betikle çıkarıldı (ünite sayfası alan satırları); çıktı metinleri yalnızca kalın başlık cümleleridir, alt maddeler (a, b, c) alınmadı. Çekim tarihi 2026-11-21."
+}
