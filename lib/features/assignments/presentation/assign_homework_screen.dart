@@ -174,7 +174,14 @@ class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
         byId[t.id] = t;
       }
       final grade = ref.watch(studentGradeProvider(s.id)).value;
-      if (effectiveGrade(grade) >= 12) anyFull = true;
+      final curriculum =
+          ref.watch(studentCurriculumProvider(s.id)).value ??
+          defaultCurriculum(grade);
+      // Süzme yalnızca eski müfredatın 12 / mezun öğrencisinde yok; Maarif'te
+      // (12. sınıf dahil) yalnızca konusu olan dersler gösterilir.
+      if (effectiveGrade(grade) >= 12 && curriculum == curriculumEski) {
+        anyFull = true;
+      }
     }
     final gradeTopics = byId.values.toList();
     _gradeCodes = anyFull ? null : {for (final t in gradeTopics) t.subjectCode};

@@ -31,17 +31,62 @@ SUBJECT = {
 }
 
 
+# 'Başlık: ayrıntı listesi' biçimindeki dersler: ayrıntı listesi asıl konu dökümü.
+DETAIL_LISTS = {"kimya", "biyoloji"}
+
+
 def clean_group(name: str) -> str:
     """'1. Tema: Sözün İnceliği' / '1. Ünite : X' → 'Sözün İnceliği'."""
     return re.sub(r"^\s*\d+\.\s*(Tema|Ünite)\s*:\s*", "", name).strip()
 
 
-def clean_topic(text: str) -> str:
-    """'Yaşam Bilimi: Biyoloji: …' / 'Çevre Etiği (…)' → kısa başlık."""
-    t = text.split(":")[0]
-    t = t.split("(")[0]
-    t = re.sub(r"\s+", " ", t).strip(" -–•")
+def split_top(text: str):
+    """Virgüllerden böler; parantez / köşeli parantez içindekilere dokunmaz."""
+    out, depth, cur = [], 0, ""
+    for ch in text:
+        if ch in "([":
+            depth += 1
+        elif ch in ")]":
+            depth = max(0, depth - 1)
+        if ch == "," and depth == 0:
+            out.append(cur)
+            cur = ""
+        else:
+            cur += ch
+    out.append(cur)
+    return out
+
+
+def short(t: str) -> str:
+    t = re.sub(r"[(\[].*$", "", t)
+    t = re.sub(r"\s+", " ", t).strip(" -–•:;")
     return t[:120]
+
+
+def clean_topics(text: str, split_detail: bool = False):
+    """İçerik Çerçevesi maddesi → konu adları.
+
+    'Başlık: a, b, c' (Kimya, Biyoloji) biçiminde başlığın yanındaki liste MEB'in
+    asıl konu dökümüdür; her öğe ayrı konu olur. Düz başlıklar (Matematik, Fizik…)
+    olduğu gibi tek konu. Parantez içi ayrıntı konu adına alınmaz.
+    """
+    if not split_detail or ":" not in text.split("(")[0]:
+        n = re.sub(r"\s+", " ", text.split(":")[0].split("(")[0]).strip(" -–•")[:120]
+        return [n] if n else []
+    rest = text.split(":", 1)[1]
+    names = []
+    for part in split_top(rest):
+        n = short(part.split(":")[-1])
+        if n:
+            names.append(n)
+    # Kaynak metindeki virgül/ayraç kusurları (elle doğrulandı, NOTLAR §104):
+    # tek başına anlamsız kalan parçalar atılır, bölünmüş bir başlık birleştirilir.
+    names = [n for n in names if n not in {"Kimyasal", "Metal"}]
+    if "Biyoteknolojinin Endüstri" in names:
+        i = names.index("Biyoteknolojinin Endüstri")
+        if i + 1 < len(names):
+            names[i : i + 2] = [f"{names[i]}, {names[i + 1]}"]
+    return names or [short(text.split(":")[0])]
 
 
 def q(s: str) -> str:
@@ -60,17 +105,19 @@ for key, code in SUBJECT.items():
         for ti, tema in enumerate(temas):
             group = clean_group(tema["ad"])
             items = tema.get("icerik_cercevesi") or tema.get("icerik_basliklari") or []
-            for ii, raw in enumerate(items):
-                name = clean_topic(raw)
-                if not name:
-                    continue
-                seen.setdefault(name, []).append((ti, ii, group, tema.get("unite_url")))
+            k = 0
+            for raw in items:
+                for name in clean_topics(raw, key in DETAIL_LISTS):
+                    k += 1
+                    seen.setdefault(name, []).append(
+                        (ti, k, group, tema.get("unite_url"))
+                    )
         for name, occ in seen.items():
             for ti, ii, group, url in occ:
                 # Aynı ad bir derste birden çok temada geçiyorsa (örn. edebiyatta
                 # "Okuma") tema adı öne eklenir.
                 final = name if len(occ) == 1 else f"{group} · {name}"
-                rows.append((code, grade, ti * 100 + ii + 1, final[:160], group, url))
+                rows.append((code, grade, ti * 100 + ii, final[:160], group, url))
 
 # Yinelenen (ders, sınıf, ad) kalmasın.
 uniq = {}
