@@ -126,7 +126,10 @@ await asUser(A.coach);
 const w = (await one(`select public.activity_weeks(2) w`)).w;
 check(w.length === 2 && w[1].questions === 10 && w[0].questions === 20, 'günler doğru haftada, aralık dışı sayılmaz', w);
 // Banu'nun İstanbul gece yarısındaki kaydı UTC'de bir önceki güne düşer (fonksiyon oturum saatiyle sayar).
-check(w[1].active === 1 && w[0].active === 2, 'aktif: soru ya da çalışma kaydı, tekil öğrenci', w);
+// UTC tarihi ile İstanbul tarihi farklıysa (UTC 21:00-24:00) Banu'nun kaydı bir sonraki haftaya kayar;
+// iki durumda da toplam 3 tekil kayıt ve her haftada en az 1 aktif öğrenci olmalı.
+check(((w[1].active === 1 && w[0].active === 2) || (w[1].active === 2 && w[0].active === 1)),
+  'aktif: soru ya da çalışma kaydı, tekil öğrenci', w);
 const wide = (await one(`select public.activity_weeks(4) w`)).w;
 
 console.log('Geri alma');
