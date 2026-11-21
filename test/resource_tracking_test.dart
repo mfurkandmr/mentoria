@@ -100,10 +100,20 @@ void main() {
     expect(find.text('Türev'), findsNothing);
     expect(find.text('0 / 4'), findsOneWidget);
 
+    // Dokununca gri → sarı (devam ediyor) → yeşil (bitti) → gri.
+    await t.tap(find.byKey(ValueKey('mark-${ids[0]}-1')));
+    await t.pumpAndSettle();
+    expect(
+      find.text('0 / 4'),
+      findsOneWidget,
+      reason: 'sarı henüz bitti sayılmaz',
+    );
+    expect(await books.fetchTopicMarks('s1'), {(ids[0], 1): MarkState.doing});
+
     await t.tap(find.byKey(ValueKey('mark-${ids[0]}-1')));
     await t.pumpAndSettle();
     expect(find.text('1 / 4'), findsOneWidget);
-    expect(await books.fetchTopicMarks('s1'), {(ids[0], 1)});
+    expect(await books.fetchTopicMarks('s1'), {(ids[0], 1): MarkState.done});
 
     await t.tap(find.byKey(ValueKey('mark-${ids[0]}-1')));
     await t.pumpAndSettle();
@@ -129,12 +139,19 @@ void main() {
   testWidgets('veli görür ama işaretleyemez', (t) async {
     final student = await seeded();
     final ids = [for (final b in (await student.overview('s1')).books) b.id];
-    await student.setTopicMark(ids[0], 1, true);
+    await student.setTopicMark(ids[0], 1, MarkState.done);
     final parent = _ReadOnly(student);
     await pump(t, parent, BooksViewer.parent);
-    final box = t.widget<Checkbox>(find.byKey(ValueKey('mark-${ids[0]}-1')));
-    expect(box.value, isTrue);
-    expect(box.onChanged, isNull);
+    final key = find.byKey(ValueKey('mark-${ids[0]}-1'));
+    expect(key, findsOneWidget);
+    expect(
+      find.descendant(of: key, matching: find.byIcon(Icons.check_rounded)),
+      findsOneWidget,
+    );
+    // Veli dokunsa da durum değişmez.
+    await t.tap(key);
+    await t.pumpAndSettle();
+    expect((await student.fetchTopicMarks('s1'))[(ids[0], 1)], MarkState.done);
   });
 
   test(
@@ -142,14 +159,17 @@ void main() {
     () async {
       final student = await seeded();
       final ids = [for (final b in (await student.overview('s1')).books) b.id];
-      await student.setTopicMark(ids[0], 1, true);
+      await student.setTopicMark(ids[0], 1, MarkState.done);
       final stranger = InMemoryBooksRepository(
         viewerId: 'c9',
         viewerRole: 'coach',
         pool: _pool,
       );
       expect(() => stranger.fetchTopicMarks('s1'), throwsStateError);
-      expect(() => student.setTopicMark('yok', 1, true), throwsStateError);
+      expect(
+        () => student.setTopicMark('yok', 1, MarkState.done),
+        throwsStateError,
+      );
     },
   );
 }
@@ -164,7 +184,7 @@ class _ReadOnly implements BooksRepository {
       _inner.overview(studentId, term: term);
 
   @override
-  Future<Set<(String, int)>> fetchTopicMarks(String studentId) =>
+  Future<Map<(String, int), MarkState>> fetchTopicMarks(String studentId) =>
       _inner.fetchTopicMarks(studentId);
 
   @override

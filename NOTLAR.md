@@ -3548,3 +3548,16 @@ yok). Migration `20261113100000_cockpit_perf` (rollback var), **canlıda**.
   yansıma dersler dahil). `Mentoria-Test`te yalnızca migration'lar var, konu verisi yok.
   Önce `Mentoria-Test`, sonra (kullanıcı onayıyla) canlı.
 
+
+## 106. Kaynak takibi: renkli kutular, üç durum (22 Kasım 2026)
+
+- Kaynak takibi tablosunda hücreler artık renkli kutu: **gri** başlanmadı, **sarı** devam ediyor,
+  **yeşil** bitti. Dokununca gri → sarı → yeşil → gri döner. Renk körlüğü için sarıda "…", yeşilde ✓ simgesi var;
+  tablo üstünde renk açıklaması (legend) gösterilir. Ders başlığındaki `x / y` yalnızca yeşilleri sayar.
+- **Migration `20261122100000_book_topic_state`** (rollback'li, test: `book_topic_marks_test.mjs`):
+  `book_topic_marks.state` ('doing' | 'done', varsayılan 'done' → eski işaretler yeşil kalır),
+  `set_book_topic_state(kitap, konu, 'none'|'doing'|'done')`; eski `set_book_topic_mark` aynen çalışır
+  (true → done, false → siler). Rollback sarı işaretleri siler, yeşiller kalır.
+- Uygulama: `MarkState` enum'u (`books_repository.dart`), `fetchTopicMarks` artık `Map<(kitap, konu), MarkState>` döner.
+- Canlıya ve `Mentoria-Test`e 22 Kasım'da uygulandı. Eski uygulama sürümü sarı işareti yeşil gösterir
+  (yalnızca bu geçiş süresince).
