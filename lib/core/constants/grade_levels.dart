@@ -67,7 +67,8 @@ String curriculumLabel(String curriculum) =>
 /// Konu bu sınıf seviyesinde ve müfredatta görünür mü?
 ///
 ///  * eski: bugünkü kural (9-11'de `topicGrades` eşlemesi, 12 / mezunda hepsi).
-///  * maarif: yalnızca öğrencinin sınıfının Maarif konuları.
+///  * maarif: 9. sınıftan öğrencinin sınıfına kadar olan Maarif konuları
+///    (12 / mezun hepsini, 11. sınıf 9-11'i çalışır).
 /// `curriculum` verilmezse eski müfredat sayılır (geriye uyumlu).
 bool topicVisibleForGrade(
   Topic t,
@@ -76,7 +77,8 @@ bool topicVisibleForGrade(
 }) {
   final g = effectiveGrade(grade);
   if (curriculum == curriculumMaarif) {
-    return t.isMaarif && t.grade == g;
+    // Birikimli: 12 / mezun 9-12, 11. sınıf 9-11, 10. sınıf 9-10 konularını çalışır.
+    return t.isMaarif && (t.grade ?? 99) <= g;
   }
   if (t.isMaarif) return false;
   if (g == 12) return true;

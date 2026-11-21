@@ -49,7 +49,7 @@ void main() {
     expect(effectiveCurriculum(12, 'bilinmeyen'), curriculumEski);
   });
 
-  test('Maarif öğrencisi yalnızca kendi sınıfının Maarif konularını görür', () {
+  test('Maarif konuları birikimlidir: 9. sınıftan kendi sınıfına kadar', () {
     final ids = [
       for (final t in topicsForGrade(all, 9, curriculum: curriculumMaarif))
         t.id,
@@ -59,9 +59,13 @@ void main() {
       for (final t in topicsForGrade(all, 10, curriculum: curriculumMaarif))
         t.id,
     ];
-    expect(ids10, [11]);
-    // 12. sınıfta Maarif seçilirse yalnızca 12. sınıf Maarif konuları gelir.
-    expect(topicsForGrade(all, 12, curriculum: curriculumMaarif), isEmpty);
+    expect(ids10, [10, 11]);
+    // 12 / mezun Maarif seçilirse 9-12 hepsi gelir.
+    final ids12 = [
+      for (final t in topicsForGrade(all, 12, curriculum: curriculumMaarif))
+        t.id,
+    ];
+    expect(ids12, [10, 11]);
   });
 
   test('eski müfredatta Maarif konuları hiç görünmez', () {
