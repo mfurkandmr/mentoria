@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/exam_subjects.dart';
 import '../../../core/constants/grade_levels.dart';
+import '../../../core/design/motion.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/widgets/common.dart';
@@ -381,7 +382,7 @@ class _MarkBox extends StatelessWidget {
           height: 44,
           child: Center(
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 120),
+              duration: AppMotion.of(context, AppMotion.instant),
               width: 28,
               height: 28,
               decoration: BoxDecoration(
