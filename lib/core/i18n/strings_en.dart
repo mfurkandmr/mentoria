@@ -1565,6 +1565,7 @@ const enStrings = <String, String>{
   '{type} {n} net düştü': '{type} down {n} nets',
   // Konu reçetesi
   'Konu reçetesi': 'Topic prescription',
+  'Konu reçetesi verilsin mi?': 'Give a topic prescription?',
   'Konu reçetesi · {date}': 'Topic prescription · {date}',
   'Son 3 denemenin eksik konularından haftalık ödev taslağı':
       'Weekly homework draft from weak topics in the last 3 mock exams',
