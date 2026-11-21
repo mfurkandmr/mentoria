@@ -3485,7 +3485,7 @@ yok). Migration `20261113100000_cockpit_perf` (rollback var), **canlıda**.
   `source_url`; `profiles.curriculum` (boş = sınıftan türet); `set_curriculum(öğrenci, müfredat)`
   (öğrenci kendisi ya da yöneten koç / müdür; doğrudan güncelleme kapalı).
 - **Varsayılan:** 9-11. sınıf → Maarif, 12 / mezun / bilinmeyen → eski. Profilde ("Müfredatın") ve
-  koçun öğrenci sayfasında ("Müfredatı") değiştirilir. Maarif öğrencisi yalnızca kendi sınıfının
+  koçun öğrenci sayfasında ("Müfredatı") değiştirilir. Maarif öğrencisi 9. sınıftan kendi sınıfına kadar (birikimli; 12 / mezun 9-12) olan
   Maarif konularını görür (ödev, soru ekleme, yanlış defteri, konular, kaynak takibi).
 - **Eski müfredat korunur:** `topicsProvider` hâlâ hepsini döner (adı bulma için); seçim
   listeleri `studentTopicsProvider` ile süzülür. Deneme kazanımı eşleme (`matchTopic`) yalnızca
@@ -3518,5 +3518,6 @@ yok). Migration `20261113100000_cockpit_perf` (rollback var), **canlıda**.
   - Konular derse göre tek liste; "9. sınıf Matematik" gibi alt grup gösterimi ekranlarda yok
     (`group_name` yalnızca saklanıyor).
   - Eski `topicGrades` eşlemesi (§91) değişmedi.
-- **Canlıya uygulama:** henüz uygulanmadı. Sırayla: iki migration, sonra `seed_maarif_topics.sql`.
+- **Canlıya uygulama:** 21 Kasım 2026'da canlıya uygulandı (iki migration + `seed_maarif_topics.sql`,
+  yansıma dersler dahil). `Mentoria-Test`te yalnızca migration'lar var, konu verisi yok.
   Önce `Mentoria-Test`, sonra (kullanıcı onayıyla) canlı.
