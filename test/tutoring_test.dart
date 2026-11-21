@@ -183,15 +183,16 @@ void main() {
 
     // Açılışta ilk dolu gün seçilir; cumartesi gibi günlerde o gün öğrencinin
     // zaten onaylı talebi olabilir. Son günü seçmek tarihten bağımsız kılar.
-    await t.tap(
-      find
-          .byWidgetPredicate(
-            (w) =>
-                w.key is ValueKey &&
-                '${(w.key! as ValueKey).value}'.startsWith('day-'),
-          )
-          .last,
-    );
+    final lastDay = find
+        .byWidgetPredicate(
+          (w) =>
+              w.key is ValueKey &&
+              '${(w.key! as ValueKey).value}'.startsWith('day-'),
+        )
+        .last;
+    await t.ensureVisible(lastDay);
+    await t.pumpAndSettle();
+    await t.tap(lastDay);
     await t.pumpAndSettle();
     final button = find.byWidgetPredicate(
       (w) =>
@@ -233,15 +234,16 @@ void main() {
     await t.pumpAndSettle();
     // Açılışta ilk dolu gün seçilir; cumartesi gibi günlerde o gün öğrencinin
     // zaten onaylı talebi olabilir. Son günü seçmek tarihten bağımsız kılar.
-    await t.tap(
-      find
-          .byWidgetPredicate(
-            (w) =>
-                w.key is ValueKey &&
-                '${(w.key! as ValueKey).value}'.startsWith('day-'),
-          )
-          .last,
-    );
+    final lastDay = find
+        .byWidgetPredicate(
+          (w) =>
+              w.key is ValueKey &&
+              '${(w.key! as ValueKey).value}'.startsWith('day-'),
+        )
+        .last;
+    await t.ensureVisible(lastDay);
+    await t.pumpAndSettle();
+    await t.tap(lastDay);
     await t.pumpAndSettle();
     final button = find.byWidgetPredicate(
       (w) =>
