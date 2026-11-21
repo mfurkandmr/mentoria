@@ -3480,3 +3480,21 @@ yok). Migration `20261113100000_cockpit_perf` (rollback var), **canlıda**.
   `curl -I https://mentoria.com.tr/` (CSP var), `/app/` (CSP yok) ve
   `/.well-known/security.txt` (200) kontrol edilmeli; Pages `.well-known` klasörünü yüklemezse
   dosya başka yolla sunulmalı.
+
+## 105. Panel CSP ve CanvasKit'i kendi sunucudan sunma (22 Kasım 2026)
+
+- `tool/web/build_web.py`: Flutter derlemeleri `--no-web-resources-cdn` ile alınır; CanvasKit/skwasm
+  `www.gstatic.com` yerine `/app/canvaskit/` altından gelir (ziyaretçi IP'si Google'a gitmez).
+- `/app/*` ve `/demo/panel/*` için zorunlu CSP (`_panel_csp`): `script-src 'self' 'wasm-unsafe-eval'`,
+  `connect-src` yalnızca kendi alan adı + Supabase (https/wss) + `fonts.gstatic.com`, `object-src 'none'`,
+  `frame-ancestors 'none'`. Supabase adresi derleme anında env.json / `SUPABASE_URL`'den alınır.
+- **Kalan Google bağlantısı:** Flutter motoru yerleşik yazı tiplerinde olmayan karakterler (emoji, simge)
+  için yedek yazı tipini `fonts.gstatic.com`'dan çeker; yalnızca bu adres izinli. Tamamen kendi sunucudan
+  sunmak için yedek yazı tipi dosyalarının (Roboto, Noto Symbols, Noto Color Emoji parçaları) paketlenip
+  `fontFallbackBaseUrl` verilmesi gerekir (ayrı iş). Aydınlatma metnine "yedek yazı tipi Google Fonts'tan
+  yüklenir" notu eklenmedi (avukat listesine).
+- Cloudflare Web Analytics beacon'ı (`static.cloudflareinsights.com`) artık panellerde CSP ile engellenir
+  (tanıtım sayfalarında zaten engelliydi). Analitik isteniyorsa Pages'te devre dışı bırakmak ya da CSP'ye
+  eklemek gerekir.
+- Canlıya 22 Kasım'da elle yayınlandı (wrangler); `/demo/panel/` ve `/app/login` CSP altında açılıyor.
+  Giriş sonrası ekranlar (dosya yükleme, PDF indirme) gerçek hesapla denenmedi.

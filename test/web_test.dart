@@ -173,7 +173,22 @@ void main() {
       );
     });
 
-    test('CSP yalnızca kendi kaynağına izin verir, panellere uygulanmaz', () {
+    test(
+      'panel CSP: wasm için eval yok, yalnızca kendi + Supabase + yazı tipi',
+      () {
+        final py = File('tool/web/build_web.py').readAsStringSync();
+        expect(py, contains('PANEL_CSP_PATHS = ("/app/*", "/demo/panel/*")'));
+        final body = py.substring(py.indexOf('def _panel_csp'));
+        expect(body, contains("script-src 'self' 'wasm-unsafe-eval'"));
+        expect(body, isNot(contains("'unsafe-eval'")));
+        expect(body, isNot(contains("script-src 'self' 'unsafe-inline'")));
+        expect(body, contains("frame-ancestors 'none'"));
+        expect(body, contains("object-src 'none'"));
+        expect(py, contains('--no-web-resources-cdn'));
+      },
+    );
+
+    test('tanıtım CSP yalnızca kendi kaynağına izin verir', () {
       final py = File('tool/web/build_web.py').readAsStringSync();
       final csp = RegExp(
         r'CSP = \((.*?)\n\)',
@@ -183,7 +198,10 @@ void main() {
       expect(csp, contains("frame-ancestors 'none'"));
       expect(csp, isNot(contains('unsafe-eval')));
       expect(csp, isNot(contains("script-src 'self' 'unsafe-inline'")));
-      final paths = RegExp(r'CSP_PATHS = \((.*?)\)').firstMatch(py)!.group(1)!;
+      // Tanıtım yolları listesi panelleri içermez (paneller kendi CSP'sini alır).
+      final paths = RegExp(
+        r'\nCSP_PATHS = \((.*?)\)',
+      ).firstMatch(py)!.group(1)!;
       expect(paths, isNot(contains('/app')));
       expect(paths, isNot(contains('/demo/panel')));
     });
