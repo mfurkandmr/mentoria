@@ -105,7 +105,17 @@ class _TopicsViewState extends ConsumerState<TopicsView> {
                   ref.invalidate(topicProgressProvider(widget.studentId)),
               builder: (status) => _TopicsContent(
                 topics: school
-                    ? topicsForGrade(all, grade, curriculum: curriculum)
+                    ? [
+                        for (final t in topicsForGrade(
+                          all,
+                          grade,
+                          curriculum: curriculum,
+                        ))
+                          // Maarif'te yansıma dersler aynı konuyu çift göstermesin.
+                          if (!(t.isMaarif &&
+                              maarifMirrorSubjects.contains(t.subjectCode)))
+                            t,
+                      ]
                     : [
                         for (final t in topicsForGrade(
                           all,

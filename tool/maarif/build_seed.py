@@ -35,6 +35,24 @@ SUBJECT = {
 DETAIL_LISTS = {"kimya", "biyoloji"}
 
 
+# Maarif'te ders TYT / AYT diye ayrılmaz; ama uygulamada soru, yanlış ve ödev
+# derse (TYT_* / AYT_*) bağlıdır ve sunucu konunun o dersin konusu olmasını ister.
+# Bu yüzden her konu, karşılık gelen AYT / TYT derslerine de kopyalanır
+# (asıl ders -> yansıma dersleri). Uygulama aynı konuyu çift göstermez
+# (lib/core/constants/grade_levels.dart: maarifMirrorSubjects).
+MIRRORS = {
+    "TYT_MAT": ["AYT_MAT"],
+    "TYT_FIZ": ["AYT_FIZ"],
+    "TYT_KIM": ["AYT_KIM"],
+    "TYT_BIY": ["AYT_BIY"],
+    "TYT_TAR": ["AYT_TAR1", "AYT_TAR2"],
+    "TYT_COG": ["AYT_COG1", "AYT_COG2"],
+    "TYT_FEL": ["AYT_FELG"],
+    "TYT_DIN": ["AYT_DIN"],
+    "AYT_EDB": ["TYT_TUR"],
+}
+
+
 def clean_group(name: str) -> str:
     """'1. Tema: Sözün İnceliği' / '1. Ünite : X' → 'Sözün İnceliği'."""
     return re.sub(r"^\s*\d+\.\s*(Tema|Ünite)\s*:\s*", "", name).strip()
@@ -124,6 +142,8 @@ uniq = {}
 for r in rows:
     uniq.setdefault((r[0], r[1], r[3]), r)
 rows = sorted(uniq.values(), key=lambda r: (r[0], r[1], r[2]))
+rows += [(dst,) + r[1:] for r in list(rows) for dst in MIRRORS.get(r[0], [])]
+rows.sort(key=lambda r: (r[0], r[1], r[2]))
 
 lines = [
     "-- Türkiye Yüzyılı Maarif Modeli konu kataloğu (NOTLAR §104).",

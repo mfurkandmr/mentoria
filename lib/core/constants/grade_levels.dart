@@ -42,6 +42,24 @@ String effectiveCurriculum(int? grade, String? chosen) =>
     ? chosen!
     : defaultCurriculum(grade);
 
+/// Maarif'te ders TYT / AYT diye ayrılmaz; konular sunucu kuralı gereği
+/// ("konu dersin konusu olmalı") karşılık gelen AYT / TYT derslerine de
+/// kopyalanır. Bunlar yansıma derslerdir: soru ekleme, yanlış defteri ve ödev
+/// seçicilerinde konusu vardır, ama liste ekranlarında aynı konu çift gösterilmez.
+const maarifMirrorSubjects = {
+  'AYT_MAT',
+  'AYT_FIZ',
+  'AYT_KIM',
+  'AYT_BIY',
+  'AYT_TAR1',
+  'AYT_TAR2',
+  'AYT_COG1',
+  'AYT_COG2',
+  'AYT_FELG',
+  'AYT_DIN',
+  'TYT_TUR',
+};
+
 /// "Eski müfredat" / "Maarif Modeli".
 String curriculumLabel(String curriculum) =>
     curriculum == curriculumMaarif ? tr('Maarif Modeli') : tr('Eski müfredat');

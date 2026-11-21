@@ -3493,6 +3493,14 @@ yok). Migration `20261113100000_cockpit_perf` (rollback var), **canlıda**.
 - **Yayımlanan kapsam** (sitedeki durum 21 Kasım 2026): Matematik, Fizik, Kimya, Biyoloji,
   Coğrafya, Din Kültürü 9-12; Tarih 9-11; Felsefe yalnızca 10-11; Türk Dili ve Edebiyatı 9-12
   (Hazırlık sınıfı alınmadı). ~490 konu.
+- **Yansıma dersler:** Maarif'te ders TYT / AYT diye ayrılmaz, ama uygulamada soru, yanlış ve
+  ödev derse (TYT_* / AYT_*) bağlı ve sunucu konunun o dersin konusu olmasını ister
+  (`send_assignment` aksi halde konuyu sessizce düşürür). Bu yüzden her Maarif konusu karşılık
+  gelen derslere de kopyalanır: Mat, Fiz, Kim, Biy → AYT_MAT/FIZ/KIM/BIY; Tarih → AYT_TAR1/2;
+  Coğrafya → AYT_COG1/2; Felsefe → AYT_FELG; Din → AYT_DIN; Edebiyat (AYT_EDB) → TYT_TUR
+  (toplam 1376 satır, `build_seed.py` MIRRORS). Soru ekleme / yanlış defteri / ödev seçicilerinde
+  hepsi konu taşır; liste ekranlarında (Konular, ödev ders sekmeleri) yansıma dersler çift
+  gösterilmez (`maarifMirrorSubjects`). Maarif'te Türkçe = Türk Dili ve Edebiyat programı.
 - **Açık / belirsiz:**
   - **Gerçek YKS kapsamı:** MEB, Maarif'e uygun soru modelinin 2028 YKS'de başlayacağını söylüyor.
     ÖSYM'nin Maarif konu listesi (TYT/AYT kapsamı) henüz alınmadı; konular yalnızca okul

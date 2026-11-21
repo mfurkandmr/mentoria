@@ -63,12 +63,25 @@ class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
   /// (null: süzme yok, seçilenlerden biri 12 / mezun).
   Set<String>? _gradeCodes;
 
+  /// Seçilenlerin hepsi Maarif'te: yansıma dersler (AYT_MAT, TYT_TUR…) aynı
+  /// konuları çift göstermesin.
+  bool _allMaarif = false;
+
   List<ExamSubject> get _subjects {
-    final all = examSubjects.where((s) => s.examType == _type).toList();
     final codes = _gradeCodes;
-    if (codes == null) return all;
-    final some = all.where((s) => codes.contains(s.code)).toList();
-    return some.isEmpty ? all : some;
+    if (codes == null) {
+      return examSubjects.where((s) => s.examType == _type).toList();
+    }
+    // 9-11 ve Maarif: TYT / AYT ayrımı yok, konusu olan bütün dersler.
+    final some = [
+      for (final s in examSubjects)
+        if (codes.contains(s.code) &&
+            !(_allMaarif && maarifMirrorSubjects.contains(s.code)))
+          s,
+    ];
+    return some.isEmpty
+        ? examSubjects.where((s) => s.examType == _type).toList()
+        : some;
   }
 
   void _toggle(AssignmentItemDraft d) {
@@ -168,6 +181,7 @@ class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
     // Seçilen öğrencilerin konuları birleştirilir (aynı konu bir kez).
     final byId = <int, Topic>{};
     var anyFull = false;
+    var allMaarif = true;
     for (final s in _students) {
       for (final t
           in ref.watch(studentTopicsProvider(s.id)).value ?? const <Topic>[]) {
@@ -182,9 +196,11 @@ class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
       if (effectiveGrade(grade) >= 12 && curriculum == curriculumEski) {
         anyFull = true;
       }
+      if (curriculum != curriculumMaarif) allMaarif = false;
     }
     final gradeTopics = byId.values.toList();
     _gradeCodes = anyFull ? null : {for (final t in gradeTopics) t.subjectCode};
+    _allMaarif = allMaarif;
     if (!_subjects.any((s) => s.code == _subject)) {
       _subject = _subjects.first.code;
     }

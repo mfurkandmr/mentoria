@@ -63,7 +63,7 @@ const B = await school('Arı Kurs', 'ADMINMC2');
 console.log('Katalog');
 await asSuper();
 const total = (await one(`select count(*)::int c from public.topics where curriculum = 'maarif'`)).c;
-check(total > 400, 'Maarif konuları yüklendi', total);
+check(total > 1000, 'Maarif konuları yüklendi', total);
 check((await one(`select count(*)::int c from public.topics where curriculum = 'eski' and grade is not null`)).c === 0,
   'eski konuların sınıfı yok');
 check((await one(`select count(*)::int c from public.topics where curriculum = 'maarif' and (group_name is null or source_url is null)`)).c === 0,
@@ -73,6 +73,12 @@ check((await one(`select count(*)::int c from public.topics where curriculum = '
 const subj = (await rows(`select distinct s.code from public.topics t join public.subjects s on s.id = t.subject_id where t.curriculum = 'maarif' order by 1`)).map((r) => r.code);
 check(['AYT_EDB', 'TYT_BIY', 'TYT_COG', 'TYT_DIN', 'TYT_FEL', 'TYT_FIZ', 'TYT_KIM', 'TYT_MAT', 'TYT_TAR'].every((c) => subj.includes(c)),
   'çekirdek dersler var', subj);
+check(['AYT_MAT', 'AYT_FIZ', 'AYT_KIM', 'AYT_BIY', 'AYT_TAR1', 'AYT_TAR2', 'AYT_COG1', 'AYT_COG2', 'AYT_FELG', 'AYT_DIN', 'TYT_TUR'].every((c) => subj.includes(c)),
+  'AYT dersleri ve TYT Türkçe de Maarif konusu taşır (yansıma dersler)', subj);
+check((await one(`select count(*)::int c from public.topics a join public.subjects sa on sa.id = a.subject_id
+  join public.topics b on b.name = a.name and b.grade = a.grade and b.curriculum = 'maarif'
+  join public.subjects sb on sb.id = b.subject_id
+  where a.curriculum = 'maarif' and sa.code = 'TYT_MAT' and sb.code = 'AYT_MAT'`)).c > 50, 'AYT Matematik, TYT Matematik konularının aynısını taşır');
 check((await one(`select count(*)::int c from (select subject_id, grade, name from public.topics where curriculum = 'maarif' group by 1,2,3 having count(*) > 1) d`)).c === 0,
   'ders/sınıf/ad tekil');
 const eski = (await one(`select count(*)::int c from public.topics where curriculum = 'eski'`)).c;
