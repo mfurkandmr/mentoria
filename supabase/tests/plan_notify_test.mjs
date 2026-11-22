@@ -68,14 +68,14 @@ const add = (student, d) => db.query(
 const notes = async (who) => { await asSuper(); return (await db.query(`select data from public.notifications where user_id = $1 and kind = 'plan' order by created_at`, [who])).rows; };
 
 console.log('Plan bildirimi');
-const d0 = await day(0), d1 = await day(1), d7 = await day(7), dPast = await day(-7);
+const d0 = await day(0), d1 = await day(1), d7 = await day(14), dPast = await day(-7);
 await asUser(A.coach);
 await add(ahmet, d0);
 await add(ahmet, d1);
 await add(ahmet, d0);
 let n = await notes(ahmet);
 const w0 = await weekOf(d0);
-// d1 bazen gelecek haftaya düşer (bugün pazar ise); o zaman iki bildirim olur.
+// d1 bazen gelecek haftaya düşer (bugün pazar ise); o zaman iki bildirim olur. d7 (14 gün sonra) her zaman ikisinden ayrı bir haftadır.
 const expected = (await weekOf(d1)) === w0 ? 1 : 2;
 check(n.length === expected, 'aynı hafta için maddeler tek bildirim', n);
 check(n[0].data.week === w0 && n[0].data.from === 'Bal Akademi Koç' && n[0].data.route === '/student/plan', 'bildirimde hafta, koç adı, rota', n[0].data);

@@ -318,7 +318,11 @@ class _NewAnswerKeyScreenState extends ConsumerState<NewAnswerKeyScreen> {
     final router = GoRouter.of(context);
     try {
       // Kazanımları konu takibine bağla (kazanım konunun adını içeriyorsa).
-      final topics = await ref.read(topicsProvider.future);
+      // Deneme kazanımları eski müfredatın konularına bağlanır (NOTLAR §104).
+      final topics = [
+        for (final t in await ref.read(topicsProvider.future))
+          if (!t.isMaarif) t,
+      ];
       final items = [
         for (final i in parsed.items)
           i.withTopic(matchTopic(i.outcome, i.subject, topics)),

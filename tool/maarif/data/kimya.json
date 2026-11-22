@@ -1,0 +1,611 @@
+{
+  "ders": "Kimya",
+  "kaynak_kok": "https://tymm.meb.gov.tr/ogretim-programlari/ders/kimya-dersi",
+  "siniflar": [
+    {
+      "sinif": 9,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/kimya-dersi/11",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "Etkileşim",
+          "unite_url": "https://tymm.meb.gov.tr/kimya-dersi/unite/92",
+          "guncelleme": "09.08.2026",
+          "ders_saati": 22,
+          "icerik_cercevesi": [
+            "Kimya Hayattır: Günlük Hayatta Kimya, Kimyasal Maddelerin Kullanımı ve Güvenlik, Kimyanın Alt Disiplinleri, Kimya Alanında Kariyer Olanakları",
+            "Atomdan Periyodik Tabloya: Atom Teorileri (Bohr Atom Teorisi, Modern Atom Teorisi) ve Atomun Yapısı, Atom Orbitalleri ve Elektron Dizilimi, Periyodik Tabloda Yer Bulma, Periyodik Özellikler (Atom Yarıçapı, İyonlaşma Enerjisi ve Elektronegatiflik)"
+          ],
+          "icerik_basliklari": [
+            "Kimya Hayattır",
+            "Atomdan Periyodik Tabloya"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "KİM.9.1.1",
+              "metin": "Kimya biliminin günlük hayata katkısına ilişkin bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "KİM.9.1.2",
+              "metin": "Farklı ortamlarda kimyasal maddelerin kullanımından kaynaklanan problemleri çözebilme"
+            },
+            {
+              "kod": "KİM.9.1.3",
+              "metin": "Atom teorilerindeki varsayımları kullanarak bilimsel bilginin değişebilirliliğine ilişkin bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "KİM.9.1.4",
+              "metin": "Atom orbitallerinin bağıl enerjilerine ilişkin bilimsel veriye dayalı tahminde bulunabilme"
+            },
+            {
+              "kod": "KİM.9.1.5",
+              "metin": "Elektronların atom orbitallerine yerleşimine ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.9.1.6",
+              "metin": "Elementlerin periyodik tablodaki yerlerine ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.9.1.7",
+              "metin": "İyon oluşumuna ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.9.1.8",
+              "metin": "Elementlerin periyodik özelliklerinin periyodik tablodaki değişimini çözümleyebilme"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "Çeşitlilik",
+          "unite_url": "https://tymm.meb.gov.tr/kimya-dersi/unite/121",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 38,
+          "icerik_cercevesi": [
+            "Etkileşimler: Metalik Bağ, İyonik Bağ, Kovalent Bağ, Lewis Nokta Yapısı, Molekül Polarlığı ve Apolarlığı, Bileşiklerin Adlandırılması",
+            "Etkileşimden Maddeye: Moleküller Arası Etkileşimler, Katılar ve Özellikleri (Amorf ve Kristal Katılar), Sıvılar ve Özellikleri (Kaynama Sıcaklığı ve Buhar Basıncı, Viskozite, Adezyon ve Kohezyon Kuvvetleri, Yüzey Gerilimi)"
+          ],
+          "icerik_basliklari": [
+            "Etkileşimler",
+            "Etkileşimden Maddeye"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "KİM.9.2.1",
+              "metin": "Metalik bağın oluşumuna yönelik tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.9.2.2",
+              "metin": "İyonik bağın oluşumunu bilimsel gözleme dayalı tahmin edebilme"
+            },
+            {
+              "kod": "KİM.9.2.3",
+              "metin": "Kovalent bağ oluşumunu bilimsel gözleme dayalı tahmin edebilme"
+            },
+            {
+              "kod": "KİM.9.2.4",
+              "metin": "Moleküllerin Lewis nokta yapısına ilişkin çıkarımda bulunabilme"
+            },
+            {
+              "kod": "KİM.9.2.5",
+              "metin": "Molekülleri polar ya da apolar olarak sınıflandırabilme"
+            },
+            {
+              "kod": "KİM.9.2.6",
+              "metin": "Bileşikleri adlandırma kurallarına ilişkin tümdengelimsel akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.9.2.7",
+              "metin": "Moleküller arası etkileşimleri sınıflandırabilme"
+            },
+            {
+              "kod": "KİM.9.2.8",
+              "metin": "Etkileşimlerin katıların özellikleri üzerindeki etkilerine ilişkin bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "KİM.9.2.9",
+              "metin": "Sıvıların buhar basıncını etkileyen faktörlere ilişkin hipotez oluşturabilme"
+            },
+            {
+              "kod": "KİM.9.2.10",
+              "metin": "Sıvıların kaynama sıcaklığını etkileyen faktörleri belirlemeye yönelik kanıt kullanabilme"
+            },
+            {
+              "kod": "KİM.9.2.11",
+              "metin": "Sıvıların viskozitesini etkileyen faktörlere ilişkin bilimsel gözlem yapabilme"
+            },
+            {
+              "kod": "KİM.9.2.12",
+              "metin": "Adezyon ve kohezyon kuvvetlerinin sıvıların özelliklerine etkilerine ilişkin bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "KİM.9.2.13",
+              "metin": "Sıvıların yüzey gerilimini etkileyen faktörlere ilişkin bilimsel sorgulama yapabilme"
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "Sürdürülebilirlik",
+          "unite_url": "https://tymm.meb.gov.tr/kimya-dersi/unite/137",
+          "guncelleme": "09.08.2026",
+          "ders_saati": 8,
+          "icerik_cercevesi": [
+            "Nanoparçacıklar ve Ekolojik Sürdürülebilirlik: Metal Nanoparçacıklar, Metal, Alaşım ve Metal Nanoparçacıkların Çevresel Etkileri, Yeşil Kimyanın Atık Önleme İlkesi"
+          ],
+          "icerik_basliklari": [
+            "Nanoparçacıklar ve Ekolojik Sürdürülebilirlik"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "KİM.9.3.1",
+              "metin": "Evsel atıklardan metal nanoparçacık elde etmek üzere deney yapabilme"
+            },
+            {
+              "kod": "KİM.9.3.2",
+              "metin": "Metal, alaşım ve metal nanoparçacıkların ekosistemdeki etkilerine ilişkin problem çözebilme"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sinif": 10,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/kimya-dersi/12",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "Etkileşim",
+          "unite_url": "https://tymm.meb.gov.tr/kimya-dersi/unite/138",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 32,
+          "icerik_cercevesi": [
+            "Kimyasal Tepkimeler: Kimyasal Değişimin Göstergeleri, Kimyasal Tepkimelerin Oluşumu, Kimyasal Tepkime Türleri, Mol Kavramı, Kimyasal Tepkime Denklemlerinin Denkleştirilmesi, Kimyasal (Stokiyometrik) Hesaplamalar",
+            "Gazlar: Gazların Özellikleri ve Kinetik Moleküler Teori, Gaz Yasaları, İdeal Gaz Yasası, Graham Difüzyon ve Efüzyon Yasası"
+          ],
+          "icerik_basliklari": [
+            "Kimyasal Tepkimeler",
+            "Gazlar"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "KİM.10.1.1",
+              "metin": "Kimyasal değişimlere ilişkin kanıtları belirlemeye yönelik bilimsel gözlem yapabilme"
+            },
+            {
+              "kod": "KİM.10.1.2",
+              "metin": "Kimyasal tepkimelerin oluşumunu açıklamak için bilimsel model oluşturabilme"
+            },
+            {
+              "kod": "KİM.10.1.3",
+              "metin": "Kimyasal tepkime türlerinin oluşum sürecine ilişkin bilimsel gözlem yapabilme"
+            },
+            {
+              "kod": "KİM.10.1.4",
+              "metin": "Mol kavramına ilişkin operasyonel tanımlama yapabilme"
+            },
+            {
+              "kod": "KİM.10.1.5",
+              "metin": "Saf maddelerin ölçülebilir özellikleri arasındaki ilişkileri belirlemeye yönelik tümdengelimsel akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.10.1.6",
+              "metin": "Kimyasal tepkime denklemlerinde tanecik sayılarının tutarsızlıklarına ilişkin çelişkiyi giderebilme"
+            },
+            {
+              "kod": "KİM.10.1.7",
+              "metin": "Kimyasal tepkimelerde stokiyometrik ilişkilere yönelik tümdengelimsel akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.10.1.8",
+              "metin": "Gazların özelliklerine ilişkin bilimsel gözlem yapabilme"
+            },
+            {
+              "kod": "KİM.10.1.9",
+              "metin": "Gazların özellikleri arasındaki ilişkileri bilimsel sorgulayabilme"
+            },
+            {
+              "kod": "KİM.10.1.10",
+              "metin": "İdeal gaz denklemini tümevarımsal akıl yürütme yoluyla oluşturabilme"
+            },
+            {
+              "kod": "KİM.10.1.11",
+              "metin": "Gazların farklı ortamlarda yayılmasına ilişkin deney yapabilme"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "Çeşitlilik",
+          "unite_url": "https://tymm.meb.gov.tr/kimya-dersi/unite/159",
+          "guncelleme": "09.08.2026",
+          "ders_saati": 26,
+          "icerik_cercevesi": [
+            "Çözeltiler: Çözünme Süreci, Maddelerin Birbiri İçindeki Çözünebilirliği, Çözünme Olayının Sınıflandırılması, Çözünürlük, Çözünürlüğe Etki Eden Faktörler (Sıcaklık, Basınç ve Madde Cinsi), Çözeltilerin Sınıflandırılması, Derişim Birimleri (Molarite ve ppm), Koligatif Özellikler (Kaynama Noktası Yükselmesi ve Donma Noktası Düşmesi)"
+          ],
+          "icerik_basliklari": [
+            "Çözeltiler"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "KİM.10.2.1",
+              "metin": "Çözünme sürecine ilişkin bilimsel model oluşturabilme"
+            },
+            {
+              "kod": "KİM.10.2.2",
+              "metin": "Farklı maddelerin birbiri içinde çözünebilirliğini kanıt kullanarak açıklayabilme"
+            },
+            {
+              "kod": "KİM.10.2.3",
+              "metin": "Çözünme olayını sınıflandırabilme"
+            },
+            {
+              "kod": "KİM.10.2.4",
+              "metin": "Çözünürlük kavramına ilişkin operasyonel tanımlama yapabilme"
+            },
+            {
+              "kod": "KİM.10.2.5",
+              "metin": "Çözünürlüğe etki eden faktörleri belirlemeye yönelik kanıt kullanabilme"
+            },
+            {
+              "kod": "KİM.10.2.6",
+              "metin": "Çözeltileri sınıflandırabilme"
+            },
+            {
+              "kod": "KİM.10.2.7",
+              "metin": "Çözeltilerin molar derişimine ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.10.2.8",
+              "metin": "Çözünen maddenin tanecik sayısının çözeltilerin kaynama ve donma noktasına etkisini belirlemeye yönelik hipotez oluşturabilme"
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "Sürdürülebilirlik",
+          "unite_url": "https://tymm.meb.gov.tr/kimya-dersi/unite/160",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 10,
+          "icerik_cercevesi": [
+            "Yeşil Kimya, Çevresel ve Ekolojik Sürdürülebilirlik: Makro ve Mikro Ölçekli Deneyler, Atmosferdeki Tepkimeler ve Küresel Sorunlar"
+          ],
+          "icerik_basliklari": [
+            "Yeşil Kimya, Çevresel ve Ekolojik Sürdürülebilirlik"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "KİM.10.3.1",
+              "metin": "Kimya dersinde mikro ölçekli deney tercih etmenin sonuçlarını ekosistem açısından değerlendirebilme"
+            },
+            {
+              "kod": "KİM.10.3.2",
+              "metin": "Kimyasal tepkimeler sonucunda atmosferin doğasındaki değişimin ekosisteme etkilerine yönelik problem çözebilme"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sinif": 11,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/kimya-dersi/13",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "Etkileşim",
+          "unite_url": "https://tymm.meb.gov.tr/kimya-dersi/unite/161",
+          "guncelleme": "09.08.2026",
+          "ders_saati": 48,
+          "icerik_cercevesi": [
+            "Enerji: Tepkimelerde Meydana Gelen Enerji Değişimi, Maddelerin Enerji Kaynağı Olma Potansiyeli, Bağ Enerjileriyle Tepkime Entalpisinin Hesaplanması, Standart Oluşum Entalpileriyle Tepkime Entalpisinin Hesaplanması",
+            "Kimyasal Tepkimelerde Hız: : Kimyasal Tepkimelerin Gerçekleşmesi İçin Gerekli Şartlar, Tepken ve Ürün Derişimleriyle Ortalama Tepkime Hızlarının Hesaplanması, Tepkime Hızına Etki Eden Faktörler (Tepken Cinsi, Maddelerin Fiziksel Hâlleri, Derişim, Sıcaklık, Katı Tepkenin Temas Yüzeyi ve Katalizör), Tek Basamaklı Kimyasal Tepkimelerin Hız Denkleminin Deneysel Veriler Yardımıyla Belirlenmesi"
+          ],
+          "icerik_basliklari": [
+            "Enerji",
+            "Kimyasal Tepkimelerde Hız"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "KİM.11.1.1",
+              "metin": "Fiziksel ve kimyasal olaylardaki enerji değişimine ilişkin deney yapabilme"
+            },
+            {
+              "kod": "KİM.11.1.2",
+              "metin": "Maddelerin enerji kaynağı olma potansiyeline ilişkin hipotezler oluşturabilme"
+            },
+            {
+              "kod": "KİM.11.1.3",
+              "metin": "Bağ enerjileri temelinde tepkimelerin entalpi değişimine ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.11.1.4",
+              "metin": "Kimyasal tepkimelerin standart tepkime entalpilerini standart oluşum entalpi verilerini kullanarak tahmin edebilme"
+            },
+            {
+              "kod": "KİM.11.1.5",
+              "metin": "Kimyasal tepkimelerin gerçekleşme şartlarını açıklamak için kanıt kullanabilme"
+            },
+            {
+              "kod": "KİM.11.1.6",
+              "metin": "Tepkime hızının zamanla değişimini bilimsel veriye dayalı tahmin edebilme"
+            },
+            {
+              "kod": "KİM.11.1.7",
+              "metin": "Tepkime hızına etki eden faktörleri bilimsel sorgulayabilme"
+            },
+            {
+              "kod": "KİM.11.1.8",
+              "metin": "Kimyasal tepkimelerin hız denklemini bilimsel veriye dayalı tahmin edebilme"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "Çeşitlilik",
+          "unite_url": "https://tymm.meb.gov.tr/kimya-dersi/unite/162",
+          "guncelleme": "09.08.2026",
+          "ders_saati": 70,
+          "icerik_cercevesi": [
+            "Denge: Tersinir Tepkimelerin Özellikleri, Fiziksel ve Kimyasal Değişimlerde Denge, Denge Sabiti İfadesinin Yazılması, Tepkime Oranı, Dengeyi Etkileyen Faktörler (Derişim, Hacim, Basınç, Sıcaklık ve Katalizör)",
+            "Asit ve Baz Çözeltilerinde Denge: Suyun Otoiyonizasyonu, Asit Baz Teorilerinin Karşılaştırılması, Asitlerin ve Bazların Kuvveti, Kuvvetli Asit-Zayıf Asit ve Kuvvetli Baz-Zayıf Baz Sulu Çözeltilerindeki pH Hesaplamaları, Kuvvetli Asit ve Kuvvetli Bazların Nötralleşme Tepkimeleri, Kuvvetli Asit-Kuvvetli Baz Titrasyonları, Asidik ve Bazik Ürünlerin Seçiminde Dikkat Edilmesi Gerekenler",
+            "Çözünürlük Dengesi: Suda Az Çözünen Tuzların Molar Çözünürlükleri, Çözünürlük Çarpımı (Kçç), Tuzların Çözünürlüğüne Etki Eden Faktörler (Sıcaklık ve Ortak İyon)"
+          ],
+          "icerik_basliklari": [
+            "Denge",
+            "Asit ve Baz Çözeltilerinde Denge",
+            "Çözünürlük Dengesi"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "KİM.11.2.1",
+              "metin": "Tepkimelerin tersinir olabileceğine ilişkin bilimsel gözlem yapabilme"
+            },
+            {
+              "kod": "KİM.11.2.2",
+              "metin": "Tepkimelerdeki denge sürecine ilişkin bilimsel gözleme dayalı tahminde bulunabilme"
+            },
+            {
+              "kod": "KİM.11.2.3",
+              "metin": "Denge sabiti ifadesinin oluşturulmasına ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.11.2.4",
+              "metin": "Tersinir tepkimelerin dengeye ulaşıp ulaşmadığını bilimsel veriye dayalı tahmin edebilme"
+            },
+            {
+              "kod": "KİM.11.2.5",
+              "metin": "Dengeye etki eden faktörleri bilimsel sorgulayabilme"
+            },
+            {
+              "kod": "KİM.11.2.6",
+              "metin": "Saf suyun otoiyonizasyonuna ilişkin bilimsel gözlem yapabilme"
+            },
+            {
+              "kod": "KİM.11.2.7",
+              "metin": "Asit ve baz teorilerini karşılaştırabilme"
+            },
+            {
+              "kod": "KİM.11.2.8",
+              "metin": "Asitlerin ve bazların kuvvetlerine ilişkin bilimsel sorgulama yapabilme"
+            },
+            {
+              "kod": "KİM.11.2.9",
+              "metin": "Kuvvetli asit-zayıf asit ve kuvvetli baz-zayıf baz sulu çözeltilerindeki pH hesaplamalarını karşılaştırabilme"
+            },
+            {
+              "kod": "KİM.11.2.10",
+              "metin": "Nötralleşme olayını operasyonel tanımlayabilme"
+            },
+            {
+              "kod": "KİM.11.2.11",
+              "metin": "Kuvvetli asit ve kuvvetli baz çözeltilerinin derişimlerini titrasyon yöntemiyle belirlemeye yönelik deney yapabilme"
+            },
+            {
+              "kod": "KİM.11.2.12",
+              "metin": "Asidik ya da bazik ürünlerin en uygun olanına karar verebilme"
+            },
+            {
+              "kod": "KİM.11.2.13",
+              "metin": "Suda az çözünen tuzların çözünürlüğüne ilişkin bilimsel model oluşturabilme"
+            },
+            {
+              "kod": "KİM.11.2.14",
+              "metin": "Suda az çözünen tuzların çözünürlüğüne etki eden faktörlere ilişkin bilimsel çıkarım yapabilme"
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "Sürdürülebilirlik",
+          "unite_url": "https://tymm.meb.gov.tr/kimya-dersi/unite/163",
+          "guncelleme": "05.08.2026",
+          "ders_saati": 20,
+          "icerik_cercevesi": [
+            "Nanoteknoloji ve Sürdürülebilirlik: Fermantasyon Yöntemi ile Yeşil Hidrojen Enerjisi ve Hidrojen Gazı Miktarına Etki Eden Faktörler, Nanoteknolojik Ürünlerin Potansiyel Faydaları ve Olası Zararları, Mikroplastik ve Nanoplastiklerin Etkileri"
+          ],
+          "icerik_basliklari": [
+            "Nanoteknoloji ve Sürdürülebilirlik"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "KİM.11.3.1",
+              "metin": "Evsel atıklardan fermantasyon yöntemi ile yeşil hidrojen enerjisi elde etme sürecine yönelik hipotez oluşturabilme"
+            },
+            {
+              "kod": "KİM.11.3.2",
+              "metin": "Nanoteknolojik ürünlerin seçimine yönelik eleştirel düşünebilme"
+            },
+            {
+              "kod": "KİM.11.3.3",
+              "metin": "Mikroplastik ve nanoplastiklerin etkilerini sorgulayabilme"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sinif": 12,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/kimya-dersi/14",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "Etkileşim",
+          "unite_url": "https://tymm.meb.gov.tr/kimya-dersi/unite/167",
+          "guncelleme": "09.08.2026",
+          "ders_saati": 48,
+          "icerik_cercevesi": [
+            "İndirgenme-Yükseltgenme Tepkimeleri: Redoks Tepkimeleri ve Yarı Tepkimeler, Metalik Aktiflik",
+            "Elektrokimyasal Hücreler: Galvanik Hücreler, Standart Hidrojen Elektrot, Standart İndirgenme Potansiyeli, Standart Hücre Potansiyeline Etki Eden Faktörler (Elektrotların Aktifliği, Elektrolit Derişimi ve Sıcaklık), Elektrolitik Hücreler, Madde-Elektrik İlişkisi, Elektrolizle Kaplama, Korozyon ve Korozyonu Önleme Yöntemleri"
+          ],
+          "icerik_basliklari": [
+            "İndirgenme-Yükseltgenme Tepkimeleri",
+            "Elektrokimyasal Hücreler"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "KİM.12.1.1",
+              "metin": "İndirgenme-yükseltgenme (redoks) tepkime sürecine ilişkin bilimsel gözlem yapabilme"
+            },
+            {
+              "kod": "KİM.12.1.2",
+              "metin": "Metallerin aktiflik sıralamasını belirlemeye ilişkin bilimsel sorgulama yapabilme"
+            },
+            {
+              "kod": "KİM.12.1.3",
+              "metin": "Galvanik bir hücrenin özelliklerini bilimsel gözleme dayalı tahmin edebilme"
+            },
+            {
+              "kod": "KİM.12.1.4",
+              "metin": "Standart hücre potansiyelinin hesaplanmasına ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.12.1.5",
+              "metin": "Galvanik hücrelerin potansiyelini etkileyen faktörlere ilişkin hipotez oluşturabilme"
+            },
+            {
+              "kod": "KİM.12.1.6",
+              "metin": "Elektrolitik bir hücrenin özelliklerini bilimsel gözlemlere dayalı tahmin edebilme"
+            },
+            {
+              "kod": "KİM.12.1.7",
+              "metin": "Elektroliz olayında madde-elektrik akımı miktarı ilişkisini açıklayabilmek için kanıt kullanabilme"
+            },
+            {
+              "kod": "KİM.12.1.8",
+              "metin": "Metallerin elektrolizle kaplanmasına yönelik deney yapabilme"
+            },
+            {
+              "kod": "KİM.12.1.9",
+              "metin": "Korozyonu önlemeye yönelik bilimsel sorgulama yapabilme"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "Çeşitlilik",
+          "unite_url": "https://tymm.meb.gov.tr/kimya-dersi/unite/168",
+          "guncelleme": "07.08.2026",
+          "ders_saati": 70,
+          "icerik_cercevesi": [
+            "Organik Kimyaya Giriş: Sigma ve Pi Bağları, Hibritleşme, Molekül Geometrisi ve VSEPR Kuramı",
+            "Organik Bileşikler: Organik Bileşiklerin Yapı Formülleri, Alifatik ve Aromatik Hidrokarbonlar, Alifatik Hidrokarbonların Sınıflandırılması, Alifatik Hidrokarbonların Sistematik Adlandırılması, Alifatik Hidrokarbonların İzomerlikleri, Alifatik Hidrokarbonların Fiziksel ve Kimyasal Özellikleri, Organik Bileşikleri Fonksiyonel Gruplarına Göre Sınıflandırma, Fonksiyonel Gruba Sahip Organik Bileşiklerin Sistematik Adlandırılması, Fonksiyonel Grup İzomerliği, Karbon Temelli Enerji Kaynakları"
+          ],
+          "icerik_basliklari": [
+            "Organik Kimyaya Giriş",
+            "Organik Bileşikler"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "KİM.12.2.1",
+              "metin": "Molekülleri oluşturan atomlar arasındaki sigma ve pi bağlarını açıklamak için kanıt kullanabilme"
+            },
+            {
+              "kod": "KİM.12.2.2",
+              "metin": "Hibrit orbitallerinin oluşumunu açıklamak için kanıt kullanabilme"
+            },
+            {
+              "kod": "KİM.12.2.3",
+              "metin": "Moleküllerin geometrisinin belirlenmesine ilişkin çıkarımda bulunabilme"
+            },
+            {
+              "kod": "KİM.12.2.4",
+              "metin": "Organik bileşiklerin gösterimi için kullanılan farklı formüllere ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.12.2.5",
+              "metin": "Hidrokarbonları sınıflandırabilme"
+            },
+            {
+              "kod": "KİM.12.2.6",
+              "metin": "Alifatik hidrokarbonların sistematik adlandırılmasına ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.12.2.7",
+              "metin": "Alifatik hidrokarbonların izomerliklerini sınıflandırabilme"
+            },
+            {
+              "kod": "KİM.12.2.8",
+              "metin": "Alifatik hidrokarbonların fiziksel ve kimyasal özelliklerini karşılaştırabilme"
+            },
+            {
+              "kod": "KİM.12.2.9",
+              "metin": "Organik bileşikleri fonksiyonel grubuna göre sınıflandırabilme"
+            },
+            {
+              "kod": "KİM.12.2.10",
+              "metin": "Fonksiyonel gruba sahip organik bileşiklerin sistematik adlandırılma kurallarına ilişkin tümdengelimsel akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.12.2.11",
+              "metin": "Fonksiyonel grup izomeri olan organik bileşiklerin bilimsel modelini oluşturabilme"
+            },
+            {
+              "kod": "KİM.12.2.12",
+              "metin": "Karbon temelli enerji kaynaklarının yanma tepkimelerinin sonuçlarına ilişkin çıkarım yapabilme"
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "Sürdürülebilirlik",
+          "unite_url": "https://tymm.meb.gov.tr/kimya-dersi/unite/169",
+          "guncelleme": "09.08.2026",
+          "ders_saati": 20,
+          "icerik_cercevesi": [
+            "Nanobilim, Yeşil Kimya ve Sürdürülebilirlik: : Boyaya Duyarlı Güneş Pili, Biyobozunur Polimer, Yapay Zekâ ve Sürdürülebilirlik"
+          ],
+          "icerik_basliklari": [
+            "Nanobilim, Yeşil Kimya ve Sürdürülebilirlik"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "KİM.12.3.1",
+              "metin": "Boyaya duyarlı güneş pillerinin verimliliklerine ilişkin bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "KİM.12.3.2",
+              "metin": "Biyobozunur polimer eldesinde kullanılacak bileşenlere karar verebilme"
+            },
+            {
+              "kod": "KİM.12.3.3",
+              "metin": "Yapay zekâ uygulamalarının sürdürülebilirliğe etkilerine yönelik eleştirel düşünebilme"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "belirsizlikler": [
+    "Kimya programı 'Tema' yapısındadır (Etkileşim, Çeşitlilik, Sürdürülebilirlik); her sınıfta 3 tema. 12. sınıf kitabı ders sayfasında listelenmemiş.",
+    "Sınıf numarası eşlemesi ders sayfasındaki bağlantı sırası ve sınıf sayfası başlığıyla doğrulandı: .../11=9. sınıf, .../12=10. sınıf, .../13=11. sınıf, .../14=12. sınıf.",
+    "Ders saati yalnızca ünite/tema düzeyinde sayfada verilir; alt konu bazında saat yok.",
+    "Ünite sayfalarında alt ünite bağlantısı yok; ünite kimlikleri arasındaki boşluklar sınıf sayfasında listelenmeyen kayıtlardır, bu dosyalara alınmadı.",
+    "icerik_cercevesi: sayfadaki kalın başlık + altındaki düz metin 'Başlık: detay' olarak birleştirildi (ayırıcı ': ' tarafımdan eklendi); icerik_basliklari yalnızca kalın başlıkları içerir. Kalın başlık olmayan sayfalarda her madde ayrı satırdır ve icerik_basliklari boştur.",
+    "ogrenme_ciktilari.metin: kalın başlık cümlesi (kod hariç); a), b) gibi alt süreç bileşenleri alınmadı.",
+    "Veriler HTML'den doğrudan ayrıştırıldı (tymm.meb.gov.tr); 'guncelleme' sayfadaki 'Güncelleme tarihi' değeridir."
+  ]
+}

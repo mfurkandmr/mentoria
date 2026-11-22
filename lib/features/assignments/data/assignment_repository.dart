@@ -100,6 +100,15 @@ class AssignmentItemDraft {
         note: note ?? this.note,
       );
 
+  /// Notu değiştirir ya da (null ile) siler.
+  AssignmentItemDraft withNote(String? value) => AssignmentItemDraft(
+    subjectCode: subjectCode,
+    topicId: topicId,
+    topicName: topicName,
+    questionCount: questionCount,
+    note: value,
+  );
+
   Map<String, Object?> toJson() => {
     'subject_code': subjectCode,
     'topic_id': topicId,
@@ -114,6 +123,16 @@ abstract interface class AssignmentRepository {
   /// Yeni ödevin kimliğini döndürür (veliye PDF için).
   Future<String> sendAssignment({
     required String studentId,
+    required String title,
+    required List<AssignmentItemDraft> items,
+    DateTime? dueOn,
+    String? note,
+  });
+
+  /// Aynı ödevi birden çok öğrenciye verir (hepsi ya da hiçbiri). Ödev
+  /// kimlikleri öğrenci sırasıyla döner.
+  Future<List<String>> sendAssignmentToMany({
+    required List<String> studentIds,
     required String title,
     required List<AssignmentItemDraft> items,
     DateTime? dueOn,
@@ -189,6 +208,27 @@ class SupabaseAssignmentRepository implements AssignmentRepository {
       'p_note': note,
     },
   );
+
+  @override
+  Future<List<String>> sendAssignmentToMany({
+    required List<String> studentIds,
+    required String title,
+    required List<AssignmentItemDraft> items,
+    DateTime? dueOn,
+    String? note,
+  }) async {
+    final ids = await _client.rpc<List<dynamic>>(
+      'send_assignment_bulk',
+      params: {
+        'p_students': studentIds,
+        'p_title': title,
+        'p_items': [for (final i in items) i.toJson()],
+        'p_due_on': dueOn == null ? null : isoDate(dueOn),
+        'p_note': note,
+      },
+    );
+    return [for (final id in ids) id as String];
+  }
 
   @override
   Future<void> setItemDone(String itemId, bool done) =>

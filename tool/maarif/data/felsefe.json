@@ -1,0 +1,327 @@
+{
+  "ders": "Felsefe",
+  "kaynak_kok": "https://tymm.meb.gov.tr/ogretim-programlari/ders/felsefe-dersi",
+  "siniflar": [
+    {
+      "sinif": 9,
+      "sayfa_url": null,
+      "yayim_durumu": "yok",
+      "temalar": []
+    },
+    {
+      "sinif": 10,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/felsefe-dersi/12",
+      "sayfa_basligi": "Felsefe Dersi 10.Sınıf",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "1. Ünite: Felsefenin Doğası",
+          "unite_url": "https://tymm.meb.gov.tr/felsefe-dersi/unite/30",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 10,
+          "icerik_cercevesi": [
+            "Felsefenin Anlamı",
+            "Felsefi Düşüncenin Özellikleri",
+            "Felsefi Düşüncenin Gelişimi",
+            "Felsefi Sorunun Temel Özellikleri",
+            "Felsefenin Diğer Alanlarla İlişkisi",
+            "Felsefenin Bireysel ve Toplumsal İşlevi"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FEL.10.1.1",
+              "metin": "Felsefenin anlamını, gelişim sürecini ve işlevini sorgulayabilme"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "2. Ünite: Felsefe, Mantık Ve Argümantasyon",
+          "unite_url": "https://tymm.meb.gov.tr/felsefe-dersi/unite/32",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 8,
+          "icerik_cercevesi": [
+            "Düşünme ve Dil İlişkisi",
+            "Mantık ve Argümantasyonun Temel Kavramları",
+            "Argümantasyonun Yapısı"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FEL.10.2.1",
+              "metin": "Düşünme ve dil ilişkisini yapılandırabilme"
+            },
+            {
+              "kod": "FEL.10.2.2",
+              "metin": "Mantığın temel kavramlarını ve argümantasyon sürecini yorumlayabilme."
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "3. Ünite: Varlık Felsefesi",
+          "unite_url": "https://tymm.meb.gov.tr/felsefe-dersi/unite/35",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 8,
+          "icerik_cercevesi": [
+            "Varlık Felsefesinin Konusu ve Temel Kavramları",
+            "Varlık Felsefesinin Temel Problemleri (Varlığın Var Olup Olmadığı, Varlığın Ne Olduğu)"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FEL.10.3.1",
+              "metin": "Varlık felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme"
+            }
+          ]
+        },
+        {
+          "sira": 4,
+          "ad": "4. Ünite: Bilgi Felsefesi",
+          "unite_url": "https://tymm.meb.gov.tr/felsefe-dersi/unite/38",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 8,
+          "icerik_cercevesi": [
+            "Bilgi Felsefesinin Konusu ve Temel Kavramları",
+            "Bilgi Felsefesinin Temel Problemleri (Bilginin İmkânı, Kaynağı ve Doğruluk Ölçütleri)"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FEL.10.4.1",
+              "metin": "Bilgi felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme"
+            }
+          ]
+        },
+        {
+          "sira": 5,
+          "ad": "5. Ünite: Ahlak Felsefesi",
+          "unite_url": "https://tymm.meb.gov.tr/felsefe-dersi/unite/41",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 8,
+          "icerik_cercevesi": [
+            "Ahlak Felsefesinin Konusu ve Temel Kavramları",
+            "Ahlak Felsefesinin Temel Problemleri (Evrensel Ahlak Yasasının İmkânı Özgürlük-Sorumluluk İlişkisi)"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FEL.10.5.1",
+              "metin": "Ahlak felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme"
+            }
+          ]
+        },
+        {
+          "sira": 6,
+          "ad": "6. Ünite: Estetik Ve Sanat Felsefesi",
+          "unite_url": "https://tymm.meb.gov.tr/felsefe-dersi/unite/46",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 6,
+          "icerik_cercevesi": [
+            "Estetik ve Sanat Felsefesinin Konusu ve Temel Kavramları",
+            "Estetik ve Sanat Felsefesinin Temel Problemleri (Sanatın Ne Olduğu, Güzellik ve Ortak Estetik Yargıların İmkânı)"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FEL.10.6.1",
+              "metin": "Estetik ve sanat felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme"
+            }
+          ]
+        },
+        {
+          "sira": 7,
+          "ad": "7. Ünite: Siyaset Felsefesi",
+          "unite_url": "https://tymm.meb.gov.tr/felsefe-dersi/unite/51",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 8,
+          "icerik_cercevesi": [
+            "Siyaset Felsefesinin Konusu ve Temel Kavramları Siyaset Felsefesinin Temel Problemleri (Devletin Kökeni, İktidarın Kaynağı ve Meşruiyeti, İdeal Düzen ve Ütopyalar)"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FEL.10.7.1",
+              "metin": "Siyaset felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme"
+            }
+          ]
+        },
+        {
+          "sira": 8,
+          "ad": "8. Ünite: Din Felsefesi",
+          "unite_url": "https://tymm.meb.gov.tr/felsefe-dersi/unite/60",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 6,
+          "icerik_cercevesi": [
+            "Din Felsefesinin Konusu ve Temel Kavramları",
+            "Din Felsefesinin Temel Problemleri (Tanrı’nın Varlığına İlişkin Görüşler,",
+            "Tanrı’nın Varlığına Yönelik argüman, Evrenin Sonluluğu ve Sonsuzluğu, Ruhun Ölümsüzlüğü)"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FEL.10.8.1",
+              "metin": "Din felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme"
+            }
+          ]
+        },
+        {
+          "sira": 9,
+          "ad": "9. Ünite: Bilim Felsefesi",
+          "unite_url": "https://tymm.meb.gov.tr/felsefe-dersi/unite/62",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 6,
+          "icerik_cercevesi": [
+            "Bilim Felsefesinin Konusu ve Temel Kavramları",
+            "Bilim Felsefesinin Temel Problemleri (Bilimin Ne Olduğu, Bilimi Oluşturan Unsurlar)"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FEL.10.9.1",
+              "metin": "Bilim felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sinif": 11,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/felsefe-dersi/13",
+      "sayfa_basligi": "Felsefe Dersi 11.Sınıf",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "1. Ünite: Çevre Sorunları Ve Felsefe",
+          "unite_url": "https://tymm.meb.gov.tr/felsefe-dersi/unite/66",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 12,
+          "icerik_cercevesi": [
+            "Çevre ve İnsan İlişkisi",
+            "Çevre Etiği (İnsan Merkezci Etik, Canlı Merkezci Etik, Çevre Merkezci Etik)"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FEL.11.1.1",
+              "metin": "Çevre ile ilgili felsefi soru ve problemleri anlayabilme"
+            },
+            {
+              "kod": "FEL.11.1.2",
+              "metin": "Çevre sorunlarıyla ilgili felsefi düşünce ortaya koyabilme"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "2. Ünite: Teknoloji Ve Hayat",
+          "unite_url": "https://tymm.meb.gov.tr/felsefe-dersi/unite/69",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 12,
+          "icerik_cercevesi": [
+            "Teknoloji ve İnsan Hayatı",
+            "Teknoloji Bağlamında Ontolojik Problemler (Ontolojik Anlam Kaybı, Yabancılaşma)",
+            "Teknoloji Bağlamında Aksiyolojik Problemler (Güvenlik Sorunları, Değerlerin Tahribatı, Ahlaki Eylemin İmkânı)"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FEL.11.2.1",
+              "metin": "Teknoloji ile ilgili felsefi soru ve problemleri anlayabilme"
+            },
+            {
+              "kod": "FEL.11.2.2",
+              "metin": "Teknoloji ve hayat ilişkisiyle ilgili felsefi düşünce ortaya koyabilme"
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "3. Ünite: Akıl Ve İnanç",
+          "unite_url": "https://tymm.meb.gov.tr/felsefe-dersi/unite/77",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 10,
+          "icerik_cercevesi": [
+            "Akıl-İnanç İlişkisine Yönelik Felsefi Sorular ve Problemler",
+            "Akıl-İnanç İlişkisine Yönelik Felsefi Görüş ve Argümanlar"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FEL.11.3.1",
+              "metin": "Akıl-inanç ilişkisiyle ilgili felsefi soru ve problemleri anlayabilme"
+            },
+            {
+              "kod": "FEL.11.3.2",
+              "metin": "Akıl-inanç ilişkisiyle ilgili felsefi düşünce ortaya koyabilme"
+            }
+          ]
+        },
+        {
+          "sira": 4,
+          "ad": "4. Ünite: Edebiyat Ve Felsefe",
+          "unite_url": "https://tymm.meb.gov.tr/felsefe-dersi/unite/85",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 12,
+          "icerik_cercevesi": [
+            "Edebiyat Felsefe İlişkisi",
+            "Edebiyat Felsefe İlişkisi Problemleri (Edebî Unsurlara Felsefi Bakış, Edebî Unsurlarla Felsefe Yapma)"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FEL.11.4.1",
+              "metin": "Edebiyat felsefe ilişkisi ile ilgili soru ve problemleri anlayabilme"
+            },
+            {
+              "kod": "FEL.11.4.2",
+              "metin": "Edebiyat felsefe ilişkisi ile ilgili felsefi düşünce ortaya koyabilme"
+            }
+          ]
+        },
+        {
+          "sira": 5,
+          "ad": "5. Ünite: Hayatın Anlamı",
+          "unite_url": "https://tymm.meb.gov.tr/felsefe-dersi/unite/93",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 12,
+          "icerik_cercevesi": [
+            "Hayatın Anlamına Yönelik Felsefi Sorular ve Problemler (Mutluluk ve Hayat İlişkisi, Varoluş ve Kendi Olma) Hayatın Anlamına Yönelik Felsefi Görüş ve Argümanlar"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FEL.11.5.1",
+              "metin": "Hayatın anlamına ilişkin felsefi soru ve problemleri anlayabilme"
+            },
+            {
+              "kod": "FEL.11.5.2",
+              "metin": "Hayatın anlamına ilişkin felsefi düşünce ortaya koyabilme"
+            }
+          ]
+        },
+        {
+          "sira": 6,
+          "ad": "6. Ünite: Hukuk Ve Felsefe",
+          "unite_url": "https://tymm.meb.gov.tr/felsefe-dersi/unite/103",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 10,
+          "icerik_cercevesi": [
+            "Hukuk ve İnsan",
+            "Hukukun Doğasına Yönelik Felsefi Problemler [Hukukun Gereği ve Önemi, Hukukun Kaynağı (Doğal Hukuk, Pozitif Hukuk), Ahlak-Hukuk İlişkisi]"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FEL.11.6.1",
+              "metin": "Hukukun doğasına yönelik soru ve felsefi problemleri anlayabilme"
+            },
+            {
+              "kod": "FEL.11.6.2",
+              "metin": "Hukuk sorunları üzerine felsefi düşünce ortaya koyabilme"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sinif": 12,
+      "sayfa_url": null,
+      "yayim_durumu": "yok",
+      "temalar": []
+    }
+  ],
+  "belirsizlikler": [
+    "Ders sayfasında yalnızca 10. ve 11. sınıf bağlantıları var (sayfa kimlikleri 12 ve 13; başlıklardan doğrulandı). 9. ve 12. sınıf için Felsefe programı yayımlanmamış ('yok').",
+    "Felsefe 10. sınıf ünitelerinin çoğunda tek çıktı vardır; HTML'de başka FEL kodu bulunmadığı doğrulandı (ör. FEL.10.1.x yalnızca .1)."
+  ],
+  "kaynak_notu": "Veriler tymm.meb.gov.tr sayfalarının HTML'inden betikle çıkarıldı (ünite sayfası alan satırları); çıktı metinleri yalnızca kalın başlık cümleleridir, alt maddeler (a, b, c) alınmadı. Çekim tarihi 2026-11-21."
+}

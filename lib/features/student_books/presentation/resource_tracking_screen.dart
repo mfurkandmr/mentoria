@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/exam_subjects.dart';
 import '../../../core/constants/grade_levels.dart';
+import '../../../core/design/motion.dart';
 import '../../../core/i18n/i18n.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/widgets/common.dart';
@@ -38,18 +39,22 @@ class _ResourceTrackingScreenState
   /// Bu ekranda yapılan işaretler. Kaydı başarılı olan da burada kalır:
   /// her dokunuşta bütün işaretleri sunucudan yeniden çekmeye gerek yok.
   /// Ekrandan çıkınca liste tazelenir.
-  final _local = <(String, int), bool>{};
+  final _local = <(String, int), MarkState>{};
 
   bool get _canEdit => widget.viewer != BooksViewer.parent;
 
-  Future<void> _toggle(String studentBookId, int topicId, bool done) async {
+  Future<void> _toggle(
+    String studentBookId,
+    int topicId,
+    MarkState state,
+  ) async {
     final key = (studentBookId, topicId);
     final before = _local[key];
-    setState(() => _local[key] = done);
+    setState(() => _local[key] = state);
     try {
       await ref
           .read(booksRepositoryProvider)
-          .setTopicMark(studentBookId, topicId, done);
+          .setTopicMark(studentBookId, topicId, state);
     } catch (_) {
       if (!mounted) return;
       setState(() {
@@ -91,7 +96,10 @@ class _ResourceTrackingScreenState
     final grade = effectiveGrade(
       ref.watch(studentGradeProvider(widget.studentId)).value,
     );
-    final school = grade < 12;
+    final curriculum =
+        ref.watch(studentCurriculumProvider(widget.studentId)).value ??
+        defaultCurriculum(grade);
+    final school = grade < 12 || curriculum == curriculumMaarif;
 
     return Scaffold(
       appBar: AppBar(title: Text(tr('Kaynak takibi'))),
@@ -114,7 +122,11 @@ class _ResourceTrackingScreenState
               // Konular derse göre bir kez gruplanır (her ders için tüm
               // listeyi taramak yerine).
               final bySubject = <String, List<Topic>>{};
-              for (final t in topicsForGrade(all, grade)) {
+              for (final t in topicsForGrade(
+                all,
+                grade,
+                curriculum: curriculum,
+              )) {
                 (bySubject[t.subjectCode] ??= []).add(t);
               }
               for (final l in bySubject.values) {
@@ -134,8 +146,8 @@ class _ResourceTrackingScreenState
                       ],
                     ),
               ].where((e) => e.books.isNotEmpty).toList();
-              bool done(String sb, int topic) =>
-                  _local[(sb, topic)] ?? saved.contains((sb, topic));
+              MarkState done(String sb, int topic) =>
+                  _local[(sb, topic)] ?? saved[(sb, topic)] ?? MarkState.none;
 
               final header = <Widget>[
                 if (!school)
@@ -152,6 +164,7 @@ class _ResourceTrackingScreenState
                           setState(() => _type = s.first),
                     ),
                   ),
+                if (subjects.isNotEmpty) const _Legend(),
                 if (subjects.isEmpty)
                   Padding(
                     padding: const EdgeInsets.all(24),
@@ -201,11 +214,15 @@ class _SubjectTable extends StatelessWidget {
   final String title;
   final List<Topic> topics;
   final List<StudentBook> books;
-  final bool Function(String studentBookId, int topicId) isDone;
-  final Future<void> Function(String studentBookId, int topicId, bool done)?
+  final MarkState Function(String studentBookId, int topicId) isDone;
+  final Future<void> Function(
+    String studentBookId,
+    int topicId,
+    MarkState state,
+  )?
   onToggle;
 
-  static const _bookWidth = 92.0;
+  static const _bookWidth = 76.0;
 
   @override
   Widget build(BuildContext context) {
@@ -216,7 +233,7 @@ class _SubjectTable extends StatelessWidget {
     final finished = [
       for (final t in topics)
         for (final b in books)
-          if (isDone(b.id, t.id)) 1,
+          if (isDone(b.id, t.id) == MarkState.done) 1,
     ].length;
 
     return Card(
@@ -299,13 +316,17 @@ class _SubjectTable extends StatelessWidget {
                               child: Text(t.name, style: text.bodyMedium),
                             ),
                             for (final b in books)
-                              Checkbox(
+                              _MarkBox(
                                 key: ValueKey('mark-${b.id}-${t.id}'),
-                                value: isDone(b.id, t.id),
-                                semanticLabel: '${t.name} · ${b.book.name}',
-                                onChanged: onToggle == null
+                                state: isDone(b.id, t.id),
+                                label: '${t.name} · ${b.book.name}',
+                                onTap: onToggle == null
                                     ? null
-                                    : (v) => onToggle!(b.id, t.id, v ?? false),
+                                    : () => onToggle!(
+                                        b.id,
+                                        t.id,
+                                        isDone(b.id, t.id).next,
+                                      ),
                               ),
                           ],
                         ),
@@ -316,6 +337,111 @@ class _SubjectTable extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Durum renkleri: gri başlanmadı, sarı devam ediyor, yeşil bitti. Anlam
+/// taşıyan sabit renklerdir (marka renginden bağımsız); renk körlüğü için
+/// simge de gösterilir.
+Color _markColor(BuildContext context, MarkState s) => switch (s) {
+  MarkState.none => Theme.of(context).colorScheme.surfaceContainerHighest,
+  MarkState.doing => const Color(0xFFFACC15),
+  MarkState.done => const Color(0xFF86EFAC),
+};
+
+String _markLabel(MarkState s) => switch (s) {
+  MarkState.none => tr('Başlanmadı'),
+  MarkState.doing => tr('Devam ediyor'),
+  MarkState.done => tr('Bitti'),
+};
+
+/// Tablo hücresi: dokununca gri → sarı → yeşil → gri.
+class _MarkBox extends StatelessWidget {
+  const _MarkBox({
+    super.key,
+    required this.state,
+    required this.label,
+    required this.onTap,
+  });
+
+  final MarkState state;
+  final String label;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: onTap != null,
+      label: '$label · ${_markLabel(state)}',
+      excludeSemantics: true,
+      child: InkWell(
+        onTap: onTap,
+        child: SizedBox(
+          height: 44,
+          child: Center(
+            child: AnimatedContainer(
+              duration: AppMotion.of(context, AppMotion.instant),
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                color: _markColor(context, state),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: switch (state) {
+                MarkState.none => null,
+                MarkState.doing => const Icon(
+                  Icons.more_horiz_rounded,
+                  size: 18,
+                  color: Color(0xFF422006),
+                ),
+                MarkState.done => const Icon(
+                  Icons.check_rounded,
+                  size: 18,
+                  color: Color(0xFF14532D),
+                ),
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Renklerin anlamı (tablo üstünde tek satır).
+class _Legend extends StatelessWidget {
+  const _Legend();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Wrap(
+        spacing: 14,
+        runSpacing: 6,
+        children: [
+          for (final s in MarkState.values)
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 14,
+                  height: 14,
+                  decoration: BoxDecoration(
+                    color: _markColor(context, s),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  _markLabel(s),
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+              ],
+            ),
+        ],
       ),
     );
   }

@@ -134,6 +134,8 @@ void main() {
         const PrescriptionCard(studentId: 'demo-student'),
         await buildDemoOverrides('coach'),
       );
+      await tester.tap(find.text('Konu reçetesi verilsin mi?'));
+      await tester.pumpAndSettle();
       // 4 konu; ilk ikisi tekrar eden yanlışlardan, kazanımlarıyla.
       expect(find.byType(Checkbox), findsNWidgets(4));
       expect(find.text('3 denemede 5 yanlış'), findsOneWidget);
@@ -169,6 +171,8 @@ void main() {
         const PrescriptionCard(studentId: 'demo-can'),
         await buildDemoOverrides('coach'),
       );
+      await tester.tap(find.text('Konu reçetesi verilsin mi?'));
+      await tester.pumpAndSettle();
       expect(find.textContaining('Önerilecek konu yok'), findsOneWidget);
       expect(find.textContaining('Onayla ve gönder'), findsNothing);
     });

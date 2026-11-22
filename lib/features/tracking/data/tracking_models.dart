@@ -57,12 +57,26 @@ class Topic {
     required this.subjectCode,
     required this.name,
     required this.sort,
+    this.curriculum = 'eski',
+    this.grade,
+    this.groupName,
   });
 
   final int id;
   final String subjectCode;
   final String name;
   final int sort;
+
+  /// 'eski' (YKS konu listesi) ya da 'maarif' (Maarif Modeli, NOTLAR §104).
+  final String curriculum;
+
+  /// Maarif konusunun sınıfı (9-12); eski konularda boş.
+  final int? grade;
+
+  /// Maarif temasının / ünitesinin adı.
+  final String? groupName;
+
+  bool get isMaarif => curriculum == 'maarif';
 }
 
 enum TopicStatus {

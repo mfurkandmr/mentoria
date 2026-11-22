@@ -1,0 +1,331 @@
+{
+  "ders": "Tarih",
+  "kaynak_kok": "https://tymm.meb.gov.tr/ogretim-programlari/ders/tarih-dersi",
+  "siniflar": [
+    {
+      "sinif": 9,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/tarih-dersi/11",
+      "sayfa_basligi": "Tarih Dersi 9.Sınıf",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "1. Ünite : Geçmişin İnşa Sürecinde Tarih",
+          "unite_url": "https://tymm.meb.gov.tr/tarih-dersi/unite/26",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 18,
+          "icerik_cercevesi": [
+            "Tarih Öğrenmenin Faydaları",
+            "Tarihin Doğası",
+            "Tarihsel Bilginin Üretim Süreci",
+            "Tarih Araştırma ve Yazımında Dijitalleşme"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TAR.9.1.1",
+              "metin": "Tarih öğrenmenin bireye ve topluma faydalarını yorumlayabilme"
+            },
+            {
+              "kod": "TAR.9.1.2",
+              "metin": "Tarihin doğasını farklı kaynaklar üzerinden inceleyebilme"
+            },
+            {
+              "kod": "TAR.9.1.3",
+              "metin": "Tarihsel bilginin üretim sürecini çözümleyebilme"
+            },
+            {
+              "kod": "TAR.9.1.4",
+              "metin": "Dijitalleşmenin tarih araştırma ve yazımının dönüşümüne etkisini değerlendirebilme"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "2. Ünite : Eski Çağ Medeniyetleri",
+          "unite_url": "https://tymm.meb.gov.tr/tarih-dersi/unite/27",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 24,
+          "icerik_cercevesi": [
+            "Tarım Devrimi’nin Eski Çağ Medeniyetlerindeki Yerleşmeye ve Ekonomiye Etkisi",
+            "Eski Çağ Medeniyetlerinde Yönetim ve Ordu",
+            "Eski Çağ Medeniyetlerinde Hukuk",
+            "Eski Çağ’da İnançlar ile Bilim ve Sanat Anlayışları",
+            "Türklerde Konargöçer Yaşam"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TAR.9.2.1",
+              "metin": "Tarım Devrimi’nin Eski Çağ medeniyetlerindeki yerleşmeye ve ekonomik faaliyetlere etkisini değerlendirebilme"
+            },
+            {
+              "kod": "TAR.9.2.2",
+              "metin": "Eski Çağ’daki farklı medeniyetlerin yönetim ve ordu sistemlerini özetleyebilme"
+            },
+            {
+              "kod": "TAR.9.2.3",
+              "metin": "Eski Çağ medeniyetlerinde hukukun toplumsal düzeni sağlamadaki rolünü sorgulayabilme"
+            },
+            {
+              "kod": "TAR.9.2.4",
+              "metin": "Eski Çağ toplumlarındaki inançlar ile bilim ve sanat anlayışları arasındaki ilişkiyiyorumlayabilme"
+            },
+            {
+              "kod": "TAR.9.2.5",
+              "metin": "Türklerde konargöçer yaşama ilişkin bakış açısı geliştirebilme"
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "3. Ünite : Orta Çağ Medeniyetleri",
+          "unite_url": "https://tymm.meb.gov.tr/tarih-dersi/unite/29",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 26,
+          "icerik_cercevesi": [
+            "Orta Çağ’da Yaşanan Kitlesel Göçler",
+            "Orta Çağ’daki Başlıca Devletlerin Yönetim ve Ordu Yapıları",
+            "Orta Çağ’daki Ticaret Yolları",
+            "Orta Çağ’daki Başlıca Medeniyet Havzalarında Bilim, Kültür ve Sanat"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TAR.9.3.1",
+              "metin": "Orta Çağ’da yaşanan kitlesel göçlerin Avrupa ve Asya’da oluşturduğu değişimi neden ve sonuçlarıyla birlikte yorumlayabilme"
+            },
+            {
+              "kod": "TAR.9.3.2",
+              "metin": "Orta Çağ’daki başlıca devletlerin yönetim ve ordu yapılarını karşılaştırabilme"
+            },
+            {
+              "kod": "TAR.9.3.3",
+              "metin": "Orta Çağ’daki ticaret yollarının kendi çevresinde meydana getirdiği etkiyi sorgulayabilme"
+            },
+            {
+              "kod": "TAR.9.3.4",
+              "metin": "Orta Çağ’daki başlıca medeniyet havzalarının bilim, kültür ve sanata etkilerine ilişkin oluşturduğu ürünleri paylaşabilme"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sinif": 10,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/tarih-dersi/12",
+      "sayfa_basligi": "Tarih Dersi 10.Sınıf",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "1. Ünite : Türkistan’dan Türkiye’ye (1040-1299)",
+          "unite_url": "https://tymm.meb.gov.tr/tarih-dersi/unite/36",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 20,
+          "icerik_cercevesi": [
+            "Türkistan’dan Türkiye’ye Uzanan Süreçte Meydana Gelen Önemli Askerî Mücadeleler",
+            "Türkistan’dan Türkiye’ye Uzanan Süreçte Türk Devlet ve Ordu Teşkilatında Meydana Gelen Değişim",
+            "Türkistan’dan Türkiye’ye Uzanan Süreçte Türklerin Sosyal Yaşamları ve Ekonomik Faaliyetleri",
+            "Türk-İslam Medeniyetinin Bilim, Kültür, Eğitim ve Sanat Alanlarında Ortaya Çıkardığı Etkiler"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TAR.10.1.1",
+              "metin": "Türkistan’dan Türkiye’ye uzanan süreçte 1040-1299 yılları arasında meydana gelen önemli askerî mücadelelerin Türk tarihinin seyrine etkilerini karşılaştırabilme"
+            },
+            {
+              "kod": "TAR.10.1.2",
+              "metin": "Türkistan’dan Türkiye’ye uzanan süreçte Türklerde devlet ve ordu teşkilatında meydana gelen değişim ve sürekliliği yorumlayabilme"
+            },
+            {
+              "kod": "TAR.10.1.3",
+              "metin": "Türkistan’dan Türkiye’ye uzanan süreçte Türklerin sosyoekonomik faaliyetleri ile yerleşme ve şehirleşme anlayışları arasındaki ilişkiyi sorgulayabilme"
+            },
+            {
+              "kod": "TAR.10.1.4",
+              "metin": "Türkistan’dan Türkiye’ye uzanan süreçte Türk-İslam medeniyetinde bilim, kültür, eğitim ve sanat alanlarında meydana gelen gelişmeleri Anadolu’nun Türkleşme ve İslamlaşma sürecine etkisi açısından değerlendirebilme"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "2. Ünite : Beylikten Devlete Osmanlı (1299-1453)",
+          "unite_url": "https://tymm.meb.gov.tr/tarih-dersi/unite/39",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 24,
+          "icerik_cercevesi": [
+            "Osmanlı Devleti’nin Kuruluşuna Dair Farklı Görüşler",
+            "Osmanlı Devleti’nin Anadolu ve Rumeli’deki Siyasi ve Askerî Mücadeleleri",
+            "Osmanlı Devleti’nin Devletleşme Süreci ile Ordu, Hukuk ve Toprak Sistemleri Arasındaki İlişkiler",
+            "Osmanlı Devleti’nin Fethettiği Topraklarda Kalıcı Olabilmek İçin İzlediği Politikalar",
+            "Osmanlı Devleti’nin İlim ve İrfan Geleneğinin Oluşmasında Mekânların ve Kişilerin Etkisi"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TAR.10.2.1",
+              "metin": "Osmanlı Devleti’nin kuruluşuna dair farklı görüşleri tartışabilme"
+            },
+            {
+              "kod": "TAR.10.2.2",
+              "metin": "1299-1453 yılları arasında Osmanlı Devleti’nin Anadolu ve Rumeli’de gerçekleştirdiği siyasi ve askerî mücadeleleri yorumlayabilme"
+            },
+            {
+              "kod": "TAR.10.2.3",
+              "metin": "Osmanlı Devleti’nin ordu, hukuk ve toprak sistemi ile devletleşme süreci arasındaki ilişkiyi çözümleyebilme"
+            },
+            {
+              "kod": "TAR.10.2.4",
+              "metin": "Osmanlı Devleti’nin fethettiği topraklarda kalıcı olabilmek için izlediği politikaları sorgulayabilme"
+            },
+            {
+              "kod": "TAR.10.2.5",
+              "metin": "Osmanlı Devleti’nin ilim ve irfan geleneğinin oluşmasında şehir, kurum ve şahsiyetlerin etkilerine dair fikirler üretebilme"
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "3. Ünite : Cihan Devleti Osmanlı (1453-1683)",
+          "unite_url": "https://tymm.meb.gov.tr/tarih-dersi/unite/48",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 24,
+          "icerik_cercevesi": [
+            "1453-1683 Yılları Arasındaki Siyasi ve Askerî Mücadeleler",
+            "Osmanlı Devleti’nin Yönetim ve Ordu Yapısında Meydana Gelen Değişim",
+            "Avrupa’nın Sömürgeci Politikalarının Etkileri",
+            "Osmanlı Devleti’ndeki Önemli İsyanların Neden ve Sonuçları",
+            "1453-1683 Yılları Arasında Osmanlı Devleti’nde Bilim, Kültür, Eğitim ve Sanat Alanında Yaşanan Gelişmeler"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TAR.10.3.1",
+              "metin": "1453-1683 yılları arasındaki siyasi ve askerî mücadelelerin Osmanlı Devleti’nin cihan devleti hâline gelmesindeki rolüne ilişkin özgün fikirler üretebilme"
+            },
+            {
+              "kod": "TAR.10.3.2",
+              "metin": "1453-1683 yılları arasında Osmanlı Devleti’nin yönetim ve ordu yapısında meydana gelen değişim ve sürekliliğe ilişkin kaynakları yorumlayabilme"
+            },
+            {
+              "kod": "TAR.10.3.3",
+              "metin": "Avrupalıların sömürgeci politikalarının etkilerini tarihsel bağlamı içerisinde değerlendirebilme"
+            },
+            {
+              "kod": "TAR.10.3.4",
+              "metin": "1453-1683 yılları arasında Osmanlı Devleti’nde gerçekleşen önemli isyanların neden ve sonuçlarını müzakere edebilme"
+            },
+            {
+              "kod": "TAR.10.3.5",
+              "metin": "1453-1683 yılları arasında Osmanlı Devleti’nde bilim, kültür, eğitim ve sanat alanlarında ortaya çıkan gelişmelere ilişkin oluşturduğu özgün ürünleri paylaşabilme"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sinif": 11,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/tarih-dersi/13",
+      "sayfa_basligi": "Tarih Dersi 11.Sınıf",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "1. Ünite : Değişen Dünyada Osmanlı Devleti (1683-1789)",
+          "unite_url": "https://tymm.meb.gov.tr/tarih-dersi/unite/68",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 22,
+          "icerik_cercevesi": [
+            "Osmanlı Devleti’nin 1683-1789 Yılları Arasındaki Siyasi ve Askerî Mücadeleleri",
+            "Lale Devri’nin Devlet ve Toplum Hayatına Etkileri",
+            "1755 Lizbon ve 1766 İstanbul Depremlerinin Etkileri",
+            "Sanayi Devrimi’nin Meydana Getirdiği Siyasi, Sosyal ve Ekonomik Değişim"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TAR.11.1.1",
+              "metin": "Osmanlı Devleti’nin 1683-1789 yılları arasındaki siyasi ve askerî mücadelelerini sonuçları açısından değerlendirebilme"
+            },
+            {
+              "kod": "TAR.11.1.2",
+              "metin": "Lale Devri’nde Osmanlı devlet ve toplum hayatında meydana gelen değişimi tarihsel bağlamı içerisinde yorumlayabilme"
+            },
+            {
+              "kod": "TAR.11.1.3",
+              "metin": "1755 Lizbon ve 1766 İstanbul depremlerini ortaya çıkardığı etkiler bakımından karşılaştırabilme"
+            },
+            {
+              "kod": "TAR.11.1.4",
+              "metin": "Sanayi Devrimi’nin meydana getirdiği siyasi, sosyal ve ekonomik değişimi neden ve sonuçlarıyla birlikte yorumlayabilme"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "2. Ünite : Dönüşüm Sürecinde Osmanlı (1789-1908)",
+          "unite_url": "https://tymm.meb.gov.tr/tarih-dersi/unite/72",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 26,
+          "icerik_cercevesi": [
+            "Fransız İhtilali’nin Devlet ve Toplum Hayatında Meydana Getirdiği Değişim",
+            "1789-1908 Yılları Arasında Osmanlı Devleti’nde Meydana Gelen Siyasi, Askerî ve İdari Gelişmeler",
+            "1789-1908 Yılları Arasında Osmanlı Devleti’nde Bilim, Sanat ve Teknoloji Alanlarında Meydana Gelen Gelişmeler",
+            "Osmanlı Devleti’nde Sanayileşme Çabaları"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TAR.11.2.1",
+              "metin": "Fransız İhtilali’nin devlet ve toplum hayatında meydana getirdiği değişimi neden ve sonuçlarıyla yorumlayabilme"
+            },
+            {
+              "kod": "TAR.11.2.2",
+              "metin": "1789-1908 yılları arasında meydana gelen siyasi, askerî ve idari gelişmelerin Osmanlı Devleti’nin yönetim ve toplum yapısına etkilerini sorgulayabilme"
+            },
+            {
+              "kod": "TAR.11.2.3",
+              "metin": "1789-1908 yılları arasında Osmanlı Devleti’nde bilim, sanat ve teknoloji alanlarında yapılan uygulamaları yorumlayabilme"
+            },
+            {
+              "kod": "TAR.11.2.4",
+              "metin": "Osmanlı Devleti’nin sanayileşmede geri kalmasına neden olan etmenleri ortadan kaldırmaya yönelik alternatif fikirler üretebilme"
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "3. Ünite : Savaşlar Sarmalında Osmanlı (1908- 1918)",
+          "unite_url": "https://tymm.meb.gov.tr/tarih-dersi/unite/80",
+          "guncelleme": "25.08.2026",
+          "ders_saati": 20,
+          "icerik_cercevesi": [
+            "1908-1918 Yılları Arasında Osmanlı Devleti’nde Meydana Gelen Siyasi ve Askerî Gelişmeler",
+            "1908-1918 Yılları Arasında Gerçekleşen Kitlesel Göç ve Salgınlar",
+            "Osmanlı Devleti’nin İnsanlık Tarihine Katkıları"
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TAR.11.3.1",
+              "metin": "1908-1918 yılları arasında Osmanlı Devleti’nde meydana gelen siyasi ve askerî gelişmelerin sonuçlarını tarihsel bağlamı içerisinde değerlendirebilme"
+            },
+            {
+              "kod": "TAR.11.3.2",
+              "metin": "1908-1918 yılları arasında yaşanan kitlesel göç ve salgınların Osmanlı devlet ve toplum hayatına etkilerine ilişkin bakış açısı geliştirebilme"
+            },
+            {
+              "kod": "TAR.11.3.3",
+              "metin": "Osmanlı Devleti’nin insanlık tarihine katkılarına ilişkin oluşturduğu özgün ürünleri paylaşabilme"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sinif": 12,
+      "sayfa_url": null,
+      "yayim_durumu": "yok",
+      "temalar": []
+    }
+  ],
+  "belirsizlikler": [
+    "Ders sayfasında (tarih-dersi) yalnızca 9, 10 ve 11. sınıf bağlantıları var; 12. sınıf için Tarih dersi programı yayımlanmamış ('yok').",
+    "12. sınıf için ayrı bir seçmeli ders var: 'Çağdaş Türk ve Dünya Tarihi Dersi' (https://tymm.meb.gov.tr/ogretim-programlari/ders/cagdas-turk-ve-dunya-tarihi-dersi, sınıf sayfası /17, sayfa başlığı 'Ortaöğretim Seçmeli Dersler'; 3 ünite: Yeni Dünya Düzenine Doğru (1919-1945), Soğuk Savaş Dönemi (1945-1991), Küreselleşen Dünya (1991 ve Sonrası)). Hangi sınıfa ait olduğu sayfada belirtilmediği için bu dosyaya 12. sınıf olarak YAZILMADI; ayrı doğrulanmalı.",
+    "'Tarih Dersi' ünite sayfalarının tümünde Güncelleme tarihi var (25.08.2026 / 26.08.2026)."
+  ],
+  "kaynak_notu": "Veriler tymm.meb.gov.tr sayfalarının HTML'inden betikle çıkarıldı (ünite sayfası alan satırları); çıktı metinleri yalnızca kalın başlık cümleleridir, alt maddeler (a, b, c) alınmadı. Çekim tarihi 2026-11-21."
+}

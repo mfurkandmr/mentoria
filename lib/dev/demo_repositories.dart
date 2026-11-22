@@ -48,6 +48,7 @@ class InMemoryTrackingRepository implements TrackingRepository {
   final _sessions = <String, List<StudySession>>{};
   final _goals = <String, Goals>{};
   final _grades = <String, int>{};
+  final _curricula = <String, String?>{};
   int _id = 1;
 
   List<QuestionLog> logsOf(String s) => _logs[s] ?? const [];
@@ -99,6 +100,18 @@ class InMemoryTrackingRepository implements TrackingRepository {
   Future<void> setGradeLevel(String studentId, int grade) async {
     if (grade < 9 || grade > 12) throw ArgumentError('BAD_GRADE');
     _grades[studentId] = grade;
+  }
+
+  @override
+  Future<String?> fetchCurriculum(String studentId) async =>
+      _curricula[studentId];
+
+  @override
+  Future<void> setCurriculum(String studentId, String? curriculum) async {
+    if (curriculum != null && curriculum != 'eski' && curriculum != 'maarif') {
+      throw ArgumentError('BAD_CURRICULUM');
+    }
+    _curricula[studentId] = curriculum;
   }
 
   @override
@@ -676,6 +689,29 @@ class InMemoryAssignmentRepository implements AssignmentRepository {
       at: at,
     );
     return id;
+  }
+
+  @override
+  Future<List<String>> sendAssignmentToMany({
+    required List<String> studentIds,
+    required String title,
+    required List<AssignmentItemDraft> items,
+    DateTime? dueOn,
+    String? note,
+  }) async {
+    final ids = {...studentIds}.toList();
+    if (ids.isEmpty) throw StateError('NO_STUDENTS');
+    if (ids.length > 30) throw StateError('TOO_MANY_STUDENTS');
+    return [
+      for (final id in ids)
+        await sendAssignment(
+          studentId: id,
+          title: title,
+          items: items,
+          dueOn: dueOn,
+          note: note,
+        ),
+    ];
   }
 
   @override

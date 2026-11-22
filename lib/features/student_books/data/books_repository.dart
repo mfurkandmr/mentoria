@@ -40,6 +40,30 @@ enum PoolStatus {
       values.firstWhere((k) => k.db == v, orElse: () => PoolStatus.active);
 }
 
+/// Kaynak takibinde bir kitap × konu hücresinin durumu (NOTLAR §106):
+/// başlanmadı (gri) → devam ediyor (sarı) → bitti (yeşil).
+enum MarkState {
+  none('none'),
+  doing('doing'),
+  done('done');
+
+  const MarkState(this.db);
+  final String db;
+
+  static MarkState fromDb(String? v) => switch (v) {
+    'doing' => MarkState.doing,
+    'none' => MarkState.none,
+    _ => MarkState.done,
+  };
+
+  /// Dokununca sıradaki durum (gri → sarı → yeşil → gri).
+  MarkState get next => switch (this) {
+    MarkState.none => MarkState.doing,
+    MarkState.doing => MarkState.done,
+    MarkState.done => MarkState.none,
+  };
+}
+
 enum StudentBookStatus {
   active('active'),
   finished('finished'),
@@ -395,12 +419,14 @@ abstract interface class BooksRepository {
   Future<Map<String, BookUsage>> usage({String? classroomId});
   Future<List<TopicGap>> topicGaps(String studentId);
 
-  /// Kaynak takibi: öğrencinin kitaplarında bitti işaretli konular
-  /// (öğrenci kitabı kimliği, konu kimliği). NOTLAR §92.
-  Future<Set<(String, int)>> fetchTopicMarks(String studentId);
+  /// Kaynak takibi: öğrencinin kitaplarında işaretli konular ve durumları
+  /// (öğrenci kitabı kimliği, konu kimliği) → devam ediyor / bitti. İşaretsiz
+  /// konu haritada yoktur (başlanmadı). NOTLAR §92, §106.
+  Future<Map<(String, int), MarkState>> fetchTopicMarks(String studentId);
 
-  /// Öğrenci kendisi ya da koçu / müdürü işaretler (`set_book_topic_mark`).
-  Future<void> setTopicMark(String studentBookId, int topicId, bool done);
+  /// Öğrenci kendisi ya da koçu / müdürü işaretler (`set_book_topic_state`).
+  /// [MarkState.none] işareti kaldırır.
+  Future<void> setTopicMark(String studentBookId, int topicId, MarkState state);
 
   /// Hangi öğrenci hangi kitaptan kaç soru çözdü (koç: kendi öğrencileri,
   /// müdür: kurum). [term] boşsa bu dönem.
@@ -541,27 +567,33 @@ class SupabaseBooksRepository implements BooksRepository {
   }
 
   @override
-  Future<Set<(String, int)>> fetchTopicMarks(String studentId) async {
+  Future<Map<(String, int), MarkState>> fetchTopicMarks(
+    String studentId,
+  ) async {
     final rows = await _client
         .from('book_topic_marks')
-        .select('student_book_id, topic_id')
+        .select('student_book_id, topic_id, state')
         .eq('student_id', studentId);
     return {
       for (final r in rows)
-        (r['student_book_id'] as String, (r['topic_id'] as num).toInt()),
+        (r['student_book_id'] as String, (r['topic_id'] as num).toInt()):
+            MarkState.fromDb(r['state'] as String?),
     };
   }
 
   @override
-  Future<void> setTopicMark(String studentBookId, int topicId, bool done) =>
-      _client.rpc(
-        'set_book_topic_mark',
-        params: {
-          'p_student_book': studentBookId,
-          'p_topic': topicId,
-          'p_done': done,
-        },
-      );
+  Future<void> setTopicMark(
+    String studentBookId,
+    int topicId,
+    MarkState state,
+  ) => _client.rpc(
+    'set_book_topic_state',
+    params: {
+      'p_student_book': studentBookId,
+      'p_topic': topicId,
+      'p_state': state.db,
+    },
+  );
 
   @override
   Future<BooksOverview> overview(String studentId, {String? term}) async {
@@ -731,7 +763,7 @@ final booksOverviewProvider =
 
 /// Kaynak takibi işaretleri (öğrenci kitabı, konu).
 final bookTopicMarksProvider =
-    FutureProvider.family<Set<(String, int)>, String>(
+    FutureProvider.family<Map<(String, int), MarkState>, String>(
       (ref, id) => ref.watch(booksRepositoryProvider).fetchTopicMarks(id),
     );
 

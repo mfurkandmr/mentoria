@@ -26,6 +26,13 @@ abstract interface class TrackingRepository {
   /// Öğrenci kendisi ya da koçu / müdürü değiştirir (`set_grade_level`).
   Future<void> setGradeLevel(String studentId, int grade);
 
+  /// Öğrencinin müfredatı: 'eski' | 'maarif'; seçilmediyse null (sınıftan
+  /// türetilir, bkz. `effectiveCurriculum`). NOTLAR §104.
+  Future<String?> fetchCurriculum(String studentId);
+
+  /// Öğrenci kendisi ya da koçu / müdürü değiştirir (`set_curriculum`).
+  Future<void> setCurriculum(String studentId, String? curriculum);
+
   Future<List<StudySession>> fetchSessions(
     String studentId, {
     required DateTime since,
@@ -149,7 +156,7 @@ class SupabaseTrackingRepository implements TrackingRepository {
       'topics',
       () => _client
           .from('topics')
-          .select('id, subject_id, name, sort')
+          .select('id, subject_id, name, sort, curriculum, grade, group_name')
           .order('sort'),
     );
     return [
@@ -159,6 +166,9 @@ class SupabaseTrackingRepository implements TrackingRepository {
           subjectCode: _codeById![r['subject_id'] as int]!,
           name: r['name'] as String,
           sort: r['sort'] as int,
+          curriculum: r['curriculum'] as String? ?? 'eski',
+          grade: (r['grade'] as num?)?.toInt(),
+          groupName: r['group_name'] as String?,
         ),
     ];
   }
@@ -178,6 +188,23 @@ class SupabaseTrackingRepository implements TrackingRepository {
     'set_grade_level',
     params: {'p_student': studentId, 'p_grade': grade},
   );
+
+  @override
+  Future<String?> fetchCurriculum(String studentId) async {
+    final row = await _client
+        .from('profiles')
+        .select('curriculum')
+        .eq('id', studentId)
+        .maybeSingle();
+    return row?['curriculum'] as String?;
+  }
+
+  @override
+  Future<void> setCurriculum(String studentId, String? curriculum) =>
+      _client.rpc(
+        'set_curriculum',
+        params: {'p_student': studentId, 'p_curriculum': curriculum},
+      );
 
   @override
   Future<Map<int, TopicStatus>> fetchTopicProgress(String studentId) async {
@@ -319,15 +346,35 @@ final studentGradeProvider = FutureProvider.family<int?, String>(
       ref.watch(trackingRepositoryProvider).fetchGradeLevel(studentId),
 );
 
-/// Öğrencinin sınıfına göre süzülmüş konular (9. sınıf yalnızca 9. sınıf
-/// konularını görür; 12 / mezun hepsini).
+/// Öğrencinin seçtiği müfredat ('eski' | 'maarif'; null = seçilmedi).
+final studentCurriculumRawProvider = FutureProvider.family<String?, String>(
+  (ref, studentId) =>
+      ref.watch(trackingRepositoryProvider).fetchCurriculum(studentId),
+);
+
+/// Öğrencinin geçerli müfredatı: seçtiği, yoksa sınıftan türetilen
+/// (9-11 → Maarif, 12 / mezun → eski).
+final studentCurriculumProvider = FutureProvider.family<String, String>((
+  ref,
+  studentId,
+) async {
+  final grade = await ref.watch(studentGradeProvider(studentId).future);
+  final raw = await ref.watch(studentCurriculumRawProvider(studentId).future);
+  return effectiveCurriculum(grade, raw);
+});
+
+/// Öğrencinin sınıfına ve müfredatına göre süzülmüş konular (9. sınıf yalnızca
+/// 9. sınıf konularını görür; eski müfredatta 12 / mezun hepsini).
 final studentTopicsProvider = FutureProvider.family<List<Topic>, String>((
   ref,
   studentId,
 ) async {
   final topics = await ref.watch(topicsProvider.future);
   final grade = await ref.watch(studentGradeProvider(studentId).future);
-  return topicsForGrade(topics, grade);
+  final curriculum = await ref.watch(
+    studentCurriculumProvider(studentId).future,
+  );
+  return topicsForGrade(topics, grade, curriculum: curriculum);
 });
 
 final topicProgressProvider =
