@@ -58,7 +58,7 @@ Ayrıntılar NOTLAR.md'deki bölümlerde.
 
 ## 4. Ürün eksikleri
 
-- [ ] **15. Güvenlik:** `book_question_report` kurum lisansını (`my_tenant_active`)
+- [x] **15. Güvenlik** (22 Kasım 2026, migration `20261122110000_book_report_license`, canlıda): `book_question_report` kurum lisansını (`my_tenant_active`)
       denetlemiyor.
 - [ ] **16. Öğretmene bildirim** — program yayınlanınca / değişince öğretmene de.
 - [ ] **17. Soru çözümü:** geçmiş talepler ekranı; öğretmen geldi/gelmedi işaretlesin.
