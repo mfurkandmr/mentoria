@@ -52,6 +52,7 @@ APP_ROUTES = [
     "t",
     "hesap-sil",
     "reset-password",
+    "notifications",
     "platform",
     "student",
     "coach",

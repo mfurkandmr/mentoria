@@ -304,6 +304,87 @@ void main() {
     expect(after.every((r) => r.status == TutoringStatus.approved), isTrue);
   });
 
+  testWidgets('öğretmen geçmiş oturumda geldi / gelmedi işaretler', (t) async {
+    final tutoring = repo('demo-teacher', 'teacher');
+    final history = await tutoring.teacherHistory();
+    expect(history, hasLength(1), reason: 'demo: geçmişte bir onaylı oturum');
+    final h = history.single;
+    expect(h.attended, isNull);
+    await pump(
+      t,
+      const TeacherHomeScreen(),
+      role: 'teacher',
+      tutoring: tutoring,
+    );
+    expect(find.text('Geçmiş oturumlar'), findsOneWidget);
+
+    final present = find.byKey(ValueKey('present-${h.id}'));
+    await t.ensureVisible(present);
+    await t.tap(present);
+    await t.pumpAndSettle();
+    expect((await tutoring.teacherHistory()).single.attended, isTrue);
+    expect(find.text('Geldi'), findsWidgets);
+
+    // Pembeyi geri al, sonra gelmedi işaretle.
+    final undo = find.byKey(ValueKey('undo-${h.id}'));
+    await t.ensureVisible(undo);
+    await t.tap(undo);
+    await t.pumpAndSettle();
+    expect((await tutoring.teacherHistory()).single.attended, isNull);
+    final absent = find.byKey(ValueKey('absent-${h.id}'));
+    await t.ensureVisible(absent);
+    await t.tap(absent);
+    await t.pumpAndSettle();
+    expect((await tutoring.teacherHistory()).single.attended, isFalse);
+  });
+
+  test('devam işareti kuralları ve öğrencinin geçmişi', () async {
+    final teacher = repo('demo-teacher', 'teacher');
+    final h = (await teacher.teacherHistory()).single;
+    // Gelecekteki onaylı talep işaretlenemez.
+    final upcoming = (await teacher.teacherRequests(
+      DateTime.now(),
+    )).firstWhere((r) => r.status == TutoringStatus.approved);
+    expect(
+      () => teacher.markAttendance(upcoming.id, true),
+      throwsA(
+        isA<StateError>().having((e) => e.message, 'message', 'TUTOR_NOT_YET'),
+      ),
+    );
+    await teacher.markAttendance(h.id, true);
+
+    // Başka öğretmen ve öğrenci işaretleyemez.
+    final other = repo('demo-other', 'teacher');
+    expect(() => other.markAttendance(h.id, false), throwsStateError);
+    final student = repo('demo-student', 'student');
+    expect(() => student.markAttendance(h.id, false), throwsStateError);
+
+    // Öğrenci geçmişinde hem onaylı hem reddedilen görünür; başkasınınki değil.
+    final mine = await student.myHistory();
+    expect(mine.map((r) => r.status).toSet(), {
+      TutoringStatus.approved,
+      TutoringStatus.rejected,
+    });
+    expect(await repo('demo-can', 'student').myHistory(), isEmpty);
+  });
+
+  testWidgets('öğrenci geçmiş taleplerini ve devamını görür', (t) async {
+    final tutoring = repo('demo-student', 'student');
+    await pump(
+      t,
+      const StudentTutoringScreen(),
+      role: 'student',
+      tutoring: tutoring,
+    );
+    final tile = find.byKey(const ValueKey('tutoring-history'));
+    await t.ensureVisible(tile);
+    expect(find.text('Geçmiş taleplerim'), findsOneWidget);
+    await t.tap(tile);
+    await t.pumpAndSettle();
+    expect(find.text('İşaretlenmedi'), findsOneWidget);
+    expect(find.text('Reddedildi'), findsOneWidget);
+  });
+
   testWidgets('öğretmen gerekçeyle reddeder', (t) async {
     final tutoring = repo('demo-teacher', 'teacher');
     final id = (await tutoring.teacherRequests(

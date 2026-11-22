@@ -41,6 +41,24 @@ class TutoringStatusPill extends StatelessWidget {
   }
 }
 
+/// Geçmiş oturumda devam durumu: geldi / gelmedi / işaretlenmedi.
+class TutoringAttendancePill extends StatelessWidget {
+  const TutoringAttendancePill(this.attended, {super.key});
+
+  final bool? attended;
+
+  @override
+  Widget build(BuildContext context) {
+    final b = context.brand;
+    final (icon, text, color) = switch (attended) {
+      true => (Icons.check_circle_rounded, tr('Geldi'), b.success),
+      false => (Icons.cancel_rounded, tr('Gelmedi'), b.danger),
+      null => (Icons.help_outline_rounded, tr('İşaretlenmedi'), b.ink),
+    };
+    return InfoPill(icon: icon, text: text, color: color);
+  }
+}
+
 /// Bir talep satırı: tarih · saat · ders, öğretmen ya da öğrenci, konu.
 class TutoringRequestTile extends StatelessWidget {
   const TutoringRequestTile({

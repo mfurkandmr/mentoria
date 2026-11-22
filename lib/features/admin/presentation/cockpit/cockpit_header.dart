@@ -10,6 +10,7 @@ import '../../../../core/i18n/i18n.dart';
 import '../../../../core/theme/brand_theme.dart';
 import '../../../../shared/widgets/brand_logo.dart';
 import '../../../auth/data/auth_repository.dart';
+import '../../../notifications/presentation/notification_widgets.dart';
 import '../../../pending_work/presentation/pending_work_screen.dart';
 import '../../data/admin_repository.dart';
 import 'cockpit_theme.dart';
@@ -66,6 +67,7 @@ class CockpitHeader extends ConsumerWidget {
           ),
         ],
         if (showPending) PendingWorkButton(basePath: basePath),
+        const NotificationBell(),
         CockpitProfileButton(
           name: ref.watch(currentProfileProvider).value?.fullName ?? '',
           route: '$basePath/profile',

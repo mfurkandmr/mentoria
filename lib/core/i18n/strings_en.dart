@@ -2047,6 +2047,14 @@ const enStrings = <String, String>{
   'Bu talep için zaten karar verilmiş.':
       'This request has already been decided.',
   'Konu: {t}': 'Topic: {t}',
+  'Geçmiş oturumlar': 'Past sessions',
+  'Geçmiş taleplerim': 'My past requests',
+  'Öğrenci geldi mi? İşaretle; öğrenci de görür.':
+      'Did the student attend? Mark it; the student sees it too.',
+  'Oturum henüz yapılmadı; devamı sonra işaretleyebilirsin.':
+      'The session has not taken place yet; you can mark attendance later.',
+  'Yalnızca onaylı talepler için devam işaretlenir.':
+      'Attendance can only be marked for approved requests.',
   'Gerekçe: {t}': 'Reason: {t}',
   'Soru çözümü ve birebir': 'Question solving & one-to-one',
   'Onaylı: {d} {t} · {b}': 'Approved: {d} {t} · {b}',

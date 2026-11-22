@@ -258,6 +258,18 @@ await asUser(A.parent);
 check((await rows(`select * from public.book_question_report()`)).length === 0, 'veliye boş döner');
 await asAnon();
 await expectError('anonim çağıramaz', () => db.query(`select * from public.book_question_report()`), 'permission');
+// Lisans (20261122110000_book_report_license): süresi biten kurum rapor çekemez.
+await asSuper();
+await db.query(`update public.organizations set license_expires_at = now() - interval '1 day' where id = (select org_id from public.profiles where id = $1)`, [A.admin]);
+await asUser(A.coach);
+check((await rows(`select * from public.book_question_report()`)).length === 0, 'lisansı biten kurumun koçu rapor göremez');
+await asUser(A.admin);
+check((await rows(`select * from public.book_question_report()`)).length > 0, 'müdür lisans bitse de görür (tasarım: müdür etkilenmez)');
+await asSuper();
+await db.query(`update public.organizations set license_expires_at = null where id = (select org_id from public.profiles where id = $1)`, [A.admin]);
+await asUser(A.coach);
+check((await rows(`select * from public.book_question_report()`)).length > 0, 'lisans yenilenince koç raporu geri gelir');
+
 
 console.log('Geri alma ve yeniden uygulama');
 await asSuper();

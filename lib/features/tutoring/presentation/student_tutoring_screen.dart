@@ -194,10 +194,53 @@ class _StudentTutoringScreenState extends ConsumerState<StudentTutoringScreen> {
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
+                _History(
+                  items: ref.watch(myTutoringHistoryProvider).value ?? const [],
+                ),
               ],
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+/// Geçmiş talepler: tarih · ders · öğretmen, devam durumu (öğretmen işaretler).
+class _History extends StatelessWidget {
+  const _History({required this.items});
+
+  final List<TutoringRequest> items;
+
+  @override
+  Widget build(BuildContext context) {
+    if (items.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Card(
+        child: ExpansionTile(
+          key: const ValueKey('tutoring-history'),
+          shape: const Border(),
+          collapsedShape: const Border(),
+          title: Text(
+            tr('Geçmiş taleplerim'),
+            style: const TextStyle(fontWeight: FontWeight.w800),
+          ),
+          subtitle: Text(tr('{n} kayıt', {'n': items.length})),
+          children: [
+            for (final h in items.take(20))
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                child: TutoringRequestTile(
+                  key: ValueKey('history-${h.id}'),
+                  request: h,
+                  trailing: h.status == TutoringStatus.approved
+                      ? TutoringAttendancePill(h.attended)
+                      : TutoringStatusPill(h.status),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

@@ -169,6 +169,7 @@ class TutoringRequest {
     this.topic,
     this.rejectReason,
     this.capacity,
+    this.attended,
   });
 
   factory TutoringRequest.fromJson(Map<String, dynamic> j) => TutoringRequest(
@@ -188,6 +189,7 @@ class TutoringRequest {
     topic: j['topic'] as String?,
     rejectReason: j['reject_reason'] as String?,
     capacity: (j['capacity'] as num?)?.toInt(),
+    attended: j['attended'] as bool?,
   );
 
   final String id;
@@ -205,6 +207,9 @@ class TutoringRequest {
   final String? topic;
   final String? rejectReason;
   final int? capacity;
+
+  /// Öğretmenin işareti: null işaretlenmedi, true geldi, false gelmedi.
+  final bool? attended;
 
   String get timeLabel => '${formatHm(start)}–${formatHm(end)}';
 }
@@ -236,6 +241,12 @@ String tutoringErrorMessage(Object e) {
   if (s.contains('TUTOR_ROOM_BUSY')) {
     return tr('Derslik bu saatte dolu (ders ya da başka oturum).');
   }
+  if (s.contains('TUTOR_NOT_YET')) {
+    return tr('Oturum henüz yapılmadı; devamı sonra işaretleyebilirsin.');
+  }
+  if (s.contains('TUTOR_NOT_APPROVED')) {
+    return tr('Yalnızca onaylı talepler için devam işaretlenir.');
+  }
   if (s.contains('TUTOR_ALREADY_DECIDED')) {
     return tr('Bu talep için zaten karar verilmiş.');
   }
@@ -262,6 +273,12 @@ abstract interface class TutoringRepository {
     required bool approve,
     String? reason,
   });
+
+  /// Geçmiş (NOTLAR §106): öğrencinin geçmiş talepleri ve öğretmenin son
+  /// günlerdeki onaylı oturumları; öğretmen geldi / gelmedi işaretler.
+  Future<List<TutoringRequest>> myHistory();
+  Future<List<TutoringRequest>> teacherHistory({int days = 30});
+  Future<void> markAttendance(String requestId, bool? attended);
 
   // Müdür (kurum): salt okunur
   Future<List<TutoringRequest>> managedRequests(DateTime from, {int days = 14});
@@ -361,6 +378,26 @@ class SupabaseTutoringRepository implements TutoringRepository {
   ];
 
   @override
+  Future<List<TutoringRequest>> myHistory() async => [
+    for (final r in _rows(await _client.rpc('my_tutoring_history')))
+      TutoringRequest.fromJson(r),
+  ];
+
+  @override
+  Future<List<TutoringRequest>> teacherHistory({int days = 30}) async => [
+    for (final r in _rows(
+      await _client.rpc('teacher_tutoring_history', params: {'p_days': days}),
+    ))
+      TutoringRequest.fromJson(r),
+  ];
+
+  @override
+  Future<void> markAttendance(String requestId, bool? attended) => _client.rpc(
+    'mark_tutoring_attendance',
+    params: {'p_id': requestId, 'p_attended': attended},
+  );
+
+  @override
   Future<List<TutoringSession>> mySessions() async => [
     for (final r in _rows(await _client.rpc('my_tutoring_sessions')))
       TutoringSession(
@@ -435,6 +472,16 @@ final openTutoringSlotsProvider = FutureProvider<List<TutoringSlot>>(
 );
 
 /// Öğrenci: kendi talepleri (bugünden itibaren).
+/// Öğrenci: geçmiş talepleri (devam durumuyla).
+final myTutoringHistoryProvider = FutureProvider<List<TutoringRequest>>(
+  (ref) => ref.watch(tutoringRepositoryProvider).myHistory(),
+);
+
+/// Öğretmen: son 30 günün onaylı oturumları (geldi / gelmedi için).
+final teacherTutoringHistoryProvider = FutureProvider<List<TutoringRequest>>(
+  (ref) => ref.watch(tutoringRepositoryProvider).teacherHistory(),
+);
+
 final myTutoringRequestsProvider = FutureProvider<List<TutoringRequest>>(
   (ref) => ref.watch(tutoringRepositoryProvider).myRequests(),
 );

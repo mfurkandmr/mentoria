@@ -54,7 +54,7 @@ class NotificationBell extends ConsumerWidget {
     return IconButton(
       tooltip: tr('Bildirimler'),
       color: color,
-      onPressed: () => context.push('/student/notifications'),
+      onPressed: () => context.push('/notifications'),
       icon: TweenAnimationBuilder<double>(
         key: ValueKey(unread),
         tween: Tween(begin: unread > 0 && Motion.of(context) ? 1 : 0, end: 0),
