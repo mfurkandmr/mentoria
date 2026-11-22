@@ -121,6 +121,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         if (loc.startsWith('/platform') && Env.activeDemoRole == 'admin') {
           return null;
         }
+        // Bildirim listesi her rolün ortak sayfasıdır.
+        if (loc == '/notifications') return null;
         return loc.startsWith(home) ? null : home;
       }
 
@@ -138,7 +140,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       // Kullanıcı başka bir rolün ekranına girmeye çalışırsa kendi ekranına dön.
       // (Asıl güvenlik veritabanındaki RLS kurallarında.)
       final profile = ref.read(currentProfileProvider).value;
-      if (profile != null && loc != '/') {
+      if (profile != null && loc != '/' && loc != '/notifications') {
         final home = RoleGateScreen.homeFor(profile.role);
         // Dershane yönetimi yalnızca süper adminlere açık.
         if (loc.startsWith('/platform')) {
@@ -273,6 +275,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/student/announcements',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (_, _) => const AnnouncementsScreen(),
+      ),
+      // Her rol (öğrenci, koç, müdür, öğretmen, veli) bildirimlerini buradan görür.
+      GoRoute(
+        path: '/notifications',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, _) => const NotificationsScreen(),
       ),
       GoRoute(
         path: '/student/notifications',

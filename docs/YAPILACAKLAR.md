@@ -60,7 +60,7 @@ Ayrıntılar NOTLAR.md'deki bölümlerde.
 
 - [x] **15. Güvenlik** (22 Kasım 2026, migration `20261122110000_book_report_license`, canlıda): `book_question_report` kurum lisansını (`my_tenant_active`)
       denetlemiyor.
-- [ ] **16. Öğretmene bildirim** — program yayınlanınca / değişince öğretmene de.
+- [x] **16. Öğretmene bildirim** (22 Kasım 2026: program bildirimi zaten öğretmene gidiyordu; asıl eksik koç/müdür/öğretmen/veli panellerinde bildirim listesi yoktu: ortak `/notifications` sayfası ve üst çubukta zil eklendi) — program yayınlanınca / değişince öğretmene de.
 - [ ] **17. Soru çözümü:** geçmiş talepler ekranı; öğretmen geldi/gelmedi işaretlesin.
 - [ ] **18. Öğretmen:** müsaitliğini kendisi girsin; ödev verebilsin (`can_manage_student`).
 - [ ] **19. Optik:** sabit genişlikli `.txt` çıktısı okunsun (kurumun gerçek dosyasıyla).

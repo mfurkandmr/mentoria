@@ -102,6 +102,8 @@ void main() {
     expect(find.text('Fizik'), findsWidgets);
     // Öğrenci takibi yok.
     expect(find.textContaining('Kayıtlı öğrenci'), findsNothing);
+    // Bildirimler (program yayını, yeni talep) uygulama içinde de görünür.
+    expect(find.byTooltip('Bildirimler'), findsOneWidget);
   });
 
   testWidgets('öğretmen branşını kendisi değiştirir', (t) async {
