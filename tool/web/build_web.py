@@ -128,7 +128,10 @@ def build_flutter() -> None:
     # --wasm: destekleyen tarayıcıda (Chrome/Edge/Firefox, yeni Safari)
     # skwasm çizer, kaydırma çok daha akıcı; desteklemeyende flutter.js
     # kendiliğinden JS + CanvasKit sürümünü yükler (NOTLAR §70).
-    common = ["build", "web", "--release", "--wasm"]
+    # --no-web-resources-cdn: CanvasKit ve yedek yazı tipleri www.gstatic.com /
+    # fonts.gstatic.com yerine kendi sunucudan gelir (ziyaretçi IP'si Google'a
+    # gitmez, KVKK; NOTLAR §105).
+    common = ["build", "web", "--release", "--wasm", "--no-web-resources-cdn"]
     subprocess.run(
         # --source-maps: hata kaydındaki (client_errors) okunaksız satırları
         # çözmek için; harita dosyaları yayına girmez (bkz. assemble).
@@ -288,8 +291,7 @@ HEADERS = """# tool/web/build_web.py üretir; elle düzenlemeyin.
 
 # Tanıtım sayfaları ve yasal metinler (statik) için sıkı CSP: yalnızca kendi
 # alan adı, satır içi script/olay işleyici yok (test/web_test.dart bunu korur).
-# Flutter panelleri (/app, /demo/panel) CSP'siz: CanvasKit Google CDN'inden
-# gelir ve 'wasm-unsafe-eval' ister; ayrı iş (NOTLAR §103).
+# Flutter panellerinin CSP'si aşağıda (PANEL_CSP_PATHS).
 CSP = (
     "default-src 'none'; script-src 'self'; style-src 'self'; "
     "style-src-attr 'unsafe-inline'; img-src 'self'; font-src 'self'; "
@@ -298,6 +300,39 @@ CSP = (
 )
 CSP_PATHS = ("/", "/gizlilik/*", "/aydinlatma/*", "/kullanim-kosullari/*", "/demo/")
 HEADERS += "".join(f"\n{p}\n  Content-Security-Policy: {CSP}\n" for p in CSP_PATHS)
+
+
+# Flutter panelleri (/app, /demo/panel) için CSP (NOTLAR §105). CanvasKit/skwasm
+# artık kendi sunucudan gelir (`--no-web-resources-cdn`); 'wasm-unsafe-eval' wasm
+# derlemesi için şart. Motor, yerleşik yazı tipinde olmayan karakterler (emoji,
+# simge) için yedek yazı tipini fonts.gstatic.com'dan çeker: yalnızca bu adres
+# izinli (aydınlatma metninde belirtilmeli). Supabase adresi derleme anında
+# env.json / ortam değişkeninden gelir.
+def _panel_csp() -> str:
+    url = os.environ.get("SUPABASE_URL", "")
+    if not url and (ROOT / "env.json").exists():
+        url = json.loads((ROOT / "env.json").read_text(encoding="utf-8")).get(
+            "SUPABASE_URL", "")
+    host = re.sub(r"^https?://", "", url).strip("/")
+    sb = f"https://{host}" if host else ""
+    ws = f"wss://{host}" if host else ""
+    return " ".join((
+        "default-src 'none'; script-src 'self' 'wasm-unsafe-eval';",
+        "style-src 'self' 'unsafe-inline';",
+        f"img-src 'self' data: blob: {sb};",
+        "font-src 'self' data: https://fonts.gstatic.com;",
+        f"connect-src 'self' {sb} {ws} https://fonts.gstatic.com;",
+        "worker-src 'self' blob:; manifest-src 'self';",
+        f"media-src 'self' blob: {sb};",
+        "form-action 'none'; base-uri 'self'; object-src 'none';",
+        "frame-ancestors 'none'",
+    )).replace("  ", " ")
+
+
+PANEL_CSP_PATHS = ("/app/*", "/demo/panel/*")
+HEADERS += "".join(
+    f"\n{p}\n  Content-Security-Policy: {_panel_csp()}\n" for p in PANEL_CSP_PATHS
+)
 
 
 def assemble() -> None:
