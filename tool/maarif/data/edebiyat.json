@@ -1,0 +1,1982 @@
+{
+  "ders": "Türk Dili ve Edebiyatı",
+  "kaynak_kok": "https://tymm.meb.gov.tr/ogretim-programlari/ders/turk-dili-ve-edebiyati-dersi",
+  "siniflar": [
+    {
+      "sinif": "Hazırlık",
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/turk-dili-ve-edebiyati-dersi/10",
+      "sayfa_basligi": "Türk Dili Ve Edebiyatı Dersi Hazırlık",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "1. Tema: Sanatın Dili",
+          "unite_url": "https://tymm.meb.gov.tr/turk-dili-ve-edebiyati-dersi/unite/5",
+          "guncelleme": "05.08.2026",
+          "ders_saati": 34,
+          "icerik_cercevesi": [
+            "Okuma",
+            "Konuşma",
+            "Dinleme/İzleme",
+            "Yazma"
+          ],
+          "icerik_cercevesi_aciklama": [
+            "“Sanatın Dili” temasının içerik çerçevesi şu şekildedir:",
+            "Okuma becerisinin geliştirilmesi için öncelikle edebiyatın sanatsal yönünü açığa çıkaran, edebî dilin inceliklerini barındıran; günlük dilden imge, çağrışım, açık ve örtük ileti gibi kavramlarla farklılaşan bir tür olan şiirden yararlanılır. Ayrıca bu tema kapsamında ikinci metin olarak anı (hatıra) türünde bir metin incelenir. Böylece tema boyunca edebiyat ile ilgili verilmek istenen içerik, farklı türdeki metinlere bağlı olarak sunulur.",
+            "Konuşma becerisinin geliştirilmesi için öğrencilerin kendi fotoğraflarından hareketle hayatlarının bir dönemini anlattıkları bir konuşma etkinliği düzenlenir. Öğrencilerin konuşmalarında temaya ilişkin söz varlığını da etkili kullanmaları göz önünde bulundurulur.",
+            "Dinleme/izleme becerisinin geliştirilmesinde içerik olarak çok modlu metin türü olan söyleşi seçilir. Dinleme/izleme metninin içeriğinde sanat, sanatçı, estetik, dil, edebî tür vb. konular yer alır. Bu söyleşide dilin sanatsal yönünün kullanılma biçimi öğrencinin edebiyat ile sanatı daha kolay ilişkilendirmesini sağlar.",
+            "Yazma becerisinin geliştirilmesinde sanat, sanatçı, estetik, dil, edebî tür vb. konular üzerine hazırlanmış söyleşi metnini dinleyen öğrencilerin metne yönelik sorular oluşturup bunları cevaplamaları sağlanır. Öğrencilerin yazılarında temaya ilişkin söz varlığının etkili kullanımı göz önünde bulundurulur."
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TDE1.1",
+              "metin": "“Sanatın Dili” temasında ele alınan metinlerde dinlemeyi/izlemeyi yönetebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.2",
+              "metin": "“Sanatın Dili” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE2.1",
+              "metin": "“Sanatın Dili” temasında ele alınan metinlerde okumayı yönetebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.2",
+              "metin": "“Sanatın Dili” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE3.1",
+              "metin": "Kişisel bilgi ve deneyimlerini edebî bir dil ile aktardığı konuşmasını yönetebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.2",
+              "metin": "Yaşadıklarını; duygu, düşünce ve etkilenmelerini yansıttığı konuşmasına yönelik içerik oluşturabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.3",
+              "metin": "Yaşadıklarını; duygu, düşünce ve etkilenmelerini yansıttığı konuşmasına yönelik kural uygulayabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.4",
+              "metin": "Kişisel bilgi ve deneyimlerini edebî bir dil ile aktardığı konuşma sürecini değerlendirebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.1",
+              "metin": "Bağlama uygun bir şekilde geliştireceği soru-cevap biçimindeki yazısını yönetebilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.2",
+              "metin": "Metin içeriğine, bağlama ve üsluba uygun yazısı için içerik oluşturabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.3",
+              "metin": "Metin içeriğine, bağlama ve üsluba uygun yazısı için kural uygulayabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.4",
+              "metin": "Metin içeriğine, bağlama ve üsluba uygun bir şekilde oluşturduğu yazısına ilişkin yazma sürecini değerlendirebilme",
+              "beceri_alani": "Yazma"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "2. Tema: Sözün Peşinde",
+          "unite_url": "https://tymm.meb.gov.tr/turk-dili-ve-edebiyati-dersi/unite/33",
+          "guncelleme": "05.08.2026",
+          "ders_saati": 34,
+          "icerik_cercevesi": [
+            "Okuma",
+            "Konuşma",
+            "Dinleme/İzleme",
+            "Yazma"
+          ],
+          "icerik_cercevesi_aciklama": [
+            "“Sözün Peşinde” temasının içerik çerçevesi şu şekildedir:",
+            "Okuma becerisinin geliştirilmesi için edebiyatın sözün etkili ve güzel kullanımına dayalı anlatımlarına dikkat çekilir. Söz varlığının farklı bağlamlarda kullanımlarına örnek oluşturması bakımından tiyatro ve gezi yazısı seçilir. Bu metinler incelenerek sözü etkili ve güzel kullanmanın önemi ortaya konur. Metinler Cumhuriyet Dönemi’nden başlanarak dil ve anlatım bakımından günümüze en yakın özelliklerine sahip metinlerden seçilir.",
+            "Dinleme/izleme becerisinin geliştirilmesinde bir şiir seçilir ve bu şiirin incelemesi yapılır. Öğrencilerin, şiirde etki uyandıran söz ve ifadelerin nasıl kullanıldığını fark etmeleri ve bunlardan hareketle çıkarımlar yapmaları sağlanır.",
+            "Konuşma becerisinin geliştirilmesinde öğrenciler, inceledikleri gezi yazısından hareketle gezip gördükleri bir yeri anlatacakları sözlü bir anlatım (sunum) gerçekleştirir.",
+            "Yazma becerisinin geliştirilmesinde öğrenciler sözün etkili ve güzel kullanımına örnek oluşturacak nitelikte bir şiir yazar."
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TDE2.1",
+              "metin": "“Sözün Peşinde” temasında ele alınan metinlerde okumayı yönetebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.2",
+              "metin": "“Sözün Peşinde” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE1.1",
+              "metin": "“Sözün Peşinde” temasında ele alınan metinlerde dinlemeyi/izlemeyi yönetebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.2",
+              "metin": "“Sözün Peşinde” temasında ele alınan metinlerden hareketle anlam oluşturabilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE3.1",
+              "metin": "Sözü etkili ve güzel kullanacağı akıcı bir konuşma sürecini yönetebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.2",
+              "metin": "Gözlem ve izlenimlerini etkili ve güzel bir biçimde sunmak için konuşma içeriği oluşturabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.3",
+              "metin": "Konuşmasında gözlem ve izlenimlerini etkili ve güzel bir biçimde sunmak için kural uygulayabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.4",
+              "metin": "Sözü etkili ve güzel kullandığı konuşma sürecini değerlendirebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.1",
+              "metin": "Sözü etkili ve güzel kullanacağı yazma sürecini yönetebilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.2",
+              "metin": "Duygularını, edindiği söz varlığını da kullanarak yansıtacağı bir yazı içeriği oluşturabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.3",
+              "metin": "Duygularını ifade ederken sözü etkili ve güzel kullanabildiği yazısında kural uygulayabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.4",
+              "metin": "Sözü etkili ve güzel kullandığı yazma sürecini değerlendirebilme",
+              "beceri_alani": "Yazma"
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "3. Tema: Okurun Dünyası",
+          "unite_url": "https://tymm.meb.gov.tr/turk-dili-ve-edebiyati-dersi/unite/49",
+          "guncelleme": "26.08.2026",
+          "ders_saati": 34,
+          "icerik_cercevesi": [
+            "Okuma",
+            "Yazma",
+            "Dinleme/İzleme",
+            "Konuşma"
+          ],
+          "icerik_cercevesi_aciklama": [
+            "“Okurun Dünyası” temasının içerik çerçevesi şu şekildedir:",
+            "Okuma becerisinin geliştirilmesi için hikâye ve deneme türünde metinler incelenir. Ara metin olarak şiir kullanılır. Böylece, edebî eserlerin okurun anlamasına göre farklı işlevleri olduğu gösterilmiş olur. Okuma metinleri Cumhuriyet Dönemi’nden başlanarak dil ve anlatım bakımından günümüze en yakın özellikleri taşıyan metinlerden seçilir. Yazma becerisinin geliştirilmesinde öğrencilerin inceledikleri hikâyenin bir bölümünü yeniden kurguladıkları yazılı bir anlatım gerçekleştirilir.",
+            "Dinleme/izleme becerisinin geliştirilmesinde çok modlu bir metin kullanılır. Dinleme/izleme metni olarak öğrencilere öğretici metin özellikleri taşıyan belgesel türünde bir metin izletilir/dinletilir.",
+            "Konuşma becerisinin geliştirilmesinde öğrencilerin inceledikleri belgesel metninin içeriğiyle ilgili görüşlerini beyan ettikleri sözlü bir anlatım gerçekleştirilir."
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TDE2.1",
+              "metin": "“Okurun Dünyası” temasında ele alınan metinlerde okumayı yönetebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.2",
+              "metin": "“Okurun Dünyası” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.3",
+              "metin": "“Okurun Dünyası” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE1.1",
+              "metin": "“Okurun Dünyası” temasında ele alınan metinlerde dinleme/izleme sürecini yönetebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.2",
+              "metin": "“Okurun Dünyası” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.3",
+              "metin": "“Okurun Dünyası” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE3.1",
+              "metin": "Duygu, düşünce ve hayal dünyasını etkili yansıtacağı akıcı bir konuşma sürecini yönetebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.2",
+              "metin": "Görüşlerini açık, etkili ve tutarlı bir biçimde sunmak için konuşma içeriğini oluşturabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.3",
+              "metin": "Görüşlerini açık, etkili ve tutarlı bir biçimde sunmak için konuşmasında kural uygulayabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.4",
+              "metin": "Duygu, düşünce ve hayal dünyasına yönelik etkili konuşma sürecini değerlendirebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.1",
+              "metin": "Duygu, düşünce ve hayal dünyasını etkili bir şekilde yansıtacağı bir yazma sürecini yönetebilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.2",
+              "metin": "Kurgusunu oluştururken, edindiği söz varlığını da kullanarak bir yazı içeriği oluşturabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.3",
+              "metin": "Duygu, düşünce ve hayal dünyasını kurgusuna yansıttığı yazısında kural uygulayabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.4",
+              "metin": "Duygu, düşünce ve hayal dünyasına yönelik yazma sürecini değerlendirebilme",
+              "beceri_alani": "Yazma"
+            }
+          ]
+        },
+        {
+          "sira": 4,
+          "ad": "4. Tema: Sözün Ebrusu",
+          "unite_url": "https://tymm.meb.gov.tr/turk-dili-ve-edebiyati-dersi/unite/55",
+          "guncelleme": "26.08.2026",
+          "ders_saati": 34,
+          "icerik_cercevesi": [
+            "Okuma",
+            "Konuşma",
+            "Dinleme/İzleme",
+            "Yazma"
+          ],
+          "icerik_cercevesi_aciklama": [
+            "“Sözün Ebrusu” temasının içerik çerçevesi şu şekildedir:",
+            "Okuma becerisinin geliştirilmesi için öncelikle anlatmaya bağlı edebî türlerden olan ve zengin söz varlığına sahip roman türünde bir metin seçilir. Metin tahlil edilirken günlük dilin edebî metinlerde nasıl değiştiğine, yaşamın gerçeklerinin kurmaca bir metne nasıl dönüştürüldüğüne, insanın duygu, düşünce ve hayallerinin yansıtılma biçimlerinin çeşitliliğine vb. vurgu yapılır. Ardından tema kapsamında ikinci metin olarak fıkra (köşe yazısı) türünde bir metin tercih edilir.",
+            "Öğrencilerin konuşma becerilerinin geliştirilmesi amacıyla okudukları romanın kahramanlarından birini tanıtmalarına yönelik etkinlik gerçekleştirilir.",
+            "Dinleme/izleme becerilerini geliştirmek amacıyla mektup türünün özelliklerini taşıyan çok modlu bir metin seçilir. Mektup ile dinleme/izleme metninin içeriği, dil ve anlatım özellikleri, türün belirgin yönleri incelenir. Farklı türdeki bir metnin tahliliyle dilin söz varlığının farklı türdeki metinlerde nasıl işlerlik kazandığı ele alınır.",
+            "Yazma becerilerini geliştirmek amacıyla, dinledikleri/izledikleri metin incelemelerinden edindikleriyle (üslup, söz varlığı vb.) arkadaşlarından birine 2073 (Cumhuriyet’in 150. yılı) yılında verilmek üzere mektup yazmalarına yönelik bir çalışma gerçekleştirilir."
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TDE2.1",
+              "metin": "“Sözün Ebrusu” temasında ele alınan metinlerde okumayı yönetebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.2",
+              "metin": "“Sözün Ebrusu” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.3",
+              "metin": "“Sözün Ebrusu” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.4",
+              "metin": "“Sözün Ebrusu” temasında ele alınan metinlerde okuma sürecini değerlendirebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE1.1",
+              "metin": "“Sözün Ebrusu” temasında ele alınan metinlerde dinleme/izlemeyi yönetebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.2",
+              "metin": "“Sözün Ebrusu” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.3",
+              "metin": "“Sözün Ebrusu” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.4",
+              "metin": "“Sözün Ebrusu” temasında ele alınan metinlerde dinleme/izleme sürecini değerlendirebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE3.1",
+              "metin": "Zengin söz varlığı kullanarak ve anlam katmanları oluşturarak gerçekleştireceği konuşmasını yönetebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.2",
+              "metin": "Empati ve etkileşim yoluyla kurduğu özdeşimle zengin söz varlığı ve anlam katmanları oluşturarak gerçekleştireceği konuşmasına içerik oluşturabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.3",
+              "metin": "Empati ve etkileşim yoluyla kurduğu özdeşimle zengin söz varlığı ve anlam katmanları oluşturarak gerçekleştireceği konuşmasında kural uygulayabilme TDE3.4. Zengin söz varlığı kullanarak ve anlam katmanları oluşturarak gerçekleştireceği konuşmasına ilişkin süreci değerlendirebilme Yazma",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.1",
+              "metin": "Zengin söz varlığı kullanarak ve anlam katmanları oluşturarak gerçekleştireceği yazma sürecini yönetebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.2",
+              "metin": "Yaşantılarına dair izlenimlerini anlam katmanlarıyla yansıtacağı yazısına içerik oluşturabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.3",
+              "metin": "Yaşantılarına dair izlenimlerini anlam katmanlarıyla yansıtacağı yazısında kural uygulayabilme TDE4.4. Zengin söz varlığı kullanarak ve anlam katmanları oluşturarak hazırladığı yazısına yönelik yazma sürecini değerlendirebilme",
+              "beceri_alani": "Konuşma"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sinif": 9,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/turk-dili-ve-edebiyati-dersi/11",
+      "sayfa_basligi": "Türk Dili Ve Edebiyatı Dersi 9.Sınıf",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "1. Tema: Sözün İnceliği",
+          "unite_url": "https://tymm.meb.gov.tr/turk-dili-ve-edebiyati-dersi/unite/76",
+          "guncelleme": "26.08.2026",
+          "ders_saati": 43,
+          "icerik_cercevesi": [
+            "Okuma",
+            "Yazma",
+            "Dinleme/İzleme",
+            "Konuşma"
+          ],
+          "icerik_cercevesi_aciklama": [
+            "“Sözün İnceliği” temasının içerik çerçevesi şu şekildedir:",
+            "Okuma becerisinin geliştirilmesi için öncelikle edebî dilin inceliklerini barındıran; estetik değer, imge, sembol gibi ögelerin ön plana çıktığı bir tür olan şiirden hareket edilir. Ayrıca bu tema kapsamında ikinci metin olarak deneme türünde bir metin incelenir. Böylece tema boyunca verilmek istenen edebiyat ile ilgili içerik, farklı türdeki metinlere bağlı olarak sunulur.",
+            "Yazma becerisinin geliştirilmesinde öğrencilerden tema çerçevesinde okudukları bir şiiri betimleme paragrafı olarak düzenlemeleri istenir. Böylece sözün inceliğinin farklı metin türlerinde yansıtılabileceği görülmüş olur. Ayrıca yazılarda söz varlığının etkili kullanımı göz önünde bulundurulur.",
+            "Dinleme/izleme becerisinin geliştirilmesinde içerik olarak çok modlu bir metin türü olan mülakat seçilir. Bir sanatçıyla gerçekleştirilen mülakatın incelenmesiyle günlük hayata ilişkin özelliklerin edebî bir dille aktarılması ve edebiyatın gerçeklikle nasıl iç içe geçtiği görülmüş olur.",
+            "Konuşma becerisinin geliştirilmesinde deneme metinlerinden hareketle bir konuşma etkinliği düzenlenir. Böylece öğrencilerin farklı düşünme tekniklerini kullanarak fikir geliştirmelerine olanak tanınır. Ayrıca temaya ilişkin söz varlığının etkili kullanımı sağlanır."
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TDE1.1",
+              "metin": "“Sözün İnceliği” temasında ele alınan metinlerde dinlemeyi/izlemeyi yönetebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.2",
+              "metin": "“Sözün İnceliği” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE2.1",
+              "metin": "“Sözün İnceliği” temasında ele alınan metinlerde okumayı yönetebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.2",
+              "metin": "“Sözün İnceliği” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE3.1",
+              "metin": "Söyleyişin inceliğini kullanarak akıcı bir konuşma süreci yönetebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.2",
+              "metin": "Muhatabını ikna etmek için söyleyiş inceliklerine yer veren bir konuşma içeriği oluşturabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.3",
+              "metin": "Muhatabını ikna etmek için söyleyiş inceliklerine yer veren bir konuşmada kural uygulayabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.4",
+              "metin": "Söyleyiş inceliğinin konuşmasına etkisiyle ilgili süreci değerlendirebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.1",
+              "metin": "Edebî söyleyişin inceliğini yansıtmak için paragraf düzeyindeki bir yazısında süreci yönetebilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.2",
+              "metin": "Edebî söyleyişin inceliğini yansıtan metinlerden edindiği söz varlığını kullanarak yazısına içerik oluşturabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.3",
+              "metin": "Edebî söyleyişin inceliğini yansıttığı yazısında kural uygulayabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.4",
+              "metin": "Edebî söyleyişin inceliğini yansıttığı yazısında yazma sürecini değerlendirebilme",
+              "beceri_alani": "Yazma"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "2. Tema: Anlam Arayışı",
+          "unite_url": "https://tymm.meb.gov.tr/turk-dili-ve-edebiyati-dersi/unite/101",
+          "guncelleme": "26.08.2026",
+          "ders_saati": 43,
+          "icerik_cercevesi": [
+            "Okuma",
+            "Konuşma",
+            "Dinleme/İzleme",
+            "Yazma"
+          ],
+          "icerik_cercevesi_aciklama": [
+            "“Anlam Arayışı” temasının içerik çerçevesi şu şekildedir:",
+            "Okuma becerisinin geliştirilmesi kapsamında öncelikle bir edebî metinde anlamın oluşmasını sağlayan unsurların kavranması için hikâye türünden bir metin incelenir. Ayrıca bu tema kapsamında deneyimleri kişisel bir bakış açısıyla yansıtan anı (hatıra) türünde bir metin ele alınır. Böylece öğrenciler hikâyelerdeki karakter gelişimini, olaylar arasındaki bağlantıları ve kurgusal unsurları anılardaki gerçek yaşam kesitleriyle karşılaştırarak metinleri derinlemesine inceleme fırsatı bulur. Okuma becerilerinin geliştirilmesinde ara metin olarak İstiklal Marşı incelenir.",
+            "Konuşma becerisinin geliştirilmesi amacıyla öğrencilerden inceledikleri hikâye metninden seçecekleri karakteri tanıtan bir sunum yapmaları istenir. Bu görevle öğrencilerin sözlü iletişim yetenekleri ve yaratıcılıklarının geliştirilmesi hedeflenir. Ayrıca konuşmalarında söz varlığını etkili kullanmaları göz önünde bulundurulur.",
+            "Dinleme/izleme becerisinin geliştirilmesi için Cumhuriyet Dönemi’nden başlanarak dil ve anlatım bakımından günümüze en yakın özellikleri taşıyan bir şiir metni seçilir. Metindeki ana duygu, örtük ileti, mecaz ve çağrışımlar tespit edilirken şiirin ses ve ritim gibi ahenk unsurlarının metnin anlamına nasıl katkı sağladığı üzerinde durulur. Bu süreç, öğrencilerin eleştirel düşünme yeteneklerini geliştirmelerine, metni farklı açılardan değerlendirebilmelerine ve edebî metinleri derinlemesine anlamlandırabilmelerine katkı sağlar.",
+            "Yazma becerisinin geliştirilmesi için öğrencilerden dinledikleri/izledikleri şiirin temasına uygun bir şiir yazmaları istenir. Böylece öğrencilerin aynı tema çerçevesinde farklı bir duyuş geliştirmelerine, kendi düşünce ve hayalleriyle yaratıcılıklarını ortaya çıkarmalarına, dili etkili ve güzel kullanmalarına fırsat tanınır."
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TDE1.1",
+              "metin": "“Anlam Arayışı” temasında ele alınan metinlerde dinlemeyi/izlemeyi yönetebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.2",
+              "metin": "“Anlam Arayışı” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE2.1",
+              "metin": "“Anlam Arayışı” temasında ele alınan metinlerde okumayı yönetebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.2",
+              "metin": "“Anlam Arayışı” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE3.1",
+              "metin": "Konusunu ana düşünce etrafında detaylandırdığı akıcı bir konuşma sürecini yönetebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.2",
+              "metin": "Konusunu ana düşünce etrafında detaylandırdığı konuşma içeriğini oluşturabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.3",
+              "metin": "Konusunu ana düşünce etrafında detaylandırdığı konuşmasında kural uygulayabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.4",
+              "metin": "Konuşmasının içeriğinde kullandığı unsurların konuşmasına olan etkisine yönelik süreci değerlendirebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.1",
+              "metin": "Konu zenginliği ve çeşitliliğini sağlayan edebî metinlerde yazma sürecini yönetebilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.2",
+              "metin": "Yazısını zenginleştirecek içerik oluşturabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.3",
+              "metin": "Konu zenginliği ve çeşitliliğini sağlayan yazısında kural uygulayabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.4",
+              "metin": "Beğeni ve eleştirilerini dile getirdiği yazısına yönelik yazma sürecini değerlendirebilme",
+              "beceri_alani": "Yazma"
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "3. Tema: Anlamın Yapı Taşları",
+          "unite_url": "https://tymm.meb.gov.tr/turk-dili-ve-edebiyati-dersi/unite/106",
+          "guncelleme": "26.08.2026",
+          "ders_saati": 43,
+          "icerik_cercevesi": [
+            "Okuma",
+            "Konuşma",
+            "Dinleme/İzleme",
+            "Yazma"
+          ],
+          "icerik_cercevesi_aciklama": [
+            "“Anlamın Yapı Taşları” temasının içerik çerçevesi şu şekildedir:",
+            "Okuma becerisinin geliştirilmesi için hikâye türünden bir metin incelenir. İkinci metin, yazarın okurla kurduğu iletişimin ön planda olduğu gezi yazısı türünden seçilir. Ara metin olarak şiir türüne yer verilir. Bu temada her bir metnin kendine özgü yapı unsurlarının neler olduğu, bunların yazma amacına göre nasıl biçimlendiği ve içerik ile yapı arasında nasıl ilişki kurulduğu ele alınır.",
+            "Konuşma becerisinin geliştirilmesi için öğrencilere, okudukları hikâye ve gezi yazısı metinlerinde inceledikleri mekânları, kendi yaşadıkları çevreyle karşılaştırmalarını sağlayan bir sunum hazırlatılır. Öğrencilerin konuşmalarında temaya ilişkin söz varlığını da etkili kullanmaları göz önünde bulundurulur.",
+            "Dinleme/izleme becerisinin geliştirilmesi için öğrencilere içerik olarak bir dinleme/izleme metninin yapısal özelliklerini de yansıtmaya uygun nitelikte olan ve Anadolu’nun farklı bölgelerinin zengin kültürel mirası ile duygusal dokusunu anlatan bir belgesel izletilir. Öğrencilerin dinlediği/izlediği belgeseli incelemesi ve okuduğu metinlerdeki yapı unsurlarıyla ilişkilendirmesi sağlanır.",
+            "Yazma becerisinin geliştirilmesi için öğrencilerden dinledikleri/izledikleri belgeseli bilgi görseline dönüştürmeleri istenir. Böylece metne kendi yorumlarını katıp yapı unsurlarına dikkat ederek yazılı bir anlatım gerçekleştirmeleri amaçlanır."
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TDE1.1",
+              "metin": "“Anlamın Yapı Taşları” temasında ele alınan metinlerde dinleme/izlemeyi yönetebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.2",
+              "metin": "“Anlamın Yapı Taşları” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.3",
+              "metin": "“Anlamın Yapı Taşları” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE2.1",
+              "metin": "“Anlamın Yapı Taşları” temasında ele alınan metinlerde okumayı yönetebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.2",
+              "metin": "“Anlamın Yapı Taşları” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.3",
+              "metin": "“Anlamın Yapı Taşları” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE3.1",
+              "metin": "Edebî metinlerde yapısal inceliklere odaklanan akıcı bir konuşma sürecini yönetebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.2",
+              "metin": "Benzetme, karşılaştırma yaparak yapısal özellikleri ortaya koyduğu bir konuşma içeriği oluşturabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.3",
+              "metin": "Benzetme, karşılaştırma yaparak yapısal özellikleri ortaya koyduğu bir konuşmada kural uygulayabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.4",
+              "metin": "Edebî metinlerdeki yapısal inceliklerin konuşmaya etkisine yönelik süreci değerlendirebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.1",
+              "metin": "Yapısını incelikle ördüğü bir yazılı anlatım sürecini yönetebilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.2",
+              "metin": "Yapısı incelikle örülmüş edebî metinlerden edindiği söz varlığını kullanarak yazısı için içerik oluşturabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.3",
+              "metin": "Yapısını incelikle ördüğü yazısında kural uygulayabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.4",
+              "metin": "Yapısını incelikle ördüğü yazısına yönelik yazma sürecini değerlendirebilme",
+              "beceri_alani": "Yazma"
+            }
+          ]
+        },
+        {
+          "sira": 4,
+          "ad": "4. Tema: Dilin Zenginliği",
+          "unite_url": "https://tymm.meb.gov.tr/turk-dili-ve-edebiyati-dersi/unite/112",
+          "guncelleme": "07.08.2026",
+          "ders_saati": 43,
+          "icerik_cercevesi": [
+            "Okuma",
+            "Konuşma",
+            "Dinleme/İzleme",
+            "Yazma"
+          ],
+          "icerik_cercevesi_aciklama": [
+            "“Dilin Zenginliği” temasının içerik çerçevesi şu şekildedir:",
+            "Okuma becerisinin geliştirilmesi için yazarların, dili kullanma biçimleri ve farklı üslup özelliklerinin en belirgin görülebileceği metinlerden biri olan roman seçilmiştir. Ara metin olarak bir tiyatro metninin incelemesi yapılır ve tahlil edilen roman ile özellikleri yönüyle karşılaştırılır. Ayrıca bu tema kapsamında ikinci metin olarak bir eleştiri metni tahlil edilir. Böylece yazarların üslup özelliklerinin farkına varılmasıyla öğrencilerin de kendi özgün üsluplarını keşfetmeleri ve bunu edebiyat atölyesinde oluşturdukları metinlere yansıtması sağlanır.",
+            "Konuşma becerisinin geliştirilmesinde öğrenciler, tahlil ettiği metinlerden hareketle sosyal medya dilini edebî dilin özellikleri açısından değerlendiren sözlü bir anlatım (sunum) gerçekleştirir. Konuşmada dilin zenginliği temasının doğasına uygun olarak söz varlığının etkili kullanımı göz önünde bulundurulur.",
+            "Dinleme/izleme becerisinin geliştirilmesinde içerik olarak otobiyografi türü seçilmiştir. Öğrencilerin otobiyografi türündeki bir metne yazarın üslup özelliklerinin ve söz varlığının nasıl yansıyabileceğini fark edebilmesi de amaçlanır.",
+            "Yazma becerisinin geliştirilmesinde öğrenciler, kendi yaşamlarına odaklanacak ve otobiyografilerini oluşturup yazılı bir anlatım gerçekleştirir. Öğrencilerden temanın doğasına uygun bir biçimde, otobiyografilerini kendi üslup özellikleriyle zenginleştirerek yazmaları istenir."
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TDE1.1",
+              "metin": "“Dilin Zenginliği” temasında ele alınan metinlerde dinlemeyi/izlemeyi yönetebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.2",
+              "metin": "“Dilin Zenginliği” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.3",
+              "metin": "“Dilin Zenginliği” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.4",
+              "metin": "“Dilin Zenginliği” temasında ele alınan metinlerde dinleme/izleme sürecini değerlendirebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE2.1",
+              "metin": "“Dilin Zenginliği” temasında ele alınan metinlerde okumayı yönetebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.2",
+              "metin": "“Dilin Zenginliği” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.3",
+              "metin": "“Dilin Zenginliği” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.4",
+              "metin": "“Dilin Zenginliği” temasında ele alınan metinlere yönelik okuma sürecini değerlendirebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE3.1",
+              "metin": "Dilin zenginliğini kullandığı akıcı bir konuşma sürecini yönetebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.2",
+              "metin": "Konusunu dilin zenginliğinden yararlanarak oluşturduğu konuşma içeriğini oluşturabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.3",
+              "metin": "Konusunu dilin zenginliğinden yararlanarak oluşturduğu konuşmasında kural uygulayabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.4",
+              "metin": "Kullandığı dil özelliklerinin konuşmasına etkisine yönelik süreci değerlendirebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.1",
+              "metin": "Öz yaşam öyküsünü oluşturabilmek için bir yazılı anlatım sürecini yönetebilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.2",
+              "metin": "Öz yaşam öyküsünü aktarmak için kendi üslup özelliklerini yansıtan bir yazılı anlatım içeriği oluşturabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.3",
+              "metin": "Öz yaşam öyküsünü aktarmak için kendi üslup özelliklerini yansıtan yazısında kural uygulayabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.4",
+              "metin": "Beğeni ve eleştirilerini dile getirdiği yazısına yönelik yazma sürecini değerlendirebilme",
+              "beceri_alani": "Yazma"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sinif": 10,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/turk-dili-ve-edebiyati-dersi/12",
+      "sayfa_basligi": "Türk Dili Ve Edebiyatı Dersi 10.Sınıf",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "1. Tema: Sözün Ezgisi",
+          "unite_url": "https://tymm.meb.gov.tr/turk-dili-ve-edebiyati-dersi/unite/242",
+          "guncelleme": "26.08.2026",
+          "ders_saati": 43,
+          "icerik_cercevesi": [
+            "Okuma",
+            "Konuşma",
+            "Dinleme/İzleme",
+            "Yazma"
+          ],
+          "icerik_cercevesi_aciklama": [
+            "“Sözün Ezgisi” temasının içerik çerçevesi şu şekildedir:",
+            "Okuma becerisinin geliştirilmesi için edebiyatın sözün akıcı ve ahenkli kullanımına dayalı anlatımlarına dikkat çekilir. Türk dili ve edebiyatının farklı dönemlerine ve gelişim çizgisine örnek oluşturması bakımından koşuk ve türkü türünde metinler seçilir. Bu metinlere ilaveten ara metin olarak belirlenen koşma ve ninni türündeki metinler ile ezgi ve ahenk gibi unsurların önemi ortaya konur.",
+            "Konuşma becerisinin geliştirilmesinde öğrenciler, kendi belirledikleri bir tema çerçevesinde seçtikleri şiirlerden oluşan bir şiir dinletisi hazırlayarak sözlü anlatımlarını gerçekleştirirler. Böylece öğrencilerin farklı edebî gelenekten belirli bir temayı esas alan şiirleri belirlemelerine, dilin kullanımının ve edebî anlayışın değişimini seçtikleri bu eserler yoluyla izlemelerine olanak tanınır.",
+            "Dinleme/izleme becerisinin geliştirilmesinde çok modlu bir metin olarak masal türünde bir eser seçilir ve bu metnin tahlili yapılır. Öğrencilerin masaldaki tekerlemelerin, kalıplaşmış ifadelerin vb. nasıl kullanıldığını fark etmeleri sağlanır.",
+            "Yazma becerisinin geliştirilmesinde öğrencilerden dinledikleri/izledikleri masal metnini film şeridi hâline getirmeleri istenir. Böylece bir metni farklı bir türle yeniden ifade etmeleri sağlanır."
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TDE1.1",
+              "metin": "“Sözün Ezgisi” temasında ele alınan metinlerde dinleme/izlemeyi yönetebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.2",
+              "metin": "“Sözün Ezgisi” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.3",
+              "metin": "“Sözün Ezgisi” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.4",
+              "metin": "“Sözün Ezgisi” temasında ele alınan metinlere yönelik dinleme/izleme sürecini değerlendirebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE2.1",
+              "metin": "“Sözün Ezgisi” temasında ele alınan metinlerde okumayı yönetebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.2",
+              "metin": "“Sözün Ezgisi” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.3",
+              "metin": "“Sözün Ezgisi” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.4",
+              "metin": "“Sözün Ezgisi” temasında ele alınan metinlere yönelik okuma sürecini değerlendirebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE3.1",
+              "metin": "Belirlenen bir tema çerçevesinde seçtiği şiirlerden oluşan bir şiir dinletisi hazırlama ve sunma sürecini yönetebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.2",
+              "metin": "Seçtiği şiirleri etkili ve güzel bir biçimde sunmak için şiir dinletisinin içeriğini oluşturabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.3",
+              "metin": "Seçilen şiirleri etkili ve güzel bir biçimde sunabilmek için kural uygulayabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.4",
+              "metin": "Gerçekleştirilen şiir dinletisine yönelik süreci değerlendirebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.1",
+              "metin": "Dinlediği/izlediği metni film şeridi hâline getireceği yazma sürecini yönetebilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.2",
+              "metin": "Dinlediği/izlediği metni film şeridi hâline getireceği yazısına içerik oluşturabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.3",
+              "metin": "Film şeridi hâline getirdiği yazısını düzenlerken kural uygulayabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.4",
+              "metin": "Film şeridi hâline getirdiği yazısına yönelik yazma sürecini değerlendirebilme",
+              "beceri_alani": "Yazma"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "2. Tema: Kelimelerin Ritmi",
+          "unite_url": "https://tymm.meb.gov.tr/turk-dili-ve-edebiyati-dersi/unite/247",
+          "guncelleme": "26.08.2026",
+          "ders_saati": 43,
+          "icerik_cercevesi": [
+            "Okuma",
+            "Yazma",
+            "Dinleme/İzleme",
+            "Konuşma"
+          ],
+          "icerik_cercevesi_aciklama": [
+            "“Kelimelerin Ritmi” temasının içerik çerçevesi şu şekildedir:",
+            "Okuma becerisinin geliştirilmesi için şiir anlayışlarındaki estetik değişimi ritim özelinde yansıtabilecek metinlere dikkat çekilir. Bunu yapabilmek için şiir türünde birer metin (gazel ve saf şiir) seçilir. Bu metinler üzerinden edebî metinlerin ahenk özellikleri ile kelimelerdeki ritim özelliklerinin yapıya, içeriğe ve üsluba katkısı ortaya konur.",
+            "Yazma becerisinin geliştirilmesinde, bilgilendirici bir metni edebî metne dönüştürme çalışması yapılır. Bu çalışmadan hareketle bilgilendirici bir metinle edebî bir metnin dinamiklerinin karşılaştırılması sağlanır. Böylece bilginin estetik bir biçimde öğrenciler tarafından yeniden yazılmasına imkân verilir.",
+            "Dinleme/izleme becerisinin geliştirilmesinde çok modlu bir metin olarak söyleşi türünde bir metnin tahlili yapılır. Öğrencilerin dilin akıcı ve rahat söyleyişinin dinlediği/izlediği bilgilendirici metinlere nasıl yansıdığını fark etmeleri sağlanır.",
+            "Konuşma becerisinin geliştirilmesinde edebiyat alanında iz bırakmış şahsiyetlerin edebî yönünü tanıtan bir podcast hazırlanır. Böylece öğrencilerin seçtikleri şairi/yazarı daha yakından tanımaları ve dijital imkânları kullanarak bir ürün ortaya çıkarmaları sağlanır."
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TDE1.1",
+              "metin": "“Kelimelerin Ritmi” temasında ele alınan metinlerde dinleme/izlemeyi yönetebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.2",
+              "metin": "“Kelimelerin Ritmi” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.3",
+              "metin": "“Kelimelerin Ritmi” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.4",
+              "metin": "“Kelimelerin Ritmi” temasında ele alınan metinlere yönelik dinleme/izleme sürecini değerlendirebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE2.1",
+              "metin": "“Kelimelerin Ritmi” temasında ele alınan metinlerde okumayı yönetebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.2",
+              "metin": "“Kelimelerin Ritmi” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.3",
+              "metin": "“Kelimelerin Ritmi” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.4",
+              "metin": "“Kelimelerin Ritmi” temasında ele alınan metinlere yönelik okuma sürecini değerlendirebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE3.1",
+              "metin": "Dilin ritimle ilişkili estetik yönünü kullanarak edebiyat alanında iz bırakmış şahsiyetlerin edebî yönünü yansıtan bir podcast (sesli blog) hazırlama sürecini yönetebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.2",
+              "metin": "Dilin ritimle ilişkili estetik yönünü kullanarak edebiyat alanında iz bırakmış şahsiyetlerin edebî yönünü yansıtan bir podcast hazırlamak için gerekli içeriği oluşturabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.3",
+              "metin": "Hazırlanan podcastleri sunarken kural uygulayabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.4",
+              "metin": "Hazırlanan podcastlere yönelik süreci değerlendirebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.1",
+              "metin": "Bilgilendirici bir metni edebî metne dönüştüreceği yazma sürecini yönetebilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.2",
+              "metin": "Bilgilendirici bir metni edebî metne dönüştüreceği yazısına içerik oluşturabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.3",
+              "metin": "Edebî metne dönüştürdüğü yazısında kural uygulayabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.4",
+              "metin": "Edebî metne dönüştürdüğü yazısına yönelik yazma sürecini değerlendirebilme",
+              "beceri_alani": "Yazma"
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "3. Tema: Dünden Bugüne",
+          "unite_url": "https://tymm.meb.gov.tr/turk-dili-ve-edebiyati-dersi/unite/256",
+          "guncelleme": "07.08.2026",
+          "ders_saati": 43,
+          "icerik_cercevesi": [
+            "Okuma",
+            "Konuşma",
+            "Dinleme/İzleme",
+            "Yazma"
+          ],
+          "icerik_cercevesi_aciklama": [
+            "“Dünden Bugüne” temasının içerik çerçevesi şu şekildedir:",
+            "Okuma becerisinin geliştirilmesi için tarihî süreç içerisinde edebî türlerde meydana gelen değişim ve dönüşüme örnek oluşturması bakımından destan ve mesnevi seçilir. Sözlü kültüre ait ve millî nitelikler taşıyan destanlardan mesnevi türüne kadar ilerleyen süreçte Türk dili ve edebiyatındaki değişim ve dönüşüm yolculuğu bu metinlerin incelenmesi suretiyle ortaya konur. Konuşma becerisinin geliştirilmesinde öğrenciler, Türk destanlarıyla ilgili bir sunum yaparak sözlü bir anlatım gerçekleştirir. Bu sayede Türk kültürünün en eski ürünlerini yakından tanımaları, incelemeleri ve arkadaşlarına aktarmaları sağlanır.",
+            "Dinleme/izleme becerisinin geliştirilmesinde kahramanları insan dışı varlıklar olan, sembolik anlatımın önemli örnekleri kabul edilen fabl metni seçilir. Öğrenciden dinlediği/izlediği fabl metnini anlamlandırmasına ve çözümlemesine yönelik çalışmalar yapması beklenir.",
+            "Yazma becerisinin geliştirilmesinde öğrenciler, bir fabl yazma çalışması yapmak suretiyle yazılı bir anlatım gerçekleştirir. Öğrencilerden yazacakları fablın amacına uygun olarak yöntem ve strateji belirlemeleri istenebilir. Hayal güçlerini kullanarak sembolik bir anlatımla özgün ürünler ortaya çıkarmaları sağlanır."
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TDE1.1",
+              "metin": "“Dünden Bugüne” temasında ele alınan metinlerde dinleme/izlemeyi yönetebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.2",
+              "metin": "“Dünden Bugüne” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.3",
+              "metin": "“Dünden Bugüne” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.4",
+              "metin": "“Dünden Bugüne” temasında ele alınan metinlere yönelik dinleme/izleme sürecini değerlendirebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE2.1",
+              "metin": "“Dünden Bugüne” temasında ele alınan metinlerde okumayı yönetebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.2",
+              "metin": "“Dünden Bugüne” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.3",
+              "metin": "“Dünden Bugüne” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.4",
+              "metin": "“Dünden Bugüne” temasında ele alınan metinlere yönelik okuma sürecini değerlendirebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE3.1",
+              "metin": "Türk destanlarıyla ilgili hazırladığı konuşmasında konuşmayı yönetebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.2",
+              "metin": "Türk destanlarıyla ilgili hazırladığı konuşmasında türe özgü içerik oluşturabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.3",
+              "metin": "Türk destanlarıyla ilgili hazırladığı konuşmasında kural uygulayabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.4",
+              "metin": "Türk destanlarıyla ilgili hazırladığı konuşmasına yönelik süreci değerlendirebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.1",
+              "metin": "Fabl türünün özelliklerine uygun olarak oluşturduğu metinlerde yazmayı yönetebilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.2",
+              "metin": "Fabl türünün özelliklerine uygun olarak oluşturduğu metinlerde içerik oluşturabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.3",
+              "metin": "Fabl türünün özelliklerine uygun olarak oluşturduğu metinlerde kural uygulayabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.4",
+              "metin": "Fabl türünün özelliklerine uygun olarak oluşturduğu metinlere yönelik yazma sürecini değerlendirebilme",
+              "beceri_alani": "Yazma"
+            }
+          ]
+        },
+        {
+          "sira": 4,
+          "ad": "4. Tema: Nesillerin Mirası",
+          "unite_url": "https://tymm.meb.gov.tr/turk-dili-ve-edebiyati-dersi/unite/261",
+          "guncelleme": "07.08.2026",
+          "ders_saati": 43,
+          "icerik_cercevesi": [
+            "Okuma",
+            "Konuşma",
+            "Dinleme/İzleme",
+            "Yazma"
+          ],
+          "icerik_cercevesi_aciklama": [
+            "“Nesillerin Mirası” temasının içerik çerçevesi şu şekildedir:",
+            "Okuma becerisinin geliştirilmesinde din, sosyoloji, felsefe, dil ve kültür gibi alanlarda yaşanan değişimler çerçevesinde Dede Korkut hikâyelerinden bir metin ile Tanzimat Dönemi’nden bir şiir incelenir. Ara metin olarak Servetifünun Dönemi’nden bir roman ile Fecriati Dönemi’nden bir şiir ele alınır. Bu metinler aracılığıyla sosyolojik, felsefi ve kültürel hayatta meydana gelen değişimlerin edebiyata nasıl yansıdığına cevap aranır.",
+            "Konuşma becerisinin geliştirilmesinde öğrencilerin Dede Korkut hikâyelerinden birini canlandırmaları suretiyle sözlü bir anlatım gerçekleştirilir. Böylece geçmişten bugüne kültürümüzde değişmeden kalan ve değişen unsurları daha iyi anlamaları sağlanır.",
+            "Dinleme/izleme becerisinin geliştirilmesinde Millî Edebiyat Dönemi’nin ruhunu yansıtan bir hikâye örneği incelenir. Bu metin ile millî değerlerin edebiyata nasıl yansıdığı, tarihî gerçekliklerin edebiyata hangi yönlerden kaynaklık ettiği gibi konuların üzerinde durulur ve öğrencilerde millî bilincin uyandırılması hedeflenir.",
+            "Yazma becerisinin geliştirilmesinde öğrencilerin dinledikleri/izledikleri Millî Edebiyat Dönemi’ne ait hikâyeyi bir şiir metni hâline getirmeleri sağlanır.Böylece bir metinde konu edilen olay, durum ya da duygular farklı bir edebî türle ifade edilirken dilin özgün ve etkili kullanımı sağlanır."
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TDE1.1",
+              "metin": "“Nesillerin Mirası” temasında ele alınan metinlerde dinleme/izlemeyi yönetebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.2",
+              "metin": "“Nesillerin Mirası” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.3",
+              "metin": "“Nesillerin Mirası” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.4",
+              "metin": "“Nesillerin Mirası” temasında ele alınan metinlerde dinleme/izleme sürecini değerlendirebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE2.1",
+              "metin": "“Nesillerin Mirası” temasında ele alınan metinlerde okumayı yönetebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.2",
+              "metin": "“Nesillerin Mirası” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.3",
+              "metin": "“Nesillerin Mirası” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.4",
+              "metin": "“Nesillerin Mirası” temasında ele alınan metinlere yönelik okuma sürecini değerlendirebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE3.1",
+              "metin": "Dede Korkut hikâyelerinden birini canlandırdığı konuşma sürecini yönetebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.2",
+              "metin": "Dede Korkut hikâyelerinden birini canlandırdığı konuşmasına uygun içerik oluşturabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.3",
+              "metin": "Dede Korkut hikâyelerinden birini canlandırdığı konuşmasında kural uygulayabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.4",
+              "metin": "Dede Korkut hikâyelerinden birini canlandırdığı konuşmasına yönelik süreci değerlendirebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.1",
+              "metin": "Dinleme/izlemede incelediği hikâyeyi şiire dönüştürerek oluşturduğu yazısında yazmayı yönetebilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.2",
+              "metin": "Dinleme/izlemede incelediği hikâyeyi şiire dönüştürerek oluşturduğu yazısında içerik oluşturabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.3",
+              "metin": "Dinleme/izlemede incelediği hikâyeyi şiire dönüştürerek oluşturduğu yazısında kural uygulayabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.4",
+              "metin": "Dinleme/izlemede incelediği hikâyeyi şiire dönüştürerek oluşturduğu yazısına yönelik yazma sürecini değerlendirebilme",
+              "beceri_alani": "Yazma"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sinif": 11,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/turk-dili-ve-edebiyati-dersi/13",
+      "sayfa_basligi": "Türk Dili Ve Edebiyatı Dersi 11.Sınıf",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "1. Tema: Bir Diyeceğim Var!",
+          "unite_url": "https://tymm.meb.gov.tr/turk-dili-ve-edebiyati-dersi/unite/267",
+          "guncelleme": "26.08.2026",
+          "ders_saati": 43,
+          "icerik_cercevesi": [
+            "Okuma",
+            "Konuşma",
+            "Dinleme/İzleme",
+            "Yazma"
+          ],
+          "icerik_cercevesi_aciklama": [
+            "“Bir Diyeceğim Var!” temasının içerik çerçevesi şu şekildedir:",
+            "Okuma becerisinin geliştirilmesi için ele alınan ilk metin, dilin iletişimde ve günlük yaşamda kullanımına örnek oluşturması bakımından, yanlış anlaşılmalara ve söz oyunlarına dayalı mizahi bir tür olan Karagöz’dür.",
+            "Karagöz metni tahlil edilirken Geleneksel Türk Tiyatrosu hakkında bilgi verilir. İkinci okuma metni olan mektup işlenirken öğretici metinlere yönelik metin tahlili sürecinin aşamaları takip edilir. Mektup türüne özgü dil, yapı ve üslup özellikleriyle ilgili gerekli bilgiler verilir. Ara metin ise bir dilekçe örneğidir. Dilekçenin günlük yaşamdaki kullanımına dikkat çekilir ve dilekçe yazımı üzerinde durulur. Konuşma becerisinin geliştirilmesinde sözlü iletişim engellerini konu alan bir canlandırma yapılır. Canlandırma öncesinde konuya dikkat çekmek amacıyla sözlü iletişim engellerinin bulunduğu çok modlu bir metin izletilir/dinletilir. Öğrencilerden bu metindeki sözlü iletişim engellerini belirlemeleri istenir. Öğrencilerden gelen fikirler doğrultusunda sözlü iletişim engellerine yer verdikleri bir konuşma metnini canlandırmak amacıyla hazırlık yapmaları istenir.",
+            "Dinleme/izleme becerisinin geliştirilmesinde günlük yaşamda iletişimi ele alan ve e-posta ile ilgili çok modlu bir metin seçilir. Dinlenen/izlenen çok modlu metinden hareketle öğrencilerden geçmişten bugüne iletişim araçlarına yönelik çıkarım yapmaları beklenir. Öğrencilerin ön bilgilerini de kullanarak e-posta vasıtasıyla iletişimin diğer iletişim araçlarına göre avantajlı yönlerini gerekçelendirerek açıklamaları istenir.",
+            "Yazma becerisinin geliştirilmesinde türün özelliklerine ve belirlenen amaca uygun bir e-posta yazılır. E-posta yazılırken yazma amacı ve alıcı göz önünde bulundurularak belirli bir plan çerçevesinde içerik oluşturulur. İletinin alıcı tarafından tam olarak anlaşılmasını sağlamak amacıyla düşünceyi geliştirme yollarına başvurulabilir. Metnin alıcısına ve yazılma amacına uygun söz varlığı kullanmaya önem verilir."
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TDE1.1",
+              "metin": "“Bir Diyeceğim Var!” temasında ele alınan metinlerde dinlemeyi/izlemeyi yönetebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.2",
+              "metin": "“Bir Diyeceğim Var!” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.3",
+              "metin": "“Bir Diyeceğim Var!” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.4",
+              "metin": "“Bir Diyeceğim Var!” temasında ele alınan metinlerde dinleme/izleme sürecini değerlendirebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE2.1",
+              "metin": "“Bir Diyeceğim Var!” temasında ele alınan metinlerde okumayı yönetebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.2",
+              "metin": "“Bir Diyeceğim Var!” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.3",
+              "metin": "“Bir Diyeceğim Var!” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.4",
+              "metin": "“Bir Diyeceğim Var!” temasında ele alınan metinlerden hareketle okuma sürecini değerlendirebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE3.1",
+              "metin": "Günlük yaşamda karşılaşabileceği iletişim engellerini konu alan konuşmasını yönetebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.2",
+              "metin": "İletişim engellerinin nedenlerini, sonuçlarını ve çözümlerini yansıtacağı konuşması için içerik oluşturabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.3",
+              "metin": "Sözlü iletişim engellerine ilişkin farklı bakış açılarını deneyimlediği konuşmasında kural uygulayabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.4",
+              "metin": "Günlük hayatta karşılaşılan sözlü iletişim engellerine yönelik gerçekleştirdiği konuşmasında süreci değerlendirebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.1",
+              "metin": "Duygu, düşünce ve isteklerini etkili bir şekilde ileteceği yazısını yönetebilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.2",
+              "metin": "Günlük hayatta karşılaşılan durumlara ilişkin duygu ve düşüncelerini etkili kullanacağı yazısı için içerik oluşturabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.3",
+              "metin": "Günlük hayatta karşılaşılan durumlara ilişkin duygu ve düşüncelerini etkili kullanacağı yazısı için kural uygulayabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.4",
+              "metin": "Günlük hayatta duygu, düşünce ve isteklerini ifade ettiği yazısında yazma sürecini değerlendirebilme",
+              "beceri_alani": "Yazma"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "2. Tema: Kültür Yolculuğu",
+          "unite_url": "https://tymm.meb.gov.tr/turk-dili-ve-edebiyati-dersi/unite/276",
+          "guncelleme": "26.08.2026",
+          "ders_saati": 43,
+          "icerik_cercevesi": [
+            "Okuma",
+            "Konuşma",
+            "Dinleme/İzleme",
+            "Yazma"
+          ],
+          "icerik_cercevesi_aciklama": [
+            "“Kültür Yolculuğu” temasının içerik çerçevesi şu şekildedir:",
+            "Okuma becerisinin geliştirilmesi için Türk dünyasından bir hikâye seçilir ve bu metnin tahlili yapılır. Metin tahlil edilirken Türk dünyasının ortak kültür değerlerine dikkat çekilir. İkinci okuma metni olarak Orhun Abideleri’nden bir bölüm incelenir. Bu metinler aracılığıyla Türkçenin ortak kültürün ve millî bilincin oluşmasındaki etkisi üzerinde durulur. Okuma metinleri tahlil edilirken anı türünden bir eser ile Dîvânu Lugâti’t-Türk’ten bir bölüm ara metin olarak kullanılır.",
+            "Konuşma becerisinin geliştirilmesi için öğrencilerden Türk dünyasının ortak kültürünü (dil, din, coğrafya, sanat, gelenek, görenek, giyim, yemek, millî ve manevi değerler) yansıtan uygun görseller bulmaları ve bunlardan hareketle Türk kültürünün tanıtıldığı bir konuşma yapmaları istenir. Yapılan sözlü anlatım çalışması sonucunda öğrencilerin Türk kültürü ile ilgili bilgileri somutlaştırılır.",
+            "Dinleme/izleme becerisinin geliştirilmesi için âşık tarzı halk şiiri geleneğinin özelliklerini yansıtan ve âşık atışmalarını da içeren çok modlu bir metin incelenir. Öğrenciden dinlenen/izlenen âşık atışmasında mizah, eğlence ve halk kültürünün nasıl oluştuğuna dair fikir oluşturması beklenir. Öğrenciden âşık atışmasında kullanılan dilin inceliğini göz önünde bulundurarak günlük dille arasındaki benzerlik ve farklılıklar üzerine çıkarım yapması beklenir.",
+            "Yazma becerisinin geliştirilmesi için belirlenen bir çevrim içi müze gezisi yapılarak bu etkinlik hakkında bir yazı yazılır. Müzelerin kültürel bir mirasın önemli bir ögesi olduğu vurgulanır. Öğrencilerden izlenimlerini yazarken karşılaştırma ve sınıflandırmalardan yararlanmaları, özgün ifadeler kullanmaları beklenir."
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TDE1.1",
+              "metin": "“Kültür Yolculuğu” temasında ele alınan metinlerde dinlemeyi/izlemeyi yönetebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.2",
+              "metin": "“Kültür Yolculuğu” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.3",
+              "metin": "“Kültür Yolculuğu” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.4",
+              "metin": "“Kültür Yolculuğu” temasında ele alınan metinlere yönelik dinleme/izleme sürecini değerlendirebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE2.1",
+              "metin": "“Kültür Yolculuğu” temasında ele alınan metinlerde okumayı yönetebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.2",
+              "metin": "“Kültür Yolculuğu” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.3",
+              "metin": "“Kültür Yolculuğu” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.4",
+              "metin": "“Kültür Yolculuğu” temasında ele alınan metinlerde okuma sürecini değerlendirebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE3.1",
+              "metin": "Türk dünyasının ortak kültürünü (dil, din, coğrafya, sanat) yansıtan konuşmasını yönetebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.2",
+              "metin": "Kültürel çeşitliliği konu edeceği konuşması için içerik oluşturabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.3",
+              "metin": "Kültürel çeşitliliği konu edeceği konuşması için kural uygulayabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.4",
+              "metin": "Türk dünyasının ortak kültürüne (dil, din, coğrafya, sanat) yönelik konuşmasıyla ilgili süreci değerlendirebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.1",
+              "metin": "Kültürel miraslara yönelik gözlemlerini ve incelemelerini yansıtacağı yazısını yönetebilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.2",
+              "metin": "Kültürel unsurlara ilişkin gözlemlerini benzerlik ve farklılıklarıyla ortaya koyacağı yazısı için içerik oluşturabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.3",
+              "metin": "Kültürel unsurlara ilişkin gözlemlerini benzerlik ve farklılıklarıyla ortaya koyacağı yazısı için kural uygulayabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.4",
+              "metin": "Kültürel miraslara yönelik gözlemlerini ve incelemelerini anlattığı yazısıyla ilgili yazma sürecini değerlendirebilme",
+              "beceri_alani": "Yazma"
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "3. Tema: Yaşamın İzinde",
+          "unite_url": "https://tymm.meb.gov.tr/turk-dili-ve-edebiyati-dersi/unite/322",
+          "guncelleme": "26.08.2026",
+          "ders_saati": 43,
+          "icerik_cercevesi": [
+            "Okuma",
+            "Konuşma",
+            "Dinleme/İzleme",
+            "Yazma"
+          ],
+          "icerik_cercevesi_aciklama": [
+            "“Yaşamın İzinde” temasının içerik çerçevesi şu şekildedir:",
+            "Okuma becerisinin geliştirilmesi için bir roman seçilir ve tahlil edilir. Metin tahlil edilirken yazarın yaşamından esere yansıyan izler üzerinde durulur. İkinci okuma metni olarak bir biyografi incelenir.",
+            "Biyografi incelenirken öğretici metinlere yönelik metin tahlili aşamaları takip edilir. Biyografi türüne özgü dil, yapı ve üslup özellikleri dikkate alınarak gerekli bilgiler verilir. Biyografi incelemesi yapılırken divan edebiyatından tezkire türü ara metin olarak kullanılır. Konuşma becerisinin geliştirilmesi için, incelenen romanın kişilerinden biriyle ile kurmaca bir mülakat gerçekleştirilir. Öğrencilerden tahlil ettikleri romandan kendilerine yakın buldukları bir roman kişisini seçmeleri ve bu seçimi yaparken o kişinin hangi özelliğinden etkilendiklerini belirtmeleri istenir. Seçtikleri bu roman kişisiyle yapacakları kurmaca mülakatın amacını, içeriğini, hedef kitlesini, süresini belirlemeleri, buna uygun yöntem ve strateji oluşturmaları beklenir.",
+            "Dinleme/izleme becerisinin geliştirilmesi için bir radyo tiyatrosu seçilir ve incelenir. Öğrencilerin tiyatro ile ilgili ön bilgilerini yoklamak amacıyla radyo tiyatrosunu oluşturan unsurların neler olabileceği hakkında öğrencilere sorular sorulabilir. Kısa cevaplı sorularla öğrencilerden radyo tiyatrosunda müzik, ses efektleri, seslendirme ve tonlamanın önemine ilişkin tahminler yürütmeleri istenebilir. Dinlenen/izlenen metinde anlamı bilinmeyen kelimelerin ve kelime gruplarının anlamları bağlamdan hareketle tahmin edilir.",
+            "Yazma becerisinin geliştirilmesi için dinleme/izleme sürecinde incelenen metinden seçtikleri bir diyaloğu, metnin bağlamına uygun olarak başka bir türe dönüştürmeye yönelik çalışmalar yapılır. Öğrencilerden seçim yaparken hangi ölçütleri göz önünde bulundurduklarını açıklamaları beklenir. Diyaloğun bağlamdan kopmadan nasıl yazılacağı, kişilerin kendi özelliklerine uygun olarak nasıl konuşturulacağı öğrenciler tarafından belirlenir. Böylece seçilen diyalog yeniden yazılır."
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TDE1.1",
+              "metin": "“Yaşamın İzinde” temasında ele alınan metinlerde dinlemeyi/izlemeyi yönetebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.2",
+              "metin": "“Yaşamın İzinde” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.3",
+              "metin": "“Yaşamın İzinde” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.4",
+              "metin": "“Yaşamın İzinde” temasında ele alınan metinlere ilişkin dinleme/izleme sürecini değerlendirebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE2.1",
+              "metin": "“Yaşamın İzinde” temasında ele alınan metinlerde okumayı yönetebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.2",
+              "metin": "“Yaşamın İzinde” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.3",
+              "metin": "“Yaşamın İzinde” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.4",
+              "metin": "“Yaşamın İzinde” temasında ele alınan metinlerden hareketle günlük yaşamın ve sanatçının hayatının edebiyata yansımasına yönelik süreci değerlendirebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE3.1",
+              "metin": "Edebiyat ve sanatın yaşamdaki yansımalarını etkileşimli bir biçimde ele aldığı konuşmasını yönetebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.2",
+              "metin": "Sanatçının ve eserden seçtiği karakterin yaşamındaki izlenimlerini yaratıcılığı ile bütünleştirdiği bir konuşma içeriği oluşturabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.3",
+              "metin": "Sanatçının ve eserden seçtiği karakterin yaşamındaki izlenimlerini yaratıcılığı ile bütünleştirdiği konuşmasında kural uygulayabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.4",
+              "metin": "Yaşamdan izler taşıyan karakterlerle kurduğu etkileşimi yansıtan konuşmasına yönelik süreci değerlendirebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.1",
+              "metin": "Edebiyat ve sanatın yaşamdaki yansımalarını kendi kurgusuyla oluşturacağı yazısını yönetebilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.2",
+              "metin": "Kendi yaşamını, ilgi alanını veya beğenilerini bağlama uygun bir şekilde kurguladığı yazısı için içerik oluşturabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.3",
+              "metin": "Kendi yaşamını, ilgi alanı veya beğenilerini bağlama uygun bir şekilde kurguladığı yazısı için kural uygulayabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.4",
+              "metin": "Edebiyat ve sanatın yaşamdaki izlerine yönelik görüşlerini anlattığı yazısında yazma sürecini değerlendirebilme",
+              "beceri_alani": "Yazma"
+            }
+          ]
+        },
+        {
+          "sira": 4,
+          "ad": "4. Tema: Hayatın Aynası",
+          "unite_url": "https://tymm.meb.gov.tr/turk-dili-ve-edebiyati-dersi/unite/332",
+          "guncelleme": "26.08.2026",
+          "ders_saati": 43,
+          "icerik_cercevesi": [
+            "Okuma",
+            "Konuşma",
+            "Dinleme/İzleme",
+            "Yazma"
+          ],
+          "icerik_cercevesi_aciklama": [
+            "“Hayatın Aynası” temasının içerik çerçevesi şu şekildedir:",
+            "Okuma becerisinin geliştirilmesi için bir tiyatro metni seçilir. Bu tiyatro eserinin temanın içeriğine uygun olarak öğrencilerin günlük hayatla kolayca ilişkilendirebilecekleri nitelikler taşımasına dikkat edilir.",
+            "Tiyatro metni tahlil edilirken öğrencilerden sosyal hayata dair gözlemlerini anlatmaları, daha önce okunan ya da izlenen tiyatroların özelliklerini dikkate alarak tiyatro metninin zihinsel ve duygusal farkındalık oluşturmaya katkısı hakkında fikir oluşturmaları sağlanır. Temada ele alınan ikinci okuma metni, yoğun bir anlatıma sahip olan küçürek hikâyedir.",
+            "Seçilen küçürek hikâyenin tahlili, metin tahlili aşamalarına uygun şekilde yapılır.",
+            "Konuşma becerisinin geliştirilmesi için tahlil edilen tiyatro eserini canlandırma çalışması yapılır. Öğrencilerden tiyatro eserinde kendi belirledikleri bölümlerin canlandırmasını nasıl yapacaklarını, içeriğe uygun hangi jest ve mimikleri kullanacaklarını belirtmeleri istenir. Tahlil edilen tiyatro metninin canlandırılmasına yönelik öğrencilerin kendi performanslarını sergilemeleri sağlanır.",
+            "Dinleme/izleme becerisinin geliştirilmesinde günlük hayatla ilişkilendirilebilecek öğretici metin özellikleri taşıyan çok modlu bir metin olan belgesel türünden yararlanılır. Öğrencilerin dinledikleri/izlediklerinden hareketle hayatın çeşitli alanlarında karşılaşabilecekleri durumlara ilişkin çıkarımlar yapmaları sağlanır.",
+            "Yazma becerisinin geliştirilmesinde dinlenen/izlenen belgeselle ilgili bir afiş hazırlanır. Afiş hazırlanırken hangi malzemelerin kullanılacağına, afişlerde dil yapılarının nasıl oluşturulacağına yönelik örnekler öğretmen tarafından gösterilerek yazma amacı ve yazılacak metnin özellikleri belirlenir. Öğrenciler tarafından dinledikleri/izledikleri belgesele yönelik özgün afişler hazırlanır."
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TDE1.1",
+              "metin": "“Hayatın Aynası” temasında ele alınan metinlerde dinlemeyi/izlemeyi yönetebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.2",
+              "metin": "“Hayatın Aynası” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.3",
+              "metin": "“Hayatın Aynası” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.4",
+              "metin": "“Hayatın Aynası” temasında ele alınan metinlerden hareketle günlük hayatta karşılaşabileceği olay ve durumlarla ilgili görüşlerini paylaştığı süreci değerlendirebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE2.1",
+              "metin": "“Hayatın Aynası” temasında ele alınan metinlerde okumayı yönetebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.2",
+              "metin": "“Hayatın Aynası” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.3",
+              "metin": "“Hayatın Aynası” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.4",
+              "metin": "“Hayatın Aynası” temasında ele alınan metinlerde okuma sürecini değerlendirebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE3.1",
+              "metin": "Sosyal hayata dair gözlemleri yansıtan metinlerden hareketle sergileyeceği konuşmayı yönetebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.2",
+              "metin": "Günlük hayatta karşılaşılabilecek olay ya da durumu etkileyici ve inandırıcı biçimde canlandırmak için konuşmasının içeriğini oluşturabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.3",
+              "metin": "Günlük hayatta karşılaşılabilecek olay ya da durumu etkileyici ve inandırıcı biçimde canlandırmak için konuşmasında kural uygulayabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.4",
+              "metin": "Hayata ayna tutan içeriği sahnelediği konuşması için konuşma sürecini değerlendirebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.1",
+              "metin": "Günlük hayatta karşılaşılabilecek olay ve durumları etkili bir şekilde aktaracağı yazısını yönetebilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.2",
+              "metin": "Farklı bakış açılarını, günlük deneyimleri ve sosyal yaşamı yansıttığı yazısı için içerik oluşturabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.3",
+              "metin": "Farklı bakış açılarını, günlük deneyimleri ve sosyal yaşamı yansıttığı yazısı için kural uygulayabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.4",
+              "metin": "Günlük hayatta karşılaşılabilecek olay ve durumları etkili bir şekilde aktardığı yazılı anlatımına yönelik yazma sürecini değerlendirebilme",
+              "beceri_alani": "Yazma"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sinif": 12,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/turk-dili-ve-edebiyati-dersi/14",
+      "sayfa_basligi": "Türk Dili Ve Edebiyatı Dersi 12.Sınıf",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "1. Tema: Benim Yolculuğum",
+          "unite_url": "https://tymm.meb.gov.tr/turk-dili-ve-edebiyati-dersi/unite/335",
+          "guncelleme": "26.08.2026",
+          "ders_saati": 43,
+          "icerik_cercevesi": [
+            "Okuma",
+            "Yazma",
+            "Dinleme/İzleme",
+            "Konuşma"
+          ],
+          "icerik_cercevesi_aciklama": [
+            "“Benim Yolculuğum” temasının içerik çerçevesi şu şekildedir:",
+            "Okuma becerisinin geliştirilmesi için kişilerin kendi dünyasını yansıttığı edebî metinlerden bir günlük seçilir. Hayatın çeşitli yönlerini samimi bir dille yansıtan blog yazısı ara metin için ele alınır. İkinci okuma metni ise şiirdir. Bu metinlerin yanı sıra ikinci ara metin olarak bir hikâye seçilir. Hikâye türünün doğası gereği bir olay ya da duruma odaklanılarak gözlem, izlenim, duygu ve düşüncelerin etkili bir şekilde anlatılmasından hareketle günlük yaşam içinde insanların olay ve durumlar karşısında duygu ve düşüncelerini nasıl yansıttıklarıyla ilgili çıkarımlar yapılır. Okunan, tahlil edilen ve karşılaştırılan metinler aracılığıyla öğrencilerden kişisel gelişime yönelik tespit, çıkarım, yorum ve değerlendirmeler yapabilmeleri; bunları kendi yaşamlarıyla ilişkilendirebilmeleri beklenir.",
+            "Yazma becerisinin geliştirilmesinde öğrencilerden genel ağdaki güvenilir ortamlarda geleceğe dair planlarını anlattıkları bir forum metni oluşturmaları istenir. Öğrencilerden forumda belirtilen kurallara uygun, kendi içinde anlam bütünlüğü olan özgün bir metin hazırlamaları beklenir.",
+            "Dinleme/İzleme becerisinin geliştirilmesinde kişisel gelişimi konu edinen ve söyleşi türünün özelliklerini taşıyan çok modlu bir metin seçilir. Seçilen bu metinde metin tahlili yöntemi kullanılır. Metnin tahlili yapılırken öğrencilerden kendi yaşamlarıyla ve hedefleriyle bağlantı kurabilmeleri istenir.",
+            "Konuşma becerisinin geliştirilmesinde öğrencilerden kişisel gelişimi etkileyen unsurlarla ilgili hazırlıklı bir konuşma yapmaları beklenir. Öğrencilerin konuşurken dil ögeleri arasındaki mantıksal ve anlamsal bütünlüğü oluşturan, metin içi ilişkiler kuran bağdaşıklık ögelerini (eksiltili cümle, bağlama, gönderim, değiştirim, sözcük bağdaşıklığı) doğru kullanmalarına dikkat edilir."
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TDE1.1",
+              "metin": "“Benim Yolculuğum” temasında farklı insanların yaşamlarını, hedeflerini ve başarılarını ele alan metinlerde dinlemeyi/izlemeyi yönetebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.2",
+              "metin": "“Benim Yolculuğum” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.3",
+              "metin": "“Benim Yolculuğum” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.4",
+              "metin": "“Benim Yolculuğum” temasında ele alınan metinlerdeki çözümlemelerini kendi kişisel gelişimleriyle birleştirip süreci değerlendirebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE2.1",
+              "metin": "“Benim Yolculuğum” temasında ele alınan metinlerde okumayı yönetebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.2",
+              "metin": "“Benim Yolculuğum” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.3",
+              "metin": "“Benim Yolculuğum” temasında ele alınan metinlerde yazarın zamana bağlı olarak karakter, duygu ve düşünce değişimini çözümleyebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.4",
+              "metin": "“Benim Yolculuğum” temasında ele alınan metinlerde okuma sürecini değerlendirebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE3.1",
+              "metin": "Kişisel gelişimini etkileyen unsurlar hakkında yapacağı konuşmasını yönetebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.2",
+              "metin": "Başkalarının deneyimleriyle empati kuracağı ve kendi görüşlerini şekillendireceği konuşma içeriğini oluşturabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.3",
+              "metin": "Kişisel gelişimini ve özelliklerini keşfettiği, kendi dünyasını yansıttığı konuşmasında kural uygulayabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.4",
+              "metin": "Deneyimlerini, kişisel özelliklerini ve gelişimlerini aktardığı konuşmasına yönelik süreci değerlendirebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.1",
+              "metin": "Geleceğe dair planlarını dijital bir platformda aktarmak için oluşturacağı yazma sürecini yönetebilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.2",
+              "metin": "Kariyer hedefleri, eğitim planları ve diğer kişisel gelişim hedeflerine yönelik yazısında içerik oluşturabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.3",
+              "metin": "Kariyer hedefleri, eğitim planları ve diğer kişisel gelişim hedeflerine yönelik yazısında kural uygulayabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.4",
+              "metin": "Geleceğe dair planlarını dijital ortamda aktardığı yazısına yönelik yazma sürecini değerlendirebilme",
+              "beceri_alani": "Yazma"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "2. Tema: Toplumun Ahengi",
+          "unite_url": "https://tymm.meb.gov.tr/turk-dili-ve-edebiyati-dersi/unite/340",
+          "guncelleme": "26.08.2026",
+          "ders_saati": 43,
+          "icerik_cercevesi": [
+            "Okuma",
+            "Yazma",
+            "Dinleme/İzleme",
+            "Konuşma"
+          ],
+          "icerik_cercevesi_aciklama": [
+            "“Toplumun Ahengi” temasının içerik çerçevesi şu şekildedir:",
+            "Okuma becerisinin geliştirilmesi için öğrencilerin toplum olarak uyum içinde yaşayabilmenin gerekleriyle ilgili çıkarımlar yapabilecekleri, hak ve özgürlükler teması ile ilişkilendirebilecekleri nitelikte bir roman seçilir. Bu romanın tahliliyle toplumsal sorunların edebî eserlere nasıl yansıdığına, hak ve özgürlüklerle ilgili kavramların edebiyatta nasıl yer aldığına yönelik çıkarımlar yapılması amaçlanır. Tahlil edilen ikinci metin, öğretici bir metin türü olan makaledir. Makale türündeki bu metnin tahlili ile toplumun uyum içinde yaşayabilmesi için öğrencilerden hukuk, din, ahlak ve görgü kurallarıyla ilgili temel bilgiler edinmeleri ve çıkarımlar yaparak bunları kendi yaşamlarıyla ilişkilendirebilmeleri beklenir.",
+            "Yazma becerisinin geliştirilmesinde öğrencilerden okudukları romanı temel hak ve özgürlükler bağlamında değerlendiren bir eleştiri yazısı hazırlamaları istenir. Öğrencilerden hazırladıkları eleştiri yazısında romanın iletisine, romanda kullanılan anlatım biçimi ve yöntemlerine, yazarın üslubuna, anlatıcının tavrına, roman kişilerinin tutumlarına yönelik bir değerlendirmede bulunmaları beklenir.",
+            "Dinleme/izleme becerisinin geliştirilmesinde temel hak ve özgürlüklerle ilgili çok modlu bir metin özelliği taşıyan haber metni seçilir. Seçilen haber metni ile öğrencilerden toplumun refah ve huzur içinde bir arada yaşayabilmesi için uyulması gereken hukuk, ahlak ve görgü kurallarını özümseyerek bunları kendi yaşamlarına aktarabilmeleri beklenir. Yapılan dinleme/izleme çalışmasıyla öğrencilerden hak ve özgürlükler temasının metinlerde nasıl ele alınıp işlendiğine yönelik çıkarım yapmaları istenir.",
+            "Konuşma becerisinin geliştirilmesinde öğrencilerden temel hak ve özgürlüklerle ilgili bir haber metni oluşturmaları ve bu haber metnini sunarak sözlü bir anlatım gerçekleştirmeleri beklenir. Öğrencilerin hazırladıkları haber metninde temel hak ve özgürlükler, adalet, duyarlılık, dürüstlük, mahremiyet gibi konuları gözetmelerine; akıcı, anlaşılır ve doğru bir Türkçe kullanmalarına; habere konu olan olayı ele alırken dürüst bir yaklaşım sergilemelerine dikkat edilir."
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TDE1.1",
+              "metin": "“Toplumun Ahengi” temasında ele alınan metinlerde dinleme/izlemeyi yönetebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.2",
+              "metin": "“Toplumun Ahengi” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.3",
+              "metin": "“Toplumun Ahengi” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.4",
+              "metin": "“Toplumun Ahengi” temasında ele alınan metinlerde dinleme/izleme sürecini değerlendirebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE2.1",
+              "metin": "“Toplumun Ahengi” temasında ele alınan metinlerde okumayı yönetebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.2",
+              "metin": "“Toplumun Ahengi” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.3",
+              "metin": "“Toplumun Ahengi” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.4",
+              "metin": "“Toplumun Ahengi” temasında ele alınan metinlerde okuma sürecini değerlendirebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE3.1",
+              "metin": "Güncel olayları takip edip toplumsal konulara duyarlı bir konuşmayı yönetebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.2",
+              "metin": "Toplumsal sorunları anlama ve bu sorunlara çözüm üretme ile ilgili konuşması için içerik oluşturabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.3",
+              "metin": "Toplumsal sorunları anlama ve bu sorunlara çözüm üretme ile ilgili konuşması için kural uygulayabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.4",
+              "metin": "Temel hak ve özgürlükler bağlamında gerçekleştirdiği konuşmasına yönelik süreci değerlendirebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.1",
+              "metin": "Toplumu farklı yönleriyle ele aldığı yazılı anlatım sürecini yönetebilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.2",
+              "metin": "Temel hak ve özgürlüklerin toplumsal düzen için gerekliliğini farklı bakış açılarıyla bir araya getirdiği yazısına içerik oluşturabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.3",
+              "metin": "Temel hak ve özgürlüklerin toplumsal düzen için gerekliliğini farklı bakış açılarıyla oluşturduğu yazısı için kural uygulayabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.4",
+              "metin": "Toplumsal duyarlılık bağlamında ortaya koyduğu yazısına yönelik yazma sürecini değerlendirebilme",
+              "beceri_alani": "Yazma"
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "3. Tema: Hayatın Dengesi",
+          "unite_url": "https://tymm.meb.gov.tr/turk-dili-ve-edebiyati-dersi/unite/348",
+          "guncelleme": "26.08.2026",
+          "ders_saati": 43,
+          "icerik_cercevesi": [
+            "Okuma",
+            "Yazma",
+            "Dinleme/İzleme",
+            "Konuşma"
+          ],
+          "icerik_cercevesi_aciklama": [
+            "“Hayatın Dengesi” temasının içerik çerçevesi şu şekildedir:",
+            "Okuma becerisinin geliştirilmesi için dünyadaki kaynakların kullanımı, birey ve toplumların kendi ihtiyaçlarını karşılayabilmesi, yaşanan çevreyi koruma ve ona saygı gösterme, yaşam tarzı vb. içerikleri etkili biçimde yansıtabilecek edebî türlerden bir gezi yazısı seçilir. Gezi yazısı ile mekâna ait bilgilendirici ifadeler de içermesi yönünden benzer özelliklere sahip broşür, karşılaştırma metni/ara metin olarak ele alınır. Sürdürülebilir bir hayatın temel unsuru olan bireyi ve içinde yaşadığı toplumu çeşitli yönleri ile yansıtmaya elverişli hikâye türünde bir metnin de tahlili yapılır. Öğrencilerin tahlil edilen edebî ve bilgilendirici metinlerden hareketle yaşadıkları çevreye yönelik farkındalık geliştirmeleri beklenir.",
+            "Yazma becerisinin geliştirilmesinde öğrencilerden, tahlil ettikleri gezi yazısının içeriğinden hareketle bir anket hazırlamaları istenir. Temanın içeriğine uygun bir probleme/konuya odaklanan ankette iş birliği yapılacak kişi ve gruplar öğrenciler tarafından tespit edilir ve böylece anketin hedef kitlesi belirlenir. Hazırlanan anketi belirlenen hedefe uyguladıktan sonra öğrencilerden anket sonuçlarını yazılı olarak paylaşmaları beklenir.",
+            "Dinleme/izleme becerisinin geliştirilmesinde içerik olarak teknoloji ve çevre temalı çok modlu bir haber metni seçilir. Metinde teknoloji ve çevre konusu ekseninde, insan ve yaşamla ilgili çeşitli olay ve durumun farklı bakış açıları ile öğrencilere yansıtılması amaçlanır. Bu çalışmalar ile temada ele alınan konular çerçevesinde öğrencilerden yaşamda sürdürülebilirlik konusu üzerine özgün fikirler oluşturmaları beklenir.",
+            "Konuşma becerisinin geliştirilmesinde öğrencilerden tahlil edilen dinleme/izleme metninden hareketle teknoloji ve çevre ile ilgili güncel bir konuyu/problemi bir sunum vasıtasıyla ele aldıkları sözlü anlatım gerçekleştirmeleri istenir. Öğrencilerden temaya bağlı olarak sürdürülebilirlik konusunu teknolojik gelişmelerle ilişkilendirebilecekleri bir konuşma hazırlamaları istenir."
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TDE1.1",
+              "metin": "“Hayatın Dengesi” temasında ele alınan metinlerde dinleme/izlemeyi yönetebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.2",
+              "metin": "“Hayatın Dengesi” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.3",
+              "metin": "“Hayatın Dengesi” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.4",
+              "metin": "“Hayatın Dengesi” temasında ele alınan metinlerde dinleme/izleme sürecini değerlendirebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE2.1",
+              "metin": "“Hayatın Dengesi” temasında ele alınan metinlerde okumayı yönetebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.2",
+              "metin": "“Hayatın Dengesi” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.3",
+              "metin": "“Hayatın Dengesi” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.4",
+              "metin": "“Hayatın Dengesi” temasında ele alınan metinlerde okuma sürecini değerlendirebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE3.1",
+              "metin": "Güncel teknoloji ve çevre konusunda yaşadığı dünyayı güzelleştirme farkındalığı oluşturmak için yapacağı konuşmasını yönetebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.2",
+              "metin": "Sürdürülebilirlik ve teknolojinin çevresel etkileri konusunda gerçekleştireceği konuşması için içerik oluşturabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.3",
+              "metin": "Sürdürülebilirlik ve teknolojinin çevresel etkileri konusunda gerçekleştireceği konuşması için kural uygulayabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.4",
+              "metin": "Sürdürülebilirlik ve teknolojinin çevresel etkileri konusunda gerçekleştireceği konuşmasına yönelik süreci değerlendirebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.1",
+              "metin": "Sürdürülebilir hayata yönelik toplumsal sorumluluklarını ortaya koyacakları yazma sürecini yönetebilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.2",
+              "metin": "Toplumsal yaşam, sürdürülebilirlik, kültürel ve çevresel unsurlara yönelik başkalarının görüşlerini alabileceği kendi yazısına içerik oluşturabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.3",
+              "metin": "Toplumsal yaşam, sürdürülebilirlik, kültürel ve çevresel unsurlara yönelik başkalarının görüşlerini alabileceği yazısı için kural uygulayabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.4",
+              "metin": "Sürdürülebilir hayat için toplumsal sorumluluklara yönelik farklı görüşleri ve kendi görüşlerini bir araya getirdiği yazısı hakkındaki yazma sürecini değerlendirebilme",
+              "beceri_alani": "Yazma"
+            }
+          ]
+        },
+        {
+          "sira": 4,
+          "ad": "4. Tema: Hayalimdeki Yarın",
+          "unite_url": "https://tymm.meb.gov.tr/turk-dili-ve-edebiyati-dersi/unite/351",
+          "guncelleme": "26.08.2026",
+          "ders_saati": 43,
+          "icerik_cercevesi": [
+            "Okuma",
+            "Konuşma",
+            "Dinleme/İzleme",
+            "Yazma"
+          ],
+          "icerik_cercevesi_aciklama": [
+            "“Hayalimdeki Yarın” temasında içerik çerçevesi şu şekildedir:",
+            "Okuma becerilerinin geliştirilmesi için seçilen ilk okuma metni, nesnel anlatım özelliklerine sahip, doğru ve güvenilir bilgi sunan makaledir. Diğer okuma metni gerçek ya da gerçeğe yakın olayların ele alındığı hikâyedir. Bu metinler tahlil edilerek öğrencilerin “Hayalimdeki Yarın” teması özelinde meslek seçimlerinin hayatı etkileme düzeyinin farkına varmaları sağlanır.",
+            "Konuşma becerilerinin geliştirilmesinde öğrencilerin okudukları ve çözümledikleri metinleri hayallerindeki meslekle ilişkilendirerek gelecekte seçmek istedikleri meslekleri belirlemeleri ve bu meslekler hakkında farklı kişilerle röportaj yapmaları istenir. Bu doğrultuda hazırladıkları röportajları sunmaya yönelik öğrencilere bir performans görevi verilir. Dinleme/izleme becerilerinin geliştirilmesinde içerik olarak mülakat türü seçilmiştir. Bu metin ile öğrencilerle hayatın her alanında özellikle iş başvurularında yararlanabilecekleri bir türün incelemesi gerçekleştirilecektir.",
+            "Yazma becerilerinin geliştirilmesinde öğrencilere dinlenen/izlenen metinden hareketle bir mesleği belirgin özellikleriyle tanıtan bir metin oluşturmalarına yönelik performans görevi verilir."
+          ],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "TDE1.1",
+              "metin": "“Hayalimdeki Yarın” temasında ele alınan metinlerde dinlemeyi/izlemeyi yönetebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.2",
+              "metin": "“Hayalimdeki Yarın” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.3",
+              "metin": "“Hayalimdeki Yarın” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE1.4",
+              "metin": "“Hayalimdeki Yarın” temasında ele alınan metinlerde dinleme/izleme sürecini değerlendirebilme",
+              "beceri_alani": "Dinleme/İzleme"
+            },
+            {
+              "kod": "TDE2.1",
+              "metin": "“Hayalimdeki Yarın” temasında ele alınan metinlerde okumayı yönetebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.2",
+              "metin": "“Hayalimdeki Yarın” temasında ele alınan metinlerde anlam oluşturabilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.3",
+              "metin": "“Hayalimdeki Yarın” temasında ele alınan metinleri çözümleyebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE2.4",
+              "metin": "“Hayalimdeki Yarın” temasında ele alınan metinlerde okuma sürecini değerlendirebilme",
+              "beceri_alani": "Okuma"
+            },
+            {
+              "kod": "TDE3.1",
+              "metin": "Farklı mesleklerdeki kişilerin deneyimlerinden faydalanarak gerçekleştireceği konuşmasını yönetebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.2",
+              "metin": "Mesleklerin özelliklerini, keyifli yanlarını, zorluklarını ve merak ettiği diğer unsurları ele alan konuşması için içerik oluşturabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.3",
+              "metin": "Mesleklerin özelliklerini, keyifli yanlarını, zorluklarını ve merak ettiği diğer unsurları ele alan kendi konuşması için kural uygulayabilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE3.4",
+              "metin": "Farklı mesleklerdeki kişilerin deneyimlerinden faydalanarak gerçekleştireceği kendi konuşmasına yönelik süreci değerlendirebilme",
+              "beceri_alani": "Konuşma"
+            },
+            {
+              "kod": "TDE4.1",
+              "metin": "Hayalindeki mesleklere yönelik bilgi edinmek amacıyla gerçekleştireceği bir meslek tanıtımı yazma sürecini yönetebilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.2",
+              "metin": "Araştırma, bilgi toplama, analitik düşünme gibi süreçler sonrasında mesleklerle ilgili ulaştığı bilgilerle yazısının içeriğini oluşturabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.3",
+              "metin": "Mesleklerin özellikleri ve kendi özelliklerini ele aldığı yazısı için kural uygulayabilme",
+              "beceri_alani": "Yazma"
+            },
+            {
+              "kod": "TDE4.4",
+              "metin": "Hayalindeki mesleklerin özelliklerini farklı açılardan ele aldığı yazısına yönelik yazma sürecini değerlendirebilme",
+              "beceri_alani": "Yazma"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "belirsizlikler": [
+    "Ders sayfasında Hazırlık ve 9-12. sınıf bağlantıları var (sayfa kimlikleri 10-14); Hazırlık 'sinif' alanında 'Hazırlık' olarak yer alır.",
+    "Edebiyat dersinde öğrenme çıktıları 'TDE<beceri>.<n>' kodludur (ör. TDE1.1) ve her temada aynı kodlar tekrar eder; kod, temayla birlikte benzersizdir. Her çıktının 'beceri_alani' alanı (Dinleme/İzleme, Okuma, Konuşma, Yazma) sayfadaki kalın başlıktan alındı. Bazı temalarda bir beceri başlığı hiç yok (ör. Hazırlık 4. tema'da Yazma yok); sayfada olmayan çıktı eklenmedi.",
+    "İçerik çerçevesi bu derste madde madde değil anlatı + '•' maddeleridir: 'icerik_cercevesi' yalnızca '•' maddelerini, 'icerik_cercevesi_aciklama' anlatı paragrafını içerir.",
+    "Temalar 'Tema' adıyla geçer (ünite değil); ders saatleri tema başına 34 (Hazırlık) / 43 (9-12)."
+  ],
+  "kaynak_notu": "Veriler tymm.meb.gov.tr sayfalarının HTML'inden betikle çıkarıldı (ünite sayfası alan satırları); çıktı metinleri yalnızca kalın başlık cümleleridir, alt maddeler (a, b, c) alınmadı. Çekim tarihi 2026-11-21."
+}

@@ -831,7 +831,11 @@ class BookDetailScreen extends ConsumerWidget {
     final result = await showDialog<BookProgress>(
       context: context,
       animationStyle: AppMotion.overlayStyle(context),
-      builder: (_) => ProgressDialog(studentBook: studentBook, progress: p),
+      builder: (_) => ProgressDialog(
+        studentBook: studentBook,
+        progress: p,
+        studentId: studentId,
+      ),
     );
     if (result == null || !context.mounted) return;
     try {
@@ -1046,7 +1050,15 @@ class BookDetailScreen extends ConsumerWidget {
 /// Çalışma ekle / düzenle: tarih, konu (kitabın dersinin konularından ya
 /// da serbest), sayfa aralığı, soru ve doğru / yanlış / boş, not.
 class ProgressDialog extends ConsumerStatefulWidget {
-  const ProgressDialog({super.key, required this.studentBook, this.progress});
+  const ProgressDialog({
+    super.key,
+    required this.studentBook,
+    this.progress,
+    this.studentId,
+  });
+
+  /// Verilirse konu listesi öğrencinin sınıfına ve müfredatına göre süzülür.
+  final String? studentId;
 
   final StudentBook studentBook;
   final BookProgress? progress;
@@ -1136,8 +1148,15 @@ class _ProgressDialogState extends ConsumerState<ProgressDialog> {
   @override
   Widget build(BuildContext context) {
     final subject = widget.studentBook.book.subjectCode;
+    final id = widget.studentId;
+    final source = id == null
+        ? [
+            for (final t in ref.watch(topicsProvider).value ?? const <Topic>[])
+              if (!t.isMaarif) t,
+          ]
+        : ref.watch(studentTopicsProvider(id)).value ?? const <Topic>[];
     final topics = [
-      for (final t in ref.watch(topicsProvider).value ?? const <Topic>[])
+      for (final t in source)
         if (subject == null || t.subjectCode == subject) t,
     ];
     return AlertDialog(

@@ -104,6 +104,12 @@ void main() {
           .fetchGradeLevel('demo-student'),
       9,
     );
+    // Bu test eski müfredatın sınıf süzmesini sınar; 9. sınıfın varsayılanı
+    // Maarif olduğundan müfredat açıkça eski seçilir (NOTLAR §104).
+    await container
+        .read(trackingRepositoryProvider)
+        .setCurriculum('demo-student', 'eski');
+    container.invalidate(studentCurriculumRawProvider('demo-student'));
     final shown = await container.read(
       studentTopicsProvider('demo-student').future,
     );

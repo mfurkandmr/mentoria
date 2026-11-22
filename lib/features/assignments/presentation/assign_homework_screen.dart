@@ -26,8 +26,12 @@ import '../../../core/design/haptics.dart';
 String _fold(String s) =>
     s.replaceAll('İ', 'i').replaceAll('I', 'ı').toLowerCase().trim();
 
-/// Koçun ödev verme ekranı: öğrenciyi bul → ders → konu → sepete ekle →
-/// sepeti gözden geçir → öğrenciye gönder.
+/// Tek seferde en çok kaç öğrenciye ödev verilir (sunucu sınırıyla aynı).
+const _maxStudents = 30;
+
+/// Koçun ödev verme ekranı: öğrenci(ler) → ders → konular → gönder.
+/// Ödev konu bazlıdır (soru sayısı yok); her konuya isteğe bağlı kısa hedef
+/// yazılabilir. Aynı ödev birden çok öğrenciye verilebilir.
 class AssignHomeworkScreen extends ConsumerStatefulWidget {
   const AssignHomeworkScreen({super.key, this.initialStudentId});
 
@@ -39,7 +43,8 @@ class AssignHomeworkScreen extends ConsumerStatefulWidget {
 }
 
 class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
-  StudentSummary? _student;
+  List<StudentSummary> _students = const [];
+  bool _initialApplied = false;
   ExamType _type = ExamType.tyt;
   late String _subject = _subjects.first.code;
   String _topicQuery = '';
@@ -54,16 +59,29 @@ class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
     super.dispose();
   }
 
-  /// 9-11. sınıf öğrencisinde yalnızca o sınıfta konusu olan dersler
-  /// (null: süzme yok, 12 / mezun).
+  /// 9-11. sınıf öğrencilerinde yalnızca o sınıflarda konusu olan dersler
+  /// (null: süzme yok, seçilenlerden biri 12 / mezun).
   Set<String>? _gradeCodes;
 
+  /// Seçilenlerin hepsi Maarif'te: yansıma dersler (AYT_MAT, TYT_TUR…) aynı
+  /// konuları çift göstermesin.
+  bool _allMaarif = false;
+
   List<ExamSubject> get _subjects {
-    final all = examSubjects.where((s) => s.examType == _type).toList();
     final codes = _gradeCodes;
-    if (codes == null) return all;
-    final some = all.where((s) => codes.contains(s.code)).toList();
-    return some.isEmpty ? all : some;
+    if (codes == null) {
+      return examSubjects.where((s) => s.examType == _type).toList();
+    }
+    // 9-11 ve Maarif: TYT / AYT ayrımı yok, konusu olan bütün dersler.
+    final some = [
+      for (final s in examSubjects)
+        if (codes.contains(s.code) &&
+            !(_allMaarif && maarifMirrorSubjects.contains(s.code)))
+          s,
+    ];
+    return some.isEmpty
+        ? examSubjects.where((s) => s.examType == _type).toList()
+        : some;
   }
 
   void _toggle(AssignmentItemDraft d) {
@@ -80,37 +98,42 @@ class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
     _basket.value = list;
   }
 
-  Future<void> _openBasket() async {
+  Future<void> _openSummary() async {
     final sent = await showModalBottomSheet<bool>(
       context: context,
       sheetAnimationStyle: AppMotion.overlayStyle(context),
       isScrollControlled: true,
       showDragHandle: true,
       useSafeArea: true,
-      builder: (_) => _BasketSheet(basket: _basket, student: _student!),
+      builder: (_) => _SummarySheet(basket: _basket, students: _students),
     );
     if (sent != true || !mounted) return;
     showMessage(
       context,
-      tr('Ödev {name} adlı öğrenciye gönderildi 🐝', {
-        'name': _student!.fullName,
-      }),
+      _students.length == 1
+          ? tr('Ödev {name} adlı öğrenciye gönderildi 🐝', {
+              'name': _students.first.fullName,
+            })
+          : tr('Ödev {n} öğrenciye gönderildi 🐝', {'n': _students.length}),
     );
     if (widget.initialStudentId != null && context.canPop()) {
       context.pop();
     } else {
-      setState(() => _student = null);
+      setState(() => _students = const []);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final students = ref.watch(studentSummariesProvider);
-    if (_student == null && widget.initialStudentId != null) {
+    if (!_initialApplied && widget.initialStudentId != null) {
       final match = students.value
           ?.where((s) => s.id == widget.initialStudentId)
           .firstOrNull;
-      if (match != null) _student = match;
+      if (match != null) {
+        _initialApplied = true;
+        _students = [match];
+      }
     }
 
     return Scaffold(
@@ -128,39 +151,56 @@ class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
             child: child,
           ),
         ),
-        child: _student == null
+        child: _students.isEmpty
             ? AsyncView(
                 key: const ValueKey('pick'),
                 value: students,
                 onRetry: () => ref.invalidate(studentSummariesProvider),
                 builder: (list) => _StudentPicker(
                   students: list,
-                  onPick: (s) {
+                  onContinue: (picked) {
                     AppHaptics.select();
-                    setState(() => _student = s);
+                    setState(() => _students = picked);
                   },
                 ),
               )
             : _buildPicker(context),
       ),
-      bottomNavigationBar: _student == null
+      bottomNavigationBar: _students.isEmpty
           ? null
           : ValueListenableBuilder(
               valueListenable: _basket,
               builder: (context, basket, _) =>
-                  _BasketBar(basket: basket, bump: _bump, onOpen: _openBasket),
+                  _BasketBar(basket: basket, bump: _bump, onOpen: _openSummary),
             ),
     );
   }
 
   Widget _buildPicker(BuildContext context) {
     final text = Theme.of(context).textTheme;
-    final gradeTopics =
-        ref.watch(studentTopicsProvider(_student!.id)).value ?? const <Topic>[];
-    final grade = ref.watch(studentGradeProvider(_student!.id)).value;
-    _gradeCodes = effectiveGrade(grade) < 12
-        ? {for (final t in gradeTopics) t.subjectCode}
-        : null;
+    // Seçilen öğrencilerin konuları birleştirilir (aynı konu bir kez).
+    final byId = <int, Topic>{};
+    var anyFull = false;
+    var allMaarif = true;
+    for (final s in _students) {
+      for (final t
+          in ref.watch(studentTopicsProvider(s.id)).value ?? const <Topic>[]) {
+        byId[t.id] = t;
+      }
+      final grade = ref.watch(studentGradeProvider(s.id)).value;
+      final curriculum =
+          ref.watch(studentCurriculumProvider(s.id)).value ??
+          defaultCurriculum(grade);
+      // Süzme yalnızca eski müfredatın 12 / mezun öğrencisinde yok; Maarif'te
+      // (12. sınıf dahil) yalnızca konusu olan dersler gösterilir.
+      if (effectiveGrade(grade) >= 12 && curriculum == curriculumEski) {
+        anyFull = true;
+      }
+      if (curriculum != curriculumMaarif) allMaarif = false;
+    }
+    final gradeTopics = byId.values.toList();
+    _gradeCodes = anyFull ? null : {for (final t in gradeTopics) t.subjectCode};
+    _allMaarif = allMaarif;
     if (!_subjects.any((s) => s.code == _subject)) {
       _subject = _subjects.first.code;
     }
@@ -176,27 +216,29 @@ class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
       key: const ValueKey('topics'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _SelectedStudent(
-          student: _student!,
-          onChange: () => setState(() => _student = null),
+        _SelectedStudents(
+          students: _students,
+          onChange: () => setState(() => _students = const []),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-          child: SegmentedButton<ExamType>(
-            segments: [
-              for (final t in ExamType.values)
-                ButtonSegment(value: t, label: Text(t.label)),
-            ],
-            selected: {_type},
-            showSelectedIcon: false,
-            onSelectionChanged: (v) => setState(() {
-              _type = v.first;
-              _subject = _subjects.first.code;
-              _topicSearch.clear();
-              _topicQuery = '';
-            }),
+        // TYT / AYT ayrımı yalnızca 12. sınıf / mezun için anlamlı.
+        if (_gradeCodes == null)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: SegmentedButton<ExamType>(
+              segments: [
+                for (final t in ExamType.values)
+                  ButtonSegment(value: t, label: Text(t.label)),
+              ],
+              selected: {_type},
+              showSelectedIcon: false,
+              onSelectionChanged: (v) => setState(() {
+                _type = v.first;
+                _subject = _subjects.first.code;
+                _topicSearch.clear();
+                _topicQuery = '';
+              }),
+            ),
           ),
-        ),
         SizedBox(
           height: 56,
           child: ListView.builder(
@@ -239,23 +281,9 @@ class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
             valueListenable: _basket,
             builder: (context, basket, _) {
               final keys = {for (final b in basket) b.key};
-              final general = AssignmentItemDraft(
-                subjectCode: _subject,
-                questionCount: 20,
-              );
               return ListView(
                 padding: const EdgeInsets.fromLTRB(8, 4, 8, 24),
                 children: [
-                  if (_topicQuery.isEmpty)
-                    _TopicTile(
-                      title: tr('Genel tekrar'),
-                      subtitle: tr('Konu seçmeden tüm {subject}', {
-                        'subject': subject.name,
-                      }),
-                      icon: Icons.all_inclusive_rounded,
-                      inBasket: keys.contains(general.key),
-                      onTap: () => _toggle(general),
-                    ),
                   for (final (i, t) in topics.indexed)
                     FadeSlideIn(
                       key: ValueKey('${t.id}'),
@@ -268,7 +296,6 @@ class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
                             subjectCode: _subject,
                             topicId: t.id,
                             topicName: t.name,
-                            questionCount: 20,
                           ),
                         ),
                       ),
@@ -295,10 +322,10 @@ class _AssignHomeworkScreenState extends ConsumerState<AssignHomeworkScreen> {
 // ───────────────────────────── Öğrenci seçimi ─────────────────────────────
 
 class _StudentPicker extends StatefulWidget {
-  const _StudentPicker({required this.students, required this.onPick});
+  const _StudentPicker({required this.students, required this.onContinue});
 
   final List<StudentSummary> students;
-  final ValueChanged<StudentSummary> onPick;
+  final ValueChanged<List<StudentSummary>> onContinue;
 
   @override
   State<_StudentPicker> createState() => _StudentPickerState();
@@ -306,6 +333,23 @@ class _StudentPicker extends StatefulWidget {
 
 class _StudentPickerState extends State<_StudentPicker> {
   String _q = '';
+  final _picked = <String>{};
+
+  void _toggle(StudentSummary s) {
+    setState(() {
+      if (_picked.contains(s.id)) {
+        _picked.remove(s.id);
+      } else if (_picked.length >= _maxStudents) {
+        showMessage(
+          context,
+          tr('En fazla {n} öğrenci seçebilirsin.', {'n': _maxStudents}),
+        );
+      } else {
+        _picked.add(s.id);
+      }
+    });
+    AppHaptics.select();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -360,6 +404,7 @@ class _StudentPickerState extends State<_StudentPicker> {
                   itemCount: list.length,
                   itemBuilder: (context, i) {
                     final s = list[i];
+                    final on = _picked.contains(s.id);
                     return FadeSlideIn(
                       key: ValueKey(s.id),
                       delay: FadeSlideIn.stagger(i),
@@ -374,12 +419,38 @@ class _StudentPickerState extends State<_StudentPicker> {
                               ? tr('Okul numarası yok')
                               : tr('No {p0}', {'p0': s.studentNumber}),
                         ),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () => widget.onPick(s),
+                        trailing: Icon(
+                          on
+                              ? Icons.check_circle_rounded
+                              : Icons.radio_button_unchecked,
+                          color: on
+                              ? context.brand.success
+                              : Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        onTap: () => _toggle(s),
                       ),
                     );
                   },
                 ),
+        ),
+        SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
+            child: FilledButton(
+              onPressed: _picked.isEmpty
+                  ? null
+                  : () => widget.onContinue([
+                      for (final s in widget.students)
+                        if (_picked.contains(s.id)) s,
+                    ]),
+              child: Text(
+                _picked.length <= 1
+                    ? tr('Konu seç')
+                    : tr('Konu seç · {n} öğrenci', {'n': _picked.length}),
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -411,15 +482,16 @@ class _Initials extends StatelessWidget {
   }
 }
 
-class _SelectedStudent extends StatelessWidget {
-  const _SelectedStudent({required this.student, required this.onChange});
+class _SelectedStudents extends StatelessWidget {
+  const _SelectedStudents({required this.students, required this.onChange});
 
-  final StudentSummary student;
+  final List<StudentSummary> students;
   final VoidCallback onChange;
 
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
+    final one = students.length == 1 ? students.first : null;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
       child: Card(
@@ -427,23 +499,31 @@ class _SelectedStudent extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(12, 10, 4, 10),
           child: Row(
             children: [
-              _Initials(name: student.fullName, radius: 22),
+              _Initials(
+                name: one?.fullName ?? '${students.length}',
+                radius: 22,
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      student.fullName,
+                      one?.fullName ??
+                          tr('{n} öğrenci seçildi', {'n': students.length}),
                       style: text.titleSmall?.copyWith(
                         fontWeight: FontWeight.w800,
                       ),
                     ),
                     Text(
-                      student.studentNumber == null
-                          ? tr('Okul numarası yok')
-                          : tr('No {p0}', {'p0': student.studentNumber}),
+                      one != null
+                          ? (one.studentNumber == null
+                                ? tr('Okul numarası yok')
+                                : tr('No {p0}', {'p0': one.studentNumber}))
+                          : students.map((s) => s.fullName).join(', '),
                       style: text.bodySmall,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -462,13 +542,9 @@ class _TopicTile extends StatelessWidget {
     required this.title,
     required this.inBasket,
     required this.onTap,
-    this.subtitle,
-    this.icon,
   });
 
   final String title;
-  final String? subtitle;
-  final IconData? icon;
   final bool inBasket;
   final VoidCallback onTap;
 
@@ -490,16 +566,12 @@ class _TopicTile extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
-          leading: icon == null
-              ? null
-              : Icon(icon, color: context.brand.primaryDeep),
           title: Text(
             title,
             style: TextStyle(
               fontWeight: inBasket ? FontWeight.w800 : FontWeight.w500,
             ),
           ),
-          subtitle: subtitle == null ? null : Text(subtitle!),
           trailing: AnimatedSwitcher(
             duration: AppMotion.base,
             transitionBuilder: (child, a) => ScaleTransition(
@@ -525,7 +597,7 @@ class _TopicTile extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────── Sepet ───────────────────────────────
+// ─────────────────────────────── Özet ───────────────────────────────
 
 class _BasketBar extends StatelessWidget {
   const _BasketBar({
@@ -541,7 +613,6 @@ class _BasketBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
-    final questions = basket.fold(0, (s, i) => s + (i.questionCount ?? 0));
     final empty = basket.isEmpty;
     return SafeArea(
       top: false,
@@ -575,7 +646,7 @@ class _BasketBar extends StatelessWidget {
                         textColor: context.brand.ink,
                         label: Text('${basket.length}'),
                         child: Icon(
-                          Icons.shopping_basket_rounded,
+                          Icons.checklist_rounded,
                           color: empty ? null : context.brand.primary,
                         ),
                       ),
@@ -584,11 +655,8 @@ class _BasketBar extends StatelessWidget {
                     Expanded(
                       child: Text(
                         empty
-                            ? tr('Konulara dokunarak sepete ekle')
-                            : tr('{n} madde · {q} soru', {
-                                'n': basket.length,
-                                'q': questions,
-                              }),
+                            ? tr('Konulara dokunarak seç')
+                            : tr('{n} konu seçildi', {'n': basket.length}),
                         style: text.titleSmall?.copyWith(
                           fontWeight: FontWeight.w800,
                           color: empty ? null : Colors.white,
@@ -601,7 +669,7 @@ class _BasketBar extends StatelessWidget {
                         style: FilledButton.styleFrom(
                           minimumSize: const Size(0, 40),
                         ),
-                        child: Text(tr('Sepeti gör')),
+                        child: Text(tr('Özete geç')),
                       ),
                   ],
                 ),
@@ -614,17 +682,17 @@ class _BasketBar extends StatelessWidget {
   }
 }
 
-class _BasketSheet extends ConsumerStatefulWidget {
-  const _BasketSheet({required this.basket, required this.student});
+class _SummarySheet extends ConsumerStatefulWidget {
+  const _SummarySheet({required this.basket, required this.students});
 
   final ValueNotifier<List<AssignmentItemDraft>> basket;
-  final StudentSummary student;
+  final List<StudentSummary> students;
 
   @override
-  ConsumerState<_BasketSheet> createState() => _BasketSheetState();
+  ConsumerState<_SummarySheet> createState() => _SummarySheetState();
 }
 
-class _BasketSheetState extends ConsumerState<_BasketSheet> {
+class _SummarySheetState extends ConsumerState<_SummarySheet> {
   late final _title = TextEditingController(text: _defaultTitle());
   final _note = TextEditingController();
   DateTime? _due = dateOnly(DateTime.now()).add(const Duration(days: 7));
@@ -654,6 +722,16 @@ class _BasketSheetState extends ConsumerState<_BasketSheet> {
     if (list.isEmpty) Navigator.pop(context);
   }
 
+  /// Konuya isteğe bağlı kısa hedef ("2 test", "konu anlatımı") yazdırır.
+  Future<void> _editGoal(int index, AssignmentItemDraft d) async {
+    final result = await showDialog<String>(
+      context: context,
+      builder: (_) => _GoalDialog(draft: d),
+    );
+    if (result == null || !mounted) return;
+    _update(index, d.withNote(result.isEmpty ? null : result));
+  }
+
   Future<void> _pickDue() async {
     final now = DateTime.now();
     final picked = await showDatePicker(
@@ -678,21 +756,33 @@ class _BasketSheetState extends ConsumerState<_BasketSheet> {
       final title = _title.text.trim();
       final items = widget.basket.value;
       final note = _note.text.trim().isEmpty ? null : _note.text.trim();
-      final id = await ref
-          .read(assignmentRepositoryProvider)
-          .sendAssignment(
-            studentId: widget.student.id,
-            title: title,
-            items: items,
-            dueOn: _due,
-            note: note,
-          );
-      ref.invalidate(assignmentsProvider(widget.student.id));
+      final repo = ref.read(assignmentRepositoryProvider);
+      final students = widget.students;
+      final ids = students.length == 1
+          ? [
+              await repo.sendAssignment(
+                studentId: students.first.id,
+                title: title,
+                items: items,
+                dueOn: _due,
+                note: note,
+              ),
+            ]
+          : await repo.sendAssignmentToMany(
+              studentIds: [for (final s in students) s.id],
+              title: title,
+              items: items,
+              dueOn: _due,
+              note: note,
+            );
+      for (final s in students) {
+        ref.invalidate(assignmentsProvider(s.id));
+      }
       widget.basket.value = const [];
       if (!mounted) return;
       // Veliye PDF (NOTLAR §89): sayfa kapanırken arkada sürer.
       final delivery = await _guardianDelivery(
-        assignmentId: id,
+        assignmentIds: ids,
         title: title,
         items: items,
         note: note,
@@ -711,10 +801,11 @@ class _BasketSheetState extends ConsumerState<_BasketSheet> {
     }
   }
 
-  /// Ödevin PDF'ini veliye gönderecek işi hazırlar. Gereken her şey sayfa
-  /// kapanmadan okunur; iş bitince sonucu alttaki bildirimde söyler.
+  /// Ödev PDF'lerini velilere (öğrenci öğrenci, sırayla) gönderecek işi
+  /// hazırlar. Gereken her şey sayfa kapanmadan okunur; iş bitince sonucu
+  /// alttaki bildirimde söyler.
   Future<Future<void> Function()?> _guardianDelivery({
-    required String assignmentId,
+    required List<String> assignmentIds,
     required String title,
     required List<AssignmentItemDraft> items,
     String? note,
@@ -731,37 +822,59 @@ class _BasketSheetState extends ConsumerState<_BasketSheet> {
       } catch (_) {
         orgName = '';
       }
-      final student = widget.student.fullName;
+      final students = widget.students;
       final due = _due;
       return () async {
-        String? message;
-        try {
-          final r = await repo.sendHomeworkPdf(
-            assignmentId: assignmentId,
-            studentId: widget.student.id,
-            buildPdf: () => renderHomeworkPdf(
-              orgName: orgName,
-              senderName: me?.fullName ?? orgName,
-              studentName: student,
-              title: title,
-              items: items,
-              dueOn: due,
-              note: note,
-              accent: accent,
-              fontFamily: font,
-            ),
-          );
-          message = switch (r) {
-            HomeworkDelivery.queued => tr(
-              "Ödev PDF'i veliye WhatsApp'tan gönderiliyor.",
-            ),
-            HomeworkDelivery.noPhone => tr(
-              'Veli telefonu kayıtlı olmadığı için ödev veliye gitmedi.',
-            ),
-            HomeworkDelivery.already => null,
-          };
-        } catch (_) {
-          message = tr('Ödev veliye gönderilemedi.');
+        var queued = 0, noPhone = 0, failed = 0;
+        for (final (i, s) in students.indexed) {
+          try {
+            final r = await repo.sendHomeworkPdf(
+              assignmentId: assignmentIds[i],
+              studentId: s.id,
+              buildPdf: () => renderHomeworkPdf(
+                orgName: orgName,
+                senderName: me?.fullName ?? orgName,
+                studentName: s.fullName,
+                title: title,
+                items: items,
+                dueOn: due,
+                note: note,
+                accent: accent,
+                fontFamily: font,
+              ),
+            );
+            switch (r) {
+              case HomeworkDelivery.queued:
+                queued++;
+              case HomeworkDelivery.noPhone:
+                noPhone++;
+              case HomeworkDelivery.already:
+                break;
+            }
+          } catch (_) {
+            failed++;
+          }
+        }
+        final String? message;
+        if (students.length == 1) {
+          message = failed > 0
+              ? tr('Ödev veliye gönderilemedi.')
+              : queued > 0
+              ? tr("Ödev PDF'i veliye WhatsApp'tan gönderiliyor.")
+              : noPhone > 0
+              ? tr('Veli telefonu kayıtlı olmadığı için ödev veliye gitmedi.')
+              : null;
+        } else {
+          final parts = [
+            if (queued > 0)
+              tr("{n} veliye ödev PDF'i WhatsApp'tan gönderiliyor.", {
+                'n': queued,
+              }),
+            if (noPhone > 0)
+              tr('{n} velinin telefonu kayıtlı değil.', {'n': noPhone}),
+            if (failed > 0) tr('{n} veliye gönderilemedi.', {'n': failed}),
+          ];
+          message = parts.isEmpty ? null : parts.join(' ');
         }
         // Koç bu arada uygulamadan çıkmış olabilir: gösterecek yer yoksa geç.
         if (message == null || !messenger.mounted) return;
@@ -777,26 +890,30 @@ class _BasketSheetState extends ConsumerState<_BasketSheet> {
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
+    final many = widget.students.length > 1;
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
       child: ValueListenableBuilder(
         valueListenable: widget.basket,
         builder: (context, items, _) {
-          final questions = items.fold(0, (s, i) => s + (i.questionCount ?? 0));
           return ListView(
             shrinkWrap: true,
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
             children: [
               Text(
-                tr('Ödev sepeti'),
+                tr('Ödev özeti'),
                 style: text.titleLarge?.copyWith(fontWeight: FontWeight.w900),
               ),
               Text(
-                tr('{name} için {n} madde · {q} soru', {
-                  'name': widget.student.fullName,
-                  'n': items.length,
-                  'q': questions,
-                }),
+                many
+                    ? tr('{n} öğrenci için {k} konu', {
+                        'n': widget.students.length,
+                        'k': items.length,
+                      })
+                    : tr('{name} için {k} konu', {
+                        'name': widget.students.first.fullName,
+                        'k': items.length,
+                      }),
                 style: text.bodySmall,
               ),
               const SizedBox(height: 12),
@@ -814,27 +931,13 @@ class _BasketSheetState extends ConsumerState<_BasketSheet> {
                       color: context.brand.danger,
                     ),
                   ),
-                  child: _BasketItem(
+                  child: _SummaryItem(
                     draft: d,
-                    onChanged: (n) => _update(i, n),
+                    onGoal: () => _editGoal(i, d),
                     onRemove: () => _update(i, null),
                   ),
                 ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: _title,
-                maxLength: 120,
-                decoration: InputDecoration(labelText: tr('Ödev başlığı')),
-              ),
-              TextField(
-                controller: _note,
-                maxLines: 3,
-                minLines: 1,
-                maxLength: 1000,
-                decoration: InputDecoration(
-                  labelText: tr('Öğrenciye not (isteğe bağlı)'),
-                ),
-              ),
+              const SizedBox(height: 8),
               Row(
                 children: [
                   const Icon(Icons.event_rounded, size: 20),
@@ -857,6 +960,27 @@ class _BasketSheetState extends ConsumerState<_BasketSheet> {
                     ),
                 ],
               ),
+              // Başlık otomatik gelir; değiştirmek isteyen açar.
+              ExpansionTile(
+                tilePadding: EdgeInsets.zero,
+                title: Text(tr('Başlık ve not')),
+                children: [
+                  TextField(
+                    controller: _title,
+                    maxLength: 120,
+                    decoration: InputDecoration(labelText: tr('Ödev başlığı')),
+                  ),
+                  TextField(
+                    controller: _note,
+                    maxLines: 3,
+                    minLines: 1,
+                    maxLength: 1000,
+                    decoration: InputDecoration(
+                      labelText: tr('Öğrenciye not (isteğe bağlı)'),
+                    ),
+                  ),
+                ],
+              ),
               if (_error != null) ...[
                 const SizedBox(height: 8),
                 Text(
@@ -873,7 +997,9 @@ class _BasketSheetState extends ConsumerState<_BasketSheet> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.send_rounded),
-                label: Text(tr('Öğrenciye gönder')),
+                label: Text(
+                  many ? tr('Öğrencilere gönder') : tr('Öğrenciye gönder'),
+                ),
               ),
             ],
           );
@@ -883,21 +1009,22 @@ class _BasketSheetState extends ConsumerState<_BasketSheet> {
   }
 }
 
-class _BasketItem extends StatelessWidget {
-  const _BasketItem({
+class _SummaryItem extends StatelessWidget {
+  const _SummaryItem({
     required this.draft,
-    required this.onChanged,
+    required this.onGoal,
     required this.onRemove,
   });
 
   final AssignmentItemDraft draft;
-  final ValueChanged<AssignmentItemDraft> onChanged;
+  final VoidCallback onGoal;
   final VoidCallback onRemove;
 
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
-    final count = draft.questionCount ?? 0;
+    final note = draft.note;
+    final hasNote = note != null && note.isNotEmpty;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
@@ -917,47 +1044,75 @@ class _BasketItem extends StatelessWidget {
                   draft.topicName ?? tr('Genel tekrar'),
                   style: text.titleSmall?.copyWith(fontWeight: FontWeight.w700),
                 ),
+                if (hasNote) Text(note, style: text.bodySmall),
               ],
             ),
           ),
           IconButton(
             visualDensity: VisualDensity.compact,
-            tooltip: tr('Azalt'),
-            onPressed: count <= 5
-                ? null
-                : () => onChanged(draft.copyWith(questionCount: count - 5)),
-            icon: const Icon(Icons.remove_circle_outline),
-          ),
-          SizedBox(
-            width: 56,
-            child: AnimatedSwitcher(
-              duration: AppMotion.fast,
-              transitionBuilder: (child, a) =>
-                  ScaleTransition(scale: a, child: child),
-              child: Text(
-                tr('{n} soru', {'n': count}),
-                key: ValueKey(count),
-                textAlign: TextAlign.center,
-                style: text.labelLarge?.copyWith(fontWeight: FontWeight.w900),
-              ),
+            tooltip: tr('Hedef ekle'),
+            onPressed: onGoal,
+            icon: Icon(
+              Icons.edit_note_rounded,
+              color: hasNote ? context.brand.primaryDeep : null,
             ),
           ),
           IconButton(
             visualDensity: VisualDensity.compact,
-            tooltip: tr('Artır'),
-            onPressed: count >= 500
-                ? null
-                : () => onChanged(draft.copyWith(questionCount: count + 5)),
-            icon: const Icon(Icons.add_circle_outline),
-          ),
-          IconButton(
-            visualDensity: VisualDensity.compact,
-            tooltip: tr('Sepetten çıkar'),
+            tooltip: tr('Listeden çıkar'),
             onPressed: onRemove,
             icon: const Icon(Icons.delete_outline),
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Konu için isteğe bağlı hedef yazma penceresi (denetleyicisini kendisi
+/// yönetir; kapanış animasyonu bitmeden dispose edilmez).
+class _GoalDialog extends StatefulWidget {
+  const _GoalDialog({required this.draft});
+
+  final AssignmentItemDraft draft;
+
+  @override
+  State<_GoalDialog> createState() => _GoalDialogState();
+}
+
+class _GoalDialogState extends State<_GoalDialog> {
+  late final _controller = TextEditingController(text: widget.draft.note ?? '');
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final d = widget.draft;
+    return AlertDialog(
+      title: Text(d.topicName ?? subjectByCode(d.subjectCode).name),
+      content: TextField(
+        controller: _controller,
+        autofocus: true,
+        maxLength: 300,
+        decoration: InputDecoration(
+          labelText: tr('Hedef (isteğe bağlı)'),
+          hintText: tr('Örn. 2 test çöz, konu anlatımını bitir'),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(tr('Vazgeç')),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, _controller.text.trim()),
+          child: Text(tr('Kaydet')),
+        ),
+      ],
     );
   }
 }

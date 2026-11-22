@@ -6,6 +6,9 @@
 //  * 12 (12. sınıf ve mezun aynı): bütün YKS konuları.
 //  * Seviye bilinmiyorsa (eski hesap) 12 gibi davranılır.
 //
+// Maarif Modeli konuları ayrı tutulur (topics.curriculum = 'maarif', sınıfı
+// kendi grade alanında); aşağıdaki eşleme yalnızca eski müfredat içindir.
+//
 // Eşleme MEB lise müfredatının ünite sırasına göre, YKS konu adları
 // üzerinden yapılmıştır (supabase/seed.sql, seed_ayt_ydt_topics.sql). Burada
 // olmayan konu yalnızca 12 / mezunda görünür. TYT ile AYT'de aynı konu
@@ -24,17 +27,72 @@ String gradeLabel(int grade) =>
 int effectiveGrade(int? grade) =>
     grade == null || grade >= 12 || grade < 9 ? 12 : grade;
 
-/// Konu bu sınıf seviyesinde görünür mü?
-bool topicVisibleForGrade(Topic t, int? grade) {
+/// Müfredat adları (`topics.curriculum`, `profiles.curriculum`).
+const curriculumEski = 'eski';
+const curriculumMaarif = 'maarif';
+
+/// Seçim yapılmadıysa sınıftan türetilen müfredat: 9-11 Maarif Modeli,
+/// 12 / mezun / bilinmeyen eski müfredat (NOTLAR §104).
+String defaultCurriculum(int? grade) =>
+    effectiveGrade(grade) < 12 ? curriculumMaarif : curriculumEski;
+
+/// Öğrencinin geçerli müfredatı: seçtiği, yoksa sınıftan türetilen.
+String effectiveCurriculum(int? grade, String? chosen) =>
+    chosen == curriculumEski || chosen == curriculumMaarif
+    ? chosen!
+    : defaultCurriculum(grade);
+
+/// Maarif'te ders TYT / AYT diye ayrılmaz; konular sunucu kuralı gereği
+/// ("konu dersin konusu olmalı") karşılık gelen AYT / TYT derslerine de
+/// kopyalanır. Bunlar yansıma derslerdir: soru ekleme, yanlış defteri ve ödev
+/// seçicilerinde konusu vardır, ama liste ekranlarında aynı konu çift gösterilmez.
+const maarifMirrorSubjects = {
+  'AYT_MAT',
+  'AYT_FIZ',
+  'AYT_KIM',
+  'AYT_BIY',
+  'AYT_TAR1',
+  'AYT_TAR2',
+  'AYT_COG1',
+  'AYT_COG2',
+  'AYT_FELG',
+  'AYT_DIN',
+  'TYT_TUR',
+};
+
+/// "Eski müfredat" / "Maarif Modeli".
+String curriculumLabel(String curriculum) =>
+    curriculum == curriculumMaarif ? tr('Maarif Modeli') : tr('Eski müfredat');
+
+/// Konu bu sınıf seviyesinde ve müfredatta görünür mü?
+///
+///  * eski: bugünkü kural (9-11'de `topicGrades` eşlemesi, 12 / mezunda hepsi).
+///  * maarif: 9. sınıftan öğrencinin sınıfına kadar olan Maarif konuları
+///    (12 / mezun hepsini, 11. sınıf 9-11'i çalışır).
+/// `curriculum` verilmezse eski müfredat sayılır (geriye uyumlu).
+bool topicVisibleForGrade(
+  Topic t,
+  int? grade, {
+  String curriculum = curriculumEski,
+}) {
   final g = effectiveGrade(grade);
+  if (curriculum == curriculumMaarif) {
+    // Birikimli: 12 / mezun 9-12, 11. sınıf 9-11, 10. sınıf 9-10 konularını çalışır.
+    return t.isMaarif && (t.grade ?? 99) <= g;
+  }
+  if (t.isMaarif) return false;
   if (g == 12) return true;
   return topicGrades[t.subjectCode]?[t.name]?.contains(g) ?? false;
 }
 
-/// Sınıf seviyesine göre süzülmüş konular.
-List<Topic> topicsForGrade(List<Topic> topics, int? grade) => [
+/// Sınıf seviyesine ve müfredata göre süzülmüş konular.
+List<Topic> topicsForGrade(
+  List<Topic> topics,
+  int? grade, {
+  String curriculum = curriculumEski,
+}) => [
   for (final t in topics)
-    if (topicVisibleForGrade(t, grade)) t,
+    if (topicVisibleForGrade(t, grade, curriculum: curriculum)) t,
 ];
 
 /// Ders kodu → konu adı → işlendiği sınıflar (9-11). 12. sınıf konuları

@@ -3480,3 +3480,84 @@ yok). Migration `20261113100000_cockpit_perf` (rollback var), **canlıda**.
   `curl -I https://mentoria.com.tr/` (CSP var), `/app/` (CSP yok) ve
   `/.well-known/security.txt` (200) kontrol edilmeli; Pages `.well-known` klasörünü yüklemezse
   dosya başka yolla sunulmalı.
+
+
+## 104. Konu bazlı toplu ödev ve Maarif Modeli müfredatı (21 Kasım 2026)
+
+**Ödev verme sadeleşti.** Koç ekranı: öğrenci(ler) → ders → konuları seç → "Özete geç" → gönder.
+- Soru sayısı kalktı (`assignment_items.question_count` boş gider; tablo değişmedi). Her konuya
+  isteğe bağlı kısa **hedef** yazılır (`assignment_items.note`: "2 test çöz"). "Genel tekrar" kalemi
+  ve ±5 sayaç yok. Başlık otomatik ("Matematik ödevi" / "Haftalık ödev"), son tarih varsayılan 7 gün;
+  başlık ve not "Başlık ve not" bölümünde, kapalı gelir. TYT / AYT sekmesi yalnızca 12 / mezun için.
+- **Toplu verme:** öğrenci listesi çoklu seçimli (en çok 30). `send_assignment_bulk(öğrenciler[],
+  başlık, maddeler, son tarih, not)` her öğrenci için `send_assignment`'ı çağırır (hepsi ya da
+  hiçbiri; öğrenci başına yetki; tek çağrıda 30, gönderen başına 24 saatte 300 ödev sınırı).
+  Birden çok öğrencide konu listesi seçilenlerin birleşimidir. Tek öğrencide eski RPC kullanılır.
+- **Veli PDF'i / WhatsApp:** değişmedi, her ödev için ayrı. Toplu gönderimde PDF'ler öğrenci öğrenci
+  sırayla üretilir, sonuç tek bildirimde özetlenir. Soru sayısı yoksa PDF'te toplam soru yazmaz.
+- Reçete kartı (`prescription_card`) soru sayısını hâlâ gönderiyor; bilinçli, ona dokunulmadı.
+- Migration `20261121100000_assignment_bulk` (rollback + `assignment_bulk_test.mjs`).
+
+**Maarif Modeli müfredatı.** Konu kataloğu eski müfredatla yan yana yaşar.
+- **Kaynak:** MEB "Türkiye Yüzyılı Maarif Modeli" öğretim programları, https://tymm.meb.gov.tr
+  (ders → sınıf → tema/ünite → "İçerik Çerçevesi" ve öğrenme çıktıları). Ham veri:
+  `tool/maarif/data/*.json` (tema, içerik çerçevesi, öğrenme çıktısı kodları ve başlıkları, ders
+  saati, güncelleme tarihi, kaynak URL). Üretici: `python tool/maarif/build_seed.py` →
+  `supabase/seed_maarif_topics.sql` (elle düzenlenmez, tekrar çalıştırılabilir).
+- **Konu = programın "İçerik Çerçevesi" maddesi**, **grup = tema/ünite** (`topics.group_name`).
+  Öğrenme çıktısı kodları (örn. `MAT.9.1.1`) yalnızca JSON'da duruyor, veritabanına alınmadı.
+- **Şema** (`20261121110000_maarif_curriculum`, rollback + `maarif_curriculum_test.mjs`):
+  `topics.curriculum` ('eski' | 'maarif'), `topics.grade` (Maarif için 9-12), `group_name`,
+  `source_url`; `profiles.curriculum` (boş = sınıftan türet); `set_curriculum(öğrenci, müfredat)`
+  (öğrenci kendisi ya da yöneten koç / müdür; doğrudan güncelleme kapalı).
+- **Varsayılan:** 9-11. sınıf → Maarif, 12 / mezun / bilinmeyen → eski. Profilde ("Müfredatın") ve
+  koçun öğrenci sayfasında ("Müfredatı") değiştirilir. Maarif öğrencisi 9. sınıftan kendi sınıfına kadar (birikimli; 12 / mezun 9-12) olan
+  Maarif konularını görür (ödev, soru ekleme, yanlış defteri, konular, kaynak takibi).
+- **Eski müfredat korunur:** `topicsProvider` hâlâ hepsini döner (adı bulma için); seçim
+  listeleri `studentTopicsProvider` ile süzülür. Deneme kazanımı eşleme (`matchTopic`) yalnızca
+  eski konulara bağlanır.
+- **Yayımlanan kapsam** (sitedeki durum 21 Kasım 2026): Matematik, Fizik, Kimya, Biyoloji,
+  Coğrafya, Din Kültürü 9-12; Tarih 9-11; Felsefe yalnızca 10-11; Türk Dili ve Edebiyatı 9-12
+  (Hazırlık sınıfı alınmadı). ~490 konu.
+- **Yansıma dersler:** Maarif'te ders TYT / AYT diye ayrılmaz, ama uygulamada soru, yanlış ve
+  ödev derse (TYT_* / AYT_*) bağlı ve sunucu konunun o dersin konusu olmasını ister
+  (`send_assignment` aksi halde konuyu sessizce düşürür). Bu yüzden her Maarif konusu karşılık
+  gelen derslere de kopyalanır: Mat, Fiz, Kim, Biy → AYT_MAT/FIZ/KIM/BIY; Tarih → AYT_TAR1/2;
+  Coğrafya → AYT_COG1/2; Felsefe → AYT_FELG; Din → AYT_DIN; Edebiyat (AYT_EDB) → TYT_TUR
+  (toplam 1376 satır, `build_seed.py` MIRRORS). Soru ekleme / yanlış defteri / ödev seçicilerinde
+  hepsi konu taşır; liste ekranlarında (Konular, ödev ders sekmeleri) yansıma dersler çift
+  gösterilmez (`maarifMirrorSubjects`). Maarif'te Türkçe = Türk Dili ve Edebiyat programı.
+- **Açık / belirsiz:**
+  - **Gerçek YKS kapsamı:** MEB, Maarif'e uygun soru modelinin 2028 YKS'de başlayacağını söylüyor.
+    ÖSYM'nin Maarif konu listesi (TYT/AYT kapsamı) henüz alınmadı; konular yalnızca okul
+    programı. Konu → YKS (TYT/AYT) eşlemesi yok; Maarif konuları hep TYT_* koduna bağlı
+    (edebiyat AYT_EDB). Deneme analizi, kazanım ve `exam_wrong_topics` hâlâ eski konularla çalışır.
+  - **Türkçe (TYT_TUR):** Maarif'te ayrı bir "Türkçe" yok, edebiyat programı tek; bu yüzden Maarif
+    öğrencisi ödevde TYT Türkçe'yi görmez, yalnızca Edebiyat'ı görür.
+  - **Tarih 12 / Felsefe 9, 12:** sitede program yok. Tarih 12 için ayrı seçmeli "Çağdaş Türk ve
+    Dünya Tarihi" var, sınıfı belli olmadığından alınmadı. Matematik 11 ve 12'de bölünmüş temalar
+    (aynı sıra numaralı birden çok sayfa) ayrı grup gibi geldi.
+  - **Başlık ayrıştırması:** Biyoloji ve Kimya "İçerik Çerçevesi" maddeleri "Başlık: ayrıntı"
+    biçiminde; konu adı ilk ":" öncesi (4-7 konu / sınıf, kaba). Fizik/Felsefe maddeleri düz
+    başlık. Bir öğretmenle gözden geçirilmeli; gerekirse bölünür.
+  - 11. sınıfın Maarif'e geçiş yılı sitede açık yazmıyor; varsayılan 9-11 Maarif.
+  - Konular derse göre tek liste; "9. sınıf Matematik" gibi alt grup gösterimi ekranlarda yok
+    (`group_name` yalnızca saklanıyor).
+  - Eski `topicGrades` eşlemesi (§91) değişmedi.
+- **Canlıya uygulama:** 21 Kasım 2026'da canlıya uygulandı (iki migration + `seed_maarif_topics.sql`,
+  yansıma dersler dahil). `Mentoria-Test`te yalnızca migration'lar var, konu verisi yok.
+  Önce `Mentoria-Test`, sonra (kullanıcı onayıyla) canlı.
+
+
+## 106. Kaynak takibi: renkli kutular, üç durum (22 Kasım 2026)
+
+- Kaynak takibi tablosunda hücreler artık renkli kutu: **gri** başlanmadı, **sarı** devam ediyor,
+  **yeşil** bitti. Dokununca gri → sarı → yeşil → gri döner. Renk körlüğü için sarıda "…", yeşilde ✓ simgesi var;
+  tablo üstünde renk açıklaması (legend) gösterilir. Ders başlığındaki `x / y` yalnızca yeşilleri sayar.
+- **Migration `20261122100000_book_topic_state`** (rollback'li, test: `book_topic_marks_test.mjs`):
+  `book_topic_marks.state` ('doing' | 'done', varsayılan 'done' → eski işaretler yeşil kalır),
+  `set_book_topic_state(kitap, konu, 'none'|'doing'|'done')`; eski `set_book_topic_mark` aynen çalışır
+  (true → done, false → siler). Rollback sarı işaretleri siler, yeşiller kalır.
+- Uygulama: `MarkState` enum'u (`books_repository.dart`), `fetchTopicMarks` artık `Map<(kitap, konu), MarkState>` döner.
+- Canlıya ve `Mentoria-Test`e 22 Kasım'da uygulandı. Eski uygulama sürümü sarı işareti yeşil gösterir
+  (yalnızca bu geçiş süresince).
