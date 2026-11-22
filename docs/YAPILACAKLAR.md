@@ -22,7 +22,8 @@ Ayrıntılar NOTLAR.md'deki bölümlerde.
       `phone_number_id`, `waba_id`, kalıcı anahtar; şablonlar onaylatılacak
       (`docs/WHATSAPP_KURULUM.md`). Müdür panelinde `/admin/whatsapp`. Bağlanana kadar
       yoklama/ödev/taksit mesajları kuyrukta.
-- [ ] **5. Maarif Modeli müfredatı** — **kurum önem veriyor.** Konu listesi ve sınıf
+- [~] **5. Maarif Modeli müfredatı** — kod ve katalog hazır (NOTLAR §104), canlıya uygulanmadı;
+      ÖSYM'nin YKS kapsamı ve öğretmen gözden geçirmesi açık. Eski not: — **kurum önem veriyor.** Konu listesi ve sınıf
       seviyesine göre konu eşlemesi (NOTLAR §91, `20261111150000_grade_level`) hâlâ eski
       MEB müfredatının ünite sırasına göre. Türkiye Yüzyılı Maarif Modeli'nin derslere
       göre konu/kazanım listesi çıkarılacak; konular, kaynak takibi (§92) ve kazanım

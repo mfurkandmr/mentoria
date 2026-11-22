@@ -36,6 +36,7 @@ class _PrescriptionCardState extends ConsumerState<PrescriptionCard> {
   final _counts = <int, int>{};
   final _off = <int>{};
   bool _sending = false;
+  bool _open = false;
 
   int _count(PrescriptionItem i) => _counts[i.topicId] ?? i.suggested;
 
@@ -84,6 +85,17 @@ class _PrescriptionCardState extends ConsumerState<PrescriptionCard> {
 
   @override
   Widget build(BuildContext context) {
+    // Kapalıyken yalnızca küçük bir düğme: içerik ve veri açılınca yüklenir.
+    if (!_open) {
+      return Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: OutlinedButton.icon(
+          onPressed: () => setState(() => _open = true),
+          icon: const Icon(Icons.medical_services_outlined, size: 18),
+          label: Text(tr('Konu reçetesi verilsin mi?')),
+        ),
+      );
+    }
     final rx = ref.watch(prescriptionProvider(widget.studentId));
     final brand = context.brand;
     return SectionCard(

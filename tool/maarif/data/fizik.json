@@ -1,0 +1,730 @@
+{
+  "ders": "Fizik",
+  "kaynak_kok": "https://tymm.meb.gov.tr/ogretim-programlari/ders/fizik-dersi",
+  "siniflar": [
+    {
+      "sinif": 9,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/fizik-dersi/11",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "Fizik Bilimi Ve Kariyer Keşfi",
+          "unite_url": "https://tymm.meb.gov.tr/fizik-dersi/unite/43",
+          "guncelleme": "04.08.2026",
+          "ders_saati": 8,
+          "icerik_cercevesi": [
+            "Fizik Bilimi",
+            "Fizik Biliminin Alt Dalları",
+            "Fizik Bilimine Yön Verenler",
+            "Fizik Bilimi İle İlgili Kariyer Keşfi"
+          ],
+          "icerik_basliklari": [],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FİZ.9.1.1",
+              "metin": "Fizik biliminin tanımına yönelik tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.9.1.2",
+              "metin": "Fizik biliminin alt dallarını sınıflandırabilme"
+            },
+            {
+              "kod": "FİZ.9.1.3",
+              "metin": "Fizik bilimine katkıda bulunmuş bilim insanlarının deneyimlerini yansıtabilme"
+            },
+            {
+              "kod": "FİZ.9.1.4",
+              "metin": "Bilim ve teknoloji alanında faaliyet gösteren kurum veya kuruluşlarda fizik bilimi ile ilişkili kariyer olanaklarını sorgulayabilme"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "Kuvvet Ve Hareket",
+          "unite_url": "https://tymm.meb.gov.tr/fizik-dersi/unite/57",
+          "guncelleme": "04.08.2026",
+          "ders_saati": 24,
+          "icerik_cercevesi": [
+            "Temel ve Türetilmiş Nicelikler",
+            "Skaler ve Vektörel Nicelikler",
+            "Vektörler",
+            "Doğadaki Temel Kuvvetler",
+            "Hareket ve Hareket Türleri"
+          ],
+          "icerik_basliklari": [],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FİZ.9.2.1",
+              "metin": "Birimleri SI birim sisteminde verilen temel ve türetilmiş nicelikleri sınıflandırabilme"
+            },
+            {
+              "kod": "FİZ.9.2.2",
+              "metin": "Skaler ve vektörel nicelikleri karşılaştırabilme"
+            },
+            {
+              "kod": "FİZ.9.2.3",
+              "metin": "Aynı doğrultu üzerinde yer alan farklı vektörlerin yön ve büyüklüklerine yönelik bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "FİZ.9.2.4",
+              "metin": "Vektörlerin toplanmasında kullanılan uç uca ekleme ve paralelkenar yöntemi ile bileşenlerine ayırma işlemine ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.9.2.5",
+              "metin": "Doğadaki temel kuvvetleri karşılaştırabilme"
+            },
+            {
+              "kod": "FİZ.9.2.6",
+              "metin": "Hareketin temel kavramlarının tanımlarına yönelik tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.9.2.7",
+              "metin": "Hareket türlerini sınıflandırabilme"
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "Akışkanlar",
+          "unite_url": "https://tymm.meb.gov.tr/fizik-dersi/unite/65",
+          "guncelleme": "04.08.2026",
+          "ders_saati": 18,
+          "icerik_cercevesi": [
+            "Basınç",
+            "Sıvılarda Basınç",
+            "Açık Hava Basıncı",
+            "Kaldırma Kuvveti",
+            "Bernoulli İlkesi"
+          ],
+          "icerik_basliklari": [],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FİZ.9.3.1",
+              "metin": "Basınca yönelik bilimsel çıkarımlarda bulunabilme"
+            },
+            {
+              "kod": "FİZ.9.3.2",
+              "metin": "Durgun sıvılarda basınca yönelik bilimsel çıkarımlarda bulunabilme"
+            },
+            {
+              "kod": "FİZ.9.3.3",
+              "metin": "Sıvılarda basıncın kullanıldığı günlük hayat örneklerine ilişkin sorgulama yapabilme"
+            },
+            {
+              "kod": "FİZ.9.3.4",
+              "metin": "Açık hava basıncına ilişkin çıkarım yapabilme"
+            },
+            {
+              "kod": "FİZ.9.3.5",
+              "metin": "Kaldırma kuvvetini etkileyen değişkenleri belirlemeye yönelik deney yapabilme"
+            },
+            {
+              "kod": "FİZ.9.3.6",
+              "metin": "Kaldırma kuvveti ile sıvılardaki basınca neden olan kuvvet arasındaki ilişkiye yönelik çıkarım yapabilme"
+            },
+            {
+              "kod": "FİZ.9.3.7",
+              "metin": "Akışkanın geçtiği borunun kesit alanı ile akışkanın sürati ve boru çeperlerine yaptığı basınç arasındaki ilişkiye yönelik tümevarımsal akıl yürütebilme"
+            }
+          ]
+        },
+        {
+          "sira": 4,
+          "ad": "Enerji",
+          "unite_url": "https://tymm.meb.gov.tr/fizik-dersi/unite/82",
+          "guncelleme": "04.08.2026",
+          "ders_saati": 18,
+          "icerik_cercevesi": [
+            "İç Enerji, Isı ve Sıcaklık Arasındaki İlişki",
+            "Isı, Öz Isı, Isı Sığası ve Sıcaklık Farkı Arasındaki İlişki",
+            "Hâl Değişimi",
+            "Isıl Denge",
+            "Isı Aktarım Yolları",
+            "Isı İletim Hızı"
+          ],
+          "icerik_basliklari": [],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FİZ.9.4.1",
+              "metin": "İç enerjinin ısı ve sıcaklık ile arasındaki ilişki hakkında tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.9.4.2",
+              "metin": "Isı, öz ısı, ısı sığası ve sıcaklık farkı arasındaki matematiksel modele ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.9.4.3",
+              "metin": "Hâl değiştirme sıcaklığında bulunan saf bir maddenin hâl değiştirmesi için alınan veya verilen ısı miktarının bağlı olduğu değişkenler hakkında bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "FİZ.9.4.4",
+              "metin": "Isıl denge durumu hakkında bilimsel gözlem yapabilme"
+            },
+            {
+              "kod": "FİZ.9.4.5",
+              "metin": "Isı aktarım yollarını sınıflayabilme"
+            },
+            {
+              "kod": "FİZ.9.4.6",
+              "metin": "Günlük hayattaki deneyimlerinden yola çıkarak katı maddelerdeki ısı iletim hızını etkileyen etmenlere yönelik yansıtma yapabilme"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sinif": 10,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/fizik-dersi/12",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "Kuvvet Ve Hareket",
+          "unite_url": "https://tymm.meb.gov.tr/fizik-dersi/unite/100",
+          "guncelleme": "04.08.2026",
+          "ders_saati": 14,
+          "icerik_cercevesi": [
+            "Sabit Hızlı Hareket",
+            "Bir Boyutta Sabit İvmeli Hareket"
+          ],
+          "icerik_basliklari": [],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FİZ.10.1.1",
+              "metin": "Yatay doğrultuda sabit hızlı hareket ile ilgili tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.10.1.2",
+              "metin": "İvme ve hız değişimi arasındaki ilişkiye yönelik tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.10.1.3",
+              "metin": "Yatay doğrultuda sabit ivmeyle hareket eden cisimlerin hareket grafiklerinden elde edilen matematiksel modelleri yorumlayabilme"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "Enerji",
+          "unite_url": "https://tymm.meb.gov.tr/fizik-dersi/unite/108",
+          "guncelleme": "04.08.2026",
+          "ders_saati": 16,
+          "icerik_cercevesi": [
+            "İş, Enerji ve Güç",
+            "Enerji Biçimleri",
+            "Mekanik Enerji",
+            "Enerji Kaynakları"
+          ],
+          "icerik_basliklari": [],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FİZ.10.2.1",
+              "metin": "Kuvvet-yer değiştirme grafiği kullanılarak iş ile ilgili tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.10.2.2",
+              "metin": "İş, enerji ve güç kavramlarına ilişkin çıkarım yapabilme"
+            },
+            {
+              "kod": "FİZ.10.2.3",
+              "metin": "Enerji biçimlerini karşılaştırabilme"
+            },
+            {
+              "kod": "FİZ.10.2.4",
+              "metin": "Mekanik enerjiyi çözümleyebilme"
+            },
+            {
+              "kod": "FİZ.10.2.5",
+              "metin": "Yenilenebilen ve yenilenemeyen enerji kaynaklarını karşılaştırabilme"
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "Elektrik",
+          "unite_url": "https://tymm.meb.gov.tr/fizik-dersi/unite/111",
+          "guncelleme": "04.08.2026",
+          "ders_saati": 22,
+          "icerik_cercevesi": [
+            "Basit Elektrik Devreleri",
+            "Elektrik Akımı",
+            "Ohm Yasası",
+            "Dirençlerin Bağlanması",
+            "Üreteçlerin Bağlanması",
+            "Elektrik Akımının Oluşturabileceği Tehlikelere Karşı Alınması Gereken Önlemler",
+            "Topraklamanın Önemi"
+          ],
+          "icerik_basliklari": [],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FİZ.10.3.1",
+              "metin": "Basit elektrik devresinde potansiyel fark, elektrik akımı ve direnç kavramlarının tanımına ilişkin analojik akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.10.3.2",
+              "metin": "Elektrik yükünün hareketi üzerinden elektrik akımı kavramını çözümleyebilme"
+            },
+            {
+              "kod": "FİZ.10.3.3",
+              "metin": "Ohm Yasası ile ilgili tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.10.3.4",
+              "metin": "Dirençlerin bağlanma türüne göre eşdeğer dirence ilişkin bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "FİZ.10.3.5",
+              "metin": "Üreteçlerin bağlanma türüne göre devreye sağladıkları potansiyel farka ilişkin bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "FİZ.10.3.6",
+              "metin": "Elektrik akımının oluşturabileceği tehlikelere karşı alınması gereken önlemlerle ilgili bilgi toplayabilme"
+            },
+            {
+              "kod": "FİZ.10.3.7",
+              "metin": "Topraklama olayının önemini sorgulayabilme"
+            }
+          ]
+        },
+        {
+          "sira": 4,
+          "ad": "Dalgalar",
+          "unite_url": "https://tymm.meb.gov.tr/fizik-dersi/unite/122",
+          "guncelleme": "04.08.2026",
+          "ders_saati": 16,
+          "icerik_cercevesi": [
+            "Periyodik Hareketler",
+            "Dalgaların Temel Kavramları",
+            "Dalgaların Sınıflandırılması",
+            "Dalgaların Yayılma Süratini Etkileyen Etmenler",
+            "Su Dalgalarında Yansıma ve Kırılma",
+            "Rezonans ve Deprem"
+          ],
+          "icerik_basliklari": [],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FİZ.10.4.1",
+              "metin": "Periyodik hareketlere ilişkin deneyimlerini yansıtabilme"
+            },
+            {
+              "kod": "FİZ.10.4.2",
+              "metin": "Dalgaların temel kavramlarına ilişkin operasyonel tanımlama yapabilme"
+            },
+            {
+              "kod": "FİZ.10.4.3",
+              "metin": "Dalgaları özelliklerine göre sınıflandırabilme"
+            },
+            {
+              "kod": "FİZ.10.4.4",
+              "metin": "Dalgaların yayılma süratini etkileyen etmenlere ilişkin bilimsel gözleme dayalı tahmin yapabilme"
+            },
+            {
+              "kod": "FİZ.10.4.5",
+              "metin": "Su dalgalarında yansıma ve kırılma ile ilgili tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.10.4.6",
+              "metin": "Rezonans ve depreme ilişkin kavramlar üzerinden depremi sorgulayabilme"
+            },
+            {
+              "kod": "FİZ.10.4.7",
+              "metin": "Depremle ilgili bilimsel model oluşturabilme"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sinif": 11,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/fizik-dersi/13",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "Kuvvet Ve Hareket",
+          "unite_url": "https://tymm.meb.gov.tr/fizik-dersi/unite/243",
+          "guncelleme": "05.08.2026",
+          "ders_saati": 54,
+          "icerik_cercevesi": [
+            "Serbest Düşme",
+            "İki Boyutta Sabit İvmeli Hareket",
+            "Newton Hareket Yasaları",
+            "Sürtünme Kuvveti",
+            "Limit Hız",
+            "Çembersel Hareket"
+          ],
+          "icerik_basliklari": [],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FİZ.11.1.1",
+              "metin": "Serbest düşme hareketi yapan cisimlerin ivmesine yönelik tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.11.1.2",
+              "metin": "Serbest düşme hareketi ile ilgili kanıt kullanabilme"
+            },
+            {
+              "kod": "FİZ.11.1.3",
+              "metin": "İki boyutta sabit ivmeli hareket ile ilgili tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.11.1.4",
+              "metin": "Newton'ın Hareket Yasaları ile ilgili tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.11.1.5",
+              "metin": "Newton'ın Hareket Yasalarını serbest cisim diyagramını kullanarak yorumlayabilme"
+            },
+            {
+              "kod": "FİZ.11.1.6",
+              "metin": "Statik ve kinetik sürtünme kuvvetlerini karşılaştırabilme"
+            },
+            {
+              "kod": "FİZ.11.1.7",
+              "metin": "Sürtünme kuvvetinin matematiksel modeline ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.11.1.8",
+              "metin": "Limit hızı etkileyen değişkenler ile ilgili bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "FİZ.11.1.9",
+              "metin": "Düzgün çembersel hareket yapan cisimlerin yörüngeleri ve hız vektörleri hakkında analojik akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.11.1.10",
+              "metin": "Düzgün çembersel hareketin değişkenleri arasındaki ilişkilerin matematiksel olarak modellenmesine ilişkin tümevarımsal akıl yürütebilme"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "Elektrik Ve Manyetizma",
+          "unite_url": "https://tymm.meb.gov.tr/fizik-dersi/unite/248",
+          "guncelleme": "05.08.2026",
+          "ders_saati": 48,
+          "icerik_cercevesi": [
+            "Elektriksel Kuvvet ve Elektriksel Alan",
+            "Manyetik Alan ve Manyetik Kuvvet",
+            "İndüksiyon Akımı",
+            "Transformatörler"
+          ],
+          "icerik_basliklari": [],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FİZ.11.2.1",
+              "metin": "Elektrik yükleri arasındaki elektriksel kuvvetin matematiksel modeline yönelik tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.11.2.2",
+              "metin": "Elektriksel alanın matematiksel modeline yönelik tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.11.2.3",
+              "metin": "Faraday kafesi ve Faraday kafesinin kullanım alanları ile ilgili bilgi toplayabilme"
+            },
+            {
+              "kod": "FİZ.11.2.4",
+              "metin": "Mıknatısların birbiriyle etkileşimine yönelik bilimsel gözlem yapabilme"
+            },
+            {
+              "kod": "FİZ.11.2.5",
+              "metin": "Üzerinden akım geçen düz bir iletken telin oluşturduğu manyetik alana ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.11.2.6",
+              "metin": "Akım makarasının merkez ekseninde oluşan manyetik alanın matematiksel modeline ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.11.2.7",
+              "metin": "Elektromıknatısların kullanım alanlarına ilişkin bilgi toplayabilme"
+            },
+            {
+              "kod": "FİZ.11.2.8",
+              "metin": "Manyetik alanda akım geçen düz bir tele etki eden kuvvete ilişkin matematiksel modele yönelik tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.11.2.9",
+              "metin": "Manyetik alanda akım geçen düz bir tele etki eden kuvvet ile ilgili deneyimini elektrik motorlarının çalışma prensibine yansıtabilme"
+            },
+            {
+              "kod": "FİZ.11.2.10",
+              "metin": "Manyetik akıya etki eden etmenleri çözümleyebilme"
+            },
+            {
+              "kod": "FİZ.11.2.11",
+              "metin": "İndüksiyon geriliminin matematiksel modeline ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.11.2.12",
+              "metin": "İndüklenme sonucu oluşan alternatif (değişken) akım hakkında bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "FİZ.11.2.13",
+              "metin": "Transformatörün yapısı ve kullanım alanlarına yönelik bilimsel çıkarım yapabilme"
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "Optik",
+          "unite_url": "https://tymm.meb.gov.tr/fizik-dersi/unite/259",
+          "guncelleme": "30.10.2026",
+          "ders_saati": 36,
+          "icerik_cercevesi": [
+            "Işık Şiddeti, Işık Akısı ve Aydınlanma",
+            "Düzlem Aynalar",
+            "Küresel Aynalar",
+            "Kırılma",
+            "Görünür Derinlik",
+            "Fiber Optik",
+            "Prizmalar",
+            "Mercekler"
+          ],
+          "icerik_basliklari": [],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FİZ.11.3.1",
+              "metin": "Işık şiddeti, ışık akısı ve aydınlanma kavramlarına ilişkin bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "FİZ.11.3.2",
+              "metin": "Düzlem aynaları kullanarak bilimsel model oluşturabilme"
+            },
+            {
+              "kod": "FİZ.11.3.3",
+              "metin": "Küresel aynaların özelliklerine ilişkin karşılaştırma yapabilme"
+            },
+            {
+              "kod": "FİZ.11.3.4",
+              "metin": "Küresel aynalarda görüntü oluşumu ile ilgili deney yapabilme"
+            },
+            {
+              "kod": "FİZ.11.3.5",
+              "metin": "Işığın saydam ortamlardaki davranışını kullanarak deney yapabilme"
+            },
+            {
+              "kod": "FİZ.11.3.6",
+              "metin": "Saydam ortamlarda görünür derinliğin, gerçek derinlik ve ortamların ışığı kırma indislerine bağlı olarak değiştiğine ilişkin bilimsel gözlem yapabilme"
+            },
+            {
+              "kod": "FİZ.11.3.7",
+              "metin": "Fiber optik malzemelerin yapısı, çalışma prensibi ve kullanım alanlarına ilişkin bilgi toplayabilme"
+            },
+            {
+              "kod": "FİZ.11.3.8",
+              "metin": "Prizmalar ve prizmalar ile kurulan birleşik sistemlerde ışığın izlediği yola ilişkin tümdengelimsel akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.11.3.9",
+              "metin": "Merceklerin özelliklerine ilişkin karşılaştırma yapabilme"
+            },
+            {
+              "kod": "FİZ.11.3.10",
+              "metin": "Merceklerde görüntü oluşumu ile ilgili deney yapabilme"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sinif": 12,
+      "sayfa_url": "https://tymm.meb.gov.tr/ogretim-programlari/fizik-dersi/14",
+      "yayim_durumu": "tam",
+      "temalar": [
+        {
+          "sira": 1,
+          "ad": "Kuvvet Ve Hareket",
+          "unite_url": "https://tymm.meb.gov.tr/fizik-dersi/unite/266",
+          "guncelleme": "05.08.2026",
+          "ders_saati": 46,
+          "icerik_cercevesi": [
+            "Tork",
+            "Denge",
+            "İtme (İmpuls) ve Momentum",
+            "Momentumun Korunumu",
+            "Eylemsizlik Momenti",
+            "Açısal Momentum"
+          ],
+          "icerik_basliklari": [],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FİZ.12.1.1",
+              "metin": "Torkun matematiksel modeline yönelik tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.12.1.2",
+              "metin": "Denge, kütle merkezi ve ağırlık merkezi ile ilgili kanıt kullanabilme"
+            },
+            {
+              "kod": "FİZ.12.1.3",
+              "metin": "İtme (İmpuls) ve momentum değişimi arasındaki ilişkiye yönelik bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "FİZ.12.1.4",
+              "metin": "Momentumun korunumunu veriye dayalı tahmin edebilme"
+            },
+            {
+              "kod": "FİZ.12.1.5",
+              "metin": "Eylemsizlik momentine yönelik tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.12.1.6",
+              "metin": "Açısal momentumun korunumuna yönelik tümevarımsal akıl yürütebilme"
+            }
+          ]
+        },
+        {
+          "sira": 2,
+          "ad": "Enerji",
+          "unite_url": "https://tymm.meb.gov.tr/fizik-dersi/unite/268",
+          "guncelleme": "05.08.2026",
+          "ders_saati": 36,
+          "icerik_cercevesi": [
+            "Yay Sabiti",
+            "Yayın Esneklik Potansiyel Enerjisi",
+            "Sürtünme Kuvvetinin Yaptığı İş",
+            "Enerjinin Korunumu",
+            "Verim"
+          ],
+          "icerik_basliklari": [],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FİZ.12.2.1",
+              "metin": "Yay sabitini tanımlamak için deney yapabilme"
+            },
+            {
+              "kod": "FİZ.12.2.2",
+              "metin": "Yay sabitinin matematiksel modeline ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.12.2.3",
+              "metin": "Yayın esneklik potansiyel enerjisinin matematiksel modeline ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.12.2.4",
+              "metin": "Sürtünme kuvvetinin yaptığı işe yönelik tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.12.2.5",
+              "metin": "Enerjinin dönüşümü ve korunumuna ilişkin bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "FİZ.12.2.6",
+              "metin": "Mekanik sistemlerin verimi ile ilgili tümevarımsal akıl yürütebilme"
+            }
+          ]
+        },
+        {
+          "sira": 3,
+          "ad": "Dalgalar",
+          "unite_url": "https://tymm.meb.gov.tr/fizik-dersi/unite/273",
+          "guncelleme": "05.08.2026",
+          "ders_saati": 22,
+          "icerik_cercevesi": [
+            "Su Dalgalarında Kırınım",
+            "Işıkta Kırınım",
+            "Su Dalgalarında Girişim",
+            "Işıkta Girişim",
+            "Elektromanyetik Dalgalar",
+            "Işık Renkleri",
+            "Mekanik veya Elektromanyetik Dalgaların Kullanıldığı Cihazlar"
+          ],
+          "icerik_basliklari": [],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FİZ.12.3.1",
+              "metin": "Doğrusal su dalgalarında kırınım olayına ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.12.3.2",
+              "metin": "Dairesel su dalgalarında girişim olayına ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.12.3.3",
+              "metin": "Işıkta girişim ile ilgili deney yapabilme"
+            },
+            {
+              "kod": "FİZ.12.3.4",
+              "metin": "Işıkta kırınım ile ilgili deney yapabilme"
+            },
+            {
+              "kod": "FİZ.12.3.5",
+              "metin": "Elektromanyetik dalgaları sınıflandırabilme"
+            },
+            {
+              "kod": "FİZ.12.3.6",
+              "metin": "Işık renklerinin dalga boyları hakkında tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.12.3.7",
+              "metin": "Mekanik veya elektromanyetik dalgaların kullanıldığı cihazlardaki dalga türlerini sorgulayabilme"
+            }
+          ]
+        },
+        {
+          "sira": 4,
+          "ad": "Madde Ve Doğası",
+          "unite_url": "https://tymm.meb.gov.tr/fizik-dersi/unite/279",
+          "guncelleme": "05.08.2026",
+          "ders_saati": 34,
+          "icerik_cercevesi": [
+            "Siyah Cisim Işıması",
+            "Fotoelektrik Etki",
+            "Yarı İletkenlik",
+            "Süper İletkenlik",
+            "Standart Model",
+            "Modern Atom Teorisi",
+            "Nükleer Enerji"
+          ],
+          "icerik_basliklari": [],
+          "ogrenme_ciktilari": [
+            {
+              "kod": "FİZ.12.4.1",
+              "metin": "Planck sabitinin modern fiziğin doğuşundaki etkisini çözümleyebilme"
+            },
+            {
+              "kod": "FİZ.12.4.2",
+              "metin": "Fotoelektrik etkinin bağlı olduğu koşullar ve foton kavramına ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.12.4.3",
+              "metin": "Fotoelektrik etkinin uygulamaları ile ilgili sorgulama yapabilme"
+            },
+            {
+              "kod": "FİZ.12.4.4",
+              "metin": "Yarı iletkenlerin kullanım alanlarını ve önemini sorgulayabilme"
+            },
+            {
+              "kod": "FİZ.12.4.5",
+              "metin": "Süper iletkenlerin kullanım alanlarını ve önemini sorgulayabilme"
+            },
+            {
+              "kod": "FİZ.12.4.6",
+              "metin": "Standart modelin bileşenlerini çözümleyebilme"
+            },
+            {
+              "kod": "FİZ.12.4.7",
+              "metin": "Modern Atom Teorisi ile ilgili bilgileri yapılandırabilme"
+            },
+            {
+              "kod": "FİZ.12.4.8",
+              "metin": "Nükleer enerjiyi sorgulayabilme"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "belirsizlikler": [
+    "Fizik sayfasında 9-12. sınıf için dört sınıf programı da yayımlı; ders sayfasında ders kitabı yalnızca 9, 10 ve 11. sınıf için listeli (12. sınıf kitabı listelenmemiş) — program yayımlı olduğu için yayim_durumu 'tam' yazıldı.",
+    "Fizik ünite sayfalarında İçerik Çerçevesi maddeleri kalın değil, düz paragraflardır.",
+    "Sınıf numarası eşlemesi ders sayfasındaki bağlantı sırası ve sınıf sayfası başlığıyla doğrulandı: .../11=9. sınıf, .../12=10. sınıf, .../13=11. sınıf, .../14=12. sınıf.",
+    "Ders saati yalnızca ünite/tema düzeyinde sayfada verilir; alt konu bazında saat yok.",
+    "Ünite sayfalarında alt ünite bağlantısı yok; ünite kimlikleri arasındaki boşluklar sınıf sayfasında listelenmeyen kayıtlardır, bu dosyalara alınmadı.",
+    "icerik_cercevesi: sayfadaki kalın başlık + altındaki düz metin 'Başlık: detay' olarak birleştirildi (ayırıcı ': ' tarafımdan eklendi); icerik_basliklari yalnızca kalın başlıkları içerir. Kalın başlık olmayan sayfalarda her madde ayrı satırdır ve icerik_basliklari boştur.",
+    "ogrenme_ciktilari.metin: kalın başlık cümlesi (kod hariç); a), b) gibi alt süreç bileşenleri alınmadı.",
+    "Veriler HTML'den doğrudan ayrıştırıldı (tymm.meb.gov.tr); 'guncelleme' sayfadaki 'Güncelleme tarihi' değeridir."
+  ]
+}

@@ -181,6 +181,19 @@ void main() {
     expect(find.text('Onaylandı'), findsWidgets);
     expect(find.text('Açık oturumlar'), findsOneWidget);
 
+    // Açılışta ilk dolu gün seçilir; cumartesi gibi günlerde o gün öğrencinin
+    // zaten onaylı talebi olabilir. Son günü seçmek tarihten bağımsız kılar.
+    final lastDay = find
+        .byWidgetPredicate(
+          (w) =>
+              w.key is ValueKey &&
+              '${(w.key! as ValueKey).value}'.startsWith('day-'),
+        )
+        .last;
+    await t.ensureVisible(lastDay);
+    await t.pumpAndSettle();
+    await t.tap(lastDay);
+    await t.pumpAndSettle();
     final button = find.byWidgetPredicate(
       (w) =>
           w.key is ValueKey &&
@@ -218,6 +231,19 @@ void main() {
       tutoring: repo('demo-student', 'student'),
     );
     t.view.physicalSize = const Size(3800, 2000); // ~1520 dp genişlik
+    await t.pumpAndSettle();
+    // Açılışta ilk dolu gün seçilir; cumartesi gibi günlerde o gün öğrencinin
+    // zaten onaylı talebi olabilir. Son günü seçmek tarihten bağımsız kılar.
+    final lastDay = find
+        .byWidgetPredicate(
+          (w) =>
+              w.key is ValueKey &&
+              '${(w.key! as ValueKey).value}'.startsWith('day-'),
+        )
+        .last;
+    await t.ensureVisible(lastDay);
+    await t.pumpAndSettle();
+    await t.tap(lastDay);
     await t.pumpAndSettle();
     final button = find.byWidgetPredicate(
       (w) =>
