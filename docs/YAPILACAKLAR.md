@@ -10,7 +10,8 @@ Ayrıntılar NOTLAR.md'deki bölümlerde.
       kesiliyor; kayıt doğrulama ve şifre sıfırlama takılır. Resend / Brevo (ücretsiz
       plan), gönderici `bildirim@mentoria.com.tr`, DNS kayıtları Cloudflare'de (SPF,
       DKIM). Supabase → Authentication → SMTP Settings. Bizim iş: kurulum + şablon
-      kontrolü (`supabase/templates/`).
+      kontrolü (`supabase/templates/`). **Hazır:** adım adım rehber `docs/SMTP_KURULUM.md`, şablonlar
+      `supabase/templates/` (confirm_signup, recovery, magic_link); hesap + DNS + Supabase paneli sizde.
 - [ ] **2. Tanıtım sayfasına "Masaüstüne / telefona yükle" bölümü** — PWA yalnızca
       `/app`'te. Chrome/Edge adres çubuğu "Yükle"; masaüstü Opera desteklemiyor;
       iPhone Paylaş → Ana Ekrana Ekle; Android ⋮ → Uygulamayı yükle. Ekle, derle,
