@@ -222,6 +222,18 @@ class InMemoryBooksRepository implements BooksRepository {
         ),
       );
     }
+    // Kaynak takibi örneği: gri / sarı / yeşil kutular (NOTLAR §106).
+    // Konu kimlikleri demoTopics() sırasına göre: 1-5 Türkçe, 6-11 Matematik.
+    for (final (sb, topic, state) in const [
+      ('sb-0', 6, MarkState.done),
+      ('sb-0', 7, MarkState.done),
+      ('sb-0', 8, MarkState.doing),
+      ('sb-0', 9, MarkState.doing),
+      ('sb-1', 1, MarkState.done),
+      ('sb-1', 2, MarkState.doing),
+    ]) {
+      repo._marks[(sb, topic)] = state;
+    }
     if (demoRichEnabled) {
       // Örnek döküm: Elif, 3-4-5 AYT Matematik'ten 239 soru.
       repo._books.add(
