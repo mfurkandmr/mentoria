@@ -1,0 +1,24 @@
+<!--
+  Supabase → Authentication → Emails → Templates → "Reset password"
+  Konu (Subject):  Mentoria şifre sıfırlama
+  Gövde (Body):    bu dosyanın aşağıdaki kısmı.
+  Uygulama bağlantıyı açar ({{ .ConfirmationURL }}); web ve mobil yönlendirmesi
+  uygulama tarafında (mentoria://reset-password ve /app/reset-password).
+-->
+<div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; color: #2a2550;">
+  <h2 style="margin: 0 0 12px; color: #5b3fd6;">Şifreni sıfırla</h2>
+  <p style="margin: 0 0 16px; font-size: 15px; line-height: 1.5;">
+    Merhaba! Mentoria hesabın için şifre sıfırlama isteği aldık. Yeni şifre
+    belirlemek için aşağıdaki düğmeye dokun.
+  </p>
+  <p style="margin: 0 0 20px; text-align: center;">
+    <a href="{{ .ConfirmationURL }}"
+       style="display: inline-block; background: #5b3fd6; color: #ffffff; text-decoration: none; font-weight: bold; font-size: 16px; padding: 14px 28px; border-radius: 12px;">
+      Yeni şifre belirle
+    </a>
+  </p>
+  <p style="margin: 0 0 8px; font-size: 13px; color: #6b6790;">
+    Bağlantı kısa süre geçerlidir. Bu isteği sen yapmadıysan bu e-postayı yok
+    sayabilirsin; şifren değişmez.
+  </p>
+</div>
