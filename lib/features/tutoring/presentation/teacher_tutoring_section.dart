@@ -32,6 +32,7 @@ class TeacherTutoringSection extends ConsumerWidget {
       for (final x in r)
         if (x.status == TutoringStatus.approved) x,
     ];
+    final history = ref.watch(teacherTutoringHistoryProvider).value ?? const [];
 
     return CockpitSection(
       title: tr('Soru çözümü ve birebir'),
@@ -85,6 +86,50 @@ class TeacherTutoringSection extends ConsumerWidget {
                   showTeacher: false,
                 ),
             ],
+            if (history.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(tr('Geçmiş oturumlar'), style: cockpitLabel(context)),
+              Text(
+                tr('Öğrenci geldi mi? İşaretle; öğrenci de görür.'),
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              for (final h in history.take(8))
+                TutoringRequestTile(
+                  key: ValueKey('teacher-history-${h.id}'),
+                  request: h,
+                  showStudent: true,
+                  showTeacher: false,
+                  trailing: h.attended == null
+                      ? Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              key: ValueKey('absent-${h.id}'),
+                              tooltip: tr('Gelmedi'),
+                              icon: Icon(
+                                Icons.close_rounded,
+                                color: context.cockpit.risk,
+                              ),
+                              onPressed: () => _attend(context, ref, h, false),
+                            ),
+                            IconButton(
+                              key: ValueKey('present-${h.id}'),
+                              tooltip: tr('Geldi'),
+                              icon: Icon(
+                                Icons.check_rounded,
+                                color: context.cockpit.good,
+                              ),
+                              onPressed: () => _attend(context, ref, h, true),
+                            ),
+                          ],
+                        )
+                      : InkWell(
+                          key: ValueKey('undo-${h.id}'),
+                          onTap: () => _attend(context, ref, h, null),
+                          child: TutoringAttendancePill(h.attended),
+                        ),
+                ),
+            ],
             if (s.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(tr('Haftalık oturumlarım'), style: cockpitLabel(context)),
@@ -102,6 +147,21 @@ class TeacherTutoringSection extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _attend(
+    BuildContext context,
+    WidgetRef ref,
+    TutoringRequest r,
+    bool? attended,
+  ) async {
+    try {
+      await ref.read(tutoringRepositoryProvider).markAttendance(r.id, attended);
+    } catch (e) {
+      if (context.mounted) showMessage(context, tutoringErrorMessage(e));
+    } finally {
+      ref.invalidate(teacherTutoringHistoryProvider);
+    }
   }
 
   Future<void> _decide(

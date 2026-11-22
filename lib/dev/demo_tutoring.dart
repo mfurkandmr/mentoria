@@ -16,6 +16,7 @@ class _Req {
   final String? topic;
   TutoringStatus status = TutoringStatus.pending;
   String? reason;
+  bool? attended;
 }
 
 /// Bellekte soru çözümü oturumları ve talepler (demo ve testler için).
@@ -116,6 +117,25 @@ class InMemoryTutoringRepository implements TutoringRepository {
       if (i == 0) r.status = TutoringStatus.approved;
       repo._requests.add(r);
     }
+    // Geçmiş: bir onaylı (devamı işaretlenmemiş), bir reddedilmiş.
+    var back = t.subtract(const Duration(days: 3));
+    if (back.weekday == 7) back = back.subtract(const Duration(days: 1));
+    for (final (i, status) in [
+      TutoringStatus.approved,
+      TutoringStatus.rejected,
+    ].indexed) {
+      var d = back.subtract(Duration(days: i * 7));
+      if (d.weekday == 7) d = d.subtract(const Duration(days: 1));
+      repo._requests.add(
+        _Req(
+          id: 'tr-${repo._id++}',
+          sessionId: 'ts-fizik-${d.weekday}',
+          studentId: 'demo-student',
+          date: d,
+          topic: i == 0 ? 'Kuvvet ve hareket' : 'Optik',
+        )..status = status,
+      );
+    }
     return repo;
   }
 
@@ -159,6 +179,7 @@ class InMemoryTutoringRepository implements TutoringRepository {
       topic: r.topic,
       rejectReason: r.reason,
       capacity: s.capacity,
+      attended: r.attended,
     );
   }
 
@@ -339,6 +360,45 @@ class InMemoryTutoringRepository implements TutoringRepository {
           r.status != TutoringStatus.cancelled)
         _view(r),
   ]..sort(_order);
+
+  @override
+  Future<List<TutoringRequest>> myHistory() async => [
+    for (final r in _requests)
+      if (r.studentId == viewerId &&
+          r.date.isBefore(_today) &&
+          (r.status == TutoringStatus.approved ||
+              r.status == TutoringStatus.rejected))
+        _view(r),
+  ]..sort((a, b) => _order(b, a));
+
+  @override
+  Future<List<TutoringRequest>> teacherHistory({int days = 30}) async {
+    final mine = _myTeacherIds;
+    final from = _today.subtract(Duration(days: days));
+    return [
+      for (final r in _requests)
+        if (mine.contains(_session(r.sessionId).teacherId) &&
+            r.status == TutoringStatus.approved &&
+            !r.date.isAfter(_today) &&
+            !r.date.isBefore(from))
+          _view(r),
+    ]..sort((a, b) => _order(b, a));
+  }
+
+  @override
+  Future<void> markAttendance(String requestId, bool? attended) async {
+    final r = _requests.firstWhere(
+      (r) => r.id == requestId,
+      orElse: () => throw StateError('NOT_ALLOWED'),
+    );
+    final s = _session(r.sessionId);
+    if (!_myTeacherIds.contains(s.teacherId)) throw StateError('NOT_ALLOWED');
+    if (r.status != TutoringStatus.approved) {
+      throw StateError('TUTOR_NOT_APPROVED');
+    }
+    if (r.date.isAfter(_today)) throw StateError('TUTOR_NOT_YET');
+    r.attended = attended;
+  }
 
   Set<String> get _myTeacherIds => {
     for (final e in teacherProfiles.entries)
