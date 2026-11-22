@@ -76,3 +76,93 @@ class GradeLevelCard extends ConsumerWidget {
     );
   }
 }
+
+/// Öğrencinin müfredatı (Maarif Modeli / eski müfredat); dokununca değiştirilir
+/// (öğrenci kendisi ya da koçu / müdürü). Konu listeleri buna göre gelir
+/// (NOTLAR §104). Seçilmediyse sınıftan türetilir: 9-11 Maarif, 12 / mezun eski.
+class CurriculumCard extends ConsumerWidget {
+  const CurriculumCard({super.key, required this.studentId, this.self = true});
+
+  final String studentId;
+  final bool self;
+
+  Future<void> _pick(
+    BuildContext context,
+    WidgetRef ref,
+    String? chosen,
+    String derived,
+  ) async {
+    // Boş seçim "sınıfıma göre" demektir.
+    const auto = '';
+    final picked = await showModalBottomSheet<String>(
+      context: context,
+      sheetAnimationStyle: AppMotion.overlayStyle(context),
+      useRootNavigator: true,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              key: const ValueKey('curriculum-auto'),
+              title: Text(tr('Sınıfa göre otomatik')),
+              subtitle: Text(
+                tr('Şu an: {name}', {'name': curriculumLabel(derived)}),
+              ),
+              trailing: chosen == null ? const Icon(Icons.check) : null,
+              onTap: () => Navigator.pop(context, auto),
+            ),
+            for (final c in [curriculumMaarif, curriculumEski])
+              ListTile(
+                key: ValueKey('curriculum-$c'),
+                title: Text(curriculumLabel(c)),
+                trailing: c == chosen ? const Icon(Icons.check) : null,
+                onTap: () => Navigator.pop(context, c),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (picked == null) return;
+    final value = picked.isEmpty ? null : picked;
+    if (value == chosen) return;
+    try {
+      await ref
+          .read(trackingRepositoryProvider)
+          .setCurriculum(studentId, value);
+      ref.invalidate(studentCurriculumRawProvider(studentId));
+      if (context.mounted) {
+        showMessage(
+          context,
+          tr('Müfredat kaydedildi. Konular buna göre listelenir.'),
+        );
+      }
+    } catch (_) {
+      if (context.mounted) showMessage(context, tr('Kaydedilemedi.'));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final grade = ref.watch(studentGradeProvider(studentId)).value;
+    final chosen = ref.watch(studentCurriculumRawProvider(studentId)).value;
+    final derived = defaultCurriculum(grade);
+    final effective = effectiveCurriculum(grade, chosen);
+    return Card(
+      child: ListTile(
+        key: const ValueKey('curriculum-card'),
+        leading: const Icon(Icons.menu_book_outlined),
+        title: Text(self ? tr('Müfredatın') : tr('Müfredatı')),
+        subtitle: Text(
+          chosen == null
+              ? tr('{name} · sınıfa göre otomatik', {
+                  'name': curriculumLabel(effective),
+                })
+              : curriculumLabel(effective),
+        ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => _pick(context, ref, chosen, derived),
+      ),
+    );
+  }
+}

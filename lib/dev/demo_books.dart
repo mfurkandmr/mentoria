@@ -58,7 +58,7 @@ class InMemoryBooksRepository implements BooksRepository {
   final _books = <_StudentBookRow>[];
   final _limits = <(String, String), int>{};
   final _progress = <BookProgress>[];
-  final _marks = <(String, int)>{};
+  final _marks = <(String, int), MarkState>{};
   int _id = 0;
 
   /// Gönderilen bildirimler (öğrenci, sonuç) — testler için.
@@ -458,15 +458,17 @@ class InMemoryBooksRepository implements BooksRepository {
   _StudentBookRow _row(String id) => _books.firstWhere((b) => b.id == id);
 
   @override
-  Future<Set<(String, int)>> fetchTopicMarks(String studentId) async {
+  Future<Map<(String, int), MarkState>> fetchTopicMarks(
+    String studentId,
+  ) async {
     if (!_canView(studentId)) throw StateError('NOT_ALLOWED');
     final mine = {
       for (final b in _books)
         if (b.studentId == studentId) b.id,
     };
     return {
-      for (final m in _marks)
-        if (mine.contains(m.$1)) m,
+      for (final m in _marks.entries)
+        if (mine.contains(m.key.$1)) m.key: m.value,
     };
   }
 
@@ -474,15 +476,15 @@ class InMemoryBooksRepository implements BooksRepository {
   Future<void> setTopicMark(
     String studentBookId,
     int topicId,
-    bool done,
+    MarkState state,
   ) async {
     final r = _row(studentBookId);
     if (!(viewerRole == 'student' && r.studentId == viewerId)) {
       _manage(r.studentId);
     }
-    done
-        ? _marks.add((studentBookId, topicId))
-        : _marks.remove((studentBookId, topicId));
+    state == MarkState.none
+        ? _marks.remove((studentBookId, topicId))
+        : _marks[(studentBookId, topicId)] = state;
   }
 
   @override
@@ -498,7 +500,7 @@ class InMemoryBooksRepository implements BooksRepository {
     _manage(r.studentId);
     _books.remove(r);
     _progress.removeWhere((p) => p.studentBookId == id);
-    _marks.removeWhere((m) => m.$1 == id);
+    _marks.removeWhere((k, _) => k.$1 == id);
   }
 
   @override

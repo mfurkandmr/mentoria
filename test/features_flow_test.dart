@@ -384,7 +384,7 @@ void main() {
     expect(find.text('2 öğrenciye deneme eklendi.'), findsOneWidget);
   });
 
-  testWidgets('koç öğrenciyi arar, sepete konu ekler ve ödev gönderir', (
+  testWidgets('koç öğrenciyi arar, konu seçer, hedef yazar ve ödev gönderir', (
     tester,
   ) async {
     _phone(tester);
@@ -397,24 +397,31 @@ void main() {
     expect(find.text('Can Kaya'), findsNothing);
     await tester.tap(find.text('Elif Yılmaz'));
     await tester.pumpAndSettle();
+    await tester.tap(find.text('Konu seç'));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('AYT'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Parabol'));
     await tester.tap(find.text('Polinomlar'));
     await tester.pumpAndSettle();
-    expect(find.text('2 madde · 40 soru'), findsOneWidget);
+    expect(find.text('2 konu seçildi'), findsOneWidget);
 
-    // Aynı konuya tekrar dokunmak sepetten çıkarır.
+    // Aynı konuya tekrar dokunmak seçimi kaldırır.
     await tester.tap(find.text('Polinomlar'));
     await tester.pumpAndSettle();
-    expect(find.text('1 madde · 20 soru'), findsOneWidget);
+    expect(find.text('1 konu seçildi'), findsOneWidget);
 
-    await tester.tap(find.text('Sepeti gör'));
+    await tester.tap(find.text('Özete geç'));
     await tester.pumpAndSettle();
-    await tester.tap(find.byTooltip('Artır'));
+    // Soru sayısı yok; konuya isteğe bağlı hedef yazılır.
+    expect(find.textContaining('soru'), findsNothing);
+    await tester.tap(find.byTooltip('Hedef ekle'));
     await tester.pumpAndSettle();
-    expect(find.text('25 soru'), findsOneWidget);
+    await tester.enterText(find.byType(TextField).last, '2 test çöz');
+    await tester.tap(find.text('Kaydet'));
+    await tester.pumpAndSettle();
+    expect(find.text('2 test çöz'), findsOneWidget);
     await tester.tap(find.text('Öğrenciye gönder'));
     await tester.pumpAndSettle();
 
