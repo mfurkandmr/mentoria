@@ -6,6 +6,7 @@ import 'dart:ui';
 
 import 'package:flutter/services.dart' show rootBundle;
 
+import 'demo_maarif_topics.dart';
 import '../core/constants/exam_subjects.dart';
 import '../core/branding/branding.dart';
 import '../core/theme/app_fonts.dart';
@@ -463,6 +464,18 @@ List<Topic> demoTopics() {
     for (final e in names.entries)
       for (var i = 0; i < e.value.length; i++)
         Topic(id: id++, subjectCode: e.key, name: e.value[i], sort: i + 1),
+    // Maarif Modeli konuları (gerçek MEB kataloğundan örnek); eski müfredattaki
+    // öğrenciler görmez, "Müfredat" kartından Maarif seçilince görünür.
+    for (final (i, m) in demoMaarifTopics.indexed)
+      Topic(
+        id: id++,
+        subjectCode: m.$1,
+        name: m.$4,
+        sort: i + 1,
+        curriculum: 'maarif',
+        grade: m.$2,
+        groupName: m.$3,
+      ),
   ];
 }
 

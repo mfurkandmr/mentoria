@@ -139,6 +139,9 @@ Future<List<Override>> buildDemoOverrides([
   if (demoRichEnabled) {
     await seedDemoTracking(tracking, richZeynep.id, scale: richZeynep.activity);
     await seedRichStudents(tracking, coaching);
+    // Maarif örneği: Zeynep 10. sınıf, Maarif Modeli (konu listesi 9-10. sınıf).
+    await tracking.setGradeLevel(richZeynep.id, 10);
+    await tracking.setCurriculum(richZeynep.id, 'maarif');
   }
   // Can hesabının silinmesini istemiş (koç panelinde rozet görünsün).
   final deletionRequests = {
