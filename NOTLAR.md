@@ -3579,3 +3579,18 @@ yok). Migration `20261113100000_cockpit_perf` (rollback var), **canlıda**.
   eklemek gerekir.
 - Canlıya 22 Kasım'da elle yayınlandı (wrangler); `/demo/panel/` ve `/app/login` CSP altında açılıyor.
   Giriş sonrası ekranlar (dosya yükleme, PDF indirme) gerçek hesapla denenmedi.
+
+## 107. Regresyon güvenceleri: güvenlik SQL testi ve canlı duman testi (23 Kasım 2026)
+
+- **`supabase/tests/security_guard_test.mjs`** (CI'daki `sql` işinde): public'teki her tabloda RLS açık mı;
+  anon yalnızca izinli tablo (`app_config`) ve işlevlere (davet kontrolü, öğrenci numarası eşleştirme, hata raporu,
+  marka bilgisi ve yardımcılar) erişebilir mi; iki kurumlu kurulumda B kurumunun koç / öğrenci / müdürü A öğrencisinin
+  verisini 15 tabloda göremez, yazamaz; rol / kurum / kredi sütunları ve katalog tabloları doğrudan değiştirilemez.
+  Yeni bir tablo ya da anonim işlev eklenince test kırılır: gerçekten anonim olması gerekiyorsa dosyadaki izin
+  listesine bilerek eklenir. Mutasyon denemesiyle (RLS'siz tablo + anonim işlev) kırıldığı doğrulandı.
+- **`tool/web/smoke_test.py`** (`python tool/web/smoke_test.py [adres]`): canlı siteye zararsız GET'lerle ana sayfa /
+  `/app` / `/demo/panel` CSP'si (wasm-unsafe-eval var, unsafe-eval yok), CanvasKit'in kendi sunucudan gelmesi
+  (`useLocalCanvasKit`), kaynak haritası / `.env` / `.git` sızıntısı, `security.txt` (süresi 14 günden fazla),
+  HSTS ve nosniff kontrolü. `.github/workflows/smoke.yml` her gün 06:17 UTC'de ve elle çalışır; `deploy-web.yml`
+  yayından sonra da çağırır (`WEB_DEPLOY` açılınca).
+- **Kapsam dışı:** giriş sonrası ekranlar (dosya yükleme, PDF) ve tarayıcıda uçtan uca senaryolar hâlâ otomatik testte yok.

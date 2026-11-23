@@ -1,0 +1,22 @@
+# Canlı site duman testi (NOTLAR §107): her gün bir kez ve elle çalıştırılabilir.
+# Zararsız GET istekleriyle CSP, CanvasKit, güvenlik başlıkları, security.txt ve
+# sızıntı kontrolü yapar (tool/web/smoke_test.py). Kırılırsa GitHub e-posta gönderir.
+name: Canlı duman testi
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Denenecek adres (boşsa https://mentoria.com.tr)"
+        required: false
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Duman testi
+        run: python3 tool/web/smoke_test.py "${{ inputs.url || 'https://mentoria.com.tr' }}"
