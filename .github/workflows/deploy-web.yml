@@ -60,3 +60,9 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy build/site --project-name=${{ vars.CLOUDFLARE_PROJECT }} --branch=main
+
+      # Yayından sonra canlı siteyi dışarıdan denetle (tool/web/smoke_test.py).
+      - name: Duman testi
+        run: |
+          sleep 20
+          python3 tool/web/smoke_test.py https://mentoria.com.tr
