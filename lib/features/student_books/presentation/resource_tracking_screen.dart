@@ -21,11 +21,16 @@ class ResourceTrackingScreen extends ConsumerStatefulWidget {
     required this.studentId,
     required this.viewer,
     this.term,
+    this.embedded = false,
   });
 
   final String studentId;
   final BooksViewer viewer;
   final String? term;
+
+  /// Başka bir ekranın (koçun öğrenci sayfasındaki "Kitaplar" sekmesi) içinde
+  /// gösterilirken kendi üst çubuğu olmaz.
+  final bool embedded;
 
   @override
   ConsumerState<ResourceTrackingScreen> createState() =>
@@ -102,7 +107,7 @@ class _ResourceTrackingScreenState
     final school = grade < 12 || curriculum == curriculumMaarif;
 
     return Scaffold(
-      appBar: AppBar(title: Text(tr('Kaynak takibi'))),
+      appBar: widget.embedded ? null : AppBar(title: Text(tr('Kaynak takibi'))),
       body: AsyncView(
         value: overview,
         onRetry: () => ref.invalidate(booksOverviewProvider),
