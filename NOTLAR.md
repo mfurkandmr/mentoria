@@ -3594,3 +3594,13 @@ yok). Migration `20261113100000_cockpit_perf` (rollback var), **canlıda**.
   HSTS ve nosniff kontrolü. `.github/workflows/smoke.yml` her gün 06:17 UTC'de ve elle çalışır; `deploy-web.yml`
   yayından sonra da çağırır (`WEB_DEPLOY` açılınca).
 - **Kapsam dışı:** giriş sonrası ekranlar (dosya yükleme, PDF) ve tarayıcıda uçtan uca senaryolar hâlâ otomatik testte yok.
+
+## 108. Panel derin bağlantıları: yönlendirme hedefi (24 Kasım 2026)
+
+- **Sorun:** `/app/coach/students`, `/demo/panel/coach/students` gibi alt yollar (sayfa yenileme, paylaşılan adres) 404
+  "Sayfa bulunamadı", `/app/login` / `/demo/panel/coach` ise 308 ile paneli köküne atıyordu (demoda rol parametresi
+  kaybolup öğrenci demosu açılıyordu). Neden: `_redirects` hedefi `/app/index.html` idi; Cloudflare Pages
+  `index.html` hedefini 308 ile klasöre yönlendirir.
+- **Düzeltme:** hedef klasör adresi (`/app/`, `/demo/panel/`) yapıldı; deneme sürümünde (preview) tüm derin
+  bağlantılar 200 döndü, varlıklar (main.dart.js, canvaskit) etkilenmedi. Test: `test/web_test.dart`; duman testi
+  (`tool/web/smoke_test.py`) artık yedi derin bağlantıyı denetler.
