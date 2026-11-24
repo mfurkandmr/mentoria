@@ -1,4 +1,6 @@
 // Maarif Modeli müfredatı ve konu bazlı toplu ödev (NOTLAR §104).
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mentoria/core/constants/grade_levels.dart';
 import 'package:mentoria/dev/demo_repositories.dart';
@@ -119,4 +121,27 @@ void main() {
       throwsStateError,
     );
   });
+
+  test(
+    'demo, Maarif kataloğunun tamamını taşır (seed ile aynı sayıda konu)',
+    () {
+      final seed = File('supabase/seed_maarif_topics.sql').readAsStringSync();
+      final rows = RegExp(
+        r"\('[A-Z_0-9]+', \d+::smallint, \d+, ",
+      ).allMatches(seed).length;
+      final demo = demoTopics().where((t) => t.isMaarif).toList();
+      expect(
+        demo.length,
+        rows,
+        reason: 'seed değişince build_demo_topics.py çalıştır',
+      );
+      expect(demo.map((t) => t.grade).toSet(), {9, 10, 11, 12});
+      // Her konunun teması var; Felsefe ve Din de katalogda.
+      expect(demo.every((t) => (t.groupName ?? '').isNotEmpty), isTrue);
+      expect(
+        demo.map((t) => t.subjectCode).toSet(),
+        containsAll(['TYT_FEL', 'TYT_DIN', 'TYT_MAT', 'AYT_EDB']),
+      );
+    },
+  );
 }

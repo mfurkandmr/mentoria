@@ -464,17 +464,17 @@ List<Topic> demoTopics() {
     for (final e in names.entries)
       for (var i = 0; i < e.value.length; i++)
         Topic(id: id++, subjectCode: e.key, name: e.value[i], sort: i + 1),
-    // Maarif Modeli konuları (gerçek MEB kataloğundan örnek); eski müfredattaki
+    // Maarif Modeli konuları (gerçek MEB kataloğunun tamamı); eski müfredattaki
     // öğrenciler görmez, "Müfredat" kartından Maarif seçilince görünür.
-    for (final (i, m) in demoMaarifTopics.indexed)
+    for (final m in demoMaarifTopics)
       Topic(
         id: id++,
         subjectCode: m.$1,
-        name: m.$4,
-        sort: i + 1,
+        name: m.$5,
+        sort: m.$3,
         curriculum: 'maarif',
         grade: m.$2,
-        groupName: m.$3,
+        groupName: m.$4,
       ),
   ];
 }
@@ -522,7 +522,11 @@ Future<void> seedDemoTracking(
       subjectCode: plan[d % plan.length].$1,
     );
   }
-  final topics = await repo.fetchTopics();
+  // Maarif kataloğu (1400 konu) örnek ilerlemeye girmez: demo hızlı açılsın.
+  final topics = [
+    for (final t in await repo.fetchTopics())
+      if (!t.isMaarif) t,
+  ];
   for (var i = 0; i < topics.length; i++) {
     final status = switch (i % 5) {
       0 || 1 => TopicStatus.done,
