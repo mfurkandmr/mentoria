@@ -142,6 +142,18 @@ Future<List<Override>> buildDemoOverrides([
     // Maarif örneği: Zeynep 10. sınıf, Maarif Modeli (konu listesi 9-10. sınıf).
     await tracking.setGradeLevel(richZeynep.id, 10);
     await tracking.setCurriculum(richZeynep.id, 'maarif');
+    // Maarif örnek ilerlemesi: Matematik 9. sınıfın ilk konuları bitti, sonrakiler sürüyor.
+    final maarifMat = [
+      for (final t in topics)
+        if (t.isMaarif && t.subjectCode == 'TYT_MAT' && t.grade == 9) t,
+    ]..sort((a, b) => a.sort.compareTo(b.sort));
+    for (final (i, t) in maarifMat.take(8).indexed) {
+      await tracking.setTopicStatus(
+        richZeynep.id,
+        t.id,
+        i < 5 ? TopicStatus.done : TopicStatus.inProgress,
+      );
+    }
   }
   // Can hesabının silinmesini istemiş (koç panelinde rozet görünsün).
   final deletionRequests = {
