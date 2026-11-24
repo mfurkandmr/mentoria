@@ -65,6 +65,12 @@ check(st == 200 and b'"useLocalCanvasKit":true' in boot, "/app önyükleyici Can
 st, _, _ = get("/app/canvaskit/skwasm.wasm", "HEAD")
 check(st == 200, "CanvasKit (skwasm.wasm) kendi sunucudan geliyor", st)
 
+# Derin bağlantılar (yenileme / paylaşılan adres): panel sayfası dönmeli, yönlendirme ya da 404 değil.
+for path in ("/app/login", "/app/coach", "/app/coach/students", "/app/student/study",
+             "/demo/panel/coach", "/demo/panel/coach/students", "/demo/panel/student/study"):
+    st, h, body = get(path)
+    check(st == 200 and b"flutter_bootstrap.js" in body, f"{path} panel sayfasını döndürür (derin bağlantı)", st)
+
 # Sızıntı: kaynak haritası, .env, .git.
 for path in ("/app/main.dart.js.map", "/.env", "/.git/config", "/app/.env", "/env.json"):
     st, _, body = get(path)

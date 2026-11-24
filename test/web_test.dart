@@ -206,6 +206,14 @@ void main() {
       expect(paths, isNot(contains('/demo/panel')));
     });
 
+    test('panel yönlendirmelerinin hedefi klasör adresi (index.html değil)', () {
+      final py = File('tool/web/build_web.py').readAsStringSync();
+      // Cloudflare Pages index.html hedefini 308 ile klasöre çevirir, alt yollar 404 verir.
+      expect(py, isNot(contains('{base}index.html  200')));
+      expect(py, contains('{base}{r}  {base}  200'));
+      expect(py, contains('{base}{r}/*  {base}  200'));
+    });
+
     test('security.txt geçerli alanları içerir', () {
       final t = File('site/.well-known/security.txt').readAsStringSync();
       expect(t, contains('Contact: mailto:'));

@@ -242,12 +242,14 @@ def markdown_to_html(md: str) -> str:
 
 def _redirects() -> str:
     lines = ["# tool/web/build_web.py üretir; elle düzenlemeyin.",
-             "# Panel yolları (Flutter, adres çubuğunda '#' yok) index.html'e."]
+             "# Panel yolları (Flutter, adres çubuğunda '#' yok) panelin klasörüne yazılır.",
+             "# Hedef 'index.html' DEĞİL klasör adresi olmalı: Cloudflare Pages index.html",
+             "# hedefini 308 ile klasöre yönlendirir (alt yollar 404 verir; NOTLAR §108)."]
     for base in (APP_BASE, DEMO_BASE):
         for r in APP_ROUTES:
-            lines.append(f"{base}{r}  {base}index.html  200")
+            lines.append(f"{base}{r}  {base}  200")
         for r in APP_ROUTES:
-            lines.append(f"{base}{r}/*  {base}index.html  200")
+            lines.append(f"{base}{r}/*  {base}  200")
     return "\n".join(lines) + "\n"
 
 
