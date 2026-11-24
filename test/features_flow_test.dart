@@ -207,11 +207,8 @@ void main() {
       final labels = [
         for (final t in tester.widgetList<Tab>(find.byType(Tab))) t.text,
       ];
-      expect(
-        labels.indexOf('Kitaplar'),
-        2,
-        reason: 'Özet, Denemeler, Kitaplar...',
-      );
+      // Önem sırası: deneme, ödev ve kitap en başta.
+      expect(labels.take(4), ['Özet', 'Denemeler', 'Ödevler', 'Kitaplar']);
 
       await _openTab(tester, 'Kitaplar');
       // Kitap listesi değil, doğrudan kaynak takibi tablosu: renk açıklaması ve konu sütunu.

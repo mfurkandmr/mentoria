@@ -54,19 +54,20 @@ class StudentDetailScreen extends ConsumerStatefulWidget {
 class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
     with SingleTickerProviderStateMixin {
   static final _tabs = [
+    // Önem sırasıyla: deneme, ödev ve kitap en başta.
     tr('Özet'),
     tr('Denemeler'),
+    tr('Ödevler'),
     tr('Kitaplar'),
     tr('Sorular'),
     tr('Konular'),
-    tr('Süre'),
     tr('Görevler'),
-    tr('Ödevler'),
+    tr('Plan'),
+    tr('Süre'),
     tr('Notlar'),
     tr('Rehberlik'),
     tr('Hata Defteri'),
     tr('Eğitim'),
-    tr('Plan'),
   ];
   late final TabController _controller =
       TabController(length: _tabs.length, vsync: this)..addListener(() {
@@ -149,13 +150,13 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
         icon: const Icon(Icons.add_task),
         label: Text(tr('Görev ver')),
       ),
-      7 when canManage => FloatingActionButton.extended(
+      2 when canManage => FloatingActionButton.extended(
         onPressed: () =>
             context.push('${widget.basePath}/homework?student=$id'),
         icon: const Icon(Icons.assignment_add),
         label: Text(tr('Ödev ver')),
       ),
-      9 when canManage => FloatingActionButton.extended(
+      10 when canManage => FloatingActionButton.extended(
         onPressed: () => showAddGuidanceSheet(context, id),
         icon: const Icon(Icons.record_voice_over_rounded),
         label: Text(tr('Görüşme kaydı')),
@@ -237,30 +238,6 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
                   canShareSummary: canManage,
                 ),
                 ExamsView(studentId: id, onAdd: _openAddExam),
-                // Kitaplar: doğrudan kaynak takibi tablosu; kitap listesi ve limit
-                // üstteki düğmeden açılır.
-                _BooksTab(
-                  studentId: id,
-                  viewer: canManage ? BooksViewer.manager : BooksViewer.parent,
-                ),
-                QuestionsView(studentId: id, bottomPadding: 32),
-                TopicsView(studentId: id),
-                ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
-                  children: [StudyStatsSection(studentId: id)],
-                ),
-                ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
-                  children: [
-                    TaskList(
-                      studentId: id,
-                      viewer: isCoach ? TaskViewer.coach : TaskViewer.readOnly,
-                      emptyText: isCoach
-                          ? tr('Henüz görev vermedin. "Görev ver"e dokun.')
-                          : tr('Henüz görev yok.'),
-                    ),
-                  ],
-                ),
                 ListView(
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
                   children: [
@@ -280,6 +257,35 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
                     ),
                   ],
                 ),
+                // Kitaplar: doğrudan kaynak takibi tablosu; kitap listesi ve limit
+                // üstteki düğmeden açılır.
+                _BooksTab(
+                  studentId: id,
+                  viewer: canManage ? BooksViewer.manager : BooksViewer.parent,
+                ),
+                QuestionsView(studentId: id, bottomPadding: 32),
+                TopicsView(studentId: id),
+                ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
+                  children: [
+                    TaskList(
+                      studentId: id,
+                      viewer: isCoach ? TaskViewer.coach : TaskViewer.readOnly,
+                      emptyText: isCoach
+                          ? tr('Henüz görev vermedin. "Görev ver"e dokun.')
+                          : tr('Henüz görev yok.'),
+                    ),
+                  ],
+                ),
+                WeeklyPlanView(
+                  studentId: id,
+                  canEdit: canManage,
+                  canTick: canManage,
+                ),
+                ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+                  children: [StudyStatsSection(studentId: id)],
+                ),
                 ListView(
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
                   children: [NotesList(studentId: id, canWrite: isCoach)],
@@ -287,11 +293,6 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
                 GuidanceTimeline(studentId: id),
                 MistakesView(studentId: id, readOnly: true, bottomPadding: 32),
                 LearnReportView(studentId: id),
-                WeeklyPlanView(
-                  studentId: id,
-                  canEdit: canManage,
-                  canTick: canManage,
-                ),
               ],
             ),
           ),
