@@ -9,6 +9,8 @@
 #   Secrets:   CLOUDFLARE_API_TOKEN (yalnızca "Cloudflare Pages: Edit"),
 #              CLOUDFLARE_ACCOUNT_ID
 # WEB_DEPLOY ayarlanana kadar iş atlanır (CI kırılmaz).
+# Yayına çıkmadan denemek için: Actions → Web yayını → Run workflow → dry_run
+# (derler ve yayın öncesi denetimleri çalıştırır, Cloudflare'e yüklemez).
 # Supabase publishable anahtarı gizli değildir (tarayıcıda zaten görünür).
 name: Web yayını
 
@@ -16,18 +18,36 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Yalnızca derle ve denetle, yayınlama"
+        type: boolean
+        default: false
 
 concurrency:
   group: deploy-web
-  cancel-in-progress: true
+  # Yükleme sürerken gelen yeni itme onu yarıda kesmesin; sıraya girer.
+  cancel-in-progress: false
 
 jobs:
   deploy:
-    if: vars.WEB_DEPLOY == 'true'
+    if: vars.WEB_DEPLOY == 'true' || inputs.dry_run
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+
+      # Yayın anahtarları eksikse derlemeye başlamadan açık bir hatayla dur.
+      - name: Yayın anahtarları var mı
+        if: ${{ !inputs.dry_run }}
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          [ -n "$CF_TOKEN" ] && [ -n "$CF_ACCOUNT" ] || {
+            echo "::error::CLOUDFLARE_API_TOKEN ve CLOUDFLARE_ACCOUNT_ID gizli değerleri tanımlı değil (NOTLAR §109)."
+            exit 1
+          }
 
       - uses: subosito/flutter-action@v2
         with:
@@ -46,6 +66,16 @@ jobs:
           FIREBASE_WEB_APP_ID: ${{ vars.FIREBASE_WEB_APP_ID }}
         run: python3 tool/web/build_web.py
 
+      # Bozuk bir derleme canlıya çıkmasın: yayın öncesi denetimler.
+      - name: Yayın öncesi denetim
+        run: |
+          grep -q "wasm-unsafe-eval" build/site/_headers || { echo "::error::_headers içinde panel CSP'si yok"; exit 1; }
+          test -f build/site/app/canvaskit/skwasm.wasm || { echo "::error::CanvasKit kendi sunucudan paketlenmemiş"; exit 1; }
+          grep -q '"useLocalCanvasKit":true' build/site/app/flutter_bootstrap.js || { echo "::error::useLocalCanvasKit kapalı"; exit 1; }
+          ! find build/site -name '*.map' | grep -q . || { echo "::error::yayına kaynak haritası girmiş"; exit 1; }
+          grep -q "/app/coach/\*  /app/  200" build/site/_redirects || { echo "::error::panel yönlendirmesi klasör hedefli değil"; exit 1; }
+          test -f build/site/.well-known/security.txt || { echo "::error::security.txt yok"; exit 1; }
+
       # Hata kaydındaki satırları çözmek için (tool/web/symbolize.mjs).
       - name: Kaynak haritalarını sakla
         uses: actions/upload-artifact@v4
@@ -55,6 +85,7 @@ jobs:
           retention-days: 90
 
       - name: Cloudflare Pages'e yükle
+        if: ${{ !inputs.dry_run }}
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -63,6 +94,7 @@ jobs:
 
       # Yayından sonra canlı siteyi dışarıdan denetle (tool/web/smoke_test.py).
       - name: Duman testi
+        if: ${{ !inputs.dry_run }}
         run: |
           sleep 20
           python3 tool/web/smoke_test.py https://mentoria.com.tr
