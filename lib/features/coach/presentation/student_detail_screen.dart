@@ -1,5 +1,6 @@
 import '../../tracking/presentation/grade_level_card.dart';
 import '../../student_books/presentation/books_screens.dart';
+import '../../student_books/presentation/resource_tracking_screen.dart';
 import '../../student/presentation/home_sky.dart';
 import '../../mistakes/presentation/mistake_widgets.dart';
 import 'package:flutter/material.dart';
@@ -55,6 +56,7 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
   static final _tabs = [
     tr('Özet'),
     tr('Denemeler'),
+    tr('Kitaplar'),
     tr('Sorular'),
     tr('Konular'),
     tr('Süre'),
@@ -64,7 +66,6 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
     tr('Rehberlik'),
     tr('Hata Defteri'),
     tr('Eğitim'),
-    tr('Kitaplar'),
     tr('Plan'),
   ];
   late final TabController _controller =
@@ -143,18 +144,18 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
         icon: const Icon(Icons.add),
         label: Text(tr('Deneme gir')),
       ),
-      5 when isCoach => FloatingActionButton.extended(
+      6 when isCoach => FloatingActionButton.extended(
         onPressed: () => showAddTaskSheet(context, id),
         icon: const Icon(Icons.add_task),
         label: Text(tr('Görev ver')),
       ),
-      6 when canManage => FloatingActionButton.extended(
+      7 when canManage => FloatingActionButton.extended(
         onPressed: () =>
             context.push('${widget.basePath}/homework?student=$id'),
         icon: const Icon(Icons.assignment_add),
         label: Text(tr('Ödev ver')),
       ),
-      8 when canManage => FloatingActionButton.extended(
+      9 when canManage => FloatingActionButton.extended(
         onPressed: () => showAddGuidanceSheet(context, id),
         icon: const Icon(Icons.record_voice_over_rounded),
         label: Text(tr('Görüşme kaydı')),
@@ -236,6 +237,12 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
                   canShareSummary: canManage,
                 ),
                 ExamsView(studentId: id, onAdd: _openAddExam),
+                // Kitaplar: doğrudan kaynak takibi tablosu; kitap listesi ve limit
+                // üstteki düğmeden açılır.
+                _BooksTab(
+                  studentId: id,
+                  viewer: canManage ? BooksViewer.manager : BooksViewer.parent,
+                ),
                 QuestionsView(studentId: id, bottomPadding: 32),
                 TopicsView(studentId: id),
                 ListView(
@@ -280,10 +287,6 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen>
                 GuidanceTimeline(studentId: id),
                 MistakesView(studentId: id, readOnly: true, bottomPadding: 32),
                 LearnReportView(studentId: id),
-                StudentBooksView(
-                  studentId: id,
-                  viewer: canManage ? BooksViewer.manager : BooksViewer.parent,
-                ),
                 WeeklyPlanView(
                   studentId: id,
                   canEdit: canManage,
@@ -613,4 +616,50 @@ class _DeleteStudentDialogState extends State<_DeleteStudentDialog> {
       ),
     ],
   );
+}
+
+/// Koçun öğrenci sayfasındaki "Kitaplar" sekmesi: açılır açılmaz kaynak takibi
+/// tablosu; kitap listesi, limit ve kitap ekleme üstteki düğmeden.
+class _BooksTab extends StatelessWidget {
+  const _BooksTab({required this.studentId, required this.viewer});
+
+  final String studentId;
+  final BooksViewer viewer;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+            child: TextButton.icon(
+              key: const ValueKey('books-list-button'),
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => Scaffold(
+                    appBar: AppBar(title: Text(tr('Kitap listesi'))),
+                    body: StudentBooksView(
+                      studentId: studentId,
+                      viewer: viewer,
+                    ),
+                  ),
+                ),
+              ),
+              icon: const Icon(Icons.menu_book_outlined, size: 18),
+              label: Text(tr('Kitap listesi ve limit')),
+            ),
+          ),
+        ),
+        Expanded(
+          child: ResourceTrackingScreen(
+            studentId: studentId,
+            viewer: viewer,
+            embedded: true,
+          ),
+        ),
+      ],
+    );
+  }
 }

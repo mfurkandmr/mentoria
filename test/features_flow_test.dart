@@ -193,6 +193,40 @@ void main() {
     expect(saved.fullName, isNotEmpty);
   });
 
+  testWidgets(
+    'koç: Kitaplar sekmesi üçüncü sırada ve doğrudan kaynak takibini açar',
+    (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(
+        await _app(
+          'coach',
+          const StudentDetailScreen(studentId: 'demo-student'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final labels = [
+        for (final t in tester.widgetList<Tab>(find.byType(Tab))) t.text,
+      ];
+      expect(
+        labels.indexOf('Kitaplar'),
+        2,
+        reason: 'Özet, Denemeler, Kitaplar...',
+      );
+
+      await _openTab(tester, 'Kitaplar');
+      // Kitap listesi değil, doğrudan kaynak takibi tablosu: renk açıklaması ve konu sütunu.
+      expect(find.text('Devam ediyor'), findsOneWidget);
+      expect(find.text('Konu'), findsWidgets);
+      expect(find.byKey(const ValueKey('books-list-button')), findsOneWidget);
+
+      // Kitap listesi ve limit üstteki düğmeden açılır.
+      await tester.tap(find.byKey(const ValueKey('books-list-button')));
+      await tester.pumpAndSettle();
+      expect(find.text('Kitap listesi'), findsOneWidget);
+      expect(find.textContaining('kitap kullanıldı'), findsOneWidget);
+    },
+  );
+
   testWidgets('koç görev verir ve not yazar', (tester) async {
     _phone(tester);
     await tester.pumpWidget(

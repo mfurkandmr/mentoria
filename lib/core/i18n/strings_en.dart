@@ -2047,6 +2047,8 @@ const enStrings = <String, String>{
   'Bu talep için zaten karar verilmiş.':
       'This request has already been decided.',
   'Konu: {t}': 'Topic: {t}',
+  'Kitap listesi': 'Book list',
+  'Kitap listesi ve limit': 'Book list and limit',
   'Geçmiş oturumlar': 'Past sessions',
   'Geçmiş taleplerim': 'My past requests',
   'Öğrenci geldi mi? İşaretle; öğrenci de görür.':
