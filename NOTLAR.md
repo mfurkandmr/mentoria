@@ -3604,3 +3604,14 @@ yok). Migration `20261113100000_cockpit_perf` (rollback var), **canlıda**.
 - **Düzeltme:** hedef klasör adresi (`/app/`, `/demo/panel/`) yapıldı; deneme sürümünde (preview) tüm derin
   bağlantılar 200 döndü, varlıklar (main.dart.js, canvaskit) etkilenmedi. Test: `test/web_test.dart`; duman testi
   (`tool/web/smoke_test.py`) artık yedi derin bağlantıyı denetler.
+
+## 109. Otomatik web yayını (24 Kasım 2026)
+
+- `.github/workflows/deploy-web.yml`: `main`'e her itmede siteyi derler, **yayın öncesi denetimleri** çalıştırır
+  (panel CSP'si, kendi sunucudan CanvasKit, kaynak haritası yok, klasör hedefli yönlendirme, `security.txt`),
+  Cloudflare Pages'e yükler ve canlı duman testini çalıştırır. Yükleme sürerken gelen yeni itme yarıda kesmez, sıraya girer.
+- **Denemek için:** Actions → *Web yayını* → *Run workflow* → `dry_run` işaretli: derler ve denetler, yüklemez.
+- **Kurulum (bir kez):** değişkenler `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `CLOUDFLARE_PROJECT` zaten tanımlı.
+  Eksik olanlar: gizli değerler `CLOUDFLARE_API_TOKEN` (Cloudflare → Profil → API Tokens → *Edit Cloudflare Pages* şablonu,
+  yalnızca bu hesap ve bu proje) ve `CLOUDFLARE_ACCOUNT_ID`; son olarak `WEB_DEPLOY=true` değişkeni.
+  Anahtarlar eksikken ve `WEB_DEPLOY=true` iken iş, derlemeden önce açık bir hata verir.
